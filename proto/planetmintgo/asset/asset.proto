@@ -1,0 +1,11 @@
+syntax = "proto3";
+package planetmintgo.asset;
+
+option go_package = "planetmint-go/x/asset/types";
+
+message Asset {
+  
+  string hash = 1; 
+  string signature = 2; 
+  string pubkey = 3; 
+}
