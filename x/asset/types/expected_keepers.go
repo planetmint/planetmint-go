@@ -1,6 +1,8 @@
 package types
 
 import (
+	machineTypes "planetmint-go/x/machine/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 )
@@ -15,4 +17,8 @@ type AccountKeeper interface {
 type BankKeeper interface {
 	SpendableCoins(ctx sdk.Context, addr sdk.AccAddress) sdk.Coins
 	// Methods imported from bank should be defined here
+}
+
+type MachineKeeper interface {
+	GetMachine(ctx sdk.Context, pubKey string) (val machineTypes.Machine, found bool)
 }

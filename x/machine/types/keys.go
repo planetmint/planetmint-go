@@ -12,6 +12,8 @@ const (
 
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_machine"
+
+	MachineKey = "Machine/value/"
 )
 
 func KeyPrefix(p string) []byte {

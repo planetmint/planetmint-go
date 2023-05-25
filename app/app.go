@@ -109,6 +109,7 @@ import (
 	machinemodule "planetmint-go/x/machine"
 	machinemodulekeeper "planetmint-go/x/machine/keeper"
 	machinemoduletypes "planetmint-go/x/machine/types"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "planetmint-go/app/params"
@@ -507,6 +508,7 @@ func New(
 		keys[assetmoduletypes.StoreKey],
 		keys[assetmoduletypes.MemStoreKey],
 		app.GetSubspace(assetmoduletypes.ModuleName),
+		app.MachineKeeper,
 	)
 	assetModule := assetmodule.NewAppModule(appCodec, app.AssetKeeper, app.AccountKeeper, app.BankKeeper)
 
