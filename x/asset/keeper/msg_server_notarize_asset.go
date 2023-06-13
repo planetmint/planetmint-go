@@ -18,6 +18,8 @@ func (k msgServer) NotarizeAsset(goCtx context.Context, msg *types.MsgNotarizeAs
 		return &types.MsgNotarizeAssetResponse{}, errors.New("machine not found")
 	}
 
+	// TODO: validate signature
+
 	var asset = types.Asset{
 		Hash:      msg.CidHash,
 		Signature: msg.Sign,

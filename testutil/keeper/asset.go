@@ -3,6 +3,10 @@ package keeper
 import (
 	"testing"
 
+	"planetmint-go/x/asset/keeper"
+	"planetmint-go/x/asset/types"
+	machinetypes "planetmint-go/x/machine/types"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -10,11 +14,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
-	"github.com/tendermint/tendermint/libs/log"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	tmdb "github.com/tendermint/tm-db"
-	"planetmint-go/x/asset/keeper"
-	"planetmint-go/x/asset/types"
 )
 
 func AssetKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
@@ -25,6 +25,10 @@ func AssetKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	stateStore := store.NewCommitMultiStore(db)
 	stateStore.MountStoreWithDB(storeKey, storetypes.StoreTypeIAVL, db)
 	stateStore.MountStoreWithDB(memStoreKey, storetypes.StoreTypeMemory, nil)
+
+	mkStoreKey := sdk.NewKVStoreKey(machinetypes.StoreKey)
+	stateStore.MountStoreWithDB(mkStoreKey, storetypes.StoreTypeIAVL, db)
+
 	require.NoError(t, stateStore.LoadLatestVersion())
 
 	registry := codectypes.NewInterfaceRegistry()
@@ -36,14 +40,16 @@ func AssetKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		memStoreKey,
 		"AssetParams",
 	)
+	mk, ctx := MachineKeeper(t)
 	k := keeper.NewKeeper(
 		cdc,
 		storeKey,
 		memStoreKey,
 		paramsSubspace,
+		mk,
 	)
 
-	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
+	// ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
 
 	// Initialize params
 	k.SetParams(ctx, types.DefaultParams())
