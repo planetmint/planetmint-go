@@ -3,9 +3,11 @@ package keeper
 import (
 	"testing"
 
+	"planetmint-go/testutil/sample"
 	"planetmint-go/x/asset/keeper"
 	"planetmint-go/x/asset/types"
-	machinetypes "planetmint-go/x/machine/types"
+
+	assettestutils "planetmint-go/x/asset/testutil"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -13,7 +15,10 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
+	"github.com/tendermint/tendermint/libs/log"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	tmdb "github.com/tendermint/tm-db"
 )
 
@@ -26,9 +31,6 @@ func AssetKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	stateStore.MountStoreWithDB(storeKey, storetypes.StoreTypeIAVL, db)
 	stateStore.MountStoreWithDB(memStoreKey, storetypes.StoreTypeMemory, nil)
 
-	mkStoreKey := sdk.NewKVStoreKey(machinetypes.StoreKey)
-	stateStore.MountStoreWithDB(mkStoreKey, storetypes.StoreTypeIAVL, db)
-
 	require.NoError(t, stateStore.LoadLatestVersion())
 
 	registry := codectypes.NewInterfaceRegistry()
@@ -40,7 +42,13 @@ func AssetKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		memStoreKey,
 		"AssetParams",
 	)
-	mk, ctx := MachineKeeper(t)
+
+	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
+
+	ctrl := gomock.NewController(t)
+	mk := assettestutils.NewMockMachineKeeper(ctrl)
+	mk.EXPECT().GetMachine(ctx, "pubkey").Return(sample.Machine(), true)
+
 	k := keeper.NewKeeper(
 		cdc,
 		storeKey,
@@ -48,8 +56,6 @@ func AssetKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		paramsSubspace,
 		mk,
 	)
-
-	// ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
 
 	// Initialize params
 	k.SetParams(ctx, types.DefaultParams())
