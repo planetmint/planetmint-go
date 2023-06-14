@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	keepertest "planetmint-go/testutil/keeper"
+	"planetmint-go/testutil/sample"
 	"planetmint-go/x/asset/keeper"
 	"planetmint-go/x/asset/types"
 
@@ -18,7 +19,8 @@ func setupMsgServer(t testing.TB) (types.MsgServer, context.Context) {
 }
 
 func TestMsgServerNotarizeAsset(t *testing.T) {
-	msg := types.NewMsgNotarizeAsset("pubkey", "cid", "sign", "pubkey")
+	_, pk := sample.KeyPair()
+	msg := types.NewMsgNotarizeAsset(pk, "cid", "sign", "pubkey")
 	msgServer, ctx := setupMsgServer(t)
 	res, err := msgServer.NotarizeAsset(ctx, msg)
 	if assert.NoError(t, err) {
@@ -27,8 +29,17 @@ func TestMsgServerNotarizeAsset(t *testing.T) {
 }
 
 func TestMsgServerNotarizeAssetMachineNotFound(t *testing.T) {
-	msg := types.NewMsgNotarizeAsset("privkey", "cid", "sign", "pubkey")
+	sk, _ := sample.KeyPair()
+	msg := types.NewMsgNotarizeAsset(sk, "cid", "sign", "pubkey")
 	msgServer, ctx := setupMsgServer(t)
 	_, err := msgServer.NotarizeAsset(ctx, msg)
 	assert.EqualError(t, err, "machine not found")
+}
+
+func TestMsgServerNotarizeAssetInvalidAsset(t *testing.T) {
+	_, pk := sample.KeyPair()
+	msg := types.NewMsgNotarizeAsset(pk, "cid", "sign", "pubkey")
+	msgServer, ctx := setupMsgServer(t)
+	_, err := msgServer.NotarizeAsset(ctx, msg)
+	assert.EqualError(t, err, "invalid signature")
 }

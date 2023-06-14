@@ -47,8 +47,9 @@ func AssetKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 
 	ctrl := gomock.NewController(t)
 	mk := assettestutils.NewMockMachineKeeper(ctrl)
-	mk.EXPECT().GetMachine(ctx, "pubkey").Return(sample.Machine(), true).AnyTimes()
-	mk.EXPECT().GetMachine(ctx, "privkey").Return(sample.Machine(), false).AnyTimes()
+	sk, pk := sample.KeyPair()
+	mk.EXPECT().GetMachine(ctx, pk).Return(sample.Machine(pk, pk), true).AnyTimes()
+	mk.EXPECT().GetMachine(ctx, sk).Return(sample.Machine(pk, pk), false).AnyTimes()
 
 	k := keeper.NewKeeper(
 		cdc,

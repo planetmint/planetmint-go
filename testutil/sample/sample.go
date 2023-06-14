@@ -7,12 +7,14 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// // KeyPair returns a sample private / public keypair
-// func KeyPair() (ed25519.PrivKey, cryptotypes.PubKey) {
-// 	sk := ed25519.GenPrivKey()
-// 	pk := sk.PubKey()
-// 	return sk.Key, pk
-// }
+// KeyPair returns a sample private / public keypair
+func KeyPair() (string, string) {
+	secret := "Hello World!"
+	sk := ed25519.GenPrivKeyFromSecret([]byte(secret))
+	pk := sk.PubKey()
+
+	return sk.String(), pk.String()
+}
 
 // AccAddress returns a sample account address
 func AccAddress() string {
@@ -21,14 +23,14 @@ func AccAddress() string {
 	return sdk.AccAddress(addr).String()
 }
 
-func Machine() machinetypes.Machine {
+func Machine(pkPM string, pkL string) machinetypes.Machine {
 	m := machinetypes.Machine{
 		Name:             "machine",
 		Ticker:           "PM",
 		Issued:           1,
 		Precision:        8,
-		IssuerPlanetmint: "pubkey",
-		IssuerLiquid:     "pubkey",
+		IssuerPlanetmint: pkPM,
+		IssuerLiquid:     pkL,
 		Cid:              "Cid",
 	}
 	return m
