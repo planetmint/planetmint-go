@@ -25,3 +25,10 @@ func TestMsgServerNotarizeAsset(t *testing.T) {
 		assert.Equal(t, &types.MsgNotarizeAssetResponse{}, res)
 	}
 }
+
+func TestMsgServerNotarizeAssetMachineNotFound(t *testing.T) {
+	msg := types.NewMsgNotarizeAsset("privkey", "cid", "sign", "pubkey")
+	msgServer, ctx := setupMsgServer(t)
+	_, err := msgServer.NotarizeAsset(ctx, msg)
+	assert.EqualError(t, err, "machine not found")
+}
