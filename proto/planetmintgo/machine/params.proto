@@ -1,0 +1,12 @@
+syntax = "proto3";
+package planetmintgo.machine;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "planetmint-go/x/machine/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
+}

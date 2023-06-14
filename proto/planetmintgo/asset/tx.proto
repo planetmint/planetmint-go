@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package planetmintgo.asset;
+
+option go_package = "planetmint-go/x/asset/types";
+
+// Msg defines the Msg service.
+service Msg {
+  rpc NotarizeAsset (MsgNotarizeAsset) returns (MsgNotarizeAssetResponse);
+}
+message MsgNotarizeAsset {
+  string creator = 1;
+  string cidHash = 2;
+  string sign    = 3;
+  string pubKey  = 4;
+}
+
+message MsgNotarizeAssetResponse {}
+
