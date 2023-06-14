@@ -2,6 +2,8 @@ package keeper_test
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"testing"
 
 	keepertest "planetmint-go/testutil/keeper"
@@ -9,6 +11,7 @@ import (
 	"planetmint-go/x/asset/keeper"
 	"planetmint-go/x/asset/types"
 
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/assert"
 )
@@ -19,8 +22,26 @@ func setupMsgServer(t testing.TB) (types.MsgServer, context.Context) {
 }
 
 func TestMsgServerNotarizeAsset(t *testing.T) {
-	_, pk := sample.KeyPair()
-	msg := types.NewMsgNotarizeAsset(pk, "cid", "sign", "pubkey")
+	sk, pk := sample.KeyPair()
+	cid := "cid"
+
+	skBytes, err := hex.DecodeString(sk)
+	if err != nil {
+		assert.Equal(t, true, false)
+	}
+	privKey := &secp256k1.PrivKey{Key: skBytes}
+
+	cidBytes, _ := hex.DecodeString(cid)
+	hash := sha256.Sum256(cidBytes)
+
+	sign, err := privKey.Sign(hash[:])
+	if err != nil {
+		assert.Equal(t, true, false)
+	}
+
+	signatureHex := hex.EncodeToString(sign)
+
+	msg := types.NewMsgNotarizeAsset(pk, cid, signatureHex, pk)
 	msgServer, ctx := setupMsgServer(t)
 	res, err := msgServer.NotarizeAsset(ctx, msg)
 	if assert.NoError(t, err) {

@@ -1,19 +1,20 @@
 package sample
 
 import (
+	"encoding/hex"
 	machinetypes "planetmint-go/x/machine/types"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // KeyPair returns a sample private / public keypair
 func KeyPair() (string, string) {
-	secret := "Hello World!"
-	sk := ed25519.GenPrivKeyFromSecret([]byte(secret))
+	secret := "Don't tell anybody"
+	sk := secp256k1.GenPrivKeyFromSecret([]byte(secret))
 	pk := sk.PubKey()
-
-	return sk.String(), pk.String()
+	return hex.EncodeToString(sk.Bytes()), hex.EncodeToString(pk.Bytes())
 }
 
 // AccAddress returns a sample account address
