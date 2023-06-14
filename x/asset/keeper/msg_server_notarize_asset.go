@@ -8,7 +8,7 @@ import (
 
 	"planetmint-go/x/asset/types"
 
-	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -47,7 +47,7 @@ func ValidateSignature(message string, signature string, publicKey string) bool 
 	hash := sha256.Sum256(messageBytes)
 
 	// Create a secp256k1 public key object
-	pubKey := &secp256k1.PubKey{Key: publicKeyBytes}
+	pubKey := &ed25519.PubKey{Key: publicKeyBytes}
 
 	// Verify the signature
 	isValid := pubKey.VerifySignature(hash[:], signatureBytes)

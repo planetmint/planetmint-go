@@ -11,7 +11,7 @@ import (
 	"planetmint-go/x/asset/keeper"
 	"planetmint-go/x/asset/types"
 
-	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/assert"
 )
@@ -29,7 +29,7 @@ func TestMsgServerNotarizeAsset(t *testing.T) {
 	if err != nil {
 		assert.Equal(t, true, false)
 	}
-	privKey := &secp256k1.PrivKey{Key: skBytes}
+	privKey := &ed25519.PrivKey{Key: skBytes}
 
 	cidBytes, _ := hex.DecodeString(cid)
 	hash := sha256.Sum256(cidBytes)
