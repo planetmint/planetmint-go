@@ -23,15 +23,33 @@ func AccAddress() string {
 	return sdk.AccAddress(addr).String()
 }
 
-func Machine(pkPM string, pkL string) machinetypes.Machine {
+func Machine(machineId string, pkPM string, pkL string) machinetypes.Machine {
 	m := machinetypes.Machine{
 		Name:             "machine",
 		Ticker:           "PM",
 		Issued:           1,
+		Amount:           1000,
 		Precision:        8,
 		IssuerPlanetmint: pkPM,
 		IssuerLiquid:     pkL,
-		Cid:              "Cid",
+		MachineId:        machineId,
 	}
 	return m
+}
+
+func Metadata() machinetypes.Metadata {
+	return machinetypes.Metadata{
+		Gps: map[string]string{
+			"Latitude":  "-48.876667",
+			"Longitude": "-123.393333",
+		},
+		Device: map[string]string{
+			"Manufacturer": "RDDL",
+			"Serial":       "AdnT2uyt",
+		},
+		AssetDefinition: map[string]string{
+			"Version": "0.1",
+		},
+		AdditionalDataCID: "CID",
+	}
 }
