@@ -23,3 +23,10 @@ message Metadata {
   map<string, string> assetDefinition = 3;
   string additionalDataCID = 4; 
 }
+
+message MachineIndex {
+
+  string machineId = 1;
+  string issuerPlanetmint = 2; 
+  string issuerLiquid = 3; 
+}

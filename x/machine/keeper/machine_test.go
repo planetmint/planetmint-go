@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"fmt"
 	"testing"
 
 	keepertest "planetmint-go/testutil/keeper"
@@ -14,19 +15,39 @@ import (
 func createNMachine(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Machine {
 	items := make([]types.Machine, n)
 	for i := range items {
-		// fill out machine
-		items[i].IssuerPlanetmint = "asd"
-		items[i].IssuerLiquid = "dsa"
+		items[i].MachineId = fmt.Sprintf("machineId%v", i)
+		items[i].IssuerPlanetmint = fmt.Sprintf("issuerPlanetmint%v", i)
+		items[i].IssuerLiquid = fmt.Sprintf("issuerLiquid%v", i)
 		keeper.StoreMachine(ctx, items[i])
 	}
 	return items
 }
 
-func TestGetMachine(t *testing.T) {
+func TestGetMachineById(t *testing.T) {
+	keeper, ctx := keepertest.MachineKeeper(t)
+	items := createNMachine(keeper, ctx, 10)
+	for _, item := range items {
+		machineById, found := keeper.GetMachine(ctx, item.MachineId)
+		assert.True(t, found)
+		assert.Equal(t, item, machineById)
+	}
+}
+
+func TestGetMachineByIssuerPlanetmint(t *testing.T) {
 	keeper, ctx := keepertest.MachineKeeper(t)
 	items := createNMachine(keeper, ctx, 10)
 	for _, item := range items {
 		machineById, found := keeper.GetMachine(ctx, item.IssuerPlanetmint)
+		assert.True(t, found)
+		assert.Equal(t, item, machineById)
+	}
+}
+
+func TestGetMachineByIssuerLiquid(t *testing.T) {
+	keeper, ctx := keepertest.MachineKeeper(t)
+	items := createNMachine(keeper, ctx, 10)
+	for _, item := range items {
+		machineById, found := keeper.GetMachine(ctx, item.IssuerLiquid)
 		assert.True(t, found)
 		assert.Equal(t, item, machineById)
 	}
