@@ -14,6 +14,8 @@ const (
 	MemStoreKey = "mem_machine"
 
 	MachineKey = "Machine/value/"
+
+	IndexKey = "Machine/index/"
 )
 
 func KeyPrefix(p string) []byte {

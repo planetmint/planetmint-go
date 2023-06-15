@@ -515,6 +515,7 @@ func New(
 	app.MachineKeeper = *machinemodulekeeper.NewKeeper(
 		appCodec,
 		keys[machinemoduletypes.StoreKey],
+		keys[machinemoduletypes.IndexKey],
 		keys[machinemoduletypes.MemStoreKey],
 		app.GetSubspace(machinemoduletypes.ModuleName),
 	)
