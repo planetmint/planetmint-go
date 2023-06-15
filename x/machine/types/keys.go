@@ -15,7 +15,11 @@ const (
 
 	MachineKey = "Machine/value/"
 
-	IndexKey = "Machine/index/"
+	TAIndexKey = "Machine/TAIndex/"
+
+	IssuerPlanetmintIndexKey = "Machine/IssuerPlanetmintIndex/"
+
+	IssuerLiquidIndexKey = "Machine/IssuerLiquidIndex/"
 )
 
 func KeyPrefix(p string) []byte {
