@@ -1,7 +1,19 @@
 syntax = "proto3";
+
 package planetmintgo.machine;
+
+import "planetmintgo/machine/machine.proto";
 
 option go_package = "planetmint-go/x/machine/types";
 
 // Msg defines the Msg service.
-service Msg {}
+service Msg {
+  rpc AttestMachine (MsgAttestMachine) returns (MsgAttestMachineResponse);
+}
+message MsgAttestMachine {
+  string  creator = 1;
+  Machine machine = 2;
+}
+
+message MsgAttestMachineResponse {}
+
