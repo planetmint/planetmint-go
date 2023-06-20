@@ -10,16 +10,10 @@ import (
 func (k Keeper) StoreMachine(ctx sdk.Context, machine types.Machine) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MachineKey))
 	appendValue := k.cdc.MustMarshal(&machine)
-	k.StoreMachineIndex(ctx, machine)
 	store.Set(GetMachineBytes(machine.IssuerPlanetmint), appendValue)
 }
 
-func (k Keeper) GetMachine(ctx sdk.Context, pubKey string) (val types.Machine, found bool) {
-	index, found := k.GetMachineIndex(ctx, pubKey)
-	if !found {
-		return val, false
-	}
-
+func (k Keeper) GetMachine(ctx sdk.Context, index types.MachineIndex) (val types.Machine, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MachineKey))
 	machine := store.Get(GetMachineBytes(index.IssuerPlanetmint))
 

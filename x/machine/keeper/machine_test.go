@@ -23,31 +23,16 @@ func createNMachine(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Machi
 	return items
 }
 
-func TestGetMachineById(t *testing.T) {
+func TestGetMachine(t *testing.T) {
 	keeper, ctx := keepertest.MachineKeeper(t)
 	items := createNMachine(keeper, ctx, 10)
 	for _, item := range items {
-		machineById, found := keeper.GetMachine(ctx, item.MachineId)
-		assert.True(t, found)
-		assert.Equal(t, item, machineById)
-	}
-}
-
-func TestGetMachineByIssuerPlanetmint(t *testing.T) {
-	keeper, ctx := keepertest.MachineKeeper(t)
-	items := createNMachine(keeper, ctx, 10)
-	for _, item := range items {
-		machineById, found := keeper.GetMachine(ctx, item.IssuerPlanetmint)
-		assert.True(t, found)
-		assert.Equal(t, item, machineById)
-	}
-}
-
-func TestGetMachineByIssuerLiquid(t *testing.T) {
-	keeper, ctx := keepertest.MachineKeeper(t)
-	items := createNMachine(keeper, ctx, 10)
-	for _, item := range items {
-		machineById, found := keeper.GetMachine(ctx, item.IssuerLiquid)
+		index := types.MachineIndex{
+			MachineId:        item.MachineId,
+			IssuerPlanetmint: item.IssuerPlanetmint,
+			IssuerLiquid:     item.IssuerLiquid,
+		}
+		machineById, found := keeper.GetMachine(ctx, index)
 		assert.True(t, found)
 		assert.Equal(t, item, machineById)
 	}
