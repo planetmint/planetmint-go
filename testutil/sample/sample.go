@@ -37,6 +37,14 @@ func Machine(machineId string, pkPM string, pkL string) machinetypes.Machine {
 	return m
 }
 
+func MachineIndex(machineId string, pkPM string, pkL string) machinetypes.MachineIndex {
+	return machinetypes.MachineIndex{
+		MachineId:        machineId,
+		IssuerPlanetmint: pkPM,
+		IssuerLiquid:     pkL,
+	}
+}
+
 func Metadata() machinetypes.Metadata {
 	return machinetypes.Metadata{
 		Gps: map[string]string{

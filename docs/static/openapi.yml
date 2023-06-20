@@ -43900,6 +43900,40 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
+  /planetmint-go/machine/get_machine_by_public_key/{publicKey}:
+    get:
+      summary: Queries a list of GetMachineByPublicKey items.
+      operationId: PlanetmintgoMachineGetMachineByPublicKey
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: publicKey
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
   /planetmint-go/machine/params:
     get:
       summary: Parameters queries the parameters of the module.
@@ -71543,6 +71577,8 @@ definitions:
   planetmintgo.machine.Params:
     type: object
     description: Params defines the parameters for the module.
+  planetmintgo.machine.QueryGetMachineByPublicKeyResponse:
+    type: object
   planetmintgo.machine.QueryParamsResponse:
     type: object
     properties:
