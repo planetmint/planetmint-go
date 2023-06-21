@@ -43909,6 +43909,46 @@ paths:
           description: A successful response.
           schema:
             type: object
+            properties:
+              machine:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  ticker:
+                    type: string
+                  issued:
+                    type: string
+                    format: uint64
+                  amount:
+                    type: string
+                    format: uint64
+                  precision:
+                    type: string
+                    format: uint64
+                  issuerPlanetmint:
+                    type: string
+                  issuerLiquid:
+                    type: string
+                  machineId:
+                    type: string
+                  metadata:
+                    type: object
+                    properties:
+                      gps:
+                        type: object
+                        additionalProperties:
+                          type: string
+                      device:
+                        type: object
+                        additionalProperties:
+                          type: string
+                      assetDefinition:
+                        type: object
+                        additionalProperties:
+                          type: string
+                      additionalDataCID:
+                        type: string
         default:
           description: An unexpected error response.
           schema:
@@ -71579,6 +71619,46 @@ definitions:
     description: Params defines the parameters for the module.
   planetmintgo.machine.QueryGetMachineByPublicKeyResponse:
     type: object
+    properties:
+      machine:
+        type: object
+        properties:
+          name:
+            type: string
+          ticker:
+            type: string
+          issued:
+            type: string
+            format: uint64
+          amount:
+            type: string
+            format: uint64
+          precision:
+            type: string
+            format: uint64
+          issuerPlanetmint:
+            type: string
+          issuerLiquid:
+            type: string
+          machineId:
+            type: string
+          metadata:
+            type: object
+            properties:
+              gps:
+                type: object
+                additionalProperties:
+                  type: string
+              device:
+                type: object
+                additionalProperties:
+                  type: string
+              assetDefinition:
+                type: object
+                additionalProperties:
+                  type: string
+              additionalDataCID:
+                type: string
   planetmintgo.machine.QueryParamsResponse:
     type: object
     properties:
