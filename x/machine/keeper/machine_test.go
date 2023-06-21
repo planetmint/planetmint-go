@@ -19,6 +19,7 @@ func createNMachine(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Machi
 		items[i].IssuerPlanetmint = fmt.Sprintf("issuerPlanetmint%v", i)
 		items[i].IssuerLiquid = fmt.Sprintf("issuerLiquid%v", i)
 		keeper.StoreMachine(ctx, items[i])
+		keeper.StoreMachineIndex(ctx, items[i])
 	}
 	return items
 }

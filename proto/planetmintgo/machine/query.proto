@@ -6,6 +6,7 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "planetmintgo/machine/params.proto";
+import "planetmintgo/machine/machine.proto";
 
 option go_package = "planetmint-go/x/machine/types";
 
@@ -38,5 +39,7 @@ message QueryGetMachineByPublicKeyRequest {
   string publicKey = 1;
 }
 
-message QueryGetMachineByPublicKeyResponse {}
+message QueryGetMachineByPublicKeyResponse {
+  Machine machine = 1;
+}
 
