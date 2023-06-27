@@ -20,5 +20,6 @@ type BankKeeper interface {
 }
 
 type MachineKeeper interface {
-	GetMachine(ctx sdk.Context, pubKey string) (val machinetypes.Machine, found bool)
+	GetMachine(ctx sdk.Context, index machinetypes.MachineIndex) (val machinetypes.Machine, found bool)
+	GetMachineIndex(ctx sdk.Context, pubKey string) (val machinetypes.MachineIndex, found bool)
 }

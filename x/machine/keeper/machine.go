@@ -13,14 +13,63 @@ func (k Keeper) StoreMachine(ctx sdk.Context, machine types.Machine) {
 	store.Set(GetMachineBytes(machine.IssuerPlanetmint), appendValue)
 }
 
-func (k Keeper) GetMachine(ctx sdk.Context, pubKey string) (val types.Machine, found bool) {
+func (k Keeper) GetMachine(ctx sdk.Context, index types.MachineIndex) (val types.Machine, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MachineKey))
-	machine := store.Get(GetMachineBytes(pubKey))
+	machine := store.Get(GetMachineBytes(index.IssuerPlanetmint))
+
 	if machine == nil {
 		return val, false
 	}
 	k.cdc.Unmarshal(machine, &val)
 	return val, true
+}
+
+func (k Keeper) StoreMachineIndex(ctx sdk.Context, machine types.Machine) {
+	taIndexStore := prefix.NewStore(ctx.KVStore(k.taIndexStoreKey), types.KeyPrefix(types.TAIndexKey))
+	issuerPlanetmintIndexStore := prefix.NewStore(ctx.KVStore(k.issuerPlanetmintIndexStoreKey), types.KeyPrefix(types.IssuerPlanetmintIndexKey))
+	issuerLiquidIndexStore := prefix.NewStore(ctx.KVStore(k.issuerLiquidIndexStoreKey), types.KeyPrefix(types.IssuerLiquidIndexKey))
+
+	index := types.MachineIndex{
+		MachineId:        machine.MachineId,
+		IssuerPlanetmint: machine.IssuerPlanetmint,
+		IssuerLiquid:     machine.IssuerPlanetmint,
+	}
+
+	machineIdIndexKey := GetMachineBytes(machine.MachineId)
+	issuerPlanetmintIndexKey := GetMachineBytes(machine.IssuerPlanetmint)
+	issuerLiquidIndexKey := GetMachineBytes(machine.IssuerLiquid)
+	indexAppendValue := k.cdc.MustMarshal(&index)
+	taIndexStore.Set(machineIdIndexKey, indexAppendValue)
+	issuerPlanetmintIndexStore.Set(issuerPlanetmintIndexKey, indexAppendValue)
+	issuerLiquidIndexStore.Set(issuerLiquidIndexKey, indexAppendValue)
+}
+
+func (k Keeper) GetMachineIndex(ctx sdk.Context, pubKey string) (val types.MachineIndex, found bool) {
+	taIndexStore := prefix.NewStore(ctx.KVStore(k.taIndexStoreKey), types.KeyPrefix(types.TAIndexKey))
+	issuerPlanetmintIndexStore := prefix.NewStore(ctx.KVStore(k.issuerPlanetmintIndexStoreKey), types.KeyPrefix(types.IssuerPlanetmintIndexKey))
+	issuerLiquidIndexStore := prefix.NewStore(ctx.KVStore(k.issuerLiquidIndexStoreKey), types.KeyPrefix(types.IssuerLiquidIndexKey))
+
+	keyBytes := GetMachineBytes(pubKey)
+
+	taIndex := taIndexStore.Get(keyBytes)
+	if taIndex != nil {
+		k.cdc.Unmarshal(taIndex, &val)
+		return val, true
+	}
+
+	ipIndex := issuerPlanetmintIndexStore.Get(keyBytes)
+	if ipIndex != nil {
+		k.cdc.Unmarshal(ipIndex, &val)
+		return val, true
+	}
+
+	ilIndex := issuerLiquidIndexStore.Get(keyBytes)
+	if ilIndex != nil {
+		k.cdc.Unmarshal(ilIndex, &val)
+		return val, true
+	}
+
+	return val, false
 }
 
 func GetMachineBytes(pubKey string) []byte {

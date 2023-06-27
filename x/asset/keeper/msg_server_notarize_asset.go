@@ -15,11 +15,13 @@ import (
 func (k msgServer) NotarizeAsset(goCtx context.Context, msg *types.MsgNotarizeAsset) (*types.MsgNotarizeAssetResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	machine, found := k.machineKeeper.GetMachine(ctx, msg.Creator)
+	machineIndex, found := k.machineKeeper.GetMachineIndex(ctx, msg.Creator)
 
 	if !found {
 		return &types.MsgNotarizeAssetResponse{}, errors.New("machine not found")
 	}
+
+	machine, _ := k.machineKeeper.GetMachine(ctx, machineIndex)
 
 	valid := ValidateSignature(msg.CidHash, msg.Sign, msg.Creator)
 	if !valid {

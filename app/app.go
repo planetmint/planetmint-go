@@ -291,7 +291,7 @@ func New(
 		ibctransfertypes.StoreKey, icahosttypes.StoreKey, capabilitytypes.StoreKey, group.StoreKey,
 		icacontrollertypes.StoreKey,
 		assetmoduletypes.StoreKey,
-		machinemoduletypes.StoreKey,
+		machinemoduletypes.StoreKey, machinemoduletypes.TAIndexKey, machinemoduletypes.IssuerPlanetmintIndexKey, machinemoduletypes.IssuerLiquidIndexKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -515,6 +515,9 @@ func New(
 	app.MachineKeeper = *machinemodulekeeper.NewKeeper(
 		appCodec,
 		keys[machinemoduletypes.StoreKey],
+		keys[machinemoduletypes.TAIndexKey],
+		keys[machinemoduletypes.IssuerPlanetmintIndexKey],
+		keys[machinemoduletypes.IssuerLiquidIndexKey],
 		keys[machinemoduletypes.MemStoreKey],
 		app.GetSubspace(machinemoduletypes.ModuleName),
 	)

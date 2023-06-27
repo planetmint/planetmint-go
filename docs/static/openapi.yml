@@ -43900,6 +43900,80 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
+  /planetmint-go/machine/get_machine_by_public_key/{publicKey}:
+    get:
+      summary: Queries a list of GetMachineByPublicKey items.
+      operationId: PlanetmintgoMachineGetMachineByPublicKey
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              machine:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  ticker:
+                    type: string
+                  issued:
+                    type: string
+                    format: uint64
+                  amount:
+                    type: string
+                    format: uint64
+                  precision:
+                    type: string
+                    format: uint64
+                  issuerPlanetmint:
+                    type: string
+                  issuerLiquid:
+                    type: string
+                  machineId:
+                    type: string
+                  metadata:
+                    type: object
+                    properties:
+                      gps:
+                        type: object
+                        additionalProperties:
+                          type: string
+                      device:
+                        type: object
+                        additionalProperties:
+                          type: string
+                      assetDefinition:
+                        type: object
+                        additionalProperties:
+                          type: string
+                      additionalDataCID:
+                        type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: publicKey
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
   /planetmint-go/machine/params:
     get:
       summary: Parameters queries the parameters of the module.
@@ -71482,9 +71556,109 @@ definitions:
         description: params holds all the parameters of this module.
         type: object
     description: QueryParamsResponse is response type for the Query/Params RPC method.
+  planetmintgo.machine.Machine:
+    type: object
+    properties:
+      name:
+        type: string
+      ticker:
+        type: string
+      issued:
+        type: string
+        format: uint64
+      amount:
+        type: string
+        format: uint64
+      precision:
+        type: string
+        format: uint64
+      issuerPlanetmint:
+        type: string
+      issuerLiquid:
+        type: string
+      machineId:
+        type: string
+      metadata:
+        type: object
+        properties:
+          gps:
+            type: object
+            additionalProperties:
+              type: string
+          device:
+            type: object
+            additionalProperties:
+              type: string
+          assetDefinition:
+            type: object
+            additionalProperties:
+              type: string
+          additionalDataCID:
+            type: string
+  planetmintgo.machine.Metadata:
+    type: object
+    properties:
+      gps:
+        type: object
+        additionalProperties:
+          type: string
+      device:
+        type: object
+        additionalProperties:
+          type: string
+      assetDefinition:
+        type: object
+        additionalProperties:
+          type: string
+      additionalDataCID:
+        type: string
+  planetmintgo.machine.MsgAttestMachineResponse:
+    type: object
   planetmintgo.machine.Params:
     type: object
     description: Params defines the parameters for the module.
+  planetmintgo.machine.QueryGetMachineByPublicKeyResponse:
+    type: object
+    properties:
+      machine:
+        type: object
+        properties:
+          name:
+            type: string
+          ticker:
+            type: string
+          issued:
+            type: string
+            format: uint64
+          amount:
+            type: string
+            format: uint64
+          precision:
+            type: string
+            format: uint64
+          issuerPlanetmint:
+            type: string
+          issuerLiquid:
+            type: string
+          machineId:
+            type: string
+          metadata:
+            type: object
+            properties:
+              gps:
+                type: object
+                additionalProperties:
+                  type: string
+              device:
+                type: object
+                additionalProperties:
+                  type: string
+              assetDefinition:
+                type: object
+                additionalProperties:
+                  type: string
+              additionalDataCID:
+                type: string
   planetmintgo.machine.QueryParamsResponse:
     type: object
     properties:

@@ -111,16 +111,31 @@ func (m *MockMachineKeeper) EXPECT() *MockMachineKeeperMockRecorder {
 }
 
 // GetMachine mocks base method.
-func (m *MockMachineKeeper) GetMachine(ctx types.Context, pubKey string) (types1.Machine, bool) {
+func (m *MockMachineKeeper) GetMachine(ctx types.Context, index types1.MachineIndex) (types1.Machine, bool) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetMachine", ctx, pubKey)
+	ret := m.ctrl.Call(m, "GetMachine", ctx, index)
 	ret0, _ := ret[0].(types1.Machine)
 	ret1, _ := ret[1].(bool)
 	return ret0, ret1
 }
 
 // GetMachine indicates an expected call of GetMachine.
-func (mr *MockMachineKeeperMockRecorder) GetMachine(ctx, pubKey interface{}) *gomock.Call {
+func (mr *MockMachineKeeperMockRecorder) GetMachine(ctx, index interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMachine", reflect.TypeOf((*MockMachineKeeper)(nil).GetMachine), ctx, pubKey)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMachine", reflect.TypeOf((*MockMachineKeeper)(nil).GetMachine), ctx, index)
+}
+
+// GetMachineIndex mocks base method.
+func (m *MockMachineKeeper) GetMachineIndex(ctx types.Context, pubKey string) (types1.MachineIndex, bool) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetMachineIndex", ctx, pubKey)
+	ret0, _ := ret[0].(types1.MachineIndex)
+	ret1, _ := ret[1].(bool)
+	return ret0, ret1
+}
+
+// GetMachineIndex indicates an expected call of GetMachineIndex.
+func (mr *MockMachineKeeperMockRecorder) GetMachineIndex(ctx, pubKey interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMachineIndex", reflect.TypeOf((*MockMachineKeeper)(nil).GetMachineIndex), ctx, pubKey)
 }
