@@ -131,10 +131,10 @@ func (m *Machine) GetMetadata() *Metadata {
 }
 
 type Metadata struct {
-	Gps               map[string]string `protobuf:"bytes,1,rep,name=gps,proto3" json:"gps,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Device            map[string]string `protobuf:"bytes,2,rep,name=device,proto3" json:"device,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	AssetDefinition   map[string]string `protobuf:"bytes,3,rep,name=assetDefinition,proto3" json:"assetDefinition,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	AdditionalDataCID string            `protobuf:"bytes,4,opt,name=additionalDataCID,proto3" json:"additionalDataCID,omitempty"`
+	Gps               string `protobuf:"bytes,1,opt,name=gps,proto3" json:"gps,omitempty"`
+	Device            string `protobuf:"bytes,2,opt,name=device,proto3" json:"device,omitempty"`
+	AssetDefinition   string `protobuf:"bytes,3,opt,name=assetDefinition,proto3" json:"assetDefinition,omitempty"`
+	AdditionalDataCID string `protobuf:"bytes,4,opt,name=additionalDataCID,proto3" json:"additionalDataCID,omitempty"`
 }
 
 func (m *Metadata) Reset()         { *m = Metadata{} }
@@ -170,25 +170,25 @@ func (m *Metadata) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Metadata proto.InternalMessageInfo
 
-func (m *Metadata) GetGps() map[string]string {
+func (m *Metadata) GetGps() string {
 	if m != nil {
 		return m.Gps
 	}
-	return nil
+	return ""
 }
 
-func (m *Metadata) GetDevice() map[string]string {
+func (m *Metadata) GetDevice() string {
 	if m != nil {
 		return m.Device
 	}
-	return nil
+	return ""
 }
 
-func (m *Metadata) GetAssetDefinition() map[string]string {
+func (m *Metadata) GetAssetDefinition() string {
 	if m != nil {
 		return m.AssetDefinition
 	}
-	return nil
+	return ""
 }
 
 func (m *Metadata) GetAdditionalDataCID() string {
@@ -261,9 +261,6 @@ func (m *MachineIndex) GetIssuerLiquid() string {
 func init() {
 	proto.RegisterType((*Machine)(nil), "planetmintgo.machine.Machine")
 	proto.RegisterType((*Metadata)(nil), "planetmintgo.machine.Metadata")
-	proto.RegisterMapType((map[string]string)(nil), "planetmintgo.machine.Metadata.AssetDefinitionEntry")
-	proto.RegisterMapType((map[string]string)(nil), "planetmintgo.machine.Metadata.DeviceEntry")
-	proto.RegisterMapType((map[string]string)(nil), "planetmintgo.machine.Metadata.GpsEntry")
 	proto.RegisterType((*MachineIndex)(nil), "planetmintgo.machine.MachineIndex")
 }
 
@@ -272,36 +269,31 @@ func init() {
 }
 
 var fileDescriptor_1bb279745bef7c4b = []byte{
-	// 460 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x53, 0x41, 0x6b, 0xdb, 0x30,
-	0x18, 0x8d, 0xec, 0x34, 0x4d, 0xbe, 0x14, 0xd6, 0x89, 0x30, 0x44, 0xd9, 0x4c, 0xf0, 0x65, 0xa6,
-	0x6c, 0x2e, 0xb4, 0xb0, 0xad, 0xbd, 0x2d, 0xf3, 0x18, 0x81, 0x15, 0x86, 0x8f, 0x83, 0x1d, 0x34,
-	0x4b, 0xcb, 0x44, 0x63, 0xd9, 0xb3, 0xe4, 0xd2, 0xc0, 0x7e, 0xc4, 0xfe, 0xc8, 0xfe, 0xc7, 0x2e,
-	0x83, 0x1e, 0x77, 0x1c, 0xc9, 0x1f, 0x19, 0x96, 0x95, 0xa4, 0x69, 0xc2, 0xda, 0x9c, 0xfc, 0x7d,
-	0x4f, 0xef, 0x3d, 0xf9, 0x93, 0x9e, 0xc0, 0xcf, 0xc7, 0x54, 0x72, 0x9d, 0x0a, 0xa9, 0x47, 0xd9,
-	0x51, 0x4a, 0x93, 0xaf, 0x42, 0xf2, 0xf9, 0x37, 0xcc, 0x8b, 0x4c, 0x67, 0xb8, 0x77, 0x93, 0x13,
-	0xda, 0x35, 0xff, 0xa7, 0x03, 0xbb, 0xe7, 0x75, 0x8d, 0x31, 0x34, 0x25, 0x4d, 0x39, 0x41, 0x7d,
-	0x14, 0x74, 0x62, 0x53, 0xe3, 0x47, 0xd0, 0xd2, 0x22, 0xb9, 0xe0, 0x05, 0x71, 0x0c, 0x6a, 0xbb,
-	0x0a, 0x17, 0x4a, 0x95, 0x9c, 0x11, 0xb7, 0x8f, 0x82, 0x66, 0x6c, 0xbb, 0x0a, 0xa7, 0x69, 0x56,
-	0x4a, 0x4d, 0x9a, 0x35, 0x5e, 0x77, 0xf8, 0x31, 0x74, 0xf2, 0x82, 0x27, 0x42, 0x89, 0x4c, 0x92,
-	0x1d, 0xb3, 0xb4, 0x04, 0xf0, 0x21, 0xec, 0x1b, 0x7d, 0xf1, 0x61, 0xf1, 0x8f, 0xa4, 0x65, 0xf6,
-	0x5b, 0xc3, 0xb1, 0x0f, 0x7b, 0x35, 0xf6, 0x5e, 0x7c, 0x2b, 0x05, 0x23, 0xbb, 0x86, 0xb7, 0x82,
-	0x55, 0xbb, 0xd9, 0x01, 0x87, 0x8c, 0xb4, 0x0d, 0x61, 0x09, 0xe0, 0x33, 0x68, 0xa7, 0x5c, 0x53,
-	0x46, 0x35, 0x25, 0x9d, 0x3e, 0x0a, 0xba, 0xc7, 0x5e, 0xb8, 0xe9, 0x70, 0xc2, 0x73, 0xcb, 0x8a,
-	0x17, 0x7c, 0xff, 0xb7, 0x0b, 0xed, 0x39, 0x8c, 0x4f, 0xc1, 0x1d, 0xe5, 0x8a, 0xa0, 0xbe, 0x1b,
-	0x74, 0x8f, 0x9f, 0xfe, 0xdf, 0x23, 0x7c, 0x97, 0xab, 0xb7, 0x52, 0x17, 0x93, 0xb8, 0xd2, 0xe0,
-	0x01, 0xb4, 0x18, 0xbf, 0x14, 0x09, 0x27, 0x8e, 0x51, 0x1f, 0xde, 0xa1, 0x8e, 0x0c, 0xb9, 0x36,
-	0xb0, 0x4a, 0xfc, 0x09, 0x1e, 0x50, 0xa5, 0xb8, 0x8e, 0xf8, 0x17, 0x21, 0x85, 0xae, 0x4e, 0xd6,
-	0x35, 0x66, 0x27, 0x77, 0x98, 0xbd, 0x5e, 0x55, 0xd5, 0xae, 0xb7, 0xbd, 0xf0, 0x33, 0x78, 0x48,
-	0x19, 0x33, 0x35, 0x1d, 0x47, 0x54, 0xd3, 0x37, 0xc3, 0xc8, 0xdc, 0x6a, 0x27, 0x5e, 0x5f, 0x38,
-	0x78, 0x01, 0xed, 0xf9, 0x84, 0x78, 0x1f, 0xdc, 0x0b, 0x3e, 0xb1, 0x39, 0xaa, 0x4a, 0xdc, 0x83,
-	0x9d, 0x4b, 0x3a, 0x2e, 0xb9, 0x4d, 0x51, 0xdd, 0x9c, 0x39, 0xaf, 0xd0, 0xc1, 0x29, 0x74, 0x6f,
-	0xcc, 0xb6, 0x95, 0x74, 0x00, 0xbd, 0x4d, 0x93, 0x6c, 0xe3, 0xe1, 0x7f, 0x87, 0x3d, 0x1b, 0xff,
-	0xa1, 0x64, 0xfc, 0x6a, 0x35, 0x39, 0xe8, 0x76, 0x72, 0x36, 0xe5, 0xd4, 0xb9, 0x67, 0x4e, 0xdd,
-	0xf5, 0x9c, 0x0e, 0x5e, 0xfe, 0x9a, 0x7a, 0xe8, 0x7a, 0xea, 0xa1, 0xbf, 0x53, 0x0f, 0xfd, 0x98,
-	0x79, 0x8d, 0xeb, 0x99, 0xd7, 0xf8, 0x33, 0xf3, 0x1a, 0x1f, 0x9f, 0x2c, 0x6f, 0xf0, 0xf9, 0x28,
-	0x3b, 0xba, 0x5a, 0x3c, 0x6a, 0x3d, 0xc9, 0xb9, 0xfa, 0xdc, 0x32, 0x6f, 0xfa, 0xe4, 0x5f, 0x00,
-	0x00, 0x00, 0xff, 0xff, 0x05, 0xe7, 0xf6, 0xc3, 0xf9, 0x03, 0x00, 0x00,
+	// 371 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x92, 0x41, 0x4f, 0xf2, 0x30,
+	0x18, 0xc7, 0x29, 0xe3, 0x05, 0xd6, 0x97, 0x44, 0x6c, 0x8c, 0xe9, 0x41, 0x1b, 0xb2, 0xd3, 0x62,
+	0x74, 0x24, 0x7a, 0x30, 0xf1, 0xa8, 0x5c, 0x48, 0x24, 0x31, 0x3b, 0x7a, 0xab, 0x6b, 0xc5, 0x46,
+	0xd6, 0xcd, 0xb5, 0x18, 0x4c, 0xfc, 0x08, 0x1e, 0xfc, 0x22, 0x7e, 0x0f, 0x8f, 0x1c, 0x3d, 0x1a,
+	0xf8, 0x22, 0x66, 0x5d, 0x01, 0x61, 0x1c, 0x3c, 0xed, 0x79, 0x7e, 0xcf, 0x7f, 0xe9, 0x9e, 0xdf,
+	0x0a, 0xbd, 0x74, 0x44, 0x25, 0xd7, 0xb1, 0x90, 0x7a, 0x98, 0x74, 0x63, 0x1a, 0x3d, 0x08, 0xc9,
+	0x17, 0xcf, 0x20, 0xcd, 0x12, 0x9d, 0xa0, 0xbd, 0xdf, 0x99, 0xc0, 0xce, 0xbc, 0x8f, 0x2a, 0x6c,
+	0x0c, 0x8a, 0x1a, 0x21, 0x58, 0x93, 0x34, 0xe6, 0x18, 0x74, 0x80, 0xef, 0x86, 0xa6, 0x46, 0xfb,
+	0xb0, 0xae, 0x45, 0xf4, 0xc8, 0x33, 0x5c, 0x35, 0xd4, 0x76, 0x39, 0x17, 0x4a, 0x8d, 0x39, 0xc3,
+	0x4e, 0x07, 0xf8, 0xb5, 0xd0, 0x76, 0x39, 0xa7, 0x71, 0x32, 0x96, 0x1a, 0xd7, 0x0a, 0x5e, 0x74,
+	0xe8, 0x00, 0xba, 0x69, 0xc6, 0x23, 0xa1, 0x44, 0x22, 0xf1, 0x3f, 0x33, 0x5a, 0x01, 0x74, 0x04,
+	0xdb, 0xe6, 0xfd, 0xec, 0x66, 0xf9, 0x8d, 0xb8, 0x6e, 0xce, 0x2b, 0x71, 0xe4, 0xc1, 0x56, 0xc1,
+	0xae, 0xc5, 0xd3, 0x58, 0x30, 0xdc, 0x30, 0xb9, 0x35, 0x96, 0x9f, 0x66, 0x17, 0xec, 0x33, 0xdc,
+	0x34, 0x81, 0x15, 0x40, 0x17, 0xb0, 0x19, 0x73, 0x4d, 0x19, 0xd5, 0x14, 0xbb, 0x1d, 0xe0, 0xff,
+	0x3f, 0x25, 0xc1, 0x36, 0x39, 0xc1, 0xc0, 0xa6, 0xc2, 0x65, 0xde, 0x7b, 0x03, 0xb0, 0xb9, 0xc0,
+	0xa8, 0x0d, 0x9d, 0x61, 0xaa, 0xac, 0xaf, 0xbc, 0xcc, 0xd7, 0x67, 0xfc, 0x59, 0x44, 0x7c, 0xa1,
+	0xab, 0xe8, 0x90, 0x0f, 0x77, 0xa8, 0x52, 0x5c, 0xf7, 0xf8, 0xbd, 0x90, 0x42, 0xe7, 0x12, 0x1c,
+	0x13, 0xd8, 0xc4, 0xe8, 0x18, 0xee, 0x52, 0xc6, 0x4c, 0x4d, 0x47, 0x3d, 0xaa, 0xe9, 0x55, 0xbf,
+	0x67, 0x5c, 0xba, 0x61, 0x79, 0xe0, 0xbd, 0xc2, 0x96, 0xfd, 0x7b, 0x7d, 0xc9, 0xf8, 0x64, 0x7d,
+	0x71, 0xb0, 0xb9, 0xf8, 0x36, 0xcd, 0xd5, 0x3f, 0x6a, 0x76, 0xca, 0x9a, 0x2f, 0xcf, 0x3f, 0x67,
+	0x04, 0x4c, 0x67, 0x04, 0x7c, 0xcf, 0x08, 0x78, 0x9f, 0x93, 0xca, 0x74, 0x4e, 0x2a, 0x5f, 0x73,
+	0x52, 0xb9, 0x3d, 0x5c, 0xf9, 0x3c, 0x19, 0x26, 0xdd, 0xc9, 0xf2, 0x4e, 0xea, 0x97, 0x94, 0xab,
+	0xbb, 0xba, 0xb9, 0x92, 0x67, 0x3f, 0x01, 0x00, 0x00, 0xff, 0xff, 0xd5, 0x3f, 0x35, 0x20, 0xb8,
+	0x02, 0x00, 0x00,
 }
 
 func (m *Machine) Marshal() (dAtA []byte, err error) {
@@ -417,61 +409,25 @@ func (m *Metadata) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		dAtA[i] = 0x22
 	}
 	if len(m.AssetDefinition) > 0 {
-		for k := range m.AssetDefinition {
-			v := m.AssetDefinition[k]
-			baseI := i
-			i -= len(v)
-			copy(dAtA[i:], v)
-			i = encodeVarintMachine(dAtA, i, uint64(len(v)))
-			i--
-			dAtA[i] = 0x12
-			i -= len(k)
-			copy(dAtA[i:], k)
-			i = encodeVarintMachine(dAtA, i, uint64(len(k)))
-			i--
-			dAtA[i] = 0xa
-			i = encodeVarintMachine(dAtA, i, uint64(baseI-i))
-			i--
-			dAtA[i] = 0x1a
-		}
+		i -= len(m.AssetDefinition)
+		copy(dAtA[i:], m.AssetDefinition)
+		i = encodeVarintMachine(dAtA, i, uint64(len(m.AssetDefinition)))
+		i--
+		dAtA[i] = 0x1a
 	}
 	if len(m.Device) > 0 {
-		for k := range m.Device {
-			v := m.Device[k]
-			baseI := i
-			i -= len(v)
-			copy(dAtA[i:], v)
-			i = encodeVarintMachine(dAtA, i, uint64(len(v)))
-			i--
-			dAtA[i] = 0x12
-			i -= len(k)
-			copy(dAtA[i:], k)
-			i = encodeVarintMachine(dAtA, i, uint64(len(k)))
-			i--
-			dAtA[i] = 0xa
-			i = encodeVarintMachine(dAtA, i, uint64(baseI-i))
-			i--
-			dAtA[i] = 0x12
-		}
+		i -= len(m.Device)
+		copy(dAtA[i:], m.Device)
+		i = encodeVarintMachine(dAtA, i, uint64(len(m.Device)))
+		i--
+		dAtA[i] = 0x12
 	}
 	if len(m.Gps) > 0 {
-		for k := range m.Gps {
-			v := m.Gps[k]
-			baseI := i
-			i -= len(v)
-			copy(dAtA[i:], v)
-			i = encodeVarintMachine(dAtA, i, uint64(len(v)))
-			i--
-			dAtA[i] = 0x12
-			i -= len(k)
-			copy(dAtA[i:], k)
-			i = encodeVarintMachine(dAtA, i, uint64(len(k)))
-			i--
-			dAtA[i] = 0xa
-			i = encodeVarintMachine(dAtA, i, uint64(baseI-i))
-			i--
-			dAtA[i] = 0xa
-		}
+		i -= len(m.Gps)
+		copy(dAtA[i:], m.Gps)
+		i = encodeVarintMachine(dAtA, i, uint64(len(m.Gps)))
+		i--
+		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
@@ -579,29 +535,17 @@ func (m *Metadata) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if len(m.Gps) > 0 {
-		for k, v := range m.Gps {
-			_ = k
-			_ = v
-			mapEntrySize := 1 + len(k) + sovMachine(uint64(len(k))) + 1 + len(v) + sovMachine(uint64(len(v)))
-			n += mapEntrySize + 1 + sovMachine(uint64(mapEntrySize))
-		}
+	l = len(m.Gps)
+	if l > 0 {
+		n += 1 + l + sovMachine(uint64(l))
 	}
-	if len(m.Device) > 0 {
-		for k, v := range m.Device {
-			_ = k
-			_ = v
-			mapEntrySize := 1 + len(k) + sovMachine(uint64(len(k))) + 1 + len(v) + sovMachine(uint64(len(v)))
-			n += mapEntrySize + 1 + sovMachine(uint64(mapEntrySize))
-		}
+	l = len(m.Device)
+	if l > 0 {
+		n += 1 + l + sovMachine(uint64(l))
 	}
-	if len(m.AssetDefinition) > 0 {
-		for k, v := range m.AssetDefinition {
-			_ = k
-			_ = v
-			mapEntrySize := 1 + len(k) + sovMachine(uint64(len(k))) + 1 + len(v) + sovMachine(uint64(len(v)))
-			n += mapEntrySize + 1 + sovMachine(uint64(mapEntrySize))
-		}
+	l = len(m.AssetDefinition)
+	if l > 0 {
+		n += 1 + l + sovMachine(uint64(l))
 	}
 	l = len(m.AdditionalDataCID)
 	if l > 0 {
@@ -973,7 +917,7 @@ func (m *Metadata) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Gps", wireType)
 			}
-			var msglen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowMachine
@@ -983,124 +927,29 @@ func (m *Metadata) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if msglen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthMachine
 			}
-			postIndex := iNdEx + msglen
+			postIndex := iNdEx + intStringLen
 			if postIndex < 0 {
 				return ErrInvalidLengthMachine
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.Gps == nil {
-				m.Gps = make(map[string]string)
-			}
-			var mapkey string
-			var mapvalue string
-			for iNdEx < postIndex {
-				entryPreIndex := iNdEx
-				var wire uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowMachine
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					wire |= uint64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				fieldNum := int32(wire >> 3)
-				if fieldNum == 1 {
-					var stringLenmapkey uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowMachine
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						stringLenmapkey |= uint64(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					intStringLenmapkey := int(stringLenmapkey)
-					if intStringLenmapkey < 0 {
-						return ErrInvalidLengthMachine
-					}
-					postStringIndexmapkey := iNdEx + intStringLenmapkey
-					if postStringIndexmapkey < 0 {
-						return ErrInvalidLengthMachine
-					}
-					if postStringIndexmapkey > l {
-						return io.ErrUnexpectedEOF
-					}
-					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
-					iNdEx = postStringIndexmapkey
-				} else if fieldNum == 2 {
-					var stringLenmapvalue uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowMachine
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						stringLenmapvalue |= uint64(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					intStringLenmapvalue := int(stringLenmapvalue)
-					if intStringLenmapvalue < 0 {
-						return ErrInvalidLengthMachine
-					}
-					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
-					if postStringIndexmapvalue < 0 {
-						return ErrInvalidLengthMachine
-					}
-					if postStringIndexmapvalue > l {
-						return io.ErrUnexpectedEOF
-					}
-					mapvalue = string(dAtA[iNdEx:postStringIndexmapvalue])
-					iNdEx = postStringIndexmapvalue
-				} else {
-					iNdEx = entryPreIndex
-					skippy, err := skipMachine(dAtA[iNdEx:])
-					if err != nil {
-						return err
-					}
-					if (skippy < 0) || (iNdEx+skippy) < 0 {
-						return ErrInvalidLengthMachine
-					}
-					if (iNdEx + skippy) > postIndex {
-						return io.ErrUnexpectedEOF
-					}
-					iNdEx += skippy
-				}
-			}
-			m.Gps[mapkey] = mapvalue
+			m.Gps = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Device", wireType)
 			}
-			var msglen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowMachine
@@ -1110,124 +959,29 @@ func (m *Metadata) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if msglen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthMachine
 			}
-			postIndex := iNdEx + msglen
+			postIndex := iNdEx + intStringLen
 			if postIndex < 0 {
 				return ErrInvalidLengthMachine
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.Device == nil {
-				m.Device = make(map[string]string)
-			}
-			var mapkey string
-			var mapvalue string
-			for iNdEx < postIndex {
-				entryPreIndex := iNdEx
-				var wire uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowMachine
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					wire |= uint64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				fieldNum := int32(wire >> 3)
-				if fieldNum == 1 {
-					var stringLenmapkey uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowMachine
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						stringLenmapkey |= uint64(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					intStringLenmapkey := int(stringLenmapkey)
-					if intStringLenmapkey < 0 {
-						return ErrInvalidLengthMachine
-					}
-					postStringIndexmapkey := iNdEx + intStringLenmapkey
-					if postStringIndexmapkey < 0 {
-						return ErrInvalidLengthMachine
-					}
-					if postStringIndexmapkey > l {
-						return io.ErrUnexpectedEOF
-					}
-					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
-					iNdEx = postStringIndexmapkey
-				} else if fieldNum == 2 {
-					var stringLenmapvalue uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowMachine
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						stringLenmapvalue |= uint64(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					intStringLenmapvalue := int(stringLenmapvalue)
-					if intStringLenmapvalue < 0 {
-						return ErrInvalidLengthMachine
-					}
-					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
-					if postStringIndexmapvalue < 0 {
-						return ErrInvalidLengthMachine
-					}
-					if postStringIndexmapvalue > l {
-						return io.ErrUnexpectedEOF
-					}
-					mapvalue = string(dAtA[iNdEx:postStringIndexmapvalue])
-					iNdEx = postStringIndexmapvalue
-				} else {
-					iNdEx = entryPreIndex
-					skippy, err := skipMachine(dAtA[iNdEx:])
-					if err != nil {
-						return err
-					}
-					if (skippy < 0) || (iNdEx+skippy) < 0 {
-						return ErrInvalidLengthMachine
-					}
-					if (iNdEx + skippy) > postIndex {
-						return io.ErrUnexpectedEOF
-					}
-					iNdEx += skippy
-				}
-			}
-			m.Device[mapkey] = mapvalue
+			m.Device = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field AssetDefinition", wireType)
 			}
-			var msglen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowMachine
@@ -1237,118 +991,23 @@ func (m *Metadata) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if msglen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthMachine
 			}
-			postIndex := iNdEx + msglen
+			postIndex := iNdEx + intStringLen
 			if postIndex < 0 {
 				return ErrInvalidLengthMachine
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.AssetDefinition == nil {
-				m.AssetDefinition = make(map[string]string)
-			}
-			var mapkey string
-			var mapvalue string
-			for iNdEx < postIndex {
-				entryPreIndex := iNdEx
-				var wire uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowMachine
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					wire |= uint64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				fieldNum := int32(wire >> 3)
-				if fieldNum == 1 {
-					var stringLenmapkey uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowMachine
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						stringLenmapkey |= uint64(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					intStringLenmapkey := int(stringLenmapkey)
-					if intStringLenmapkey < 0 {
-						return ErrInvalidLengthMachine
-					}
-					postStringIndexmapkey := iNdEx + intStringLenmapkey
-					if postStringIndexmapkey < 0 {
-						return ErrInvalidLengthMachine
-					}
-					if postStringIndexmapkey > l {
-						return io.ErrUnexpectedEOF
-					}
-					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
-					iNdEx = postStringIndexmapkey
-				} else if fieldNum == 2 {
-					var stringLenmapvalue uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowMachine
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						stringLenmapvalue |= uint64(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					intStringLenmapvalue := int(stringLenmapvalue)
-					if intStringLenmapvalue < 0 {
-						return ErrInvalidLengthMachine
-					}
-					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
-					if postStringIndexmapvalue < 0 {
-						return ErrInvalidLengthMachine
-					}
-					if postStringIndexmapvalue > l {
-						return io.ErrUnexpectedEOF
-					}
-					mapvalue = string(dAtA[iNdEx:postStringIndexmapvalue])
-					iNdEx = postStringIndexmapvalue
-				} else {
-					iNdEx = entryPreIndex
-					skippy, err := skipMachine(dAtA[iNdEx:])
-					if err != nil {
-						return err
-					}
-					if (skippy < 0) || (iNdEx+skippy) < 0 {
-						return ErrInvalidLengthMachine
-					}
-					if (iNdEx + skippy) > postIndex {
-						return io.ErrUnexpectedEOF
-					}
-					iNdEx += skippy
-				}
-			}
-			m.AssetDefinition[mapkey] = mapvalue
+			m.AssetDefinition = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {

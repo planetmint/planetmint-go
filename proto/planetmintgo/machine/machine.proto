@@ -17,10 +17,9 @@ message Machine {
 }
 
 message Metadata {
-
-  map<string, string> gps = 1;
-  map<string, string> device = 2;
-  map<string, string> assetDefinition = 3;
+  string gps = 1;
+  string device = 2;
+  string assetDefinition = 3;
   string additionalDataCID = 4; 
 }
 

@@ -43936,17 +43936,11 @@ paths:
                     type: object
                     properties:
                       gps:
-                        type: object
-                        additionalProperties:
-                          type: string
+                        type: string
                       device:
-                        type: object
-                        additionalProperties:
-                          type: string
+                        type: string
                       assetDefinition:
-                        type: object
-                        additionalProperties:
-                          type: string
+                        type: string
                       additionalDataCID:
                         type: string
         default:
@@ -71582,34 +71576,22 @@ definitions:
         type: object
         properties:
           gps:
-            type: object
-            additionalProperties:
-              type: string
+            type: string
           device:
-            type: object
-            additionalProperties:
-              type: string
+            type: string
           assetDefinition:
-            type: object
-            additionalProperties:
-              type: string
+            type: string
           additionalDataCID:
             type: string
   planetmintgo.machine.Metadata:
     type: object
     properties:
       gps:
-        type: object
-        additionalProperties:
-          type: string
+        type: string
       device:
-        type: object
-        additionalProperties:
-          type: string
+        type: string
       assetDefinition:
-        type: object
-        additionalProperties:
-          type: string
+        type: string
       additionalDataCID:
         type: string
   planetmintgo.machine.MsgAttestMachineResponse:
@@ -71646,17 +71628,11 @@ definitions:
             type: object
             properties:
               gps:
-                type: object
-                additionalProperties:
-                  type: string
+                type: string
               device:
-                type: object
-                additionalProperties:
-                  type: string
+                type: string
               assetDefinition:
-                type: object
-                additionalProperties:
-                  type: string
+                type: string
               additionalDataCID:
                 type: string
   planetmintgo.machine.QueryParamsResponse:

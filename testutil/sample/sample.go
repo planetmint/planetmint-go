@@ -47,17 +47,9 @@ func MachineIndex(machineId string, pkPM string, pkL string) machinetypes.Machin
 
 func Metadata() machinetypes.Metadata {
 	return machinetypes.Metadata{
-		Gps: map[string]string{
-			"Latitude":  "-48.876667",
-			"Longitude": "-123.393333",
-		},
-		Device: map[string]string{
-			"Manufacturer": "RDDL",
-			"Serial":       "AdnT2uyt",
-		},
-		AssetDefinition: map[string]string{
-			"Version": "0.1",
-		},
+		Gps:               "{\"Latitude\":\"-48.876667\",\"Longitude\":\"-123.393333\"}",
+		Device:            "{\"Manufacturer\": \"RDDL\",\"Serial\":\"AdnT2uyt\"}",
+		AssetDefinition:   "{\"Version\": \"0.1\"}",
 		AdditionalDataCID: "CID",
 	}
 }
