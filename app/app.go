@@ -503,15 +503,6 @@ func New(
 		govConfig,
 	)
 
-	app.AssetKeeper = *assetmodulekeeper.NewKeeper(
-		appCodec,
-		keys[assetmoduletypes.StoreKey],
-		keys[assetmoduletypes.MemStoreKey],
-		app.GetSubspace(assetmoduletypes.ModuleName),
-		app.MachineKeeper,
-	)
-	assetModule := assetmodule.NewAppModule(appCodec, app.AssetKeeper, app.AccountKeeper, app.BankKeeper)
-
 	app.MachineKeeper = *machinemodulekeeper.NewKeeper(
 		appCodec,
 		keys[machinemoduletypes.StoreKey],
@@ -522,6 +513,15 @@ func New(
 		app.GetSubspace(machinemoduletypes.ModuleName),
 	)
 	machineModule := machinemodule.NewAppModule(appCodec, app.MachineKeeper, app.AccountKeeper, app.BankKeeper)
+
+	app.AssetKeeper = *assetmodulekeeper.NewKeeper(
+		appCodec,
+		keys[assetmoduletypes.StoreKey],
+		keys[assetmoduletypes.MemStoreKey],
+		app.GetSubspace(assetmoduletypes.ModuleName),
+		app.MachineKeeper,
+	)
+	assetModule := assetmodule.NewAppModule(appCodec, app.AssetKeeper, app.AccountKeeper, app.BankKeeper, app.MachineKeeper)
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 

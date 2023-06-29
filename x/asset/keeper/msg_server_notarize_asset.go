@@ -15,15 +15,13 @@ import (
 func (k msgServer) NotarizeAsset(goCtx context.Context, msg *types.MsgNotarizeAsset) (*types.MsgNotarizeAssetResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	machineIndex, found := k.machineKeeper.GetMachineIndex(ctx, msg.Creator)
+	_, found := k.machineKeeper.GetMachineIndex(ctx, msg.PubKey)
 
 	if !found {
 		return &types.MsgNotarizeAssetResponse{}, errors.New("machine not found")
 	}
 
-	machine, _ := k.machineKeeper.GetMachine(ctx, machineIndex)
-
-	valid := ValidateSignature(msg.CidHash, msg.Sign, msg.Creator)
+	valid := ValidateSignature(msg.CidHash, msg.Sign, msg.PubKey)
 	if !valid {
 		return &types.MsgNotarizeAssetResponse{}, errors.New("invalid signature")
 	}
@@ -31,7 +29,7 @@ func (k msgServer) NotarizeAsset(goCtx context.Context, msg *types.MsgNotarizeAs
 	var asset = types.Asset{
 		Hash:      msg.CidHash,
 		Signature: msg.Sign,
-		Pubkey:    machine.IssuerPlanetmint,
+		Pubkey:    msg.PubKey,
 	}
 
 	k.StoreAsset(ctx, asset)
