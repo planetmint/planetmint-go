@@ -51,7 +51,7 @@ func TestMsgServerNotarizeAsset(t *testing.T) {
 
 func TestMsgServerNotarizeAssetMachineNotFound(t *testing.T) {
 	sk, _ := sample.KeyPair()
-	msg := types.NewMsgNotarizeAsset(sk, "cid", "sign", "pubkey")
+	msg := types.NewMsgNotarizeAsset(sk, "cid", "sign", sk)
 	msgServer, ctx := setupMsgServer(t)
 	_, err := msgServer.NotarizeAsset(ctx, msg)
 	assert.EqualError(t, err, "machine not found")
@@ -59,7 +59,7 @@ func TestMsgServerNotarizeAssetMachineNotFound(t *testing.T) {
 
 func TestMsgServerNotarizeAssetInvalidAsset(t *testing.T) {
 	_, pk := sample.KeyPair()
-	msg := types.NewMsgNotarizeAsset(pk, "cid", "sign", "pubkey")
+	msg := types.NewMsgNotarizeAsset(pk, "cid", "sign", pk)
 	msgServer, ctx := setupMsgServer(t)
 	_, err := msgServer.NotarizeAsset(ctx, msg)
 	assert.EqualError(t, err, "invalid signature")
