@@ -113,6 +113,7 @@ import (
 	machinemodule "planetmint-go/x/machine"
 	machinemodulekeeper "planetmint-go/x/machine/keeper"
 	machinemoduletypes "planetmint-go/x/machine/types"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "planetmint-go/app/params"
@@ -296,7 +297,7 @@ func New(
 		govtypes.StoreKey, paramstypes.StoreKey, ibcexported.StoreKey, upgradetypes.StoreKey,
 		feegrant.StoreKey, evidencetypes.StoreKey, ibctransfertypes.StoreKey, icahosttypes.StoreKey,
 		capabilitytypes.StoreKey, group.StoreKey, icacontrollertypes.StoreKey, consensusparamtypes.StoreKey,
-		machinemoduletypes.StoreKey,
+		machinemoduletypes.StoreKey, machinemoduletypes.TAIndexKey, machinemoduletypes.IssuerPlanetmintIndexKey, machinemoduletypes.IssuerLiquidIndexKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -522,6 +523,9 @@ func New(
 	app.MachineKeeper = *machinemodulekeeper.NewKeeper(
 		appCodec,
 		keys[machinemoduletypes.StoreKey],
+		keys[machinemoduletypes.TAIndexKey],
+		keys[machinemoduletypes.IssuerPlanetmintIndexKey],
+		keys[machinemoduletypes.IssuerLiquidIndexKey],
 		keys[machinemoduletypes.MemStoreKey],
 		app.GetSubspace(machinemoduletypes.ModuleName),
 	)

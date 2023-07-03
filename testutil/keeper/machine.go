@@ -3,6 +3,9 @@ package keeper
 import (
 	"testing"
 
+	"planetmint-go/x/machine/keeper"
+	"planetmint-go/x/machine/types"
+
 	tmdb "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
@@ -13,17 +16,21 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
-	"planetmint-go/x/machine/keeper"
-	"planetmint-go/x/machine/types"
 )
 
 func MachineKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
+	taIndexStoreKey := sdk.NewKVStoreKey(types.TAIndexKey)
+	issuerPlanetmintIndexStoreKey := sdk.NewKVStoreKey(types.IssuerPlanetmintIndexKey)
+	issuerLiquidIndexStoreKey := sdk.NewKVStoreKey(types.IssuerLiquidIndexKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 
 	db := tmdb.NewMemDB()
 	stateStore := store.NewCommitMultiStore(db)
 	stateStore.MountStoreWithDB(storeKey, storetypes.StoreTypeIAVL, db)
+	stateStore.MountStoreWithDB(taIndexStoreKey, storetypes.StoreTypeIAVL, db)
+	stateStore.MountStoreWithDB(issuerPlanetmintIndexStoreKey, storetypes.StoreTypeIAVL, db)
+	stateStore.MountStoreWithDB(issuerLiquidIndexStoreKey, storetypes.StoreTypeIAVL, db)
 	stateStore.MountStoreWithDB(memStoreKey, storetypes.StoreTypeMemory, nil)
 	require.NoError(t, stateStore.LoadLatestVersion())
 
@@ -39,6 +46,9 @@ func MachineKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	k := keeper.NewKeeper(
 		cdc,
 		storeKey,
+		taIndexStoreKey,
+		issuerPlanetmintIndexStoreKey,
+		issuerLiquidIndexStoreKey,
 		memStoreKey,
 		paramsSubspace,
 	)
