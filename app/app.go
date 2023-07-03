@@ -114,6 +114,9 @@ import (
 	machinemodulekeeper "planetmint-go/x/machine/keeper"
 	machinemoduletypes "planetmint-go/x/machine/types"
 
+	assetmodule "planetmint-go/x/asset"
+	assetmodulekeeper "planetmint-go/x/asset/keeper"
+	assetmoduletypes "planetmint-go/x/asset/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "planetmint-go/app/params"
@@ -175,6 +178,7 @@ var (
 		vesting.AppModuleBasic{},
 		consensus.AppModuleBasic{},
 		machinemodule.AppModuleBasic{},
+		assetmodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -251,6 +255,8 @@ type App struct {
 	ScopedICAHostKeeper  capabilitykeeper.ScopedKeeper
 
 	MachineKeeper machinemodulekeeper.Keeper
+
+	AssetKeeper assetmodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -298,6 +304,7 @@ func New(
 		feegrant.StoreKey, evidencetypes.StoreKey, ibctransfertypes.StoreKey, icahosttypes.StoreKey,
 		capabilitytypes.StoreKey, group.StoreKey, icacontrollertypes.StoreKey, consensusparamtypes.StoreKey,
 		machinemoduletypes.StoreKey, machinemoduletypes.TAIndexKey, machinemoduletypes.IssuerPlanetmintIndexKey, machinemoduletypes.IssuerLiquidIndexKey,
+		assetmoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -531,6 +538,16 @@ func New(
 	)
 	machineModule := machinemodule.NewAppModule(appCodec, app.MachineKeeper, app.AccountKeeper, app.BankKeeper)
 
+	app.AssetKeeper = *assetmodulekeeper.NewKeeper(
+		appCodec,
+		keys[assetmoduletypes.StoreKey],
+		keys[assetmoduletypes.MemStoreKey],
+		app.GetSubspace(assetmoduletypes.ModuleName),
+
+		app.MachineKeeper,
+	)
+	assetModule := assetmodule.NewAppModule(appCodec, app.AssetKeeper, app.AccountKeeper, app.BankKeeper)
+
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	/**** IBC Routing ****/
@@ -593,6 +610,7 @@ func New(
 		transferModule,
 		icaModule,
 		machineModule,
+		assetModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 
 		crisis.NewAppModule(app.CrisisKeeper, skipGenesisInvariants, app.GetSubspace(crisistypes.ModuleName)), // always be last to make sure that it checks for all invariants and not only part of them
@@ -626,6 +644,7 @@ func New(
 		vestingtypes.ModuleName,
 		consensusparamtypes.ModuleName,
 		machinemoduletypes.ModuleName,
+		assetmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
 
@@ -652,6 +671,7 @@ func New(
 		vestingtypes.ModuleName,
 		consensusparamtypes.ModuleName,
 		machinemoduletypes.ModuleName,
+		assetmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	)
 
@@ -683,6 +703,7 @@ func New(
 		vestingtypes.ModuleName,
 		consensusparamtypes.ModuleName,
 		machinemoduletypes.ModuleName,
+		assetmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	}
 	app.mm.SetOrderInitGenesis(genesisModuleOrder...)
@@ -908,6 +929,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(machinemoduletypes.ModuleName)
+	paramsKeeper.Subspace(assetmoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper

@@ -1,0 +1,7 @@
+syntax = "proto3";
+package planetmintgo.asset;
+
+option go_package = "planetmint-go/x/asset/types";
+
+// Msg defines the Msg service.
+service Msg {}
