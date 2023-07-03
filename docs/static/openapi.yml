@@ -75212,6 +75212,52 @@ definitions:
     description: |-
       Version defines the versioning scheme used to negotiate the IBC verison in
       the connection handshake.
+  planetmintgo.machine.Machine:
+    type: object
+    properties:
+      name:
+        type: string
+      ticker:
+        type: string
+      issued:
+        type: string
+        format: uint64
+      amount:
+        type: string
+        format: uint64
+      precision:
+        type: string
+        format: uint64
+      issuerPlanetmint:
+        type: string
+      issuerLiquid:
+        type: string
+      machineId:
+        type: string
+      metadata:
+        type: object
+        properties:
+          gps:
+            type: string
+          device:
+            type: string
+          assetDefinition:
+            type: string
+          additionalDataCID:
+            type: string
+  planetmintgo.machine.Metadata:
+    type: object
+    properties:
+      gps:
+        type: string
+      device:
+        type: string
+      assetDefinition:
+        type: string
+      additionalDataCID:
+        type: string
+  planetmintgo.machine.MsgAttestMachineResponse:
+    type: object
   planetmintgo.machine.Params:
     type: object
     description: Params defines the parameters for the module.
