@@ -3,10 +3,11 @@ package keeper
 import (
 	"context"
 
+	"planetmint-go/x/machine/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"planetmint-go/x/machine/types"
 )
 
 func (k Keeper) GetMachineByPublicKey(goCtx context.Context, req *types.QueryGetMachineByPublicKeyRequest) (*types.QueryGetMachineByPublicKeyResponse, error) {
@@ -16,8 +17,12 @@ func (k Keeper) GetMachineByPublicKey(goCtx context.Context, req *types.QueryGet
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Process the query
-	_ = ctx
+	machineIndex, found := k.GetMachineIndex(ctx, req.PublicKey)
+	if !found {
+		return nil, status.Error(codes.NotFound, "machine not found")
+	}
 
-	return &types.QueryGetMachineByPublicKeyResponse{}, nil
+	machine, _ := k.GetMachine(ctx, machineIndex)
+
+	return &types.QueryGetMachineByPublicKeyResponse{Machine: &machine}, nil
 }
