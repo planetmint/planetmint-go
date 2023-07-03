@@ -1,0 +1,12 @@
+syntax = "proto3";
+package planetmintgo.machine;
+
+import "gogoproto/gogo.proto";
+import "planetmintgo/machine/params.proto";
+
+option go_package = "planetmint-go/x/machine/types";
+
+// GenesisState defines the machine module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+}
