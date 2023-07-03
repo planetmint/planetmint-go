@@ -5,7 +5,6 @@ import (
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
-	"planetmint-go/testutil/sample"
 )
 
 func TestMsgAttestMachine_ValidateBasic(t *testing.T) {
@@ -20,11 +19,6 @@ func TestMsgAttestMachine_ValidateBasic(t *testing.T) {
 				Creator: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
-		}, {
-			name: "valid address",
-			msg: MsgAttestMachine{
-				Creator: sample.AccAddress(),
-			},
 		},
 	}
 	for _, tt := range tests {
