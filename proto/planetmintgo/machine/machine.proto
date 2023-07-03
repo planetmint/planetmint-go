@@ -1,0 +1,31 @@
+syntax = "proto3";
+package planetmintgo.machine;
+
+option go_package = "planetmint-go/x/machine/types";
+
+message Machine {
+  
+  string name = 1; 
+  string ticker = 2; 
+  uint64 issued = 3; 
+  uint64 amount = 4; 
+  uint64 precision = 5; 
+  string issuerPlanetmint = 6; 
+  string issuerLiquid = 7; 
+  string machineId = 8; 
+  Metadata metadata = 9; 
+}
+
+message Metadata {
+  string gps = 1;
+  string device = 2;
+  string assetDefinition = 3;
+  string additionalDataCID = 4; 
+}
+
+message MachineIndex {
+
+  string machineId = 1;
+  string issuerPlanetmint = 2; 
+  string issuerLiquid = 3; 
+}
