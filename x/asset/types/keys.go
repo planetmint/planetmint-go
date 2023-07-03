@@ -12,6 +12,8 @@ const (
 
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_asset"
+
+	AssetKey = "Asset/value/"
 )
 
 func KeyPrefix(p string) []byte {
