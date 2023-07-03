@@ -1,12 +1,16 @@
 package types
 
 import (
+	machinetypes "planetmint-go/x/machine/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
 type MachineKeeper interface {
 	// Methods imported from machine should be defined here
+	GetMachine(ctx sdk.Context, index machinetypes.MachineIndex) (val machinetypes.Machine, found bool)
+	GetMachineIndex(ctx sdk.Context, pubKey string) (val machinetypes.MachineIndex, found bool)
 }
 
 // AccountKeeper defines the expected account keeper used for simulations (noalias)
