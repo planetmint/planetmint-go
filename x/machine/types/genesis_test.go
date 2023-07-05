@@ -3,11 +3,12 @@ package types_test
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
 	"planetmint-go/x/machine/types"
+
+	"github.com/stretchr/testify/require"
 )
 
-func TestGenesisState_Validate(t *testing.T) {
+func TestGenesisStateValidate(t *testing.T) {
 	tests := []struct {
 		desc     string
 		genState *types.GenesisState

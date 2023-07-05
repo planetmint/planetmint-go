@@ -3,12 +3,13 @@ package types
 import (
 	"testing"
 
+	"planetmint-go/testutil/sample"
+
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
-	"planetmint-go/testutil/sample"
 )
 
-func TestMsgNotarizeAsset_ValidateBasic(t *testing.T) {
+func TestMsgNotarizeAssetValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
 		msg  MsgNotarizeAsset
