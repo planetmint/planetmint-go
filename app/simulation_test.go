@@ -39,6 +39,8 @@ import (
 	"planetmint-go/app"
 )
 
+const SIMULATION_SETUP_FAILED = "simulation setup failed"
+
 type storeKeysPrefixes struct {
 	A        storetypes.StoreKey
 	B        storetypes.StoreKey
@@ -76,7 +78,7 @@ func BenchmarkSimulation(b *testing.B) {
 		simcli.FlagVerboseValue,
 		simcli.FlagEnabledValue,
 	)
-	require.NoError(b, err, "simulation setup failed")
+	require.NoError(b, err, SIMULATION_SETUP_FAILED)
 
 	b.Cleanup(func() {
 		require.NoError(b, db.Close())
@@ -230,7 +232,7 @@ func TestAppImportExport(t *testing.T) {
 	if skip {
 		t.Skip("skipping application import/export simulation")
 	}
-	require.NoError(t, err, "simulation setup failed")
+	require.NoError(t, err, SIMULATION_SETUP_FAILED)
 
 	defer func() {
 		require.NoError(t, db.Close())
@@ -295,7 +297,7 @@ func TestAppImportExport(t *testing.T) {
 		simcli.FlagVerboseValue,
 		simcli.FlagEnabledValue,
 	)
-	require.NoError(t, err, "simulation setup failed")
+	require.NoError(t, err, SIMULATION_SETUP_FAILED)
 
 	defer func() {
 		require.NoError(t, newDB.Close())
@@ -384,7 +386,7 @@ func TestAppSimulationAfterImport(t *testing.T) {
 	if skip {
 		t.Skip("skipping application simulation after import")
 	}
-	require.NoError(t, err, "simulation setup failed")
+	require.NoError(t, err, SIMULATION_SETUP_FAILED)
 
 	defer func() {
 		require.NoError(t, db.Close())
@@ -455,7 +457,7 @@ func TestAppSimulationAfterImport(t *testing.T) {
 		simcli.FlagVerboseValue,
 		simcli.FlagEnabledValue,
 	)
-	require.NoError(t, err, "simulation setup failed")
+	require.NoError(t, err, SIMULATION_SETUP_FAILED)
 
 	defer func() {
 		require.NoError(t, newDB.Close())
