@@ -47,33 +47,33 @@ func (s *E2ETestSuite) TearDownSuite() {
 func (s *E2ETestSuite) TestAttestMachine() {
 	val := s.network.Validators[0]
 
-	account, err := val.ClientCtx.Keyring.Key("alice")
+	account, err := val.ClientCtx.Keyring.Key("machine")
 	s.Require().NoError(err)
 
 	addr, _ := account.GetAddress()
 	s.T().Log(fmt.Sprintf("address: %s", addr))
 
-	account, err = val.ClientCtx.Keyring.Key("machine")
-	s.Require().NoError(err)
-
-	addr, _ = account.GetAddress()
-	s.T().Log(fmt.Sprintf("address: %s", addr))
-
-	// cmd := machine.CmdAttestMachine()
-	// args := []string{"{\"name\": \"machine\", \"ticker\": \"machine_ticker\", \"issued\": 1, \"amount\": 1000, \"precision\": 8, \"issuerPlanetmint\": \"A/ZrbETECRq5DNGJZ0aH0DjlV4Y1opMlRfGoEJH454eB\", \"issuerLiquid\": \"A/ZrbETECRq5DNGJZ0aH0DjlV4Y1opMlRfGoEJH454eB\", \"machineId\": \"A/ZrbETECRq5DNGJZ0aH0DjlV4Y1opMlRfGoEJH454eB\", \"metadata\": {\"additionalDataCID\": \"CID\", \"gps\": \"{'Latitude':'-48.876667','Longitude':'-123.393333'}\"}}"}
-
-	// testCmd := &cobra.Command{}
-	// testCmd.SetArgs(args)
-
-	// err = cmd.RunE(testCmd, args)
-	// s.Require().NoError(err)
-
 	args := []string{
+		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
 		"{\"name\": \"machine\", \"ticker\": \"machine_ticker\", \"issued\": 1, \"amount\": 1000, \"precision\": 8, \"issuerPlanetmint\": \"A/ZrbETECRq5DNGJZ0aH0DjlV4Y1opMlRfGoEJH454eB\", \"issuerLiquid\": \"A/ZrbETECRq5DNGJZ0aH0DjlV4Y1opMlRfGoEJH454eB\", \"machineId\": \"A/ZrbETECRq5DNGJZ0aH0DjlV4Y1opMlRfGoEJH454eB\", \"metadata\": {\"additionalDataCID\": \"CID\", \"gps\": \"{'Latitude':'-48.876667','Longitude':'-123.393333'}\"}}",
-		// addr.String(),
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, addr.String()),
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, "node0"),
+		"-y",
+		fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
 	}
 
-	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machine.CmdAttestMachine(), args)
+	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, machine.CmdAttestMachine(), args)
 	s.Require().NoError(err)
+
+	s.Require().NoError(s.network.WaitForNextBlock())
+
+	s.T().Log(out.String())
+
+	args = []string{
+		"A/ZrbETECRq5DNGJZ0aH0DjlV4Y1opMlRfGoEJH454eB",
+	}
+
+	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machine.CmdGetMachineByPublicKey(), args)
+	s.Require().NoError(err)
+
+	s.T().Log(out.String())
 }
