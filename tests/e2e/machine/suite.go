@@ -9,6 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
+	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	"github.com/stretchr/testify/suite"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -29,13 +30,25 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.T().Log("setting up e2e test suite")
 
 	s.network = network.New(s.T())
+	val := s.network.Validators[0]
 
-	kb := s.network.Validators[0].ClientCtx.Keyring
-	_, _, err := kb.NewMnemonic("alice", keyring.English, sdk.FullFundraiserPath, keyring.DefaultBIP39Passphrase, hd.Secp256k1)
+	kb := val.ClientCtx.Keyring
+	account, _, err := kb.NewMnemonic("machine", keyring.English, sdk.FullFundraiserPath, keyring.DefaultBIP39Passphrase, hd.Secp256k1)
 	s.Require().NoError(err)
 
-	_, _, err = kb.NewMnemonic("machine", keyring.English, sdk.FullFundraiserPath, keyring.DefaultBIP39Passphrase, hd.Secp256k1)
+	addr, _ := account.GetAddress()
+
+	args := []string{
+		"node0",
+		addr.String(),
+		"1000stake",
+		"-y",
+		fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
+	}
+	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
 	s.Require().NoError(err)
+
+	s.T().Log(out.String())
 
 	s.Require().NoError(s.network.WaitForNextBlock())
 }
@@ -56,7 +69,7 @@ func (s *E2ETestSuite) TestAttestMachine() {
 	args := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
 		"{\"name\": \"machine\", \"ticker\": \"machine_ticker\", \"issued\": 1, \"amount\": 1000, \"precision\": 8, \"issuerPlanetmint\": \"A/ZrbETECRq5DNGJZ0aH0DjlV4Y1opMlRfGoEJH454eB\", \"issuerLiquid\": \"A/ZrbETECRq5DNGJZ0aH0DjlV4Y1opMlRfGoEJH454eB\", \"machineId\": \"A/ZrbETECRq5DNGJZ0aH0DjlV4Y1opMlRfGoEJH454eB\", \"metadata\": {\"additionalDataCID\": \"CID\", \"gps\": \"{'Latitude':'-48.876667','Longitude':'-123.393333'}\"}}",
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, "node0"),
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, "machine"),
 		"-y",
 		fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
 	}
