@@ -18,8 +18,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+// Queryable pubkey for TestAttestMachine
 const pubKey = "A/ZrbETECRq5DNGJZ0aH0DjlV4Y1opMlRfGoEJH454eB"
 
+// Struct definition of machine E2ETestSuite
 type E2ETestSuite struct {
 	suite.Suite
 
@@ -27,10 +29,12 @@ type E2ETestSuite struct {
 	network *network.Network
 }
 
+// Returns new machine E2ETestSuite
 func NewE2ETestSuite(cfg network.Config) *E2ETestSuite {
 	return &E2ETestSuite{cfg: cfg}
 }
 
+// Sets up new machine E2ETestSuite
 func (s *E2ETestSuite) SetupSuite() {
 	s.T().Log("setting up e2e test suite")
 
@@ -57,10 +61,12 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.Require().NoError(s.network.WaitForNextBlock())
 }
 
+// Tear down machine E2ETestSuite
 func (s *E2ETestSuite) TearDownSuite() {
 	s.T().Log("tearing down e2e test suite")
 }
 
+// Attest machine and query attested machine from chain
 func (s *E2ETestSuite) TestAttestMachine() {
 	val := s.network.Validators[0]
 
