@@ -48,7 +48,7 @@ func (s *E2ETestSuite) SetupSuite() {
 		"node0",
 		addr.String(),
 		"1000stake",
-		"-y",
+		"--yes",
 		fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
 	}
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
@@ -83,10 +83,10 @@ func (s *E2ETestSuite) TestAttestMachine() {
 
 	args := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
-		string(machineJSON),
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, "machine"),
-		"-y",
 		fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
+		"--yes",
+		string(machineJSON),
 	}
 
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
