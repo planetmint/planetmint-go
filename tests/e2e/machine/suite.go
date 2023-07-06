@@ -38,6 +38,7 @@ func (s *E2ETestSuite) SetupSuite() {
 
 	addr, _ := account.GetAddress()
 
+	// sending funds to machine to initialize account on chain
 	args := []string{
 		"node0",
 		addr.String(),
