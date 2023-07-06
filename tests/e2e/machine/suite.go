@@ -4,7 +4,7 @@ import (
 	"fmt"
 	clitestutil "planetmint-go/testutil/cli"
 	"planetmint-go/testutil/network"
-	machine "planetmint-go/x/machine/client/cli"
+	machinecli "planetmint-go/x/machine/client/cli"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
@@ -45,10 +45,8 @@ func (s *E2ETestSuite) SetupSuite() {
 		"-y",
 		fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
 	}
-	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
+	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
 	s.Require().NoError(err)
-
-	s.T().Log(out.String())
 
 	s.Require().NoError(s.network.WaitForNextBlock())
 }
@@ -60,12 +58,6 @@ func (s *E2ETestSuite) TearDownSuite() {
 func (s *E2ETestSuite) TestAttestMachine() {
 	val := s.network.Validators[0]
 
-	account, err := val.ClientCtx.Keyring.Key("machine")
-	s.Require().NoError(err)
-
-	addr, _ := account.GetAddress()
-	s.T().Log(fmt.Sprintf("address: %s", addr))
-
 	args := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
 		"{\"name\": \"machine\", \"ticker\": \"machine_ticker\", \"issued\": 1, \"amount\": 1000, \"precision\": 8, \"issuerPlanetmint\": \"A/ZrbETECRq5DNGJZ0aH0DjlV4Y1opMlRfGoEJH454eB\", \"issuerLiquid\": \"A/ZrbETECRq5DNGJZ0aH0DjlV4Y1opMlRfGoEJH454eB\", \"machineId\": \"A/ZrbETECRq5DNGJZ0aH0DjlV4Y1opMlRfGoEJH454eB\", \"metadata\": {\"additionalDataCID\": \"CID\", \"gps\": \"{'Latitude':'-48.876667','Longitude':'-123.393333'}\"}}",
@@ -74,19 +66,15 @@ func (s *E2ETestSuite) TestAttestMachine() {
 		fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
 	}
 
-	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, machine.CmdAttestMachine(), args)
+	_, err := clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
-
-	s.T().Log(out.String())
 
 	args = []string{
 		"A/ZrbETECRq5DNGJZ0aH0DjlV4Y1opMlRfGoEJH454eB",
 	}
 
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machine.CmdGetMachineByPublicKey(), args)
+	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdGetMachineByPublicKey(), args)
 	s.Require().NoError(err)
-
-	s.T().Log(out.String())
 }
