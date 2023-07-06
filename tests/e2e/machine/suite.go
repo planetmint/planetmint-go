@@ -1,6 +1,7 @@
 package machine
 
 import (
+	"encoding/json"
 	"fmt"
 	clitestutil "planetmint-go/testutil/cli"
 	"planetmint-go/testutil/network"
@@ -12,9 +13,15 @@ import (
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	"github.com/stretchr/testify/suite"
 
+	machinetypes "planetmint-go/x/machine/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+// Queryable pubkey for TestAttestMachine
+const pubKey = "A/ZrbETECRq5DNGJZ0aH0DjlV4Y1opMlRfGoEJH454eB"
+
+// Struct definition of machine E2ETestSuite
 type E2ETestSuite struct {
 	suite.Suite
 
@@ -22,10 +29,12 @@ type E2ETestSuite struct {
 	network *network.Network
 }
 
+// Returns new machine E2ETestSuite
 func NewE2ETestSuite(cfg network.Config) *E2ETestSuite {
 	return &E2ETestSuite{cfg: cfg}
 }
 
+// Sets up new machine E2ETestSuite
 func (s *E2ETestSuite) SetupSuite() {
 	s.T().Log("setting up e2e test suite")
 
@@ -43,7 +52,7 @@ func (s *E2ETestSuite) SetupSuite() {
 		"node0",
 		addr.String(),
 		"1000stake",
-		"-y",
+		"--yes",
 		fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
 	}
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
@@ -52,28 +61,47 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.Require().NoError(s.network.WaitForNextBlock())
 }
 
+// Tear down machine E2ETestSuite
 func (s *E2ETestSuite) TearDownSuite() {
 	s.T().Log("tearing down e2e test suite")
 }
 
+// Attest machine and query attested machine from chain
 func (s *E2ETestSuite) TestAttestMachine() {
 	val := s.network.Validators[0]
 
+	machine := machinetypes.Machine{
+		Name:             "machine",
+		Ticker:           "machine_ticker",
+		Issued:           1,
+		Amount:           1000,
+		Precision:        8,
+		IssuerPlanetmint: pubKey,
+		IssuerLiquid:     pubKey,
+		MachineId:        pubKey,
+		Metadata: &machinetypes.Metadata{
+			AdditionalDataCID: "CID",
+			Gps:               "{\"Latitude\":\"-48.876667\",\"Longitude\":\"-123.393333\"}",
+		},
+	}
+	machineJSON, err := json.Marshal(&machine)
+	s.Require().NoError(err)
+
 	args := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
-		"{\"name\": \"machine\", \"ticker\": \"machine_ticker\", \"issued\": 1, \"amount\": 1000, \"precision\": 8, \"issuerPlanetmint\": \"A/ZrbETECRq5DNGJZ0aH0DjlV4Y1opMlRfGoEJH454eB\", \"issuerLiquid\": \"A/ZrbETECRq5DNGJZ0aH0DjlV4Y1opMlRfGoEJH454eB\", \"machineId\": \"A/ZrbETECRq5DNGJZ0aH0DjlV4Y1opMlRfGoEJH454eB\", \"metadata\": {\"additionalDataCID\": \"CID\", \"gps\": \"{'Latitude':'-48.876667','Longitude':'-123.393333'}\"}}",
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, "machine"),
-		"-y",
 		fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
+		"--yes",
+		string(machineJSON),
 	}
 
-	_, err := clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
+	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
 
 	args = []string{
-		"A/ZrbETECRq5DNGJZ0aH0DjlV4Y1opMlRfGoEJH454eB",
+		pubKey,
 	}
 
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdGetMachineByPublicKey(), args)
