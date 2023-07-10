@@ -32,7 +32,6 @@ jobs:
 
       - name: Run staticcheck
         run: staticcheck ./...
-        continue-on-error: true
 
       - name: Install golint
         run: go install golang.org/x/lint/golint@latest
