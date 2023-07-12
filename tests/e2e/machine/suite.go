@@ -20,6 +20,7 @@ import (
 
 // Queryable pubkey for TestAttestMachine
 const pubKey = "A/ZrbETECRq5DNGJZ0aH0DjlV4Y1opMlRfGoEJH454eB"
+const mnemonic = "science humor project sword foil amazing exhibit afford kangaroo child pulse adapt camera trigger isolate pull approve october dragon critic vendor panic business valve"
 
 // Struct definition of machine E2ETestSuite
 type E2ETestSuite struct {
@@ -42,7 +43,7 @@ func (s *E2ETestSuite) SetupSuite() {
 	val := s.network.Validators[0]
 
 	kb := val.ClientCtx.Keyring
-	account, _, err := kb.NewMnemonic("machine", keyring.English, sdk.FullFundraiserPath, keyring.DefaultBIP39Passphrase, hd.Secp256k1)
+	account, err := kb.NewAccount("machine", mnemonic, keyring.DefaultBIP39Passphrase, sdk.FullFundraiserPath, hd.Secp256k1)
 	s.Require().NoError(err)
 
 	addr, _ := account.GetAddress()

@@ -5,9 +5,16 @@ import (
 	"planetmint-go/testutil"
 	machinetypes "planetmint-go/x/machine/types"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/cosmos/cosmos-sdk/client/tx"
+	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
+
 	"github.com/cosmos/cosmos-sdk/codec/types"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	txtypes "github.com/cosmos/cosmos-sdk/types/tx"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
+	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
@@ -26,13 +33,10 @@ func (s *E2ETestSuite) TestAttestMachineREST() {
 	respAccountInfo, err := testutil.GetRequest(reqAccountInfo)
 	s.Require().NoError(err)
 
-	s.T().Log(string(respAccountInfo))
-
 	var resAccountInfo authtypes.QueryAccountInfoResponse
 	err = val.ClientCtx.Codec.UnmarshalJSON(respAccountInfo, &resAccountInfo)
 	s.Require().NoError(err)
 
-	s.T().Log(resAccountInfo.Info.AccountNumber)
 	// Create Attest Machine TX
 	machine := machinetypes.Machine{
 		Name:             "machine",
@@ -48,37 +52,103 @@ func (s *E2ETestSuite) TestAttestMachineREST() {
 			Gps:               "{\"Latitude\":\"-48.876667\",\"Longitude\":\"-123.393333\"}",
 		},
 	}
-	// machineJSON, err := json.Marshal(&machine)
-	// s.Require().NoError(err)
+
+	txBuilder := val.ClientCtx.TxConfig.NewTxBuilder()
 
 	msg := machinetypes.MsgAttestMachine{
-		Creator: string(addr),
+		Creator: addr.String(),
 		Machine: &machine,
 	}
+	err = txBuilder.SetMsgs(&msg)
+	s.Require().NoError(err)
 
-	msg.Type()
+	txBuilder.SetGasLimit(200000)
+	txBuilder.SetFeeAmount(sdk.Coins{sdk.NewInt64Coin("stake", 2)})
+	txBuilder.SetTimeoutHeight(0)
+
+	pk, err := k.GetPubKey()
+	s.Require().NoError(err)
+	sk := k.GetLocal().PrivKey
+
+	var priv cryptotypes.PrivKey
+	err = val.ClientCtx.Codec.UnpackAny(sk, &priv)
+	s.Require().NoError(err)
+
+	sigV2 := signing.SignatureV2{
+		PubKey: pk,
+		Data: &signing.SingleSignatureData{
+			SignMode:  val.ClientCtx.TxConfig.SignModeHandler().DefaultMode(),
+			Signature: nil,
+		},
+		Sequence: resAccountInfo.Info.Sequence,
+	}
+
+	err = txBuilder.SetSignatures(sigV2)
+	s.Require().NoError(err)
+
+	signerData := xauthsigning.SignerData{
+		ChainID:       val.ClientCtx.ChainID,
+		AccountNumber: resAccountInfo.Info.AccountNumber,
+		Sequence:      resAccountInfo.Info.Sequence,
+	}
+	sigV2, err = tx.SignWithPrivKey(
+		val.ClientCtx.TxConfig.SignModeHandler().DefaultMode(), signerData,
+		txBuilder, priv, val.ClientCtx.TxConfig, resAccountInfo.Info.Sequence,
+	)
+	s.Require().NoError(err)
+
+	err = txBuilder.SetSignatures(sigV2)
+	s.Require().NoError(err)
+
+	txBytes, err := val.ClientCtx.TxConfig.TxEncoder()(txBuilder.GetTx())
+	s.Require().NoError(err)
+
+	broadcastTxUrl := fmt.Sprintf("%s/cosmos/tx/v1beta1/txs", baseURL)
+	req := txtypes.BroadcastTxRequest{
+		TxBytes: txBytes,
+		Mode:    txtypes.BroadcastMode_BROADCAST_MODE_SYNC,
+	}
+
+	marshalledReq, err := val.ClientCtx.Codec.MarshalJSON(&req)
+	s.Require().NoError(err)
+
+	s.Require().NoError(err)
+	r, err := testutil.PostRequest(broadcastTxUrl, "application/json", marshalledReq)
+	s.Require().NoError(err)
+
+	s.T().Log("RESULT:")
+	s.T().Log(string(r))
 
 	// Encode TX
-	reqEncodeTx := fmt.Sprintf("%s/cosmos/tx/encode", baseURL)
+	reqEncodeTx := fmt.Sprintf("%s/cosmos/tx/v1beta1/encode", baseURL)
 
-	signerInfos := make([]txtypes.SignerInfo, 1)
-	signerInfos[1].PublicKey = &types.Any{
+	msgs := make([]*types.Any, 1)
+	msgs[0], err = cdctypes.NewAnyWithValue(&msg)
+	s.Require().NoError(err)
+
+	signerInfos := make([]*txtypes.SignerInfo, 1)
+	signerInfos[0] = &txtypes.SignerInfo{}
+	signerInfos[0].PublicKey = &types.Any{
 		TypeUrl: "/cosmos.crypto.secp256k1.PubKey",
 		Value:   k.PubKey.Value,
 	}
-	signerInfos[1].ModeInfo = &txtypes.ModeInfo{
+	signerInfos[0].ModeInfo = &txtypes.ModeInfo{
 		Sum: &txtypes.ModeInfo_Single_{
 			Single: &txtypes.ModeInfo_Single{
 				Mode: signing.SignMode_SIGN_MODE_DIRECT,
 			},
 		},
 	}
-	signerInfos[1].Sequence = resAccountInfo.Info.Sequence
+	signerInfos[0].Sequence = resAccountInfo.Info.Sequence
 
 	reqEncodeTxBody := txtypes.TxEncodeRequest{
 		Tx: &txtypes.Tx{
 			Body: &txtypes.TxBody{
-				// Messages: make([]*types.Any, 0),
+				Messages:                    msgs,
+				Memo:                        "",
+				TimeoutHeight:               0,
+				ExtensionOptions:            []*types.Any{},
+				NonCriticalExtensionOptions: []*types.Any{},
 			},
 			AuthInfo: &txtypes.AuthInfo{
 				SignerInfos: signerInfos,
@@ -87,12 +157,13 @@ func (s *E2ETestSuite) TestAttestMachineREST() {
 			Signatures: [][]byte{},
 		},
 	}
+	reqEncodeTxBodyBytes, err := reqEncodeTxBody.Marshal()
 	s.Require().NoError(err)
 	// var resEncodeTX TXEncodeRequest
-	respEncodeTx, err := testutil.PostRequest(reqEncodeTx, "application/json", []byte(reqEncodeTxBody))
+	respEncodeTx, err := testutil.PostRequest(reqEncodeTx, "application/json", reqEncodeTxBodyBytes)
 	s.Require().NoError(err)
 
-	s.T().Log(respEncodeTx)
+	s.T().Log(string(respEncodeTx))
 	// Send encoded TX to /cosmos/tx/v1beta1/txs
 
 	// Query Machine by Pubkey
