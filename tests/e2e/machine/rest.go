@@ -2,6 +2,7 @@ package machine
 
 import (
 	"fmt"
+	"net/url"
 	"planetmint-go/testutil"
 	machinetypes "planetmint-go/x/machine/types"
 
@@ -118,6 +119,16 @@ func (s *E2ETestSuite) TestAttestMachineREST() {
 
 	s.T().Log("RESULT:")
 	s.T().Log(string(r))
+
+	s.T().Log(string(pubKey))
+	urlPubKey := url.QueryEscape(pubKey)
+	s.T().Log(string(urlPubKey))
+
+	queryMachineUrl := fmt.Sprintf("%s/planetmint-go/machine/get_machine_by_public_key/%s", baseURL, urlPubKey)
+	s.T().Log(string(queryMachineUrl))
+	queryMachineRes, err := testutil.GetRequest(queryMachineUrl)
+	s.Require().NoError(err)
+	s.T().Log(string(queryMachineRes))
 
 	// Encode TX
 	reqEncodeTx := fmt.Sprintf("%s/cosmos/tx/v1beta1/encode", baseURL)
