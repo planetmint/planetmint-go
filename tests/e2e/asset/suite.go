@@ -6,6 +6,7 @@ import (
 	"planetmint-go/testutil/network"
 
 	clitestutil "planetmint-go/testutil/cli"
+	assetcli "planetmint-go/x/asset/client/cli"
 	machinecli "planetmint-go/x/machine/client/cli"
 
 	machinetypes "planetmint-go/x/machine/types"
@@ -60,15 +61,6 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
-}
-
-// Tear down machine E2ETestSuite
-func (s *E2ETestSuite) TearDownSuite() {
-	s.T().Log("tearing down e2e test suite")
-}
-
-func (s *E2ETestSuite) TestNotarizeAsset() {
-	val := s.network.Validators[0]
 
 	machine := machinetypes.Machine{
 		Name:             "machine",
@@ -87,7 +79,7 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 	machineJSON, err := json.Marshal(&machine)
 	s.Require().NoError(err)
 
-	args := []string{
+	args = []string{
 		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, "machine"),
 		fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
@@ -96,5 +88,26 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 	}
 
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
+	s.Require().NoError(err)
+}
+
+// Tear down machine E2ETestSuite
+func (s *E2ETestSuite) TearDownSuite() {
+	s.T().Log("tearing down e2e test suite")
+}
+
+func (s *E2ETestSuite) TestNotarizeAsset() {
+	val := s.network.Validators[0]
+
+	args := []string{
+		// TODO: add cid-hash and signature
+		pubKey,
+		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, "machine"),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
+		"--yes",
+	}
+
+	_, err := clitestutil.ExecTestCLICmd(val.ClientCtx, assetcli.CmdNotarizeAsset(), args)
 	s.Require().NoError(err)
 }
