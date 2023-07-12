@@ -19,8 +19,6 @@ import (
 )
 
 // Queryable pubkey for TestAttestMachine
-// const pubKey = "A/ZrbETECRq5DNGJZ0aH0DjlV4Y1opMlRfGoEJH454eB"
-// const mnemonic = "science humor project sword foil amazing exhibit afford kangaroo child pulse adapt camera trigger isolate pull approve october dragon critic vendor panic business valve"
 const pubKey = "AjKN6HiWucu1EBwzX0ACnkvomJiLRwq79oPxoLMY1zRw"
 const mnemonic = "helmet hedgehog lab actor weekend elbow pelican valid obtain hungry rocket decade tower gallery fit practice cart cherry giggle hair snack glance bulb farm"
 
