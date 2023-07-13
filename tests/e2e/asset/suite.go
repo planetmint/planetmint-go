@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"planetmint-go/testutil/network"
+	"planetmint-go/testutil/sample"
 
 	clitestutil "planetmint-go/testutil/cli"
 	assetcli "planetmint-go/x/asset/client/cli"
@@ -80,7 +81,6 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.Require().NoError(err)
 
 	args = []string{
-		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, "machine"),
 		fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
 		"--yes",
@@ -89,6 +89,7 @@ func (s *E2ETestSuite) SetupSuite() {
 
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
 	s.Require().NoError(err)
+	s.Require().NoError(s.network.WaitForNextBlock())
 }
 
 // Tear down machine E2ETestSuite
@@ -99,15 +100,65 @@ func (s *E2ETestSuite) TearDownSuite() {
 func (s *E2ETestSuite) TestNotarizeAsset() {
 	val := s.network.Validators[0]
 
-	args := []string{
-		// TODO: add cid-hash and signature
-		pubKey,
-		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, "machine"),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
-		"--yes",
+	sk, pk := sample.KeyPair()
+	cid, signature := sample.Asset(sk, pk)
+
+	testCases := []struct {
+		name   string
+		args   []string
+		expErr bool
+		errMsg string
+	}{
+		{
+			"machine not found",
+			[]string{
+				cid,
+				signature,
+				pk,
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, "machine"),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
+				"--yes",
+			},
+			true,
+			"machine not found",
+		},
+		{
+			"invalid signature",
+			[]string{
+				"cid",
+				"signature",
+				pubKey,
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, "machine"),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
+				"--yes",
+			},
+			true,
+			"invalid signature",
+		},
+		{
+			"valid notarization",
+			[]string{
+				// TODO: Create Valid Inputs
+				cid,
+				signature,
+				pubKey,
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, "machine"),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
+				"--yes",
+			},
+			false,
+			"",
+		},
 	}
 
-	_, err := clitestutil.ExecTestCLICmd(val.ClientCtx, assetcli.CmdNotarizeAsset(), args)
-	s.Require().NoError(err)
+	for _, tc := range testCases {
+		out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, assetcli.CmdNotarizeAsset(), tc.args)
+		if tc.expErr {
+			s.Require().Error(err)
+			s.Require().Contains(err.Error(), tc.errMsg)
+		} else {
+			s.Require().NoError(err)
+			s.T().Log(out)
+		}
+	}
 }

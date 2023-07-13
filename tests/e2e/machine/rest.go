@@ -6,9 +6,8 @@ import (
 	"planetmint-go/testutil"
 	machinetypes "planetmint-go/x/machine/types"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	txtypes "github.com/cosmos/cosmos-sdk/types/tx"
