@@ -33,7 +33,7 @@ func (s *E2ETestSuite) TestAttestMachineREST() {
 	broadcastTxResponse, err := testutil.BroadcastTx(val, txBytes)
 	s.Require().NoError(err)
 
-	s.network.WaitForNextBlock()
+	s.Require().NoError(s.network.WaitForNextBlock())
 	tx, err := testutil.GetRequest(fmt.Sprintf("%s/cosmos/tx/v1beta1/txs/%s", val.APIAddress, broadcastTxResponse.TxResponse.TxHash))
 	s.Require().NoError(err)
 

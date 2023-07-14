@@ -33,12 +33,11 @@ jobs:
       - name: Run staticcheck
         run: staticcheck ./...
 
-      - name: Install golint
-        run: go install golang.org/x/lint/golint@latest
+      - name: Install golangci-lint
+        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 
-      - name: Run golint
-        run: golint -set_exit_status ./...
-        continue-on-error: true
+      - name: Run golangci-lint
+        run: golangci-lint run --timeout 5m
 
       - name: Run tests
         run: go test -race -vet=off ./...

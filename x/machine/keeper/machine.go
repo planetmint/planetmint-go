@@ -20,7 +20,9 @@ func (k Keeper) GetMachine(ctx sdk.Context, index types.MachineIndex) (val types
 	if machine == nil {
 		return val, false
 	}
-	k.cdc.Unmarshal(machine, &val)
+	if err := k.cdc.Unmarshal(machine, &val); err != nil {
+		return val, false
+	}
 	return val, true
 }
 
@@ -53,19 +55,25 @@ func (k Keeper) GetMachineIndex(ctx sdk.Context, pubKey string) (val types.Machi
 
 	taIndex := taIndexStore.Get(keyBytes)
 	if taIndex != nil {
-		k.cdc.Unmarshal(taIndex, &val)
+		if err := k.cdc.Unmarshal(taIndex, &val); err != nil {
+			return val, false
+		}
 		return val, true
 	}
 
 	ipIndex := issuerPlanetmintIndexStore.Get(keyBytes)
 	if ipIndex != nil {
-		k.cdc.Unmarshal(ipIndex, &val)
+		if err := k.cdc.Unmarshal(ipIndex, &val); err != nil {
+			return val, false
+		}
 		return val, true
 	}
 
 	ilIndex := issuerLiquidIndexStore.Get(keyBytes)
 	if ilIndex != nil {
-		k.cdc.Unmarshal(ilIndex, &val)
+		if err := k.cdc.Unmarshal(ilIndex, &val); err != nil {
+			return val, false
+		}
 		return val, true
 	}
 
