@@ -1,23 +1,30 @@
 package asset
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"planetmint-go/testutil/network"
 	"planetmint-go/testutil/sample"
+	"regexp"
 
 	clitestutil "planetmint-go/testutil/cli"
 	assetcli "planetmint-go/x/asset/client/cli"
 	machinecli "planetmint-go/x/machine/client/cli"
+
+	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 
 	machinetypes "planetmint-go/x/machine/types"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
+	"github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+	"sigs.k8s.io/yaml"
 )
 
 // Queryable pubkey for TestNotarizeAsset
@@ -47,6 +54,9 @@ func (s *E2ETestSuite) SetupSuite() {
 	kb := val.ClientCtx.Keyring
 	account, err := kb.NewAccount("machine", mnemonic, keyring.DefaultBIP39Passphrase, sdk.FullFundraiserPath, hd.Secp256k1)
 	s.Require().NoError(err)
+	pk, err := account.GetPubKey()
+	pkHex := hex.EncodeToString(pk.Bytes())
+	s.Require().NoError(err)
 
 	addr, _ := account.GetAddress()
 
@@ -69,9 +79,9 @@ func (s *E2ETestSuite) SetupSuite() {
 		Issued:           1,
 		Amount:           1000,
 		Precision:        8,
-		IssuerPlanetmint: pubKey,
-		IssuerLiquid:     pubKey,
-		MachineId:        pubKey,
+		IssuerPlanetmint: pkHex,
+		IssuerLiquid:     pkHex,
+		MachineId:        pkHex,
 		Metadata: &machinetypes.Metadata{
 			AdditionalDataCID: "CID",
 			Gps:               "{\"Latitude\":\"-48.876667\",\"Longitude\":\"-123.393333\"}",
@@ -97,29 +107,36 @@ func (s *E2ETestSuite) TearDownSuite() {
 	s.T().Log("tearing down e2e test suite")
 }
 
+// Needed to export private key from Keyring
+type unsafeExporter interface {
+	ExportPrivateKeyObject(uid string) (types.PrivKey, error)
+}
+
 func (s *E2ETestSuite) TestNotarizeAsset() {
 	val := s.network.Validators[0]
 
-	sk, pk := sample.KeyPair()
-	cid, signature := sample.Asset(sk, pk)
+	privKey, err := val.ClientCtx.Keyring.(unsafeExporter).ExportPrivateKeyObject("machine")
+	s.Require().NoError(err)
+
+	sk := hex.EncodeToString(privKey.Bytes())
+
+	cidHash, signature := sample.Asset(sk)
 
 	testCases := []struct {
 		name   string
 		args   []string
-		expErr bool
-		errMsg string
+		rawLog string
 	}{
 		{
 			"machine not found",
 			[]string{
-				cid,
+				cidHash,
 				signature,
-				pk,
+				"pubkey",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, "machine"),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
 				"--yes",
 			},
-			true,
 			"machine not found",
 		},
 		{
@@ -127,38 +144,53 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 			[]string{
 				"cid",
 				"signature",
-				pubKey,
+				hex.EncodeToString(privKey.PubKey().Bytes()),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, "machine"),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
 				"--yes",
 			},
-			true,
 			"invalid signature",
 		},
 		{
 			"valid notarization",
 			[]string{
-				// TODO: Create Valid Inputs
-				cid,
+				cidHash,
 				signature,
-				pubKey,
+				hex.EncodeToString(privKey.PubKey().Bytes()),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, "machine"),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
 				"--yes",
 			},
-			false,
-			"",
+			"planetmintgo.asset.MsgNotarizeAsset",
 		},
 	}
 
 	for _, tc := range testCases {
 		out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, assetcli.CmdNotarizeAsset(), tc.args)
-		if tc.expErr {
-			s.Require().Error(err)
-			s.Require().Contains(err.Error(), tc.errMsg)
-		} else {
-			s.Require().NoError(err)
-			s.T().Log(out)
+		s.Require().NoError(err)
+		// Hack: numbers come back as strings and cannot be unmarshalled into TxResponse struct
+		m := regexp.MustCompile(`"([0-9]+?)"`)
+		str := m.ReplaceAllString(out.String(), "${1}")
+
+		var txResponse sdk.TxResponse
+		err = json.Unmarshal([]byte(str), &txResponse)
+		s.Require().NoError(err)
+
+		s.Require().NoError(s.network.WaitForNextBlock())
+		args := []string{
+			txResponse.TxHash,
 		}
+		out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, authcmd.QueryTxCmd(), args)
+		s.Require().NoError(err)
+
+		str = m.ReplaceAllString(out.String(), "${1}")
+		// Need to convert to JSON first, because TxResponse struct lacks `yaml:"height,omitempty"`, etc.
+		j, err := yaml.YAMLToJSON([]byte(str))
+		s.Require().NoError(err)
+
+		err = json.Unmarshal(j, &txResponse)
+		s.Require().NoError(err)
+
+		assert.Contains(s.T(), txResponse.RawLog, tc.rawLog)
 	}
 }

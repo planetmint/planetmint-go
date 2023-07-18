@@ -27,7 +27,7 @@ func TestMsgServer(t *testing.T) {
 
 func TestMsgServerNotarizeAsset(t *testing.T) {
 	sk, pk := sample.KeyPair()
-	cid, signatureHex := sample.Asset(sk, pk)
+	cid, signatureHex := sample.Asset(sk)
 
 	msg := types.NewMsgNotarizeAsset(pk, cid, signatureHex, pk)
 	msgServer, ctx := setupMsgServer(t)

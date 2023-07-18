@@ -57,7 +57,7 @@ func Metadata() machinetypes.Metadata {
 	}
 }
 
-func Asset(sk string, pk string) (string, string) {
+func Asset(sk string) (string, string) {
 	cid := "cid"
 
 	skBytes, _ := hex.DecodeString(sk)
