@@ -11,6 +11,21 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+// Mnemonic sample mnemonic to use in tests
+const Mnemonic = "helmet hedgehog lab actor weekend elbow pelican valid obtain hungry rocket decade tower gallery fit practice cart cherry giggle hair snack glance bulb farm"
+
+// PubKey corresponding public key to sample mnemonic
+const PubKey = "AjKN6HiWucu1EBwzX0ACnkvomJiLRwq79oPxoLMY1zRw"
+
+// Name is the name of the sample machine to use in tests
+const Name = "machine"
+
+// Amount is the amount to transfer to the machine account
+const Amount = "1000stake"
+
+// Fees is the amount of fees to use in tests
+const Fees = "2stake"
+
 // KeyPair returns a sample private / public keypair
 func KeyPair() (string, string) {
 	secret := "Don't tell anybody"

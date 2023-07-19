@@ -14,20 +14,20 @@ func (s *E2ETestSuite) TestAttestMachineREST() {
 	baseURL := val.APIAddress
 
 	// Query Sequence Number
-	k, err := val.ClientCtx.Keyring.Key("machine")
+	k, err := val.ClientCtx.Keyring.Key(sample.Name)
 	s.Require().NoError(err)
 
 	addr, err := k.GetAddress()
 	s.Require().NoError(err)
 
 	// Create Attest Machine TX
-	machine := sample.Machine("machine", pubKey)
+	machine := sample.Machine(sample.Name, sample.PubKey)
 	msg := machinetypes.MsgAttestMachine{
 		Creator: addr.String(),
 		Machine: &machine,
 	}
 
-	txBytes, err := testutil.PrepareTx(val, &msg, "machine")
+	txBytes, err := testutil.PrepareTx(val, &msg, sample.Name)
 	s.Require().NoError(err)
 
 	broadcastTxResponse, err := testutil.BroadcastTx(val, txBytes)
@@ -42,7 +42,7 @@ func (s *E2ETestSuite) TestAttestMachineREST() {
 	s.Require().NoError(err)
 	s.Require().Equal(uint32(0), txRes.TxResponse.Code)
 
-	queryMachineUrl := fmt.Sprintf("%s/planetmint-go/machine/get_machine_by_public_key/%s", baseURL, pubKey)
+	queryMachineUrl := fmt.Sprintf("%s/planetmint-go/machine/get_machine_by_public_key/%s", baseURL, sample.PubKey)
 	queryMachineRes, err := testutil.GetRequest(queryMachineUrl)
 	s.Require().NoError(err)
 

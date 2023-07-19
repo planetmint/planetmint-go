@@ -25,9 +25,6 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
-// Queryable pubkey for TestNotarizeAsset
-const mnemonic = "helmet hedgehog lab actor weekend elbow pelican valid obtain hungry rocket decade tower gallery fit practice cart cherry giggle hair snack glance bulb farm"
-
 // E2ETestSuite struct definition of asset suite
 type E2ETestSuite struct {
 	suite.Suite
@@ -49,7 +46,7 @@ func (s *E2ETestSuite) SetupSuite() {
 	val := s.network.Validators[0]
 
 	kb := val.ClientCtx.Keyring
-	account, err := kb.NewAccount("machine", mnemonic, keyring.DefaultBIP39Passphrase, sdk.FullFundraiserPath, hd.Secp256k1)
+	account, err := kb.NewAccount(sample.Name, sample.Mnemonic, keyring.DefaultBIP39Passphrase, sdk.FullFundraiserPath, hd.Secp256k1)
 	s.Require().NoError(err)
 	pk, err := account.GetPubKey()
 	pkHex := hex.EncodeToString(pk.Bytes())
@@ -59,11 +56,11 @@ func (s *E2ETestSuite) SetupSuite() {
 
 	// sending funds to machine to initialize account on chain
 	args := []string{
-		"node0",
+		val.Moniker,
 		addr.String(),
-		"1000stake",
+		sample.Amount,
 		"--yes",
-		fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 	}
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
 	s.Require().NoError(err)

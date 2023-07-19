@@ -17,10 +17,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// Queryable pubkey for TestAttestMachine
-const pubKey = "AjKN6HiWucu1EBwzX0ACnkvomJiLRwq79oPxoLMY1zRw"
-const mnemonic = "helmet hedgehog lab actor weekend elbow pelican valid obtain hungry rocket decade tower gallery fit practice cart cherry giggle hair snack glance bulb farm"
-
 // E2ETestSuite struct definition of machine suite
 type E2ETestSuite struct {
 	suite.Suite
@@ -42,18 +38,18 @@ func (s *E2ETestSuite) SetupSuite() {
 	val := s.network.Validators[0]
 
 	kb := val.ClientCtx.Keyring
-	account, err := kb.NewAccount("machine", mnemonic, keyring.DefaultBIP39Passphrase, sdk.FullFundraiserPath, hd.Secp256k1)
+	account, err := kb.NewAccount(sample.Name, sample.Mnemonic, keyring.DefaultBIP39Passphrase, sdk.FullFundraiserPath, hd.Secp256k1)
 	s.Require().NoError(err)
 
 	addr, _ := account.GetAddress()
 
 	// sending funds to machine to initialize account on chain
 	args := []string{
-		"node0",
+		val.Moniker,
 		addr.String(),
-		"1000stake",
+		sample.Amount,
 		"--yes",
-		fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 	}
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
 	s.Require().NoError(err)
@@ -70,14 +66,14 @@ func (s *E2ETestSuite) TearDownSuite() {
 func (s *E2ETestSuite) TestAttestMachine() {
 	val := s.network.Validators[0]
 
-	machine := sample.Machine("machine", pubKey)
+	machine := sample.Machine(sample.Name, sample.PubKey)
 	machineJSON, err := json.Marshal(&machine)
 	s.Require().NoError(err)
 
 	args := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, "machine"),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 		"--yes",
 		string(machineJSON),
 	}
@@ -88,7 +84,7 @@ func (s *E2ETestSuite) TestAttestMachine() {
 	s.Require().NoError(s.network.WaitForNextBlock())
 
 	args = []string{
-		pubKey,
+		sample.PubKey,
 	}
 
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdGetMachineByPublicKey(), args)
