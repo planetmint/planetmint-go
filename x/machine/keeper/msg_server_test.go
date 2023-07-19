@@ -28,7 +28,7 @@ func TestMsgServer(t *testing.T) {
 
 func TestMsgServerAttestMachine(t *testing.T) {
 	_, pk := sample.KeyPair()
-	machine := sample.Machine(pk, pk, pk)
+	machine := sample.Machine(pk, pk)
 	msg := types.NewMsgAttestMachine(pk, &machine)
 	msgServer, ctx := setupMsgServer(t)
 	res, err := msgServer.AttestMachine(ctx, msg)

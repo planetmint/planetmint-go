@@ -3,6 +3,7 @@ package machine
 import (
 	"fmt"
 	"planetmint-go/testutil"
+	"planetmint-go/testutil/sample"
 	machinetypes "planetmint-go/x/machine/types"
 
 	txtypes "github.com/cosmos/cosmos-sdk/types/tx"
@@ -20,21 +21,7 @@ func (s *E2ETestSuite) TestAttestMachineREST() {
 	s.Require().NoError(err)
 
 	// Create Attest Machine TX
-	machine := machinetypes.Machine{
-		Name:             "machine",
-		Ticker:           "machine_ticker",
-		Issued:           1,
-		Amount:           1000,
-		Precision:        8,
-		IssuerPlanetmint: pubKey,
-		IssuerLiquid:     pubKey,
-		MachineId:        pubKey,
-		Metadata: &machinetypes.Metadata{
-			AdditionalDataCID: "CID",
-			Gps:               "{\"Latitude\":\"-48.876667\",\"Longitude\":\"-123.393333\"}",
-		},
-	}
-
+	machine := sample.Machine("machine", pubKey)
 	msg := machinetypes.MsgAttestMachine{
 		Creator: addr.String(),
 		Machine: &machine,

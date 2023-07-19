@@ -14,8 +14,6 @@ import (
 
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 
-	machinetypes "planetmint-go/x/machine/types"
-
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
@@ -72,20 +70,7 @@ func (s *E2ETestSuite) SetupSuite() {
 
 	s.Require().NoError(s.network.WaitForNextBlock())
 
-	machine := machinetypes.Machine{
-		Name:             "machine",
-		Ticker:           "machine_ticker",
-		Issued:           1,
-		Amount:           1000,
-		Precision:        8,
-		IssuerPlanetmint: pkHex,
-		IssuerLiquid:     pkHex,
-		MachineId:        pkHex,
-		Metadata: &machinetypes.Metadata{
-			AdditionalDataCID: "CID",
-			Gps:               "{\"Latitude\":\"-48.876667\",\"Longitude\":\"-123.393333\"}",
-		},
-	}
+	machine := sample.Machine("machine", pkHex)
 	machineJSON, err := json.Marshal(&machine)
 	s.Require().NoError(err)
 

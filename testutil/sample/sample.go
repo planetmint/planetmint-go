@@ -26,25 +26,27 @@ func AccAddress() string {
 	return sdk.AccAddress(addr).String()
 }
 
-func Machine(machineId string, pkPM string, pkL string) machinetypes.Machine {
+func Machine(name, pubKey string) machinetypes.Machine {
+	metadata := Metadata()
 	m := machinetypes.Machine{
-		Name:             "machine",
-		Ticker:           "PM",
+		Name:             name,
+		Ticker:           name + "_ticker",
 		Issued:           1,
 		Amount:           1000,
 		Precision:        8,
-		IssuerPlanetmint: pkPM,
-		IssuerLiquid:     pkL,
-		MachineId:        machineId,
+		IssuerPlanetmint: pubKey,
+		IssuerLiquid:     pubKey,
+		MachineId:        pubKey,
+		Metadata:         &metadata,
 	}
 	return m
 }
 
-func MachineIndex(machineId string, pkPM string, pkL string) machinetypes.MachineIndex {
+func MachineIndex(pubKey string) machinetypes.MachineIndex {
 	return machinetypes.MachineIndex{
-		MachineId:        machineId,
-		IssuerPlanetmint: pkPM,
-		IssuerLiquid:     pkL,
+		MachineId:        pubKey,
+		IssuerPlanetmint: pubKey,
+		IssuerLiquid:     pubKey,
 	}
 }
 

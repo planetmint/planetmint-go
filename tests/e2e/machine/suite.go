@@ -5,6 +5,7 @@ import (
 	"fmt"
 	clitestutil "planetmint-go/testutil/cli"
 	"planetmint-go/testutil/network"
+	"planetmint-go/testutil/sample"
 	machinecli "planetmint-go/x/machine/client/cli"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -12,8 +13,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	"github.com/stretchr/testify/suite"
-
-	machinetypes "planetmint-go/x/machine/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -71,20 +70,7 @@ func (s *E2ETestSuite) TearDownSuite() {
 func (s *E2ETestSuite) TestAttestMachine() {
 	val := s.network.Validators[0]
 
-	machine := machinetypes.Machine{
-		Name:             "machine",
-		Ticker:           "machine_ticker",
-		Issued:           1,
-		Amount:           1000,
-		Precision:        8,
-		IssuerPlanetmint: pubKey,
-		IssuerLiquid:     pubKey,
-		MachineId:        pubKey,
-		Metadata: &machinetypes.Metadata{
-			AdditionalDataCID: "CID",
-			Gps:               "{\"Latitude\":\"-48.876667\",\"Longitude\":\"-123.393333\"}",
-		},
-	}
+	machine := sample.Machine("machine", pubKey)
 	machineJSON, err := json.Marshal(&machine)
 	s.Require().NoError(err)
 
