@@ -1,6 +1,7 @@
 package sample
 
 import (
+	"crypto/sha256"
 	"encoding/hex"
 
 	machinetypes "planetmint-go/x/machine/types"
@@ -54,4 +55,20 @@ func Metadata() machinetypes.Metadata {
 		AssetDefinition:   "{\"Version\": \"0.1\"}",
 		AdditionalDataCID: "CID",
 	}
+}
+
+func Asset(sk string) (string, string) {
+	cid := "cid"
+
+	skBytes, _ := hex.DecodeString(sk)
+	privKey := &secp256k1.PrivKey{Key: skBytes}
+
+	cidBytes, _ := hex.DecodeString(cid)
+	hash := sha256.Sum256(cidBytes)
+
+	sign, _ := privKey.Sign(hash[:])
+
+	signatureHex := hex.EncodeToString(sign)
+
+	return cid, signatureHex
 }

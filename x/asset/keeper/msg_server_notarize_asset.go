@@ -18,12 +18,12 @@ func (k msgServer) NotarizeAsset(goCtx context.Context, msg *types.MsgNotarizeAs
 	_, found := k.machineKeeper.GetMachineIndex(ctx, msg.PubKey)
 
 	if !found {
-		return &types.MsgNotarizeAssetResponse{}, errors.New("machine not found")
+		return nil, errors.New("machine not found")
 	}
 
 	valid := ValidateSignature(msg.Hash, msg.Signature, msg.PubKey)
 	if !valid {
-		return &types.MsgNotarizeAssetResponse{}, errors.New("invalid signature")
+		return nil, errors.New("invalid signature")
 	}
 
 	var asset = types.Asset{
