@@ -77,6 +77,7 @@ func (app *App) prepForZeroHeightGenesis(ctx sdk.Context, jailAllowedAddrs []str
 
 	// withdraw all delegator rewards
 	dels := app.StakingKeeper.GetAllDelegations(ctx)
+	//nolint:errcheck
 	app.withdrawAllDelegatorRewards(ctx, dels)
 
 	// clear validator slash events
@@ -93,6 +94,7 @@ func (app *App) prepForZeroHeightGenesis(ctx sdk.Context, jailAllowedAddrs []str
 	app.reinitializeAllValidators(ctx)
 
 	// reinitialize all delegations
+	//nolint:errcheck
 	app.reinitializeAllDelegations(ctx, dels)
 
 	// reset context height

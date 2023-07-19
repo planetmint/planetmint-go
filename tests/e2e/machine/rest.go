@@ -3,6 +3,7 @@ package machine
 import (
 	"fmt"
 	"planetmint-go/testutil"
+	"planetmint-go/testutil/sample"
 	machinetypes "planetmint-go/x/machine/types"
 
 	txtypes "github.com/cosmos/cosmos-sdk/types/tx"
@@ -13,40 +14,26 @@ func (s *E2ETestSuite) TestAttestMachineREST() {
 	baseURL := val.APIAddress
 
 	// Query Sequence Number
-	k, err := val.ClientCtx.Keyring.Key("machine")
+	k, err := val.ClientCtx.Keyring.Key(sample.Name)
 	s.Require().NoError(err)
 
 	addr, err := k.GetAddress()
 	s.Require().NoError(err)
 
 	// Create Attest Machine TX
-	machine := machinetypes.Machine{
-		Name:             "machine",
-		Ticker:           "machine_ticker",
-		Reissue:          true,
-		Amount:           1000,
-		Precision:        8,
-		IssuerPlanetmint: pubKey,
-		IssuerLiquid:     pubKey,
-		MachineId:        pubKey,
-		Metadata: &machinetypes.Metadata{
-			AdditionalDataCID: "CID",
-			Gps:               "{\"Latitude\":\"-48.876667\",\"Longitude\":\"-123.393333\"}",
-		},
-	}
-
+	machine := sample.Machine(sample.Name, sample.PubKey)
 	msg := machinetypes.MsgAttestMachine{
 		Creator: addr.String(),
 		Machine: &machine,
 	}
 
-	txBytes, err := testutil.PrepareTx(val, &msg, "machine")
+	txBytes, err := testutil.PrepareTx(val, &msg, sample.Name)
 	s.Require().NoError(err)
 
 	broadcastTxResponse, err := testutil.BroadcastTx(val, txBytes)
 	s.Require().NoError(err)
 
-	s.network.WaitForNextBlock()
+	s.Require().NoError(s.network.WaitForNextBlock())
 	tx, err := testutil.GetRequest(fmt.Sprintf("%s/cosmos/tx/v1beta1/txs/%s", val.APIAddress, broadcastTxResponse.TxResponse.TxHash))
 	s.Require().NoError(err)
 
@@ -55,7 +42,7 @@ func (s *E2ETestSuite) TestAttestMachineREST() {
 	s.Require().NoError(err)
 	s.Require().Equal(uint32(0), txRes.TxResponse.Code)
 
-	queryMachineUrl := fmt.Sprintf("%s/planetmint-go/machine/get_machine_by_public_key/%s", baseURL, pubKey)
+	queryMachineUrl := fmt.Sprintf("%s/planetmint-go/machine/get_machine_by_public_key/%s", baseURL, sample.PubKey)
 	queryMachineRes, err := testutil.GetRequest(queryMachineUrl)
 	s.Require().NoError(err)
 
