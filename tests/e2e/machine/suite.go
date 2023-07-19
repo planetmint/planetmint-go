@@ -22,7 +22,7 @@ import (
 const pubKey = "AjKN6HiWucu1EBwzX0ACnkvomJiLRwq79oPxoLMY1zRw"
 const mnemonic = "helmet hedgehog lab actor weekend elbow pelican valid obtain hungry rocket decade tower gallery fit practice cart cherry giggle hair snack glance bulb farm"
 
-// Struct definition of machine E2ETestSuite
+// E2ETestSuite struct definition of machine suite
 type E2ETestSuite struct {
 	suite.Suite
 
@@ -30,12 +30,12 @@ type E2ETestSuite struct {
 	network *network.Network
 }
 
-// Returns new machine E2ETestSuite
+// NewE2ETestSuite returns configured machine E2ETestSuite
 func NewE2ETestSuite(cfg network.Config) *E2ETestSuite {
 	return &E2ETestSuite{cfg: cfg}
 }
 
-// Sets up new machine E2ETestSuite
+// SetupSuite initializes machine E2ETestSuite
 func (s *E2ETestSuite) SetupSuite() {
 	s.T().Log("setting up e2e test suite")
 
@@ -62,12 +62,12 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.Require().NoError(s.network.WaitForNextBlock())
 }
 
-// Tear down machine E2ETestSuite
+// TearDownSuite clean up after testing
 func (s *E2ETestSuite) TearDownSuite() {
 	s.T().Log("tearing down e2e test suite")
 }
 
-// Attest machine and query attested machine from chain
+// TestAttestMachine attests machine and query attested machine from chain
 func (s *E2ETestSuite) TestAttestMachine() {
 	val := s.network.Validators[0]
 
