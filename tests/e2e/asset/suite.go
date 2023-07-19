@@ -28,7 +28,6 @@ import (
 )
 
 // Queryable pubkey for TestNotarizeAsset
-const pubKey = "AjKN6HiWucu1EBwzX0ACnkvomJiLRwq79oPxoLMY1zRw"
 const mnemonic = "helmet hedgehog lab actor weekend elbow pelican valid obtain hungry rocket decade tower gallery fit practice cart cherry giggle hair snack glance bulb farm"
 
 // Struct definition of machine E2ETestSuite
