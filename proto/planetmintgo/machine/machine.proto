@@ -7,7 +7,7 @@ message Machine {
   
   string name = 1; 
   string ticker = 2; 
-  uint64 issued = 3; 
+  bool reissue = 3; 
   uint64 amount = 4; 
   uint64 precision = 5; 
   string issuerPlanetmint = 6; 

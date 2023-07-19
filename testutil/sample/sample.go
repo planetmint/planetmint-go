@@ -30,7 +30,7 @@ func Machine(machineId string, pkPM string, pkL string) machinetypes.Machine {
 	m := machinetypes.Machine{
 		Name:             "machine",
 		Ticker:           "PM",
-		Issued:           1,
+		Reissue:          true,
 		Amount:           1000,
 		Precision:        8,
 		IssuerPlanetmint: pkPM,

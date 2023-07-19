@@ -75,7 +75,7 @@ func (s *E2ETestSuite) SetupSuite() {
 	machine := machinetypes.Machine{
 		Name:             "machine",
 		Ticker:           "machine_ticker",
-		Issued:           1,
+		Reissue:          true,
 		Amount:           1000,
 		Precision:        8,
 		IssuerPlanetmint: pkHex,

@@ -23,7 +23,7 @@ func (s *E2ETestSuite) TestAttestMachineREST() {
 	machine := machinetypes.Machine{
 		Name:             "machine",
 		Ticker:           "machine_ticker",
-		Issued:           1,
+		Reissue:          true,
 		Amount:           1000,
 		Precision:        8,
 		IssuerPlanetmint: pubKey,
