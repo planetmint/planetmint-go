@@ -11,6 +11,7 @@ import (
 	txtypes "github.com/cosmos/cosmos-sdk/types/tx"
 )
 
+// TestNotarizeAssetREST notarizes asset over REST endpoint
 func (s *E2ETestSuite) TestNotarizeAssetREST() {
 	val := s.network.Validators[0]
 
