@@ -14,8 +14,6 @@ import (
 
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 
-	machinetypes "planetmint-go/x/machine/types"
-
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
@@ -26,9 +24,6 @@ import (
 	"github.com/stretchr/testify/suite"
 	"sigs.k8s.io/yaml"
 )
-
-// Queryable pubkey for TestNotarizeAsset
-const mnemonic = "helmet hedgehog lab actor weekend elbow pelican valid obtain hungry rocket decade tower gallery fit practice cart cherry giggle hair snack glance bulb farm"
 
 // E2ETestSuite struct definition of asset suite
 type E2ETestSuite struct {
@@ -51,7 +46,7 @@ func (s *E2ETestSuite) SetupSuite() {
 	val := s.network.Validators[0]
 
 	kb := val.ClientCtx.Keyring
-	account, err := kb.NewAccount("machine", mnemonic, keyring.DefaultBIP39Passphrase, sdk.FullFundraiserPath, hd.Secp256k1)
+	account, err := kb.NewAccount(sample.Name, sample.Mnemonic, keyring.DefaultBIP39Passphrase, sdk.FullFundraiserPath, hd.Secp256k1)
 	s.Require().NoError(err)
 	pk, err := account.GetPubKey()
 	pkHex := hex.EncodeToString(pk.Bytes())
@@ -61,31 +56,18 @@ func (s *E2ETestSuite) SetupSuite() {
 
 	// sending funds to machine to initialize account on chain
 	args := []string{
-		"node0",
+		val.Moniker,
 		addr.String(),
-		"1000stake",
+		sample.Amount,
 		"--yes",
-		fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 	}
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
 
-	machine := machinetypes.Machine{
-		Name:             "machine",
-		Ticker:           "machine_ticker",
-		Issued:           1,
-		Amount:           1000,
-		Precision:        8,
-		IssuerPlanetmint: pkHex,
-		IssuerLiquid:     pkHex,
-		MachineId:        pkHex,
-		Metadata: &machinetypes.Metadata{
-			AdditionalDataCID: "CID",
-			Gps:               "{\"Latitude\":\"-48.876667\",\"Longitude\":\"-123.393333\"}",
-		},
-	}
+	machine := sample.Machine("machine", pkHex)
 	machineJSON, err := json.Marshal(&machine)
 	s.Require().NoError(err)
 

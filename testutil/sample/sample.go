@@ -11,6 +11,21 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+// Mnemonic sample mnemonic to use in tests
+const Mnemonic = "helmet hedgehog lab actor weekend elbow pelican valid obtain hungry rocket decade tower gallery fit practice cart cherry giggle hair snack glance bulb farm"
+
+// PubKey corresponding public key to sample mnemonic
+const PubKey = "AjKN6HiWucu1EBwzX0ACnkvomJiLRwq79oPxoLMY1zRw"
+
+// Name is the name of the sample machine to use in tests
+const Name = "machine"
+
+// Amount is the amount to transfer to the machine account
+const Amount = "1000stake"
+
+// Fees is the amount of fees to use in tests
+const Fees = "2stake"
+
 // KeyPair returns a sample private / public keypair
 func KeyPair() (string, string) {
 	secret := "Don't tell anybody"
@@ -26,25 +41,27 @@ func AccAddress() string {
 	return sdk.AccAddress(addr).String()
 }
 
-func Machine(machineId string, pkPM string, pkL string) machinetypes.Machine {
+func Machine(name, pubKey string) machinetypes.Machine {
+	metadata := Metadata()
 	m := machinetypes.Machine{
-		Name:             "machine",
-		Ticker:           "PM",
+		Name:             name,
+		Ticker:           name + "_ticker",
 		Issued:           1,
 		Amount:           1000,
 		Precision:        8,
-		IssuerPlanetmint: pkPM,
-		IssuerLiquid:     pkL,
-		MachineId:        machineId,
+		IssuerPlanetmint: pubKey,
+		IssuerLiquid:     pubKey,
+		MachineId:        pubKey,
+		Metadata:         &metadata,
 	}
 	return m
 }
 
-func MachineIndex(machineId string, pkPM string, pkL string) machinetypes.MachineIndex {
+func MachineIndex(pubKey string) machinetypes.MachineIndex {
 	return machinetypes.MachineIndex{
-		MachineId:        machineId,
-		IssuerPlanetmint: pkPM,
-		IssuerLiquid:     pkL,
+		MachineId:        pubKey,
+		IssuerPlanetmint: pubKey,
+		IssuerLiquid:     pubKey,
 	}
 }
 

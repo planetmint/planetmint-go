@@ -80,7 +80,10 @@ func PrepareTx(val *network.Validator, msg sdk.Msg, signer string) ([]byte, erro
 	}
 
 	txBuilder := val.ClientCtx.TxConfig.NewTxBuilder()
-	txBuilder.SetMsgs(msg)
+	err = txBuilder.SetMsgs(msg)
+	if err != nil {
+		return nil, err
+	}
 	txBuilder.SetGasLimit(200000)
 	txBuilder.SetFeeAmount(sdk.Coins{sdk.NewInt64Coin("stake", 2)})
 	txBuilder.SetTimeoutHeight(0)
