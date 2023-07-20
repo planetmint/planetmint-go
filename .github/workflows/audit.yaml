@@ -24,6 +24,9 @@ jobs:
       - name: Build
         run: go build -v ./...
 
+      - name: Run gofmt
+        run: if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then exit 1; fi
+
       - name: Run go vet
         run: go vet ./...
 
