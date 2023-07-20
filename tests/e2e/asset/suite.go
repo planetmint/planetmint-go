@@ -69,8 +69,8 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.Require().NoError(err)
 
 	args = []string{
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, "machine"),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 		"--yes",
 		string(machineJSON),
 	}
@@ -94,7 +94,7 @@ type unsafeExporter interface {
 func (s *E2ETestSuite) TestNotarizeAsset() {
 	val := s.network.Validators[0]
 
-	privKey, err := val.ClientCtx.Keyring.(unsafeExporter).ExportPrivateKeyObject("machine")
+	privKey, err := val.ClientCtx.Keyring.(unsafeExporter).ExportPrivateKeyObject(sample.Name)
 	s.Require().NoError(err)
 
 	sk := hex.EncodeToString(privKey.Bytes())
@@ -112,8 +112,8 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 				cidHash,
 				signature,
 				"pubkey",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, "machine"),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 				"--yes",
 			},
 			"machine not found",
@@ -124,8 +124,8 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 				"cid",
 				"signature",
 				hex.EncodeToString(privKey.PubKey().Bytes()),
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, "machine"),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 				"--yes",
 			},
 			"invalid signature",
@@ -136,8 +136,8 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 				cidHash,
 				signature,
 				hex.EncodeToString(privKey.PubKey().Bytes()),
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, "machine"),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 				"--yes",
 			},
 			"planetmintgo.asset.MsgNotarizeAsset",

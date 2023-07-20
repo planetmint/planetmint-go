@@ -16,13 +16,13 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 	val := s.network.Validators[0]
 
 	// Create Msg
-	k, err := val.ClientCtx.Keyring.Key("machine")
+	k, err := val.ClientCtx.Keyring.Key(sample.Name)
 	s.Require().NoError(err)
 
 	addr, err := k.GetAddress()
 	s.Require().NoError(err)
 
-	privKey, err := val.ClientCtx.Keyring.(unsafeExporter).ExportPrivateKeyObject("machine")
+	privKey, err := val.ClientCtx.Keyring.(unsafeExporter).ExportPrivateKeyObject(sample.Name)
 	s.Require().NoError(err)
 
 	sk := hex.EncodeToString(privKey.Bytes())
@@ -67,7 +67,7 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 
 	for _, tc := range testCases {
 		// Prepare Tx
-		txBytes, err := testutil.PrepareTx(val, &tc.msg, "machine")
+		txBytes, err := testutil.PrepareTx(val, &tc.msg, sample.Name)
 		s.Require().NoError(err)
 
 		// Broadcast Tx
