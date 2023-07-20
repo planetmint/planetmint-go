@@ -13,9 +13,7 @@ import (
 	"io"
 	"net/http"
 
-	//lint:ignore SA1019 file is generated
 	"github.com/golang/protobuf/descriptor"
-	//lint:ignore SA1019 file is generated
 	"github.com/golang/protobuf/proto"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/grpc-ecosystem/grpc-gateway/utilities"
@@ -32,7 +30,6 @@ var _ io.Reader
 var _ status.Status
 var _ = runtime.String
 var _ = utilities.NewDoubleArray
-//lint:ignore SA1019 file is generated
 var _ = descriptor.ForMessage
 var _ = metadata.Join
 
