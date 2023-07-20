@@ -15,7 +15,7 @@ import (
 const Mnemonic = "helmet hedgehog lab actor weekend elbow pelican valid obtain hungry rocket decade tower gallery fit practice cart cherry giggle hair snack glance bulb farm"
 
 // PubKey corresponding public key to sample mnemonic
-const PubKey = "AjKN6HiWucu1EBwzX0ACnkvomJiLRwq79oPxoLMY1zRw"
+const PubKey = "02328de87896b9cbb5101c335f40029e4be898988b470abbf683f1a0b318d73470"
 
 // Name is the name of the sample machine to use in tests
 const Name = "machine"

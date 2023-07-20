@@ -48,9 +48,6 @@ func (s *E2ETestSuite) SetupSuite() {
 	kb := val.ClientCtx.Keyring
 	account, err := kb.NewAccount(sample.Name, sample.Mnemonic, keyring.DefaultBIP39Passphrase, sdk.FullFundraiserPath, hd.Secp256k1)
 	s.Require().NoError(err)
-	pk, err := account.GetPubKey()
-	pkHex := hex.EncodeToString(pk.Bytes())
-	s.Require().NoError(err)
 
 	addr, _ := account.GetAddress()
 
@@ -67,7 +64,7 @@ func (s *E2ETestSuite) SetupSuite() {
 
 	s.Require().NoError(s.network.WaitForNextBlock())
 
-	machine := sample.Machine("machine", pkHex)
+	machine := sample.Machine(sample.Name, sample.PubKey)
 	machineJSON, err := json.Marshal(&machine)
 	s.Require().NoError(err)
 
