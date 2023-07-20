@@ -32,7 +32,6 @@ var _ io.Reader
 var _ status.Status
 var _ = runtime.String
 var _ = utilities.NewDoubleArray
-
 //lint:ignore SA1019 file is generated
 var _ = descriptor.ForMessage
 var _ = metadata.Join

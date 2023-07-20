@@ -46,7 +46,7 @@ func Machine(name, pubKey string) machinetypes.Machine {
 	m := machinetypes.Machine{
 		Name:             name,
 		Ticker:           name + "_ticker",
-		Issued:           1,
+		Reissue:          true,
 		Amount:           1000,
 		Precision:        8,
 		IssuerPlanetmint: pubKey,
