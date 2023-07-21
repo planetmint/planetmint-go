@@ -6,13 +6,10 @@ import (
 	"fmt"
 	"planetmint-go/testutil/network"
 	"planetmint-go/testutil/sample"
-	"regexp"
 
 	clitestutil "planetmint-go/testutil/cli"
 	assetcli "planetmint-go/x/asset/client/cli"
 	machinecli "planetmint-go/x/machine/client/cli"
-
-	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
@@ -22,7 +19,6 @@ import (
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"sigs.k8s.io/yaml"
 )
 
 // E2ETestSuite struct definition of asset suite
@@ -147,29 +143,14 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 	for _, tc := range testCases {
 		out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, assetcli.CmdNotarizeAsset(), tc.args)
 		s.Require().NoError(err)
-		// Hack: numbers come back as strings and cannot be unmarshalled into TxResponse struct
-		m := regexp.MustCompile(`"([0-9]+?)"`)
-		str := m.ReplaceAllString(out.String(), "${1}")
 
-		var txResponse sdk.TxResponse
-		err = json.Unmarshal([]byte(str), &txResponse)
+		txResponse, err := clitestutil.GetTxResponseFromOut(out)
 		s.Require().NoError(err)
 
 		s.Require().NoError(s.network.WaitForNextBlock())
-		args := []string{
-			txResponse.TxHash,
-		}
-		out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, authcmd.QueryTxCmd(), args)
+		rawLog, err := clitestutil.GetRawLogFromTxResponse(val, txResponse)
 		s.Require().NoError(err)
 
-		str = m.ReplaceAllString(out.String(), "${1}")
-		// Need to convert to JSON first, because TxResponse struct lacks `yaml:"height,omitempty"`, etc.
-		j, err := yaml.YAMLToJSON([]byte(str))
-		s.Require().NoError(err)
-
-		err = json.Unmarshal(j, &txResponse)
-		s.Require().NoError(err)
-
-		assert.Contains(s.T(), txResponse.RawLog, tc.rawLog)
+		assert.Contains(s.T(), rawLog, tc.rawLog)
 	}
 }
