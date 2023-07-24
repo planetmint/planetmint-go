@@ -116,6 +116,7 @@ import (
 	assetmodule "planetmint-go/x/asset"
 	assetmodulekeeper "planetmint-go/x/asset/keeper"
 	assetmoduletypes "planetmint-go/x/asset/types"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "planetmint-go/app/params"
@@ -123,7 +124,7 @@ import (
 )
 
 const (
-	AccountAddressPrefix = "plmt"
+	AccountAddressPrefix = "cosmos"
 	Name                 = "planetmint-go"
 )
 
