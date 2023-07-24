@@ -6,9 +6,13 @@ import (
 
 	machinetypes "planetmint-go/x/machine/types"
 
+	"github.com/btcsuite/btcd/btcutil/hdkeychain"
+	"github.com/btcsuite/btcd/chaincfg"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/go-bip39"
 )
 
 // Mnemonic sample mnemonic to use in tests
@@ -43,6 +47,7 @@ func AccAddress() string {
 
 func Machine(name, pubKey string) machinetypes.Machine {
 	metadata := Metadata()
+	_, liquidPubKey := LiquidKeyPair()
 	m := machinetypes.Machine{
 		Name:             name,
 		Ticker:           name + "_ticker",
@@ -50,18 +55,18 @@ func Machine(name, pubKey string) machinetypes.Machine {
 		Amount:           1000,
 		Precision:        8,
 		IssuerPlanetmint: pubKey,
-		IssuerLiquid:     pubKey,
+		IssuerLiquid:     liquidPubKey,
 		MachineId:        pubKey,
 		Metadata:         &metadata,
 	}
 	return m
 }
 
-func MachineIndex(pubKey string) machinetypes.MachineIndex {
+func MachineIndex(pubKey string, liquidPubKey string) machinetypes.MachineIndex {
 	return machinetypes.MachineIndex{
 		MachineId:        pubKey,
 		IssuerPlanetmint: pubKey,
-		IssuerLiquid:     pubKey,
+		IssuerLiquid:     liquidPubKey,
 	}
 }
 
@@ -88,4 +93,11 @@ func Asset(sk string) (string, string) {
 	signatureHex := hex.EncodeToString(sign)
 
 	return cid, signatureHex
+}
+
+func LiquidKeyPair() (string, string) {
+	seed, _ := bip39.NewSeedWithErrorChecking(Mnemonic, keyring.DefaultBIP39Passphrase)
+	xprivKey, _ := hdkeychain.NewMaster(seed, &chaincfg.MainNetParams)
+	xpubKey, _ := xprivKey.Neuter()
+	return xprivKey.String(), xpubKey.String()
 }
