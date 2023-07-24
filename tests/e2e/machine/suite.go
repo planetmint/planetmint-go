@@ -12,6 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -51,10 +52,17 @@ func (s *E2ETestSuite) SetupSuite() {
 		"--yes",
 		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 	}
-	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
+	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
+	s.Require().NoError(err)
+
+	txResponse, err := clitestutil.GetTxResponseFromOut(out)
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
+	rawLog, err := clitestutil.GetRawLogFromTxResponse(val, txResponse)
+	s.Require().NoError(err)
+
+	assert.Contains(s.T(), rawLog, "cosmos.bank.v1beta1.MsgSend")
 }
 
 // TearDownSuite clean up after testing
@@ -78,10 +86,17 @@ func (s *E2ETestSuite) TestAttestMachine() {
 		string(machineJSON),
 	}
 
-	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
+	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
+	s.Require().NoError(err)
+
+	txResponse, err := clitestutil.GetTxResponseFromOut(out)
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
+	rawLog, err := clitestutil.GetRawLogFromTxResponse(val, txResponse)
+	s.Require().NoError(err)
+
+	assert.Contains(s.T(), rawLog, "planetmintgo.machine.MsgAttestMachine")
 
 	args = []string{
 		sample.PubKey,

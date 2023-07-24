@@ -6,13 +6,10 @@ import (
 	"fmt"
 	"planetmint-go/testutil/network"
 	"planetmint-go/testutil/sample"
-	"regexp"
 
 	clitestutil "planetmint-go/testutil/cli"
 	assetcli "planetmint-go/x/asset/client/cli"
 	machinecli "planetmint-go/x/machine/client/cli"
-
-	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
@@ -22,7 +19,6 @@ import (
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"sigs.k8s.io/yaml"
 )
 
 // E2ETestSuite struct definition of asset suite
@@ -48,9 +44,6 @@ func (s *E2ETestSuite) SetupSuite() {
 	kb := val.ClientCtx.Keyring
 	account, err := kb.NewAccount(sample.Name, sample.Mnemonic, keyring.DefaultBIP39Passphrase, sdk.FullFundraiserPath, hd.Secp256k1)
 	s.Require().NoError(err)
-	pk, err := account.GetPubKey()
-	pkHex := hex.EncodeToString(pk.Bytes())
-	s.Require().NoError(err)
 
 	addr, _ := account.GetAddress()
 
@@ -62,25 +55,42 @@ func (s *E2ETestSuite) SetupSuite() {
 		"--yes",
 		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 	}
-	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
+	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
+	s.Require().NoError(err)
+
+	txResponse, err := clitestutil.GetTxResponseFromOut(out)
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
+	rawLog, err := clitestutil.GetRawLogFromTxResponse(val, txResponse)
+	s.Require().NoError(err)
 
-	machine := sample.Machine("machine", pkHex)
+	assert.Contains(s.T(), rawLog, "cosmos.bank.v1beta1.MsgSend")
+
+	s.Require().NoError(s.network.WaitForNextBlock())
+
+	machine := sample.Machine(sample.Name, sample.PubKey)
 	machineJSON, err := json.Marshal(&machine)
 	s.Require().NoError(err)
 
 	args = []string{
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, "machine"),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 		"--yes",
 		string(machineJSON),
 	}
 
-	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
+	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
 	s.Require().NoError(err)
+
+	txResponse, err = clitestutil.GetTxResponseFromOut(out)
+	s.Require().NoError(err)
+
 	s.Require().NoError(s.network.WaitForNextBlock())
+	rawLog, err = clitestutil.GetRawLogFromTxResponse(val, txResponse)
+	s.Require().NoError(err)
+
+	assert.Contains(s.T(), rawLog, "planetmintgo.machine.MsgAttestMachine")
 }
 
 // TearDownSuite clean up after testing
@@ -97,7 +107,7 @@ type unsafeExporter interface {
 func (s *E2ETestSuite) TestNotarizeAsset() {
 	val := s.network.Validators[0]
 
-	privKey, err := val.ClientCtx.Keyring.(unsafeExporter).ExportPrivateKeyObject("machine")
+	privKey, err := val.ClientCtx.Keyring.(unsafeExporter).ExportPrivateKeyObject(sample.Name)
 	s.Require().NoError(err)
 
 	sk := hex.EncodeToString(privKey.Bytes())
@@ -115,8 +125,8 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 				cidHash,
 				signature,
 				"pubkey",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, "machine"),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 				"--yes",
 			},
 			"machine not found",
@@ -127,8 +137,8 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 				"cid",
 				"signature",
 				hex.EncodeToString(privKey.PubKey().Bytes()),
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, "machine"),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 				"--yes",
 			},
 			"invalid signature",
@@ -139,8 +149,8 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 				cidHash,
 				signature,
 				hex.EncodeToString(privKey.PubKey().Bytes()),
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, "machine"),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, "2stake"),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 				"--yes",
 			},
 			"planetmintgo.asset.MsgNotarizeAsset",
@@ -150,29 +160,14 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 	for _, tc := range testCases {
 		out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, assetcli.CmdNotarizeAsset(), tc.args)
 		s.Require().NoError(err)
-		// Hack: numbers come back as strings and cannot be unmarshalled into TxResponse struct
-		m := regexp.MustCompile(`"([0-9]+?)"`)
-		str := m.ReplaceAllString(out.String(), "${1}")
 
-		var txResponse sdk.TxResponse
-		err = json.Unmarshal([]byte(str), &txResponse)
+		txResponse, err := clitestutil.GetTxResponseFromOut(out)
 		s.Require().NoError(err)
 
 		s.Require().NoError(s.network.WaitForNextBlock())
-		args := []string{
-			txResponse.TxHash,
-		}
-		out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, authcmd.QueryTxCmd(), args)
+		rawLog, err := clitestutil.GetRawLogFromTxResponse(val, txResponse)
 		s.Require().NoError(err)
 
-		str = m.ReplaceAllString(out.String(), "${1}")
-		// Need to convert to JSON first, because TxResponse struct lacks `yaml:"height,omitempty"`, etc.
-		j, err := yaml.YAMLToJSON([]byte(str))
-		s.Require().NoError(err)
-
-		err = json.Unmarshal(j, &txResponse)
-		s.Require().NoError(err)
-
-		assert.Contains(s.T(), txResponse.RawLog, tc.rawLog)
+		assert.Contains(s.T(), rawLog, tc.rawLog)
 	}
 }
