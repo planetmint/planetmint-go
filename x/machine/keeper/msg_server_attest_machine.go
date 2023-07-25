@@ -15,12 +15,8 @@ import (
 func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMachine) (*types.MsgAttestMachineResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	xpubKeyLiquid, err := hdkeychain.NewKeyFromString(msg.Machine.IssuerLiquid)
-	if err != nil {
-		return nil, errors.New("invalid liquid key")
-	}
-	isValidLiquidKey := xpubKeyLiquid.IsForNet(&chaincfg.MainNetParams)
-	if !isValidLiquidKey {
+	isValidIssuerLiquid := validateIssuerLiquid(msg.Machine.IssuerLiquid)
+	if !isValidIssuerLiquid {
 		return nil, errors.New("invalid liquid key")
 	}
 
@@ -32,4 +28,13 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 	k.StoreMachineIndex(ctx, *msg.Machine)
 
 	return &types.MsgAttestMachineResponse{}, nil
+}
+
+func validateIssuerLiquid(issuerLiquid string) bool {
+	xpubKeyLiquid, err := hdkeychain.NewKeyFromString(issuerLiquid)
+	if err != nil {
+		return false
+	}
+	isValidLiquidKey := xpubKeyLiquid.IsForNet(&chaincfg.MainNetParams)
+	return isValidLiquidKey
 }
