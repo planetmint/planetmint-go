@@ -8,6 +8,7 @@ import (
 
 	"github.com/btcsuite/btcd/btcutil/hdkeychain"
 	"github.com/btcsuite/btcd/chaincfg"
+	"github.com/crgimenes/go-osc"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -21,7 +22,7 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 	}
 
 	if msg.Machine.Reissue {
-		k.Logger(ctx).Info("TODO Implement handle on reissue == true")
+		k.reissueMachineNFT(msg.Machine)
 	}
 
 	k.StoreMachine(ctx, *msg.Machine)
@@ -37,4 +38,13 @@ func validateIssuerLiquid(issuerLiquid string) bool {
 	}
 	isValidLiquidKey := xpubKeyLiquid.IsForNet(&chaincfg.MainNetParams)
 	return isValidLiquidKey
+}
+
+func (k msgServer) reissueMachineNFT(machine *types.Machine) {
+	// client := osc.NewClient("localhost", 8765)
+	msg := osc.NewMessage("/osc/address")
+	msg.Append(int32(111))
+	msg.Append(true)
+	msg.Append("hello")
+	k.oscClient.Send(msg)
 }
