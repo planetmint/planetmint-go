@@ -36,3 +36,13 @@ func TestMsgServerAttestMachine(t *testing.T) {
 		assert.Equal(t, &types.MsgAttestMachineResponse{}, res)
 	}
 }
+
+func TestMsgServerAttestMachineInvalidLiquidKey(t *testing.T) {
+	_, pk := sample.KeyPair()
+	machine := sample.Machine(pk, pk)
+	machine.IssuerLiquid = "invalidkey"
+	msg := types.NewMsgAttestMachine(pk, &machine)
+	msgServer, ctx := setupMsgServer(t)
+	_, err := msgServer.AttestMachine(ctx, msg)
+	assert.EqualError(t, err, "invalid liquid key")
+}
