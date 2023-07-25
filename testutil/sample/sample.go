@@ -96,6 +96,7 @@ func Asset(sk string) (string, string) {
 }
 
 func LiquidKeyPair() (string, string) {
+	// Ignore errors as keypair was tested beforehand
 	seed, _ := bip39.NewSeedWithErrorChecking(Mnemonic, keyring.DefaultBIP39Passphrase)
 	xprivKey, _ := hdkeychain.NewMaster(seed, &chaincfg.MainNetParams)
 	xpubKey, _ := xprivKey.Neuter()
