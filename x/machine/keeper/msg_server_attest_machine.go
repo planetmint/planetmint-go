@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	config "planetmint-go/config"
 	"planetmint-go/x/machine/types"
 
 	"github.com/btcsuite/btcd/btcutil/hdkeychain"
@@ -22,7 +23,7 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 	}
 
 	if msg.Machine.Reissue {
-		err := k.reissueMachineNFT(msg.Machine)
+		err := k.reissueMachine(msg.Machine)
 		if err != nil {
 			return nil, errors.New("an error occured while reissuning the machine")
 		}
@@ -43,8 +44,9 @@ func validateIssuerLiquid(issuerLiquid string) bool {
 	return isValidLiquidKey
 }
 
-func (k msgServer) reissueMachineNFT(machine *types.Machine) error {
-	client := osc.NewClient("localhost", 8765)
+func (k msgServer) reissueMachine(machine *types.Machine) error {
+	conf := config.GetConfig()
+	client := osc.NewClient(conf.WATCHMEN_ENDPOINT, int(conf.WATCHMEN_PORT))
 	msg := osc.NewMessage("/rddl/*")
 	msg.Append(machine.Name)
 	msg.Append(machine.Ticker)
