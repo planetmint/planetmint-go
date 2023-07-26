@@ -22,7 +22,10 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 	}
 
 	if msg.Machine.Reissue {
-		k.reissueMachineNFT(msg.Machine)
+		err := k.reissueMachineNFT(msg.Machine)
+		if err != nil {
+			return nil, errors.New("an error occured while reissuning the machine")
+		}
 	}
 
 	k.StoreMachine(ctx, *msg.Machine)
@@ -40,7 +43,7 @@ func validateIssuerLiquid(issuerLiquid string) bool {
 	return isValidLiquidKey
 }
 
-func (k msgServer) reissueMachineNFT(machine *types.Machine) {
+func (k msgServer) reissueMachineNFT(machine *types.Machine) error {
 	client := osc.NewClient("localhost", 8765)
 	msg := osc.NewMessage("/rddl/*")
 	msg.Append(machine.Name)
@@ -49,5 +52,6 @@ func (k msgServer) reissueMachineNFT(machine *types.Machine) {
 	msg.Append(machine.Amount)
 	msg.Append("1")
 	msg.Append(machine.Precision)
-	client.Send(msg)
+	err := client.Send(msg)
+	return err
 }
