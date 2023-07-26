@@ -50,6 +50,7 @@ func Machine(name, pubKey string) machinetypes.Machine {
 	m := machinetypes.Machine{
 		Name:             name,
 		Ticker:           name + "_ticker",
+		Domain:           "lab.r3c.net",
 		Reissue:          true,
 		Amount:           1000,
 		Precision:        8,

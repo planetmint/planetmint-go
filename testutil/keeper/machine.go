@@ -15,10 +15,7 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
-
-	machinetestutils "planetmint-go/x/machine/testutil"
 )
 
 func MachineKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
@@ -47,9 +44,6 @@ func MachineKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		"MachineParams",
 	)
 
-	ctrl := gomock.NewController(t)
-	oscMockClient := machinetestutils.NewMockClient(ctrl)
-
 	k := keeper.NewKeeper(
 		cdc,
 		storeKey,
@@ -58,7 +52,6 @@ func MachineKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		issuerLiquidIndexStoreKey,
 		memStoreKey,
 		paramsSubspace,
-		oscMockClient,
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())

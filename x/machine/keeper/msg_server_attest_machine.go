@@ -41,10 +41,13 @@ func validateIssuerLiquid(issuerLiquid string) bool {
 }
 
 func (k msgServer) reissueMachineNFT(machine *types.Machine) {
-	// client := osc.NewClient("localhost", 8765)
-	msg := osc.NewMessage("/osc/address")
-	msg.Append(int32(111))
-	msg.Append(true)
-	msg.Append("hello")
-	k.oscClient.Send(msg)
+	client := osc.NewClient("localhost", 8765)
+	msg := osc.NewMessage("/rddl/*")
+	msg.Append(machine.Name)
+	msg.Append(machine.Ticker)
+	msg.Append(machine.Domain)
+	msg.Append(machine.Amount)
+	msg.Append("1")
+	msg.Append(machine.Precision)
+	client.Send(msg)
 }

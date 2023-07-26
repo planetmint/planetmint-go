@@ -7,13 +7,14 @@ message Machine {
   
   string name = 1; 
   string ticker = 2; 
-  bool reissue = 3; 
-  uint64 amount = 4; 
-  uint64 precision = 5; 
-  string issuerPlanetmint = 6; 
-  string issuerLiquid = 7; 
-  string machineId = 8; 
-  Metadata metadata = 9; 
+  string domain = 3; 
+  bool reissue = 4; 
+  uint64 amount = 5; 
+  uint64 precision = 6; 
+  string issuerPlanetmint = 7; 
+  string issuerLiquid = 8; 
+  string machineId = 9; 
+  Metadata metadata = 10; 
 }
 
 message Metadata {
