@@ -51,9 +51,9 @@ func (k msgServer) reissueMachine(machine *types.Machine) error {
 	msg.Append(machine.Name)
 	msg.Append(machine.Ticker)
 	msg.Append(machine.Domain)
-	msg.Append(machine.Amount)
+	msg.Append(int32(machine.Amount))
 	msg.Append("1")
-	msg.Append(machine.Precision)
+	msg.Append(int32(machine.Precision))
 	err := client.Send(msg)
 	return err
 }
