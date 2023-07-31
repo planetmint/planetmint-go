@@ -32,7 +32,6 @@ func NewKeeper(
 	issuerLiquidIndexStoreKey,
 	memKey storetypes.StoreKey,
 	ps paramtypes.Subspace,
-
 ) *Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {

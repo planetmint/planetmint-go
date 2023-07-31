@@ -43,6 +43,7 @@ func MachineKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		memStoreKey,
 		"MachineParams",
 	)
+
 	k := keeper.NewKeeper(
 		cdc,
 		storeKey,

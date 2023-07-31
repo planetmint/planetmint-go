@@ -4,10 +4,12 @@ import (
 	"context"
 	"errors"
 
+	config "planetmint-go/config"
 	"planetmint-go/x/machine/types"
 
 	"github.com/btcsuite/btcd/btcutil/hdkeychain"
 	"github.com/btcsuite/btcd/chaincfg"
+	"github.com/crgimenes/go-osc"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -21,7 +23,10 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 	}
 
 	if msg.Machine.Reissue {
-		k.Logger(ctx).Info("TODO Implement handle on reissue == true")
+		err := k.reissueMachine(msg.Machine)
+		if err != nil {
+			return nil, errors.New("an error occured while reissuning the machine")
+		}
 	}
 
 	k.StoreMachine(ctx, *msg.Machine)
@@ -37,4 +42,18 @@ func validateIssuerLiquid(issuerLiquid string) bool {
 	}
 	isValidLiquidKey := xpubKeyLiquid.IsForNet(&chaincfg.MainNetParams)
 	return isValidLiquidKey
+}
+
+func (k msgServer) reissueMachine(machine *types.Machine) error {
+	conf := config.GetConfig()
+	client := osc.NewClient(conf.WATCHMEN_ENDPOINT, int(conf.WATCHMEN_PORT))
+	msg := osc.NewMessage("/rddl/*")
+	msg.Append(machine.Name)
+	msg.Append(machine.Ticker)
+	msg.Append(machine.Domain)
+	msg.Append(int32(machine.Amount))
+	msg.Append("1")
+	msg.Append(int32(machine.Precision))
+	err := client.Send(msg)
+	return err
 }
