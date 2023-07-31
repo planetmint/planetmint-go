@@ -37,7 +37,7 @@ var (
 func DefaultConfig() *Config {
 	return &Config{
 		WatchmenConfig: WatchmenConfig{
-			Endpoint: "localhost",
+			Endpoint: "lab.r3c.network",
 			Port:     7401,
 		},
 	}

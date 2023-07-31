@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"errors"
+	"strconv"
 
 	config "planetmint-go/config"
 	"planetmint-go/x/machine/types"
@@ -22,11 +23,9 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 		return nil, errors.New("invalid liquid key")
 	}
 
-	if msg.Machine.Reissue {
-		err := k.reissueMachine(msg.Machine)
-		if err != nil {
-			return nil, errors.New("an error occured while reissuning the machine")
-		}
+	err := k.issueMachineNFT(msg.Machine)
+	if err != nil {
+		return nil, errors.New("an error occurred while issuing the machine NFT")
 	}
 
 	k.StoreMachine(ctx, *msg.Machine)
@@ -44,16 +43,22 @@ func validateIssuerLiquid(issuerLiquid string) bool {
 	return isValidLiquidKey
 }
 
-func (k msgServer) reissueMachine(machine *types.Machine) error {
+func (k msgServer) issueMachineNFT(machine *types.Machine) error {
 	conf := config.GetConfig()
 	client := osc.NewClient(conf.WatchmenConfig.Endpoint, conf.WatchmenConfig.Port)
-	msg := osc.NewMessage("/rddl/*")
+	machine_precision := strconv.FormatInt(int64(machine.Precision), 10)
+	machine_amount := strconv.FormatInt(int64(machine.Amount), 10)
+
+	msg := osc.NewMessage("/rddl/issue")
 	msg.Append(machine.Name)
 	msg.Append(machine.Ticker)
 	msg.Append(machine.Domain)
-	msg.Append(int32(machine.Amount))
+	msg.Append(machine_amount)
 	msg.Append("1")
-	msg.Append(int32(machine.Precision))
+	msg.Append(machine_precision)
+	msg.Append(machine.Metadata.GetAdditionalDataCID())
+	msg.Append(machine.GetIssuerPlanetmint())
 	err := client.Send(msg)
+
 	return err
 }
