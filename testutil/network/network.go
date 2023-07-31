@@ -6,7 +6,6 @@ import (
 	"time"
 
 	tmdb "github.com/cometbft/cometbft-db"
-	tmrand "github.com/cometbft/cometbft/libs/rand"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
@@ -51,7 +50,7 @@ func New(t *testing.T, configs ...Config) *Network {
 func DefaultConfig() network.Config {
 	var (
 		encoding = app.MakeEncodingConfig()
-		chainID  = "chain-" + tmrand.NewRand().Str(6)
+		chainID  = "chain-foobarbaz"
 	)
 	return network.Config{
 		Codec:             encoding.Marshaler,

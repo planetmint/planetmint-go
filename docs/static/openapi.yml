@@ -46490,9 +46490,8 @@ paths:
                     type: string
                   ticker:
                     type: string
-                  issued:
-                    type: string
-                    format: uint64
+                  reissue:
+                    type: boolean
                   amount:
                     type: string
                     format: uint64
@@ -75335,9 +75334,8 @@ definitions:
         type: string
       ticker:
         type: string
-      issued:
-        type: string
-        format: uint64
+      reissue:
+        type: boolean
       amount:
         type: string
         format: uint64
@@ -75387,9 +75385,8 @@ definitions:
             type: string
           ticker:
             type: string
-          issued:
-            type: string
-            format: uint64
+          reissue:
+            type: boolean
           amount:
             type: string
             format: uint64
