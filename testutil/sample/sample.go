@@ -1,7 +1,6 @@
 package sample
 
 import (
-	"crypto/sha256"
 	"encoding/hex"
 
 	machinetypes "planetmint-go/x/machine/types"
@@ -85,10 +84,8 @@ func Asset(sk string) (string, string) {
 	skBytes, _ := hex.DecodeString(sk)
 	privKey := &secp256k1.PrivKey{Key: skBytes}
 
-	cidBytes, _ := hex.DecodeString(cid)
-	hash := sha256.Sum256(cidBytes)
-
-	sign, _ := privKey.Sign(hash[:])
+	cid_bytes := []byte(cid)
+	sign, _ := privKey.Sign(cid_bytes)
 
 	signatureHex := hex.EncodeToString(sign)
 
