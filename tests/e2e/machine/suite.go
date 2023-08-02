@@ -14,8 +14,6 @@ import (
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // E2ETestSuite struct definition of machine suite
@@ -39,7 +37,7 @@ func (s *E2ETestSuite) SetupSuite() {
 	val := s.network.Validators[0]
 
 	kb := val.ClientCtx.Keyring
-	account, err := kb.NewAccount(sample.Name, sample.Mnemonic, keyring.DefaultBIP39Passphrase, sdk.FullFundraiserPath, hd.Secp256k1)
+	account, err := kb.NewAccount(sample.Name, sample.Mnemonic, keyring.DefaultBIP39Passphrase, sample.DefaultDerivationPath, hd.Secp256k1)
 	s.Require().NoError(err)
 
 	addr, _ := account.GetAddress()

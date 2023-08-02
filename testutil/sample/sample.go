@@ -29,6 +29,8 @@ const Amount = "1000stake"
 // Fees is the amount of fees to use in tests
 const Fees = "2stake"
 
+const DefaultDerivationPath = "m/44'/8680'/0'/0/0"
+
 // KeyPair returns a sample private / public keypair
 func KeyPair() (string, string) {
 	secret := "Don't tell anybody"

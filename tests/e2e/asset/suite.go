@@ -15,7 +15,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	"github.com/cosmos/cosmos-sdk/crypto/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -42,7 +41,7 @@ func (s *E2ETestSuite) SetupSuite() {
 	val := s.network.Validators[0]
 
 	kb := val.ClientCtx.Keyring
-	account, err := kb.NewAccount(sample.Name, sample.Mnemonic, keyring.DefaultBIP39Passphrase, sdk.FullFundraiserPath, hd.Secp256k1)
+	account, err := kb.NewAccount(sample.Name, sample.Mnemonic, keyring.DefaultBIP39Passphrase, sample.DefaultDerivationPath, hd.Secp256k1)
 	s.Require().NoError(err)
 
 	addr, _ := account.GetAddress()
