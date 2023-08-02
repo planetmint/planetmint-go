@@ -46490,6 +46490,8 @@ paths:
                     type: string
                   ticker:
                     type: string
+                  domain:
+                    type: string
                   reissue:
                     type: boolean
                   amount:
@@ -75334,6 +75336,8 @@ definitions:
         type: string
       ticker:
         type: string
+      domain:
+        type: string
       reissue:
         type: boolean
       amount:
@@ -75384,6 +75388,8 @@ definitions:
           name:
             type: string
           ticker:
+            type: string
+          domain:
             type: string
           reissue:
             type: boolean
