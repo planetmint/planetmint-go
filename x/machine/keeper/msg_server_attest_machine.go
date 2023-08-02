@@ -15,6 +15,12 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+func (k msgServer) isNFTCreationRequest(machine *types.Machine) bool {
+	if !machine.GetReissue() && machine.GetAmount() == 1 && machine.GetPrecision() == 8 {
+		return true
+	}
+	return false
+}
 func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMachine) (*types.MsgAttestMachineResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -22,10 +28,11 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 	if !isValidIssuerLiquid {
 		return nil, errors.New("invalid liquid key")
 	}
-
-	err := k.issueMachineNFT(msg.Machine)
-	if err != nil {
-		return nil, errors.New("an error occurred while issuing the machine NFT")
+	if k.isNFTCreationRequest(msg.Machine) {
+		err := k.issueMachineNFT(msg.Machine)
+		if err != nil {
+			return nil, errors.New("an error occurred while issuing the machine NFT")
+		}
 	}
 
 	k.StoreMachine(ctx, *msg.Machine)
