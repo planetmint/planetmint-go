@@ -11,12 +11,14 @@ const DefaultConfigTemplate = `
 ###############################################################################
 
 [planetmint]
+osc-service-port = {{ .PlmntConfig.OSCServicePort }}
 watchmen-endpoint = "{{ .PlmntConfig.WatchmenEndpoint }}"
 watchmen-port = {{ .PlmntConfig.WatchmenPort }}
 `
 
 // Config defines Planetmint's top level configuration
 type Config struct {
+	OSCServicePort   int    `mapstructure:"osc-service-port" json:"osc-service-port"`
 	WatchmenEndpoint string `mapstructure:"watchmen-endpoint" json:"watchmen-endpoint"`
 	WatchmenPort     int    `mapstructure:"watchmen-port" json:"watchmen-port"`
 }
@@ -30,6 +32,7 @@ var (
 // DefaultConfig returns planetmint's default configuration.
 func DefaultConfig() *Config {
 	return &Config{
+		OSCServicePort:   8766,
 		WatchmenEndpoint: "lab.r3c.network",
 		WatchmenPort:     7401,
 	}

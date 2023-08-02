@@ -1,12 +1,16 @@
 package keeper
 
 import (
+	config "planetmint-go/config"
+	"strconv"
+
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/hypebeast/go-osc/osc"
 )
 
 func (k Keeper) IssueResponseHandler(logger log.Logger) {
-	addr := "0.0.0.0:8766"
+	conf := config.GetConfig()
+	addr := "0.0.0.0:" + strconv.FormatInt(int64(conf.OSCServicePort), 10)
 	d := osc.NewStandardDispatcher()
 	err := d.AddMsgHandler("/rddl/resp", func(msg *osc.Message) {
 		logger.Info("Issue Response: " + msg.String())
