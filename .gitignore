@@ -6,4 +6,4 @@ release/
 .DS_Store
 vendor/
 tags
-planetmint-god
+/planetmint-god

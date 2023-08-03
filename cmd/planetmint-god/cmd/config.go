@@ -6,7 +6,7 @@ import (
 	"planetmint-go/app"
 )
 
-func initSDKConfig() {
+func initSDKConfig() *sdk.Config {
 	// Set prefixes
 	accountPubKeyPrefix := app.AccountAddressPrefix + "pub"
 	validatorAddressPrefix := app.AccountAddressPrefix + "valoper"
@@ -22,4 +22,5 @@ func initSDKConfig() {
 	// Set to PLMNT coin type as defined in SLIP44 (https://github.com/satoshilabs/slips/blob/master/slip-0044.md)
 	config.SetCoinType(8680)
 	config.Seal()
+	return config
 }
