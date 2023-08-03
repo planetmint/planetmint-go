@@ -18,7 +18,7 @@ import (
 const Mnemonic = "helmet hedgehog lab actor weekend elbow pelican valid obtain hungry rocket decade tower gallery fit practice cart cherry giggle hair snack glance bulb farm"
 
 // PubKey corresponding public key to sample mnemonic
-const PubKey = "02328de87896b9cbb5101c335f40029e4be898988b470abbf683f1a0b318d73470"
+const PubKey = "021cd2a59c6f9402ce09effba89b3deb6bb5863733e625f22c06204918061db4f0"
 
 // Name is the name of the sample machine to use in tests
 const Name = "machine"
@@ -28,6 +28,9 @@ const Amount = "1000stake"
 
 // Fees is the amount of fees to use in tests
 const Fees = "2stake"
+
+// DefaultDerivationPath is the BIP44Prefix for PLMNT (see https://github.com/satoshilabs/slips/blob/master/slip-0044.md)
+const DefaultDerivationPath = "m/44'/8680'/0'/0/0"
 
 // KeyPair returns a sample private / public keypair
 func KeyPair() (string, string) {
