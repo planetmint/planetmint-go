@@ -1,36 +1,65 @@
 package app
 
 import (
-	"path"
-	"path/filepath"
-	"runtime"
-	"strings"
-
-	"github.com/tkanos/gonfig"
+	"encoding/json"
+	"fmt"
+	"sync"
 )
 
-type Configuration struct {
-	WATCHMEN_ENDPOINT string
-	WATCHMEN_PORT     int
+const DefaultConfigTemplate = `
+###############################################################################
+###                         Planetmint                                      ###
+###############################################################################
+
+[planetmint]
+watchmen-endpoint = "{{ .PlmntConfig.WatchmenConfig.Endpoint }}"
+watchmen-port = {{ .PlmntConfig.WatchmenConfig.Port }}
+`
+
+// Config defines Planetmint's top level configuration
+type Config struct {
+	WatchmenConfig WatchmenConfig `mapstructure:"watchmen-config" json:"watchmen-config"`
 }
 
-func GetConfig(params ...string) Configuration {
-	configuration := Configuration{}
-	env := "dev"
+// WatchmenConfig defines Planetmint's watchmen configuration
+type WatchmenConfig struct {
+	Endpoint string `mapstructure:"watchmen-endpoint" json:"watchmen-endpoint"`
+	Port     int    `mapstructure:"watchmen-port" json:"watchmen-port"`
+}
 
-	if len(params) > 0 {
-		env = params[0]
+// cosmos-sdk wide global singleton
+var (
+	plmntConfig *Config
+	initConfig  sync.Once
+)
+
+// DefaultConfig returns planetmint's default configuration.
+func DefaultConfig() *Config {
+	return &Config{
+		WatchmenConfig: WatchmenConfig{
+			Endpoint: "localhost",
+			Port:     7401,
+		},
 	}
+}
 
-	filename := []string{"config.", env, ".json"}
-	_, dirname, _, _ := runtime.Caller(0)
-	filePath := path.Join(filepath.Dir(dirname), strings.Join(filename, ""))
+// GetConfig returns the config instance for the SDK.
+func GetConfig() *Config {
+	initConfig.Do(func() {
+		plmntConfig = DefaultConfig()
+	})
+	return plmntConfig
+}
 
-	err := gonfig.GetConf(filePath, &configuration)
-
+// SetWatchmenConfig sets Planetmint's watchmen configuration
+func (config *Config) SetWatchmenConfig(watchmenConfig interface{}) {
+	jsonWatchmenConfig, err := json.Marshal(watchmenConfig)
 	if err != nil {
 		panic(err)
 	}
-
-	return configuration
+	err = json.Unmarshal(jsonWatchmenConfig, &config.WatchmenConfig)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("%+v\n", config.WatchmenConfig.Port)
 }
