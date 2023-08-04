@@ -537,6 +537,7 @@ func New(
 		app.GetSubspace(machinemoduletypes.ModuleName),
 	)
 	machineModule := machinemodule.NewAppModule(appCodec, app.MachineKeeper, app.AccountKeeper, app.BankKeeper)
+	go app.MachineKeeper.IssueResponseHandler(logger)
 
 	app.AssetKeeper = *assetmodulekeeper.NewKeeper(
 		appCodec,
