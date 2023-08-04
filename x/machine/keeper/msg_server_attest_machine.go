@@ -46,7 +46,7 @@ func validateIssuerLiquid(issuerLiquid string) bool {
 
 func (k msgServer) reissueMachine(machine *types.Machine) error {
 	conf := config.GetConfig()
-	client := osc.NewClient(conf.WATCHMEN_ENDPOINT, int(conf.WATCHMEN_PORT))
+	client := osc.NewClient(conf.WatchmenConfig.Endpoint, conf.WatchmenConfig.Port)
 	msg := osc.NewMessage("/rddl/*")
 	msg.Append(machine.Name)
 	msg.Append(machine.Ticker)

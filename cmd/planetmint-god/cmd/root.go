@@ -36,10 +36,12 @@ import (
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+
 	// this line is used by starport scaffolding # root/moduleImport
 
 	"planetmint-go/app"
 	appparams "planetmint-go/app/params"
+	planetmintconfig "planetmint-go/config"
 )
 
 // NewRootCmd creates a new root command for a Cosmos SDK application
@@ -234,6 +236,10 @@ func (a appCreator) newApp(
 ) servertypes.Application {
 	var cache sdk.MultiStorePersistentCache
 
+	// Get [planetmint] section from app.toml
+	plmntConfig := planetmintconfig.GetConfig()
+	plmntConfig.SetWatchmenConfig(appOpts.Get("planetmint"))
+
 	if cast.ToBool(appOpts.Get(server.FlagInterBlockCache)) {
 		cache = store.NewCommitKVStoreCacheManager()
 	}
@@ -344,6 +350,7 @@ func initAppConfig() (string, interface{}) {
 
 	type CustomAppConfig struct {
 		serverconfig.Config
+		PlmntConfig planetmintconfig.Config
 	}
 
 	// Optionally allow the chain developer to overwrite the SDK's default
@@ -363,10 +370,13 @@ func initAppConfig() (string, interface{}) {
 	// In simapp, we set the min gas prices to 0.
 	srvCfg.MinGasPrices = "0stake"
 
+	plmntCfg := planetmintconfig.DefaultConfig()
+
 	customAppConfig := CustomAppConfig{
-		Config: *srvCfg,
+		Config:      *srvCfg,
+		PlmntConfig: *plmntCfg,
 	}
-	customAppTemplate := serverconfig.DefaultConfigTemplate
+	customAppTemplate := serverconfig.DefaultConfigTemplate + planetmintconfig.DefaultConfigTemplate
 
 	return customAppTemplate, customAppConfig
 }
