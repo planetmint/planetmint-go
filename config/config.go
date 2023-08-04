@@ -2,7 +2,6 @@ package app
 
 import (
 	"encoding/json"
-	"fmt"
 	"sync"
 )
 
@@ -12,19 +11,14 @@ const DefaultConfigTemplate = `
 ###############################################################################
 
 [planetmint]
-watchmen-endpoint = "{{ .PlmntConfig.WatchmenConfig.Endpoint }}"
-watchmen-port = {{ .PlmntConfig.WatchmenConfig.Port }}
+watchmen-endpoint = "{{ .PlmntConfig.WatchmenEndpoint }}"
+watchmen-port = {{ .PlmntConfig.WatchmenPort }}
 `
 
 // Config defines Planetmint's top level configuration
 type Config struct {
-	WatchmenConfig WatchmenConfig `mapstructure:"watchmen-config" json:"watchmen-config"`
-}
-
-// WatchmenConfig defines Planetmint's watchmen configuration
-type WatchmenConfig struct {
-	Endpoint string `mapstructure:"watchmen-endpoint" json:"watchmen-endpoint"`
-	Port     int    `mapstructure:"watchmen-port" json:"watchmen-port"`
+	WatchmenEndpoint string `mapstructure:"watchmen-endpoint" json:"watchmen-endpoint"`
+	WatchmenPort     int    `mapstructure:"watchmen-port" json:"watchmen-port"`
 }
 
 // cosmos-sdk wide global singleton
@@ -36,10 +30,8 @@ var (
 // DefaultConfig returns planetmint's default configuration.
 func DefaultConfig() *Config {
 	return &Config{
-		WatchmenConfig: WatchmenConfig{
-			Endpoint: "lab.r3c.network",
-			Port:     7401,
-		},
+		WatchmenEndpoint: "lab.r3c.network",
+		WatchmenPort:     7401,
 	}
 }
 
@@ -51,15 +43,14 @@ func GetConfig() *Config {
 	return plmntConfig
 }
 
-// SetWatchmenConfig sets Planetmint's watchmen configuration
-func (config *Config) SetWatchmenConfig(watchmenConfig interface{}) {
-	jsonWatchmenConfig, err := json.Marshal(watchmenConfig)
+// SetWatchmenConfig sets Planetmint's configuration
+func (config *Config) SetPlanetmintConfig(planetmintconfig interface{}) {
+	jsonConfig, err := json.Marshal(planetmintconfig)
 	if err != nil {
 		panic(err)
 	}
-	err = json.Unmarshal(jsonWatchmenConfig, &config.WatchmenConfig)
+	err = json.Unmarshal(jsonConfig, &config)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("%+v\n", config.WatchmenConfig.Port)
 }

@@ -52,7 +52,7 @@ func validateIssuerLiquid(issuerLiquid string) bool {
 
 func (k msgServer) issueMachineNFT(machine *types.Machine) error {
 	conf := config.GetConfig()
-	client := osc.NewClient(conf.WatchmenConfig.Endpoint, conf.WatchmenConfig.Port)
+	client := osc.NewClient(conf.WatchmenEndpoint, conf.WatchmenPort)
 	machine_precision := strconv.FormatInt(int64(machine.Precision), 10)
 	machine_amount := strconv.FormatInt(int64(machine.Amount), 10)
 

@@ -238,7 +238,7 @@ func (a appCreator) newApp(
 
 	// Get [planetmint] section from app.toml
 	plmntConfig := planetmintconfig.GetConfig()
-	plmntConfig.SetWatchmenConfig(appOpts.Get("planetmint"))
+	plmntConfig.SetPlanetmintConfig(appOpts.Get("planetmint"))
 
 	if cast.ToBool(appOpts.Get(server.FlagInterBlockCache)) {
 		cache = store.NewCommitKVStoreCacheManager()
