@@ -18,5 +18,8 @@ var PlmntNetParams = chaincfg.Params{
 }
 
 func init() {
-	chaincfg.Register(&PlmntNetParams)
+	err := chaincfg.Register(&PlmntNetParams)
+	if err != nil {
+		panic(err)
+	}
 }

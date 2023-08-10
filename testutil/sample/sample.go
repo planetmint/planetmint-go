@@ -99,9 +99,17 @@ func Asset(sk string) (string, string) {
 }
 
 func ExtendedKeyPair(cfg chaincfg.Params) (string, string) {
-	// Ignore errors as keypair was tested beforehand
-	seed, _ := bip39.NewSeedWithErrorChecking(Mnemonic, keyring.DefaultBIP39Passphrase)
-	xprivKey, _ := hdkeychain.NewMaster(seed, &cfg)
-	xpubKey, _ := xprivKey.Neuter()
+	seed, err := bip39.NewSeedWithErrorChecking(Mnemonic, keyring.DefaultBIP39Passphrase)
+	if err != nil {
+		panic(err)
+	}
+	xprivKey, err := hdkeychain.NewMaster(seed, &cfg)
+	if err != nil {
+		panic(err)
+	}
+	xpubKey, err := xprivKey.Neuter()
+	if err != nil {
+		panic(err)
+	}
 	return xprivKey.String(), xpubKey.String()
 }
