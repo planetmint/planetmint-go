@@ -13,8 +13,9 @@ message Machine {
   uint64 precision = 6; 
   string issuerPlanetmint = 7; 
   string issuerLiquid = 8; 
-  string machineId = 9; 
+  string machineId = 9;
   Metadata metadata = 10; 
+  uint32 type = 11;
 }
 
 message Metadata {
