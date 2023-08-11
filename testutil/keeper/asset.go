@@ -10,7 +10,6 @@ import (
 
 	assettestutils "planetmint-go/x/asset/testutil"
 
-	"github.com/btcsuite/btcd/chaincfg"
 	tmdb "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
@@ -51,7 +50,7 @@ func AssetKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	mk := assettestutils.NewMockMachineKeeper(ctrl)
 	sk, pk := sample.KeyPair()
 	_, ppk := sample.ExtendedKeyPair(config.PlmntNetParams)
-	_, lpk := sample.ExtendedKeyPair(chaincfg.MainNetParams)
+	_, lpk := sample.ExtendedKeyPair(config.LiquidNetParams)
 	id := sample.MachineIndex(pk, ppk, lpk)
 	mk.EXPECT().GetMachineIndex(ctx, pk).Return(id, true).AnyTimes()
 	mk.EXPECT().GetMachineIndex(ctx, sk).Return(id, false).AnyTimes()

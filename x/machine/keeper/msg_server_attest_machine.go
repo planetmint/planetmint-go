@@ -28,7 +28,7 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 	if !isValidIssuerPlanetmint {
 		return nil, errors.New("invalid planetmint key")
 	}
-	isValidIssuerLiquid := validateExtendedPublicKey(msg.Machine.IssuerLiquid, chaincfg.MainNetParams)
+	isValidIssuerLiquid := validateExtendedPublicKey(msg.Machine.IssuerLiquid, config.LiquidNetParams)
 	if !isValidIssuerLiquid {
 		return nil, errors.New("invalid liquid key")
 	}

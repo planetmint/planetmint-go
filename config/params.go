@@ -4,6 +4,9 @@ import (
 	"github.com/btcsuite/btcd/chaincfg"
 )
 
+// LiquidNetParams defines the network parameters for the Liquid network.
+var LiquidNetParams chaincfg.Params
+
 // PlmntNetParams defines the network parameters for the Planetmint network.
 var PlmntNetParams = chaincfg.Params{
 	Name: "planetmint",
@@ -18,6 +21,15 @@ var PlmntNetParams = chaincfg.Params{
 }
 
 func init() {
+	// Not allowed to register LiquidNetParams, because it's just another
+	// Bitcoin network with different coin type.
+	// See https://github.com/satoshilabs/slips/blob/master/slip-0044.md
+	LiquidNetParams = chaincfg.MainNetParams
+	LiquidNetParams.Name = "liquidv1"
+	LiquidNetParams.HDCoinType = 1776
+
+	// Need to register PlmntNetParams, otherwise we get an "unknown hd
+	// private extended key bytes" error.
 	err := chaincfg.Register(&PlmntNetParams)
 	if err != nil {
 		panic(err)
