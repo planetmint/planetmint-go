@@ -50,7 +50,7 @@ func AccAddress() string {
 
 func Machine(name, pubKey string) machinetypes.Machine {
 	metadata := Metadata()
-	_, liquidPubKey := ExtendedKeyPair(chaincfg.MainNetParams)
+	_, liquidPubKey := ExtendedKeyPair(config.LiquidNetParams)
 	_, planetmintPubKey := ExtendedKeyPair(config.PlmntNetParams)
 	m := machinetypes.Machine{
 		Name:             name,
