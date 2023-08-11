@@ -3,6 +3,7 @@ package sample
 import (
 	"encoding/hex"
 
+	"planetmint-go/config"
 	machinetypes "planetmint-go/x/machine/types"
 
 	"github.com/btcsuite/btcd/btcutil/hdkeychain"
@@ -49,15 +50,16 @@ func AccAddress() string {
 
 func Machine(name, pubKey string) machinetypes.Machine {
 	metadata := Metadata()
-	_, liquidPubKey := LiquidKeyPair()
+	_, liquidPubKey := ExtendedKeyPair(chaincfg.MainNetParams)
+	_, planetmintPubKey := ExtendedKeyPair(config.PlmntNetParams)
 	m := machinetypes.Machine{
 		Name:             name,
 		Ticker:           name + "_ticker",
-		Domain:           "lab.r3c.net",
+		Domain:           "lab.r3c.network",
 		Reissue:          true,
 		Amount:           1000,
 		Precision:        8,
-		IssuerPlanetmint: pubKey,
+		IssuerPlanetmint: planetmintPubKey,
 		IssuerLiquid:     liquidPubKey,
 		MachineId:        pubKey,
 		Metadata:         &metadata,
@@ -65,10 +67,10 @@ func Machine(name, pubKey string) machinetypes.Machine {
 	return m
 }
 
-func MachineIndex(pubKey string, liquidPubKey string) machinetypes.MachineIndex {
+func MachineIndex(pubKey string, planetmintPubKey string, liquidPubKey string) machinetypes.MachineIndex {
 	return machinetypes.MachineIndex{
 		MachineId:        pubKey,
-		IssuerPlanetmint: pubKey,
+		IssuerPlanetmint: planetmintPubKey,
 		IssuerLiquid:     liquidPubKey,
 	}
 }
@@ -96,10 +98,18 @@ func Asset(sk string) (string, string) {
 	return cid, signatureHex
 }
 
-func LiquidKeyPair() (string, string) {
-	// Ignore errors as keypair was tested beforehand
-	seed, _ := bip39.NewSeedWithErrorChecking(Mnemonic, keyring.DefaultBIP39Passphrase)
-	xprivKey, _ := hdkeychain.NewMaster(seed, &chaincfg.MainNetParams)
-	xpubKey, _ := xprivKey.Neuter()
+func ExtendedKeyPair(cfg chaincfg.Params) (string, string) {
+	seed, err := bip39.NewSeedWithErrorChecking(Mnemonic, keyring.DefaultBIP39Passphrase)
+	if err != nil {
+		panic(err)
+	}
+	xprivKey, err := hdkeychain.NewMaster(seed, &cfg)
+	if err != nil {
+		panic(err)
+	}
+	xpubKey, err := xprivKey.Neuter()
+	if err != nil {
+		panic(err)
+	}
 	return xprivKey.String(), xpubKey.String()
 }
