@@ -117,6 +117,9 @@ import (
 	assetmodulekeeper "planetmint-go/x/asset/keeper"
 	assetmoduletypes "planetmint-go/x/asset/types"
 
+	daomodule "planetmint-go/x/dao"
+	daomodulekeeper "planetmint-go/x/dao/keeper"
+	daomoduletypes "planetmint-go/x/dao/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "planetmint-go/app/params"
@@ -179,6 +182,7 @@ var (
 		consensus.AppModuleBasic{},
 		machinemodule.AppModuleBasic{},
 		assetmodule.AppModuleBasic{},
+		daomodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -192,6 +196,7 @@ var (
 		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
+		daomoduletypes.ModuleName:      {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )
@@ -257,6 +262,8 @@ type App struct {
 	MachineKeeper machinemodulekeeper.Keeper
 
 	AssetKeeper assetmodulekeeper.Keeper
+
+	DaoKeeper daomodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -305,6 +312,7 @@ func New(
 		capabilitytypes.StoreKey, group.StoreKey, icacontrollertypes.StoreKey, consensusparamtypes.StoreKey,
 		machinemoduletypes.StoreKey, machinemoduletypes.TAIndexKey, machinemoduletypes.IssuerPlanetmintIndexKey, machinemoduletypes.IssuerLiquidIndexKey,
 		assetmoduletypes.StoreKey,
+		daomoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -549,6 +557,17 @@ func New(
 	)
 	assetModule := assetmodule.NewAppModule(appCodec, app.AssetKeeper, app.AccountKeeper, app.BankKeeper)
 
+	app.DaoKeeper = *daomodulekeeper.NewKeeper(
+		appCodec,
+		keys[daomoduletypes.StoreKey],
+		keys[daomoduletypes.MemStoreKey],
+		app.GetSubspace(daomoduletypes.ModuleName),
+
+		app.BankKeeper,
+		app.AccountKeeper,
+	)
+	daoModule := daomodule.NewAppModule(appCodec, app.DaoKeeper, app.AccountKeeper, app.BankKeeper)
+
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	/**** IBC Routing ****/
@@ -612,6 +631,7 @@ func New(
 		icaModule,
 		machineModule,
 		assetModule,
+		daoModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 
 		crisis.NewAppModule(app.CrisisKeeper, skipGenesisInvariants, app.GetSubspace(crisistypes.ModuleName)), // always be last to make sure that it checks for all invariants and not only part of them
@@ -646,6 +666,7 @@ func New(
 		consensusparamtypes.ModuleName,
 		machinemoduletypes.ModuleName,
 		assetmoduletypes.ModuleName,
+		daomoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
 
@@ -673,6 +694,7 @@ func New(
 		consensusparamtypes.ModuleName,
 		machinemoduletypes.ModuleName,
 		assetmoduletypes.ModuleName,
+		daomoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	)
 
@@ -705,6 +727,7 @@ func New(
 		consensusparamtypes.ModuleName,
 		machinemoduletypes.ModuleName,
 		assetmoduletypes.ModuleName,
+		daomoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	}
 	app.mm.SetOrderInitGenesis(genesisModuleOrder...)
@@ -931,6 +954,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(machinemoduletypes.ModuleName)
 	paramsKeeper.Subspace(assetmoduletypes.ModuleName)
+	paramsKeeper.Subspace(daomoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper
