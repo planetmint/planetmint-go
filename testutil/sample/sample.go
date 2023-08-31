@@ -63,6 +63,7 @@ func Machine(name, pubKey string) machinetypes.Machine {
 		IssuerLiquid:     liquidPubKey,
 		MachineId:        pubKey,
 		Metadata:         &metadata,
+		Type:             1,
 	}
 	return m
 }

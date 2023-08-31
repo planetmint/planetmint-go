@@ -46517,6 +46517,9 @@ paths:
                         type: string
                       additionalDataCID:
                         type: string
+                  type:
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -75363,6 +75366,9 @@ definitions:
             type: string
           additionalDataCID:
             type: string
+      type:
+        type: integer
+        format: int64
   planetmintgo.machine.Metadata:
     type: object
     properties:
@@ -75416,6 +75422,9 @@ definitions:
                 type: string
               additionalDataCID:
                 type: string
+          type:
+            type: integer
+            format: int64
   planetmintgo.machine.QueryParamsResponse:
     type: object
     properties:

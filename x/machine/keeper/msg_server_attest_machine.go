@@ -39,6 +39,10 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 		}
 	}
 
+	if msg.Machine.GetType() == 0 { // 0 == RDDL_MACHINE_UNDEFINED
+		return nil, errors.New("the machine type has to be defined")
+	}
+
 	k.StoreMachine(ctx, *msg.Machine)
 	k.StoreMachineIndex(ctx, *msg.Machine)
 
@@ -59,6 +63,7 @@ func (k msgServer) issueMachineNFT(machine *types.Machine) error {
 	client := osc.NewClient(conf.WatchmenEndpoint, conf.WatchmenPort)
 	machine_precision := strconv.FormatInt(int64(machine.Precision), 10)
 	machine_amount := strconv.FormatInt(int64(machine.Amount), 10)
+	machine_type := strconv.FormatUint(uint64(machine.GetType()), 10)
 
 	msg := osc.NewMessage("/rddl/issue")
 	msg.Append(machine.Name)
@@ -69,6 +74,7 @@ func (k msgServer) issueMachineNFT(machine *types.Machine) error {
 	msg.Append(machine_precision)
 	msg.Append(machine.Metadata.GetAdditionalDataCID())
 	msg.Append(machine.GetIssuerPlanetmint())
+	msg.Append(machine_type)
 	err := client.Send(msg)
 
 	return err
