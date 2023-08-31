@@ -40,7 +40,7 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 	}
 
 	if msg.Machine.GetType() == 0 { // 0 == RDDL_MACHINE_UNDEFINED
-		return nil, errors.New("The machine type has to be defined.")
+		return nil, errors.New("the machine type has to be defined")
 	}
 
 	k.StoreMachine(ctx, *msg.Machine)
