@@ -124,7 +124,7 @@ import (
 )
 
 const (
-	AccountAddressPrefix = "cosmos"
+	AccountAddressPrefix = "plmnt"
 	Name                 = "planetmint-go"
 )
 
