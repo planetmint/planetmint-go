@@ -24,7 +24,11 @@ func (k msgServer) isNFTCreationRequest(machine *types.Machine) bool {
 func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMachine) (*types.MsgAttestMachineResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	isValidIssuerLiquid := validateIssuerLiquid(msg.Machine.IssuerLiquid)
+	isValidIssuerPlanetmint := validateExtendedPublicKey(msg.Machine.IssuerPlanetmint, config.PlmntNetParams)
+	if !isValidIssuerPlanetmint {
+		return nil, errors.New("invalid planetmint key")
+	}
+	isValidIssuerLiquid := validateExtendedPublicKey(msg.Machine.IssuerLiquid, config.LiquidNetParams)
 	if !isValidIssuerLiquid {
 		return nil, errors.New("invalid liquid key")
 	}
@@ -45,13 +49,13 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 	return &types.MsgAttestMachineResponse{}, nil
 }
 
-func validateIssuerLiquid(issuerLiquid string) bool {
-	xpubKeyLiquid, err := hdkeychain.NewKeyFromString(issuerLiquid)
+func validateExtendedPublicKey(issuer string, cfg chaincfg.Params) bool {
+	xpubKey, err := hdkeychain.NewKeyFromString(issuer)
 	if err != nil {
 		return false
 	}
-	isValidLiquidKey := xpubKeyLiquid.IsForNet(&chaincfg.MainNetParams)
-	return isValidLiquidKey
+	isValidExtendedPublicKey := xpubKey.IsForNet(&cfg)
+	return isValidExtendedPublicKey
 }
 
 func (k msgServer) issueMachineNFT(machine *types.Machine) error {

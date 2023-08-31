@@ -1,0 +1,58 @@
+---
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag"
+        required: true
+        default: ""
+      prerelease:
+        type: choice
+        description: "Pre-Release?"
+        required: true
+        options:
+          - true
+          - false
+        default: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      PRERELEASE: ${{ github.event.inputs.prerelease }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Tag
+        run: |
+          if ! [[ ${{ github.event.inputs.tag }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Tag needs to be vX.Y.Z, e.g. v1.2.3"
+            exit 1
+          fi
+          git tag ${{ github.event.inputs.tag }}
+          git push origin ${{ github.event.inputs.tag }}
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+
+      - name: Build
+        run: |
+          go build -ldflags="-s -w
+            -X 'github.com/cosmos/cosmos-sdk/version.Name=Planetmint Go'
+            -X 'github.com/cosmos/cosmos-sdk/version.AppName=planetmint-god'
+            -X 'github.com/cosmos/cosmos-sdk/version.Version=${{ github.event.inputs.tag }}'
+            -X 'github.com/cosmos/cosmos-sdk/version.Commit=$(git rev-list HEAD|head -n1)'
+            -X 'github.com/cosmos/cosmos-sdk/version.BuildTags=linux amd64'" -v ./cmd/planetmint-god
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          prerelease: ${{ fromJSON(env.PRERELEASE) }}
+          files: planetmint-god
+          name: ${{ github.event.inputs.tag }}
+          tag_name: ${{ github.event.inputs.tag }}
+          fail_on_unmatched_files: true
+          generate_release_notes: true

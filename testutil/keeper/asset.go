@@ -3,6 +3,7 @@ package keeper
 import (
 	"testing"
 
+	"planetmint-go/config"
 	"planetmint-go/testutil/sample"
 	"planetmint-go/x/asset/keeper"
 	"planetmint-go/x/asset/types"
@@ -48,8 +49,9 @@ func AssetKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	ctrl := gomock.NewController(t)
 	mk := assettestutils.NewMockMachineKeeper(ctrl)
 	sk, pk := sample.KeyPair()
-	_, lpk := sample.LiquidKeyPair()
-	id := sample.MachineIndex(pk, lpk)
+	_, ppk := sample.ExtendedKeyPair(config.PlmntNetParams)
+	_, lpk := sample.ExtendedKeyPair(config.LiquidNetParams)
+	id := sample.MachineIndex(pk, ppk, lpk)
 	mk.EXPECT().GetMachineIndex(ctx, pk).Return(id, true).AnyTimes()
 	mk.EXPECT().GetMachineIndex(ctx, sk).Return(id, false).AnyTimes()
 	mk.EXPECT().GetMachine(ctx, id).Return(sample.Machine(pk, pk), true).AnyTimes()
