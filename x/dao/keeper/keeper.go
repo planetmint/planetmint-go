@@ -64,7 +64,7 @@ func (k Keeper) DistributeCollectedFees(ctx sdk.Context) {
 	k.accountKeeper.IterateAccounts(ctx, func(acc authtypes.AccountI) bool {
 		addr := acc.GetAddress()
 		balance := k.bankKeeper.SpendableCoins(ctx, addr)
-		found, stake := balance.Find("stake")
+		found, stake := balance.Find("rddl")
 		if found {
 			totalStake = totalStake.Add(stake.Amount)
 			balances[addr.String()] = stake.Amount
@@ -74,7 +74,8 @@ func (k Keeper) DistributeCollectedFees(ctx sdk.Context) {
 
 	distAddr := k.accountKeeper.GetModuleAddress(disttypes.ModuleName)
 	distSpendableCoins := k.bankKeeper.SpendableCoins(ctx, distAddr)
-	found, coinToDistribute := distSpendableCoins.Find("token")
+	// found, coinToDistribute := distSpendableCoins.Find("stake")
+	found, coinToDistribute := distSpendableCoins.Find("node0token")
 
 	if found {
 		decTotalAmountToDistribute := sdk.NewDecFromInt(coinToDistribute.Amount)
@@ -85,7 +86,7 @@ func (k Keeper) DistributeCollectedFees(ctx sdk.Context) {
 			claim := decTotalAmountToDistribute.Mul(share)
 			if claim.GTE(sdk.OneDec()) {
 				intClaim := claim.TruncateInt()
-				coinClaim := sdk.NewCoin("token", intClaim)
+				coinClaim := sdk.NewCoin("node0token", intClaim)
 				accAddress, err := sdk.AccAddressFromBech32(addr)
 				if err != nil {
 					panic(err)
