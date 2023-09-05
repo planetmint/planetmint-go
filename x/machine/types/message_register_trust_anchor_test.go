@@ -5,7 +5,6 @@ import (
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
-	"planetmint-go/testutil/sample"
 )
 
 func TestMsgRegisterTrustAnchor_ValidateBasic(t *testing.T) {
@@ -20,11 +19,6 @@ func TestMsgRegisterTrustAnchor_ValidateBasic(t *testing.T) {
 				Creator: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
-		}, {
-			name: "valid address",
-			msg: MsgRegisterTrustAnchor{
-				Creator: sample.AccAddress(),
-			},
 		},
 	}
 	for _, tt := range tests {

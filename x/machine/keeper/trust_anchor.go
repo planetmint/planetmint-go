@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func (k Keeper) StoreTrustAnchor(ctx sdk.Context, ta types.TrustAnchor) {
+func (k Keeper) StoreTrustAnchor(ctx sdk.Context, ta types.TrustAnchor, activated bool) {
 	store := prefix.NewStore(ctx.KVStore(k.taStoreKey), types.KeyPrefix(types.TrustAnchorKey))
 	appendValue := k.cdc.MustMarshal(&ta)
 	store.Set(GetTrustAnchorBytes(ta.Pubkey), appendValue)
