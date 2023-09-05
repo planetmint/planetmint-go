@@ -15,6 +15,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -38,6 +39,7 @@ func NewE2ETestSuite(cfg network.Config) *E2ETestSuite {
 
 // SetupSuite initializes dao E2ETestSuite
 func (s *E2ETestSuite) SetupSuite() {
+	// set FeeDenom to node0token because the sending account is initialized with no plmnt tokens
 	conf := config.GetConfig()
 	conf.FeeDenom = "node0token"
 	conf.SetPlanetmintConfig(conf)
@@ -60,7 +62,7 @@ func (s *E2ETestSuite) SetupSuite() {
 	authGenState.Accounts = append(authGenState.Accounts, accounts...)
 	s.cfg.GenesisState[authtypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&authGenState)
 
-	// set the balances in the genesis state
+	// set the balances in genesis state
 	var bankGenState banktypes.GenesisState
 	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[banktypes.ModuleName], &bankGenState)
 
@@ -91,47 +93,39 @@ func (s *E2ETestSuite) TearDownSuite() {
 }
 
 func (s *E2ETestSuite) TestDistributeCollectedFees() {
+	conf := config.GetConfig()
 	val := s.network.Validators[0]
 
-	// sending funds to alice
+	// sending funds to alice and pay some fees to be distributed
 	args := []string{
 		val.Moniker,
 		aliceAddr.String(),
 		"1000stake",
 		"--yes",
-		// fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, "10node0token"),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
 	}
 	_, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
 	s.Require().NoError(err)
 
 	s.network.WaitForNextBlock()
-	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
-		aliceAddr.String(),
-	})
-	s.Require().NoError(err)
-	s.T().Log(out)
-
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
-		bobAddr.String(),
-	})
-	s.Require().NoError(err)
-	s.T().Log(out)
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
 	s.Require().NoError(err)
 
 	s.network.WaitForNextBlock()
 
 	s.network.WaitForNextBlock()
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
+
+	// assert that alice has 6 of 20 paid fee tokens based on 5000 stake of 15000 total stake
+	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		aliceAddr.String(),
 	})
+	assert.Contains(s.T(), out.String(), "6")
 	s.Require().NoError(err)
-	s.T().Log(out)
 
+	// assert that bob has 13 of 20 paid fee tokens based on 10000 stake of 15000 total stake
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		bobAddr.String(),
 	})
+	assert.Contains(s.T(), out.String(), "13")
 	s.Require().NoError(err)
-	s.T().Log(out)
 }
