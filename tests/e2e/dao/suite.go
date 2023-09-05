@@ -107,13 +107,17 @@ func (s *E2ETestSuite) TestDistributeCollectedFees() {
 	_, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
 	s.Require().NoError(err)
 
-	s.network.WaitForNextBlock()
+	err = s.network.WaitForNextBlock()
+	s.Require().NoError(err)
+
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
 	s.Require().NoError(err)
 
-	s.network.WaitForNextBlock()
+	err = s.network.WaitForNextBlock()
+	s.Require().NoError(err)
 
-	s.network.WaitForNextBlock()
+	err = s.network.WaitForNextBlock()
+	s.Require().NoError(err)
 
 	// assert that alice has 6 of 20 paid fee tokens based on 5000 stake of 15000 total stake
 	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
