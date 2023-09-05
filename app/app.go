@@ -533,6 +533,7 @@ func New(
 		keys[machinemoduletypes.TAIndexKey],
 		keys[machinemoduletypes.IssuerPlanetmintIndexKey],
 		keys[machinemoduletypes.IssuerLiquidIndexKey],
+		keys[machinemoduletypes.TrustAnchorKey],
 		keys[machinemoduletypes.MemStoreKey],
 		app.GetSubspace(machinemoduletypes.ModuleName),
 	)
