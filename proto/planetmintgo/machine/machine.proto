@@ -31,7 +31,3 @@ message MachineIndex {
   string issuerPlanetmint = 2; 
   string issuerLiquid = 3; 
 }
-
-message TrustAnchor {
-  string pubkey = 1;
-}

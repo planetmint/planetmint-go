@@ -27,6 +27,10 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgAttestMachine int = 100
 
+	opWeightMsgRegisterTrustAnchor = "op_weight_msg_register_trust_anchor"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgRegisterTrustAnchor int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -68,6 +72,17 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		machinesimulation.SimulateMsgAttestMachine(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
+	var weightMsgRegisterTrustAnchor int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgRegisterTrustAnchor, &weightMsgRegisterTrustAnchor, nil,
+		func(_ *rand.Rand) {
+			weightMsgRegisterTrustAnchor = defaultWeightMsgRegisterTrustAnchor
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgRegisterTrustAnchor,
+		machinesimulation.SimulateMsgRegisterTrustAnchor(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
 	// this line is used by starport scaffolding # simapp/module/operation
 
 	return operations
@@ -81,6 +96,14 @@ func (am AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.Wei
 			defaultWeightMsgAttestMachine,
 			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
 				machinesimulation.SimulateMsgAttestMachine(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgRegisterTrustAnchor,
+			defaultWeightMsgRegisterTrustAnchor,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				machinesimulation.SimulateMsgRegisterTrustAnchor(am.accountKeeper, am.bankKeeper, am.keeper)
 				return nil
 			},
 		),
