@@ -12,6 +12,7 @@ import (
 	disttypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
+	"planetmint-go/config"
 	"planetmint-go/x/dao/types"
 )
 
@@ -58,13 +59,14 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 
 func (k Keeper) DistributeCollectedFees(ctx sdk.Context) {
 	ctx = sdk.UnwrapSDKContext(ctx)
+	conf := config.GetConfig()
 
 	balances := make(map[string]math.Int)
 	totalStake := math.ZeroInt()
 	k.accountKeeper.IterateAccounts(ctx, func(acc authtypes.AccountI) bool {
 		addr := acc.GetAddress()
 		balance := k.bankKeeper.SpendableCoins(ctx, addr)
-		found, stake := balance.Find("rddl")
+		found, stake := balance.Find(conf.StakeDenom)
 		if found {
 			totalStake = totalStake.Add(stake.Amount)
 			balances[addr.String()] = stake.Amount
@@ -74,8 +76,7 @@ func (k Keeper) DistributeCollectedFees(ctx sdk.Context) {
 
 	distAddr := k.accountKeeper.GetModuleAddress(disttypes.ModuleName)
 	distSpendableCoins := k.bankKeeper.SpendableCoins(ctx, distAddr)
-	// found, coinToDistribute := distSpendableCoins.Find("stake")
-	found, coinToDistribute := distSpendableCoins.Find("node0token")
+	found, coinToDistribute := distSpendableCoins.Find(conf.FeeDenom)
 
 	if found {
 		decTotalAmountToDistribute := sdk.NewDecFromInt(coinToDistribute.Amount)
@@ -86,7 +87,7 @@ func (k Keeper) DistributeCollectedFees(ctx sdk.Context) {
 			claim := decTotalAmountToDistribute.Mul(share)
 			if claim.GTE(sdk.OneDec()) {
 				intClaim := claim.TruncateInt()
-				coinClaim := sdk.NewCoin("node0token", intClaim)
+				coinClaim := sdk.NewCoin(conf.FeeDenom, intClaim)
 				accAddress, err := sdk.AccAddressFromBech32(addr)
 				if err != nil {
 					panic(err)

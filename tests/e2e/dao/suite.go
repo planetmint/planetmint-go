@@ -2,6 +2,7 @@ package dao
 
 import (
 	"fmt"
+	"planetmint-go/config"
 	"planetmint-go/testutil/network"
 	"planetmint-go/testutil/sample"
 
@@ -37,6 +38,10 @@ func NewE2ETestSuite(cfg network.Config) *E2ETestSuite {
 
 // SetupSuite initializes dao E2ETestSuite
 func (s *E2ETestSuite) SetupSuite() {
+	conf := config.GetConfig()
+	conf.FeeDenom = "node0token"
+	conf.SetPlanetmintConfig(conf)
+
 	s.T().Log("setting up e2e test suite")
 
 	// set accounts for alice and bob in genesis state
@@ -60,11 +65,13 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[banktypes.ModuleName], &bankGenState)
 
 	bbalances := sdk.NewCoins(
-		sdk.NewCoin("rddl", math.NewInt(10000)),
+		sdk.NewCoin(conf.TokenDenom, math.NewInt(10000)),
+		sdk.NewCoin(conf.StakeDenom, math.NewInt(10000)),
 	)
 
 	abalances := sdk.NewCoins(
-		sdk.NewCoin("rddl", math.NewInt(5000)),
+		sdk.NewCoin(conf.TokenDenom, math.NewInt(10000)),
+		sdk.NewCoin(conf.StakeDenom, math.NewInt(5000)),
 	)
 
 	accountBalances := []banktypes.Balance{
@@ -74,7 +81,7 @@ func (s *E2ETestSuite) SetupSuite() {
 	bankGenState.Balances = append(bankGenState.Balances, accountBalances...)
 	s.cfg.GenesisState[banktypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&bankGenState)
 
-	s.cfg.MinGasPrices = fmt.Sprintf("0.000006%s", "node0token")
+	s.cfg.MinGasPrices = fmt.Sprintf("0.000006%s", conf.FeeDenom)
 	s.network = network.New(s.T(), s.cfg)
 }
 
