@@ -73,7 +73,9 @@ func TestMsgServerRegisterTrustAnchorTwice(t *testing.T) {
 
 func TestMsgServerRegisterTrustAnchorInvalidPubkey(t *testing.T) {
 	_, pk := sample.KeyPair()
-	ta := sample.TrustAnchor()
+	ta := types.TrustAnchor{
+		Pubkey: "invalidpublickey",
+	}
 	msg := types.NewMsgRegisterTrustAnchor(pk, &ta)
 	msgServer, ctx := setupMsgServer(t)
 	_, err := msgServer.RegisterTrustAnchor(ctx, msg)
