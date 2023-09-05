@@ -42,3 +42,19 @@ func TestGetTrustAnchor(t *testing.T) {
 		}
 	}
 }
+
+func TestUpdateTrustAnchor(t *testing.T) {
+	keeper, ctx := keepertest.MachineKeeper(t)
+	items := createNTrustAnchor(keeper, ctx, 10)
+	for _, item := range items {
+		ta, activated, _ := keeper.GetTrustAnchor(ctx, item.Pubkey)
+		if !activated {
+			keeper.StoreTrustAnchor(ctx, ta, true)
+		}
+	}
+
+	for _, item := range items {
+		_, activated, _ := keeper.GetTrustAnchor(ctx, item.Pubkey)
+		assert.True(t, activated)
+	}
+}
