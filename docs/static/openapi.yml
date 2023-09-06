@@ -46556,6 +46556,8 @@ paths:
                   type:
                     type: integer
                     format: int64
+                  machineIdSignature:
+                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -75415,6 +75417,8 @@ definitions:
       type:
         type: integer
         format: int64
+      machineIdSignature:
+        type: string
   planetmintgo.machine.Metadata:
     type: object
     properties:
@@ -75473,6 +75477,8 @@ definitions:
           type:
             type: integer
             format: int64
+          machineIdSignature:
+            type: string
   planetmintgo.machine.QueryParamsResponse:
     type: object
     properties:

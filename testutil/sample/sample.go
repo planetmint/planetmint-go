@@ -61,7 +61,7 @@ func Machine(name, pubKey string, prvKey string) machinetypes.Machine {
 
 	prvKeyBytes, _ := hex.DecodeString(prvKey)
 	sk := &secp256k1.PrivKey{Key: prvKeyBytes}
-	pubKeyBytes := []byte(pubKey)
+	pubKeyBytes, _ := hex.DecodeString(pubKey)
 	sign, _ := sk.Sign(pubKeyBytes)
 	signatureHex := hex.EncodeToString(sign)
 
