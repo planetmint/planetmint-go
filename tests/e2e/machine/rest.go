@@ -20,15 +20,30 @@ func (s *E2ETestSuite) TestAttestMachineREST() {
 	addr, err := k.GetAddress()
 	s.Require().NoError(err)
 
+	prvKey, pubKey := sample.KeyPair(1)
+
+	// Register TA
+	ta := sample.TrustAnchor(pubKey)
+	taMsg := machinetypes.MsgRegisterTrustAnchor{
+		Creator:     addr.String(),
+		TrustAnchor: &ta,
+	}
+	txBytes, err := testutil.PrepareTx(val, &taMsg, sample.Name)
+	s.Require().NoError(err)
+
+	_, err = testutil.BroadcastTx(val, txBytes)
+	s.Require().NoError(err)
+
+	s.Require().NoError(s.network.WaitForNextBlock())
+
 	// Create Attest Machine TX
-	pubKey, prvKey := sample.KeyPair()
 	machine := sample.Machine(sample.Name, pubKey, prvKey)
 	msg := machinetypes.MsgAttestMachine{
 		Creator: addr.String(),
 		Machine: &machine,
 	}
 
-	txBytes, err := testutil.PrepareTx(val, &msg, sample.Name)
+	txBytes, err = testutil.PrepareTx(val, &msg, sample.Name)
 	s.Require().NoError(err)
 
 	broadcastTxResponse, err := testutil.BroadcastTx(val, txBytes)

@@ -2,6 +2,7 @@ package sample
 
 import (
 	"encoding/hex"
+	"fmt"
 
 	"planetmint-go/config"
 	machinetypes "planetmint-go/x/machine/types"
@@ -34,8 +35,12 @@ const Fees = "2stake"
 const DefaultDerivationPath = "m/44'/8680'/0'/0/0"
 
 // KeyPair returns a sample private / public keypair
-func KeyPair() (string, string) {
+func KeyPair(optional ...int) (string, string) {
 	secret := "Don't tell anybody"
+	// optional value if different keypairs are needed
+	if len(optional) > 0 {
+		secret = fmt.Sprintf("%v%v", secret, optional[0])
+	}
 	sk := secp256k1.GenPrivKeyFromSecret([]byte(secret))
 	pk := sk.PubKey()
 	return hex.EncodeToString(sk.Bytes()), hex.EncodeToString(pk.Bytes())
