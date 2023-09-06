@@ -27,10 +27,10 @@ func TestMsgServer(t *testing.T) {
 }
 
 func TestMsgServerAttestMachine(t *testing.T) {
-	_, pk := sample.KeyPair()
-	ta := sample.TrustAnchor()
+	sk, pk := sample.KeyPair()
+	ta := sample.TrustAnchor(pk)
 	taMsg := types.NewMsgRegisterTrustAnchor(pk, &ta)
-	machine := sample.Machine(pk, ta.Pubkey)
+	machine := sample.Machine(pk, pk, sk)
 	msg := types.NewMsgAttestMachine(pk, &machine)
 	msgServer, ctx := setupMsgServer(t)
 	_, err := msgServer.RegisterTrustAnchor(ctx, taMsg)
@@ -42,10 +42,10 @@ func TestMsgServerAttestMachine(t *testing.T) {
 }
 
 func TestMsgServerAttestMachineInvalidLiquidKey(t *testing.T) {
-	_, pk := sample.KeyPair()
-	ta := sample.TrustAnchor()
+	sk, pk := sample.KeyPair()
+	ta := sample.TrustAnchor(pk)
 	taMsg := types.NewMsgRegisterTrustAnchor(pk, &ta)
-	machine := sample.Machine(pk, ta.Pubkey)
+	machine := sample.Machine(pk, pk, sk)
 	machine.IssuerLiquid = "invalidkey"
 	msg := types.NewMsgAttestMachine(pk, &machine)
 	msgServer, ctx := setupMsgServer(t)
@@ -57,7 +57,7 @@ func TestMsgServerAttestMachineInvalidLiquidKey(t *testing.T) {
 
 func TestMsgServerRegisterTrustAnchor(t *testing.T) {
 	_, pk := sample.KeyPair()
-	ta := sample.TrustAnchor()
+	ta := sample.TrustAnchor(pk)
 	msg := types.NewMsgRegisterTrustAnchor(pk, &ta)
 	msgServer, ctx := setupMsgServer(t)
 	res, err := msgServer.RegisterTrustAnchor(ctx, msg)
@@ -68,7 +68,7 @@ func TestMsgServerRegisterTrustAnchor(t *testing.T) {
 
 func TestMsgServerRegisterTrustAnchorTwice(t *testing.T) {
 	_, pk := sample.KeyPair()
-	ta := sample.TrustAnchor()
+	ta := sample.TrustAnchor(pk)
 	msg := types.NewMsgRegisterTrustAnchor(pk, &ta)
 	msgServer, ctx := setupMsgServer(t)
 	res, err := msgServer.RegisterTrustAnchor(ctx, msg)

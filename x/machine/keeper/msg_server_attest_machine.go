@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	config "planetmint-go/config"
+	"planetmint-go/util"
 	"planetmint-go/x/machine/types"
 
 	"github.com/btcsuite/btcd/btcutil/hdkeychain"
@@ -30,6 +31,11 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 	}
 	if activated {
 		return nil, errors.New("trust anchor has already been used for attestation")
+	}
+
+	isValidMachineId := util.ValidateSignature(msg.Machine.MachineId, msg.Machine.MachineIdSignature, msg.Machine.MachineId)
+	if !isValidMachineId {
+		return nil, errors.New("invalid machine id")
 	}
 
 	isValidIssuerPlanetmint := validateExtendedPublicKey(msg.Machine.IssuerPlanetmint, config.PlmntNetParams)

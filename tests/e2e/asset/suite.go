@@ -68,7 +68,8 @@ func (s *E2ETestSuite) SetupSuite() {
 
 	s.Require().NoError(s.network.WaitForNextBlock())
 
-	machine := sample.Machine(sample.Name, sample.PubKey)
+	pubKey, prvKey := sample.KeyPair()
+	machine := sample.Machine(sample.Name, pubKey, prvKey)
 	machineJSON, err := json.Marshal(&machine)
 	s.Require().NoError(err)
 

@@ -120,6 +120,7 @@ import (
 	daomodule "planetmint-go/x/dao"
 	daomodulekeeper "planetmint-go/x/dao/keeper"
 	daomoduletypes "planetmint-go/x/dao/types"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "planetmint-go/app/params"
@@ -311,6 +312,7 @@ func New(
 		feegrant.StoreKey, evidencetypes.StoreKey, ibctransfertypes.StoreKey, icahosttypes.StoreKey,
 		capabilitytypes.StoreKey, group.StoreKey, icacontrollertypes.StoreKey, consensusparamtypes.StoreKey,
 		machinemoduletypes.StoreKey, machinemoduletypes.TAIndexKey, machinemoduletypes.IssuerPlanetmintIndexKey, machinemoduletypes.IssuerLiquidIndexKey,
+		machinemoduletypes.TrustAnchorKey,
 		assetmoduletypes.StoreKey,
 		daomoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
