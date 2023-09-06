@@ -127,6 +127,4 @@ func (s *E2ETestSuite) TestAttestMachine() {
 
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdGetMachineByPublicKey(), args)
 	s.Require().NoError(err)
-
-	// verify double registration fails
 }
