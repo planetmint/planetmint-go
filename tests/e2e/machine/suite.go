@@ -72,6 +72,8 @@ func (s *E2ETestSuite) TearDownSuite() {
 func (s *E2ETestSuite) TestAttestMachine() {
 	val := s.network.Validators[0]
 
+	// register Ta
+
 	machine := sample.Machine(sample.Name, sample.PubKey)
 	machineJSON, err := json.Marshal(&machine)
 	s.Require().NoError(err)
@@ -102,4 +104,6 @@ func (s *E2ETestSuite) TestAttestMachine() {
 
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdGetMachineByPublicKey(), args)
 	s.Require().NoError(err)
+
+	// verify double registration fails
 }
