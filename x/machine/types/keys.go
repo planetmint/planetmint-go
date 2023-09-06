@@ -20,6 +20,8 @@ const (
 	IssuerPlanetmintIndexKey = "Machine/IssuerPlanetmintIndex/"
 
 	IssuerLiquidIndexKey = "Machine/IssuerLiquidIndex/"
+
+	TrustAnchorKey = "Machine/trustAnchor/"
 )
 
 func KeyPrefix(p string) []byte {

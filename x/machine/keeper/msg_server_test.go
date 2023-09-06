@@ -46,3 +46,38 @@ func TestMsgServerAttestMachineInvalidLiquidKey(t *testing.T) {
 	_, err := msgServer.AttestMachine(ctx, msg)
 	assert.EqualError(t, err, "invalid liquid key")
 }
+
+func TestMsgServerRegisterTrustAnchor(t *testing.T) {
+	_, pk := sample.KeyPair()
+	ta := sample.TrustAnchor()
+	msg := types.NewMsgRegisterTrustAnchor(pk, &ta)
+	msgServer, ctx := setupMsgServer(t)
+	res, err := msgServer.RegisterTrustAnchor(ctx, msg)
+	if assert.NoError(t, err) {
+		assert.Equal(t, &types.MsgRegisterTrustAnchorResponse{}, res)
+	}
+}
+
+func TestMsgServerRegisterTrustAnchorTwice(t *testing.T) {
+	_, pk := sample.KeyPair()
+	ta := sample.TrustAnchor()
+	msg := types.NewMsgRegisterTrustAnchor(pk, &ta)
+	msgServer, ctx := setupMsgServer(t)
+	res, err := msgServer.RegisterTrustAnchor(ctx, msg)
+	if assert.NoError(t, err) {
+		assert.Equal(t, &types.MsgRegisterTrustAnchorResponse{}, res)
+	}
+	_, err = msgServer.RegisterTrustAnchor(ctx, msg)
+	assert.EqualError(t, err, "trust anchor is already registered")
+}
+
+func TestMsgServerRegisterTrustAnchorInvalidPubkey(t *testing.T) {
+	_, pk := sample.KeyPair()
+	ta := types.TrustAnchor{
+		Pubkey: "invalidpublickey",
+	}
+	msg := types.NewMsgRegisterTrustAnchor(pk, &ta)
+	msgServer, ctx := setupMsgServer(t)
+	_, err := msgServer.RegisterTrustAnchor(ctx, msg)
+	assert.EqualError(t, err, "invalid trust anchor pubkey")
+}

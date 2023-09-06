@@ -120,3 +120,9 @@ func ExtendedKeyPair(cfg chaincfg.Params) (string, string) {
 	}
 	return xprivKey.String(), xpubKey.String()
 }
+
+func TrustAnchor() machinetypes.TrustAnchor {
+	return machinetypes.TrustAnchor{
+		Pubkey: PubKey,
+	}
+}

@@ -3,12 +3,14 @@ syntax = "proto3";
 package planetmintgo.machine;
 
 import "planetmintgo/machine/machine.proto";
+import "planetmintgo/machine/trust_anchor.proto";
 
 option go_package = "planetmint-go/x/machine/types";
 
 // Msg defines the Msg service.
 service Msg {
-  rpc AttestMachine (MsgAttestMachine) returns (MsgAttestMachineResponse);
+  rpc AttestMachine       (MsgAttestMachine      ) returns (MsgAttestMachineResponse      );
+  rpc RegisterTrustAnchor (MsgRegisterTrustAnchor) returns (MsgRegisterTrustAnchorResponse);
 }
 message MsgAttestMachine {
   string  creator = 1;
@@ -16,4 +18,11 @@ message MsgAttestMachine {
 }
 
 message MsgAttestMachineResponse {}
+
+message MsgRegisterTrustAnchor {
+  string      creator     = 1;
+  TrustAnchor trustAnchor = 2;
+}
+
+message MsgRegisterTrustAnchorResponse {}
 

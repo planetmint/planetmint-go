@@ -1,0 +1,8 @@
+syntax = "proto3";
+package planetmintgo.machine;
+
+option go_package = "planetmint-go/x/machine/types";
+
+message TrustAnchor {
+    string pubkey = 1;
+}
