@@ -28,9 +28,13 @@ func TestMsgServer(t *testing.T) {
 
 func TestMsgServerAttestMachine(t *testing.T) {
 	_, pk := sample.KeyPair()
-	machine := sample.Machine(pk, pk)
+	ta := sample.TrustAnchor()
+	taMsg := types.NewMsgRegisterTrustAnchor(pk, &ta)
+	machine := sample.Machine(pk, ta.Pubkey)
 	msg := types.NewMsgAttestMachine(pk, &machine)
 	msgServer, ctx := setupMsgServer(t)
+	_, err := msgServer.RegisterTrustAnchor(ctx, taMsg)
+	assert.NoError(t, err)
 	res, err := msgServer.AttestMachine(ctx, msg)
 	if assert.NoError(t, err) {
 		assert.Equal(t, &types.MsgAttestMachineResponse{}, res)
@@ -39,11 +43,15 @@ func TestMsgServerAttestMachine(t *testing.T) {
 
 func TestMsgServerAttestMachineInvalidLiquidKey(t *testing.T) {
 	_, pk := sample.KeyPair()
-	machine := sample.Machine(pk, pk)
+	ta := sample.TrustAnchor()
+	taMsg := types.NewMsgRegisterTrustAnchor(pk, &ta)
+	machine := sample.Machine(pk, ta.Pubkey)
 	machine.IssuerLiquid = "invalidkey"
 	msg := types.NewMsgAttestMachine(pk, &machine)
 	msgServer, ctx := setupMsgServer(t)
-	_, err := msgServer.AttestMachine(ctx, msg)
+	_, err := msgServer.RegisterTrustAnchor(ctx, taMsg)
+	assert.NoError(t, err)
+	_, err = msgServer.AttestMachine(ctx, msg)
 	assert.EqualError(t, err, "invalid liquid key")
 }
 
