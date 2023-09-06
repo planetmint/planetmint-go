@@ -79,26 +79,54 @@ func (k Keeper) DistributeCollectedFees(ctx sdk.Context) {
 	found, coinToDistribute := distSpendableCoins.Find(conf.FeeDenom)
 
 	if found {
-		decTotalAmountToDistribute := sdk.NewDecFromInt(coinToDistribute.Amount)
-		decTotalStake := sdk.NewDecFromInt(totalStake)
-		for addr, stake := range balances {
-			decStake := sdk.NewDecFromInt(stake)
-			share := decStake.Quo(decTotalStake)
-			claim := decTotalAmountToDistribute.Mul(share)
-			if claim.GTE(sdk.OneDec()) {
-				intClaim := claim.TruncateInt()
-				coinClaim := sdk.NewCoin(conf.FeeDenom, intClaim)
-				accAddress, err := sdk.AccAddressFromBech32(addr)
+		err := k.processBalances(ctx, balances, totalStake, coinToDistribute)
+		if err != nil {
+			ctx.Logger().Error("Error processing balances:", err)
+		}
+	}
+}
+
+// Check if the address is blocked
+func (k Keeper) isAddressBlocked(accAddress sdk.AccAddress) bool {
+	return k.bankKeeper.BlockedAddr(accAddress)
+}
+
+// Send coins from the module to the account
+func (k Keeper) sendCoinsFromModuleToAccount(ctx sdk.Context, accAddress sdk.AccAddress, coinClaim sdk.Coin) error {
+	return k.bankKeeper.SendCoinsFromModuleToAccount(ctx, disttypes.ModuleName, accAddress, sdk.NewCoins(coinClaim))
+}
+
+// Calculate the claim for an address
+func calculateClaimForAddress(stake math.Int, totalStake math.Int, coinToDistribute sdk.Coin) sdk.Dec {
+	decTotalAmountToDistribute := sdk.NewDecFromInt(coinToDistribute.Amount)
+	decTotalStake := sdk.NewDecFromInt(totalStake)
+	decStake := sdk.NewDecFromInt(stake)
+
+	share := decStake.Quo(decTotalStake)
+	return decTotalAmountToDistribute.Mul(share)
+}
+
+func (k Keeper) processBalances(ctx sdk.Context, balances map[string]math.Int, totalStake math.Int, coinToDistribute sdk.Coin) error {
+	conf := config.GetConfig()
+	for addr, stake := range balances {
+		claim := calculateClaimForAddress(stake, totalStake, coinToDistribute)
+
+		if claim.GTE(sdk.OneDec()) {
+			intClaim := claim.TruncateInt()
+			coinClaim := sdk.NewCoin(conf.FeeDenom, intClaim)
+
+			accAddress, err := sdk.AccAddressFromBech32(addr)
+			if err != nil {
+				return err
+			}
+
+			if !k.isAddressBlocked(accAddress) {
+				err = k.sendCoinsFromModuleToAccount(ctx, accAddress, coinClaim)
 				if err != nil {
-					panic(err)
-				}
-				if !k.bankKeeper.BlockedAddr(accAddress) {
-					err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, disttypes.ModuleName, accAddress, sdk.NewCoins(coinClaim))
-					if err != nil {
-						panic(err)
-					}
+					return err
 				}
 			}
 		}
 	}
+	return nil
 }
