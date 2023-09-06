@@ -48,6 +48,12 @@ func AccAddress() string {
 	return sdk.AccAddress(addr).String()
 }
 
+func Secp256k1AccAddress() sdk.AccAddress {
+	pk := secp256k1.GenPrivKey().PubKey()
+	addr := pk.Address()
+	return sdk.AccAddress(addr)
+}
+
 func Machine(name, pubKey string) machinetypes.Machine {
 	metadata := Metadata()
 	_, liquidPubKey := ExtendedKeyPair(config.LiquidNetParams)
