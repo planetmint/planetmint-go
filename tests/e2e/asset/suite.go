@@ -13,7 +13,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
-	"github.com/cosmos/cosmos-sdk/crypto/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -116,11 +115,6 @@ func (s *E2ETestSuite) SetupSuite() {
 // TearDownSuite clean up after testing
 func (s *E2ETestSuite) TearDownSuite() {
 	s.T().Log("tearing down e2e test suite")
-}
-
-// Needed to export private key from Keyring
-type unsafeExporter interface {
-	ExportPrivateKeyObject(uid string) (types.PrivKey, error)
 }
 
 // TestNotarizeAsset notarizes asset over cli
