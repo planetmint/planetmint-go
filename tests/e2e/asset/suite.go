@@ -1,7 +1,6 @@
 package asset
 
 import (
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"planetmint-go/testutil/network"
@@ -18,6 +17,11 @@ import (
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+)
+
+var (
+	pubKey string
+	prvKey string
 )
 
 // E2ETestSuite struct definition of asset suite
@@ -68,7 +72,23 @@ func (s *E2ETestSuite) SetupSuite() {
 
 	s.Require().NoError(s.network.WaitForNextBlock())
 
-	pubKey, prvKey := sample.KeyPair()
+	prvKey, pubKey = sample.KeyPair()
+
+	ta := sample.TrustAnchor(pubKey)
+	taJSON, err := json.Marshal(&ta)
+	s.Require().NoError(err)
+	args = []string{
+		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
+		"--yes",
+		string(taJSON),
+	}
+	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdRegisterTrustAnchor(), args)
+	s.Require().NoError(err)
+
+	s.Require().NoError(s.network.WaitForNextBlock())
+
 	machine := sample.Machine(sample.Name, pubKey, prvKey)
 	machineJSON, err := json.Marshal(&machine)
 	s.Require().NoError(err)
@@ -107,12 +127,7 @@ type unsafeExporter interface {
 func (s *E2ETestSuite) TestNotarizeAsset() {
 	val := s.network.Validators[0]
 
-	privKey, err := val.ClientCtx.Keyring.(unsafeExporter).ExportPrivateKeyObject(sample.Name)
-	s.Require().NoError(err)
-
-	sk := hex.EncodeToString(privKey.Bytes())
-
-	cidHash, signature := sample.Asset(sk)
+	cidHash, signature := sample.Asset(prvKey)
 
 	testCases := []struct {
 		name   string
@@ -136,7 +151,7 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 			[]string{
 				"cid",
 				"signature",
-				hex.EncodeToString(privKey.PubKey().Bytes()),
+				pubKey,
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 				"--yes",
@@ -148,7 +163,7 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 			[]string{
 				cidHash,
 				signature,
-				hex.EncodeToString(privKey.PubKey().Bytes()),
+				pubKey,
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 				"--yes",

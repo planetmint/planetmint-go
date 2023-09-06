@@ -1,7 +1,6 @@
 package asset
 
 import (
-	"encoding/hex"
 	"fmt"
 	"planetmint-go/testutil"
 	"planetmint-go/testutil/sample"
@@ -22,11 +21,7 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 	addr, err := k.GetAddress()
 	s.Require().NoError(err)
 
-	privKey, err := val.ClientCtx.Keyring.(unsafeExporter).ExportPrivateKeyObject(sample.Name)
-	s.Require().NoError(err)
-
-	sk := hex.EncodeToString(privKey.Bytes())
-	cidHash, signature := sample.Asset(sk)
+	cidHash, signature := sample.Asset(prvKey)
 
 	testCases := []struct {
 		name   string
@@ -49,7 +44,7 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 				Creator:   addr.String(),
 				Hash:      cidHash,
 				Signature: "invalid signature",
-				PubKey:    hex.EncodeToString(privKey.PubKey().Bytes()),
+				PubKey:    pubKey,
 			},
 			"invalid signature",
 		},
@@ -59,7 +54,7 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 				Creator:   addr.String(),
 				Hash:      cidHash,
 				Signature: signature,
-				PubKey:    hex.EncodeToString(privKey.PubKey().Bytes()),
+				PubKey:    pubKey,
 			},
 			"planetmintgo.asset.MsgNotarizeAsset",
 		},
