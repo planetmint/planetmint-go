@@ -33,7 +33,7 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 		return nil, errors.New("trust anchor has already been used for attestation")
 	}
 
-	isValidMachineId := util.ValidateSignature_hexstring(msg.Machine.MachineId, msg.Machine.MachineIdSignature, msg.Machine.MachineId)
+	isValidMachineId := util.ValidateSignature(msg.Machine.MachineId, msg.Machine.MachineIdSignature, msg.Machine.MachineId)
 	if !isValidMachineId {
 		return nil, errors.New("invalid machine id")
 	}

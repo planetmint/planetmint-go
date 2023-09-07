@@ -110,7 +110,7 @@ func Asset(sk string) (string, string) {
 	skBytes, _ := hex.DecodeString(sk)
 	privKey := &secp256k1.PrivKey{Key: skBytes}
 
-	cid_bytes := []byte(cid)
+	cid_bytes, _ := hex.DecodeString(cid)
 	sign, _ := privKey.Sign(cid_bytes)
 
 	signatureHex := hex.EncodeToString(sign)

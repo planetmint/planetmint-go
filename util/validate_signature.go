@@ -8,21 +8,6 @@ import (
 
 func ValidateSignature(message string, signature string, publicKey string) bool {
 	// Convert the message, signature, and public key from hex to bytes
-	messageBytes := []byte(message)
-	signatureBytes, _ := hex.DecodeString(signature)
-	publicKeyBytes, _ := hex.DecodeString(publicKey)
-
-	// Create a secp256k1 public key object
-	pubKey := &secp256k1.PubKey{Key: publicKeyBytes}
-
-	// Verify the signature
-	isValid := pubKey.VerifySignature(messageBytes, signatureBytes)
-
-	return isValid
-}
-
-func ValidateSignature_hexstring(message string, signature string, publicKey string) bool {
-	// Convert the message, signature, and public key from hex to bytes
 	messageBytes, _ := hex.DecodeString(message)
 	signatureBytes, _ := hex.DecodeString(signature)
 	publicKeyBytes, _ := hex.DecodeString(publicKey)
