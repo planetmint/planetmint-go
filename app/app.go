@@ -120,8 +120,10 @@ import (
 	daomodule "planetmint-go/x/dao"
 	daomodulekeeper "planetmint-go/x/dao/keeper"
 	daomoduletypes "planetmint-go/x/dao/types"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
+	pmante "planetmint-go/app/ante"
 	appparams "planetmint-go/app/params"
 	"planetmint-go/docs"
 )
@@ -761,13 +763,14 @@ func New(
 	app.MountMemoryStores(memKeys)
 
 	// initialize BaseApp
-	anteHandler, err := ante.NewAnteHandler(
-		ante.HandlerOptions{
+	anteHandler, err := pmante.NewAnteHandler(
+		pmante.HandlerOptions{
 			AccountKeeper:   app.AccountKeeper,
 			BankKeeper:      app.BankKeeper,
 			SignModeHandler: encodingConfig.TxConfig.SignModeHandler(),
 			FeegrantKeeper:  app.FeeGrantKeeper,
 			SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
+			MachineKeeper:   app.MachineKeeper,
 		},
 	)
 	if err != nil {
