@@ -37,7 +37,3 @@ func (k msgServer) NotarizeAsset(goCtx context.Context, msg *types.MsgNotarizeAs
 
 	return &types.MsgNotarizeAssetResponse{}, nil
 }
-
-func getHexPubKey(s string) {
-	panic("unimplemented")
-}
