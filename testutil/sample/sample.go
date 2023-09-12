@@ -2,6 +2,7 @@ package sample
 
 import (
 	"encoding/hex"
+	"fmt"
 
 	"planetmint-go/config"
 	machinetypes "planetmint-go/x/machine/types"
@@ -34,8 +35,12 @@ const Fees = "2stake"
 const DefaultDerivationPath = "m/44'/8680'/0'/0/0"
 
 // KeyPair returns a sample private / public keypair
-func KeyPair() (string, string) {
+func KeyPair(optional ...int) (string, string) {
 	secret := "Don't tell anybody"
+	// optional value if different keypairs are needed
+	if len(optional) > 0 {
+		secret = fmt.Sprintf("%v%v", secret, optional[0])
+	}
 	sk := secp256k1.GenPrivKeyFromSecret([]byte(secret))
 	pk := sk.PubKey()
 	return hex.EncodeToString(sk.Bytes()), hex.EncodeToString(pk.Bytes())
@@ -54,22 +59,30 @@ func Secp256k1AccAddress() sdk.AccAddress {
 	return sdk.AccAddress(addr)
 }
 
-func Machine(name, pubKey string) machinetypes.Machine {
+func Machine(name, pubKey string, prvKey string) machinetypes.Machine {
 	metadata := Metadata()
 	_, liquidPubKey := ExtendedKeyPair(config.LiquidNetParams)
 	_, planetmintPubKey := ExtendedKeyPair(config.PlmntNetParams)
+
+	prvKeyBytes, _ := hex.DecodeString(prvKey)
+	sk := &secp256k1.PrivKey{Key: prvKeyBytes}
+	pubKeyBytes, _ := hex.DecodeString(pubKey)
+	sign, _ := sk.Sign(pubKeyBytes)
+	signatureHex := hex.EncodeToString(sign)
+
 	m := machinetypes.Machine{
-		Name:             name,
-		Ticker:           name + "_ticker",
-		Domain:           "lab.r3c.network",
-		Reissue:          true,
-		Amount:           1000,
-		Precision:        8,
-		IssuerPlanetmint: planetmintPubKey,
-		IssuerLiquid:     liquidPubKey,
-		MachineId:        pubKey,
-		Metadata:         &metadata,
-		Type:             1,
+		Name:               name,
+		Ticker:             name + "_ticker",
+		Domain:             "lab.r3c.network",
+		Reissue:            true,
+		Amount:             1000,
+		Precision:          8,
+		IssuerPlanetmint:   planetmintPubKey,
+		IssuerLiquid:       liquidPubKey,
+		MachineId:          pubKey,
+		Metadata:           &metadata,
+		Type:               1,
+		MachineIdSignature: signatureHex,
 	}
 	return m
 }
@@ -97,7 +110,7 @@ func Asset(sk string) (string, string) {
 	skBytes, _ := hex.DecodeString(sk)
 	privKey := &secp256k1.PrivKey{Key: skBytes}
 
-	cid_bytes := []byte(cid)
+	cid_bytes, _ := hex.DecodeString(cid)
 	sign, _ := privKey.Sign(cid_bytes)
 
 	signatureHex := hex.EncodeToString(sign)
@@ -121,8 +134,8 @@ func ExtendedKeyPair(cfg chaincfg.Params) (string, string) {
 	return xprivKey.String(), xpubKey.String()
 }
 
-func TrustAnchor() machinetypes.TrustAnchor {
+func TrustAnchor(pubkey string) machinetypes.TrustAnchor {
 	return machinetypes.TrustAnchor{
-		Pubkey: PubKey,
+		Pubkey: pubkey,
 	}
 }

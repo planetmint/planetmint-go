@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	config "planetmint-go/config"
+	"planetmint-go/util"
 	"planetmint-go/x/machine/types"
 
 	"github.com/btcsuite/btcd/btcutil/hdkeychain"
@@ -23,6 +24,19 @@ func (k msgServer) isNFTCreationRequest(machine *types.Machine) bool {
 }
 func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMachine) (*types.MsgAttestMachineResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	ta, activated, found := k.GetTrustAnchor(ctx, msg.Machine.MachineId)
+	if !found {
+		return nil, errors.New("no preregistered trust anchor found for machine id")
+	}
+	if activated {
+		return nil, errors.New("trust anchor has already been used for attestation")
+	}
+
+	isValidMachineId := util.ValidateSignature(msg.Machine.MachineId, msg.Machine.MachineIdSignature, msg.Machine.MachineId)
+	if !isValidMachineId {
+		return nil, errors.New("invalid machine id")
+	}
 
 	isValidIssuerPlanetmint := validateExtendedPublicKey(msg.Machine.IssuerPlanetmint, config.PlmntNetParams)
 	if !isValidIssuerPlanetmint {
@@ -45,6 +59,7 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 
 	k.StoreMachine(ctx, *msg.Machine)
 	k.StoreMachineIndex(ctx, *msg.Machine)
+	k.StoreTrustAnchor(ctx, ta, true)
 
 	return &types.MsgAttestMachineResponse{}, nil
 }

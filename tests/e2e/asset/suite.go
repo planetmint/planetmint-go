@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"planetmint-go/config"
 	"planetmint-go/testutil/network"
 	"planetmint-go/testutil/sample"
 
@@ -11,13 +12,20 @@ import (
 	assetcli "planetmint-go/x/asset/client/cli"
 	machinecli "planetmint-go/x/machine/client/cli"
 
+	"github.com/btcsuite/btcd/btcutil/hdkeychain"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
-	"github.com/cosmos/cosmos-sdk/crypto/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+)
+
+var (
+	pubKey  string
+	prvKey  string
+	xPubKey string
+	xPrvKey string
 )
 
 // E2ETestSuite struct definition of asset suite
@@ -68,7 +76,25 @@ func (s *E2ETestSuite) SetupSuite() {
 
 	s.Require().NoError(s.network.WaitForNextBlock())
 
-	machine := sample.Machine(sample.Name, sample.PubKey)
+	prvKey, pubKey = sample.KeyPair()
+	xPrvKey, xPubKey = sample.ExtendedKeyPair(config.PlmntNetParams)
+
+	ta := sample.TrustAnchor(pubKey)
+	taJSON, err := json.Marshal(&ta)
+	s.Require().NoError(err)
+	args = []string{
+		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
+		"--yes",
+		string(taJSON),
+	}
+	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdRegisterTrustAnchor(), args)
+	s.Require().NoError(err)
+
+	s.Require().NoError(s.network.WaitForNextBlock())
+
+	machine := sample.Machine(sample.Name, pubKey, prvKey)
 	machineJSON, err := json.Marshal(&machine)
 	s.Require().NoError(err)
 
@@ -97,20 +123,14 @@ func (s *E2ETestSuite) TearDownSuite() {
 	s.T().Log("tearing down e2e test suite")
 }
 
-// Needed to export private key from Keyring
-type unsafeExporter interface {
-	ExportPrivateKeyObject(uid string) (types.PrivKey, error)
-}
-
 // TestNotarizeAsset notarizes asset over cli
 func (s *E2ETestSuite) TestNotarizeAsset() {
 	val := s.network.Validators[0]
 
-	privKey, err := val.ClientCtx.Keyring.(unsafeExporter).ExportPrivateKeyObject(sample.Name)
-	s.Require().NoError(err)
-
-	sk := hex.EncodeToString(privKey.Bytes())
-
+	xskKey, _ := hdkeychain.NewKeyFromString(xPrvKey)
+	privKey, _ := xskKey.ECPrivKey()
+	byte_key := privKey.Serialize()
+	sk := hex.EncodeToString(byte_key)
 	cidHash, signature := sample.Asset(sk)
 
 	testCases := []struct {
@@ -135,7 +155,7 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 			[]string{
 				"cid",
 				"signature",
-				hex.EncodeToString(privKey.PubKey().Bytes()),
+				xPubKey,
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 				"--yes",
@@ -147,7 +167,7 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 			[]string{
 				cidHash,
 				signature,
-				hex.EncodeToString(privKey.PubKey().Bytes()),
+				xPubKey,
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 				"--yes",
