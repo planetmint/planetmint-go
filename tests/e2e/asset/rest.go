@@ -31,9 +31,10 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 	cidHash, signature := sample.Asset(sk)
 
 	testCases := []struct {
-		name   string
-		msg    assettypes.MsgNotarizeAsset
-		rawLog string
+		name             string
+		msg              assettypes.MsgNotarizeAsset
+		rawLog           string
+		expectCheckTxErr bool
 	}{
 		{
 			"machine not found",
@@ -44,6 +45,7 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 				PubKey:    "human pubkey",
 			},
 			"machine not found",
+			true,
 		},
 		{
 			"invalid signature",
@@ -54,6 +56,7 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 				PubKey:    xPubKey,
 			},
 			"invalid signature",
+			false,
 		},
 		{
 			"valid notarization",
@@ -64,6 +67,7 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 				PubKey:    xPubKey,
 			},
 			"planetmintgo.asset.MsgNotarizeAsset",
+			false,
 		},
 	}
 
@@ -81,9 +85,13 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 		tx, err := testutil.GetRequest(fmt.Sprintf("%s/cosmos/tx/v1beta1/txs/%s", val.APIAddress, broadcastTxResponse.TxResponse.TxHash))
 		s.Require().NoError(err)
 
-		var txRes txtypes.GetTxResponse
-		err = val.ClientCtx.Codec.UnmarshalJSON(tx, &txRes)
-		s.Require().NoError(err)
-		s.Require().Contains(txRes.TxResponse.RawLog, tc.rawLog)
+		if !tc.expectCheckTxErr {
+			var txRes txtypes.GetTxResponse
+			err = val.ClientCtx.Codec.UnmarshalJSON(tx, &txRes)
+			s.Require().NoError(err)
+			s.Require().Contains(txRes.TxResponse.RawLog, tc.rawLog)
+		} else {
+			s.Require().Contains(broadcastTxResponse.TxResponse.RawLog, tc.rawLog)
+		}
 	}
 }

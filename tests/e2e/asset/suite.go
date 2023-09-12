@@ -134,9 +134,10 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 	cidHash, signature := sample.Asset(sk)
 
 	testCases := []struct {
-		name   string
-		args   []string
-		rawLog string
+		name             string
+		args             []string
+		rawLog           string
+		expectCheckTxErr bool
 	}{
 		{
 			"machine not found",
@@ -149,6 +150,7 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 				"--yes",
 			},
 			"machine not found",
+			true,
 		},
 		{
 			"invalid signature",
@@ -161,6 +163,7 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 				"--yes",
 			},
 			"invalid signature",
+			false,
 		},
 		{
 			"valid notarization",
@@ -173,6 +176,7 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 				"--yes",
 			},
 			"planetmintgo.asset.MsgNotarizeAsset",
+			false,
 		},
 	}
 
@@ -185,8 +189,12 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 
 		s.Require().NoError(s.network.WaitForNextBlock())
 		rawLog, err := clitestutil.GetRawLogFromTxResponse(val, txResponse)
-		s.Require().NoError(err)
 
-		assert.Contains(s.T(), rawLog, tc.rawLog)
+		if !tc.expectCheckTxErr {
+			s.Require().NoError(err)
+			assert.Contains(s.T(), rawLog, tc.rawLog)
+		} else {
+			assert.Contains(s.T(), txResponse.RawLog, tc.rawLog)
+		}
 	}
 }
