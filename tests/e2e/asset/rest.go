@@ -6,6 +6,8 @@ import (
 	"planetmint-go/testutil"
 	"planetmint-go/testutil/sample"
 
+	"github.com/btcsuite/btcd/btcutil/hdkeychain"
+
 	assettypes "planetmint-go/x/asset/types"
 
 	txtypes "github.com/cosmos/cosmos-sdk/types/tx"
@@ -22,10 +24,10 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 	addr, err := k.GetAddress()
 	s.Require().NoError(err)
 
-	privKey, err := val.ClientCtx.Keyring.(unsafeExporter).ExportPrivateKeyObject(sample.Name)
-	s.Require().NoError(err)
-
-	sk := hex.EncodeToString(privKey.Bytes())
+	xskKey, _ := hdkeychain.NewKeyFromString(xPrvKey)
+	privKey, _ := xskKey.ECPrivKey()
+	byte_key := privKey.Serialize()
+	sk := hex.EncodeToString(byte_key)
 	cidHash, signature := sample.Asset(sk)
 
 	testCases := []struct {
@@ -49,7 +51,7 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 				Creator:   addr.String(),
 				Hash:      cidHash,
 				Signature: "invalid signature",
-				PubKey:    hex.EncodeToString(privKey.PubKey().Bytes()),
+				PubKey:    xPubKey,
 			},
 			"invalid signature",
 		},
@@ -59,7 +61,7 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 				Creator:   addr.String(),
 				Hash:      cidHash,
 				Signature: signature,
-				PubKey:    hex.EncodeToString(privKey.PubKey().Bytes()),
+				PubKey:    xPubKey,
 			},
 			"planetmintgo.asset.MsgNotarizeAsset",
 		},

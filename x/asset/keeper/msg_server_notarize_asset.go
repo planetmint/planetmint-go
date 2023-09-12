@@ -2,12 +2,11 @@ package keeper
 
 import (
 	"context"
-	"encoding/hex"
 	"errors"
 
+	"planetmint-go/util"
 	"planetmint-go/x/asset/types"
 
-	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -19,8 +18,11 @@ func (k msgServer) NotarizeAsset(goCtx context.Context, msg *types.MsgNotarizeAs
 	if !found {
 		return nil, errors.New("machine not found")
 	}
-
-	valid := ValidateSignature(msg.Hash, msg.Signature, msg.PubKey)
+	hex_pub_key, err := util.GetHexPubKey(msg.PubKey)
+	if err != nil {
+		return nil, errors.New("could not convert xpub key to hex pub key")
+	}
+	valid := util.ValidateSignature(msg.Hash, msg.Signature, hex_pub_key)
 	if !valid {
 		return nil, errors.New("invalid signature")
 	}
@@ -34,19 +36,4 @@ func (k msgServer) NotarizeAsset(goCtx context.Context, msg *types.MsgNotarizeAs
 	k.StoreAsset(ctx, asset)
 
 	return &types.MsgNotarizeAssetResponse{}, nil
-}
-
-func ValidateSignature(message string, signature string, publicKey string) bool {
-	// Convert the message, signature, and public key from hex to bytes
-	messageBytes := []byte(message)
-	signatureBytes, _ := hex.DecodeString(signature)
-	publicKeyBytes, _ := hex.DecodeString(publicKey)
-
-	// Create a secp256k1 public key object
-	pubKey := &secp256k1.PubKey{Key: publicKeyBytes}
-
-	// Verify the signature
-	isValid := pubKey.VerifySignature(messageBytes, signatureBytes)
-
-	return isValid
 }

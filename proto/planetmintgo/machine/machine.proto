@@ -16,6 +16,7 @@ message Machine {
   string machineId = 9;
   Metadata metadata = 10; 
   uint32 type = 11;
+  string machineIdSignature = 12;
 }
 
 message Metadata {

@@ -20,14 +20,30 @@ func (s *E2ETestSuite) TestAttestMachineREST() {
 	addr, err := k.GetAddress()
 	s.Require().NoError(err)
 
+	prvKey, pubKey := sample.KeyPair(1)
+
+	// Register TA
+	ta := sample.TrustAnchor(pubKey)
+	taMsg := machinetypes.MsgRegisterTrustAnchor{
+		Creator:     addr.String(),
+		TrustAnchor: &ta,
+	}
+	txBytes, err := testutil.PrepareTx(val, &taMsg, sample.Name)
+	s.Require().NoError(err)
+
+	_, err = testutil.BroadcastTx(val, txBytes)
+	s.Require().NoError(err)
+
+	s.Require().NoError(s.network.WaitForNextBlock())
+
 	// Create Attest Machine TX
-	machine := sample.Machine(sample.Name, sample.PubKey)
+	machine := sample.Machine(sample.Name, pubKey, prvKey)
 	msg := machinetypes.MsgAttestMachine{
 		Creator: addr.String(),
 		Machine: &machine,
 	}
 
-	txBytes, err := testutil.PrepareTx(val, &msg, sample.Name)
+	txBytes, err = testutil.PrepareTx(val, &msg, sample.Name)
 	s.Require().NoError(err)
 
 	broadcastTxResponse, err := testutil.BroadcastTx(val, txBytes)
@@ -42,7 +58,7 @@ func (s *E2ETestSuite) TestAttestMachineREST() {
 	s.Require().NoError(err)
 	s.Require().Equal(uint32(0), txRes.TxResponse.Code)
 
-	queryMachineUrl := fmt.Sprintf("%s/planetmint-go/machine/get_machine_by_public_key/%s", baseURL, sample.PubKey)
+	queryMachineUrl := fmt.Sprintf("%s/planetmint-go/machine/get_machine_by_public_key/%s", baseURL, pubKey)
 	queryMachineRes, err := testutil.GetRequest(queryMachineUrl)
 	s.Require().NoError(err)
 

@@ -72,19 +72,20 @@ func (s *E2ETestSuite) TearDownSuite() {
 func (s *E2ETestSuite) TestAttestMachine() {
 	val := s.network.Validators[0]
 
-	machine := sample.Machine(sample.Name, sample.PubKey)
-	machineJSON, err := json.Marshal(&machine)
-	s.Require().NoError(err)
+	// register Ta
+	prvKey, pubKey := sample.KeyPair()
 
+	ta := sample.TrustAnchor(pubKey)
+	taJSON, err := json.Marshal(&ta)
+	s.Require().NoError(err)
 	args := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
 		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 		"--yes",
-		string(machineJSON),
+		string(taJSON),
 	}
-
-	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
+	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdRegisterTrustAnchor(), args)
 	s.Require().NoError(err)
 
 	txResponse, err := clitestutil.GetTxResponseFromOut(out)
@@ -94,10 +95,34 @@ func (s *E2ETestSuite) TestAttestMachine() {
 	rawLog, err := clitestutil.GetRawLogFromTxResponse(val, txResponse)
 	s.Require().NoError(err)
 
+	assert.Contains(s.T(), rawLog, "planetmintgo.machine.MsgRegisterTrustAnchor")
+
+	machine := sample.Machine(sample.Name, pubKey, prvKey)
+	machineJSON, err := json.Marshal(&machine)
+	s.Require().NoError(err)
+
+	args = []string{
+		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
+		"--yes",
+		string(machineJSON),
+	}
+
+	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
+	s.Require().NoError(err)
+
+	txResponse, err = clitestutil.GetTxResponseFromOut(out)
+	s.Require().NoError(err)
+
+	s.Require().NoError(s.network.WaitForNextBlock())
+	rawLog, err = clitestutil.GetRawLogFromTxResponse(val, txResponse)
+	s.Require().NoError(err)
+
 	assert.Contains(s.T(), rawLog, "planetmintgo.machine.MsgAttestMachine")
 
 	args = []string{
-		sample.PubKey,
+		pubKey,
 	}
 
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdGetMachineByPublicKey(), args)

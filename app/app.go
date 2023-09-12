@@ -313,6 +313,7 @@ func New(
 		feegrant.StoreKey, evidencetypes.StoreKey, ibctransfertypes.StoreKey, icahosttypes.StoreKey,
 		capabilitytypes.StoreKey, group.StoreKey, icacontrollertypes.StoreKey, consensusparamtypes.StoreKey,
 		machinemoduletypes.StoreKey, machinemoduletypes.TAIndexKey, machinemoduletypes.IssuerPlanetmintIndexKey, machinemoduletypes.IssuerLiquidIndexKey,
+		machinemoduletypes.TrustAnchorKey,
 		assetmoduletypes.StoreKey,
 		daomoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
