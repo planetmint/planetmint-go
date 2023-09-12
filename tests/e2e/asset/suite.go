@@ -1,8 +1,10 @@
 package asset
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"planetmint-go/config"
 	"planetmint-go/testutil/network"
 	"planetmint-go/testutil/sample"
 
@@ -10,6 +12,7 @@ import (
 	assetcli "planetmint-go/x/asset/client/cli"
 	machinecli "planetmint-go/x/machine/client/cli"
 
+	"github.com/btcsuite/btcd/btcutil/hdkeychain"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
@@ -19,8 +22,10 @@ import (
 )
 
 var (
-	pubKey string
-	prvKey string
+	pubKey  string
+	prvKey  string
+	xPubKey string
+	xPrvKey string
 )
 
 // E2ETestSuite struct definition of asset suite
@@ -72,6 +77,7 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.Require().NoError(s.network.WaitForNextBlock())
 
 	prvKey, pubKey = sample.KeyPair()
+	xPrvKey, xPubKey = sample.ExtendedKeyPair(config.PlmntNetParams)
 
 	ta := sample.TrustAnchor(pubKey)
 	taJSON, err := json.Marshal(&ta)
@@ -121,7 +127,11 @@ func (s *E2ETestSuite) TearDownSuite() {
 func (s *E2ETestSuite) TestNotarizeAsset() {
 	val := s.network.Validators[0]
 
-	cidHash, signature := sample.Asset(prvKey)
+	xskKey, _ := hdkeychain.NewKeyFromString(xPrvKey)
+	privKey, _ := xskKey.ECPrivKey()
+	byte_key := privKey.Serialize()
+	sk := hex.EncodeToString(byte_key)
+	cidHash, signature := sample.Asset(sk)
 
 	testCases := []struct {
 		name   string
@@ -145,7 +155,7 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 			[]string{
 				"cid",
 				"signature",
-				pubKey,
+				xPubKey,
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 				"--yes",
@@ -157,7 +167,7 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 			[]string{
 				cidHash,
 				signature,
-				pubKey,
+				xPubKey,
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 				"--yes",

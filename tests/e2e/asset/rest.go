@@ -1,9 +1,12 @@
 package asset
 
 import (
+	"encoding/hex"
 	"fmt"
 	"planetmint-go/testutil"
 	"planetmint-go/testutil/sample"
+
+	"github.com/btcsuite/btcd/btcutil/hdkeychain"
 
 	assettypes "planetmint-go/x/asset/types"
 
@@ -21,7 +24,11 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 	addr, err := k.GetAddress()
 	s.Require().NoError(err)
 
-	cidHash, signature := sample.Asset(prvKey)
+	xskKey, _ := hdkeychain.NewKeyFromString(xPrvKey)
+	privKey, _ := xskKey.ECPrivKey()
+	byte_key := privKey.Serialize()
+	sk := hex.EncodeToString(byte_key)
+	cidHash, signature := sample.Asset(sk)
 
 	testCases := []struct {
 		name   string
@@ -44,7 +51,7 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 				Creator:   addr.String(),
 				Hash:      cidHash,
 				Signature: "invalid signature",
-				PubKey:    pubKey,
+				PubKey:    xPubKey,
 			},
 			"invalid signature",
 		},
@@ -54,7 +61,7 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 				Creator:   addr.String(),
 				Hash:      cidHash,
 				Signature: signature,
-				PubKey:    pubKey,
+				PubKey:    xPubKey,
 			},
 			"planetmintgo.asset.MsgNotarizeAsset",
 		},
