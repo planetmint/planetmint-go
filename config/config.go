@@ -14,9 +14,9 @@ const DefaultConfigTemplate = `
 osc-service-port = {{ .PlmntConfig.OSCServicePort }}
 watchmen-endpoint = "{{ .PlmntConfig.WatchmenEndpoint }}"
 watchmen-port = {{ .PlmntConfig.WatchmenPort }}
-token-denom = {{ .PlmntConfig.TokenDenom }}
-stake-denom = {{ .PlmntConfig.StakeDenom }}
-fee-denom = {{ .PlmntConfig.FeeDenom }}
+token-denom = "{{ .PlmntConfig.TokenDenom }}"
+stake-denom = "{{ .PlmntConfig.StakeDenom }}"
+fee-denom = "{{ .PlmntConfig.FeeDenom }}"
 `
 
 // Config defines Planetmint's top level configuration
