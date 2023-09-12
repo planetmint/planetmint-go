@@ -1,6 +1,8 @@
 package ante
 
 import (
+	assettypes "planetmint-go/x/asset/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
@@ -17,6 +19,25 @@ func NewCheckMachineDecorator(mk MachineKeeper) CheckMachineDecorator {
 	return CheckMachineDecorator{
 		mk: mk,
 	}
+}
+
+func (cm CheckMachineDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (sdk.Context, error) {
+	for _, msg := range tx.GetMsgs() {
+		switch sdk.MsgTypeURL(msg) {
+		case "/planetmintgo.asset.MsgNotarizeAsset":
+			notarizeMsg, ok := msg.(*assettypes.MsgNotarizeAsset)
+			if ok {
+				_, found := cm.mk.GetMachineIndex(ctx, notarizeMsg.PubKey)
+				if !found {
+					return ctx, sdkerrors.Wrapf(sdkerrors.ErrLogic, "machine not found")
+				}
+			}
+		default:
+			continue
+		}
+	}
+
+	return next(ctx, tx, simulate)
 }
 
 // HandlerOptions are the options required for constructing a default SDK AnteHandler.
@@ -57,6 +78,7 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		ante.NewValidateBasicDecorator(),
 		ante.NewTxTimeoutHeightDecorator(),
 		ante.NewValidateMemoDecorator(options.AccountKeeper),
+		NewCheckMachineDecorator(options.MachineKeeper),
 		ante.NewConsumeGasForTxSizeDecorator(options.AccountKeeper),
 		ante.NewDeductFeeDecorator(options.AccountKeeper, options.BankKeeper, options.FeegrantKeeper, options.TxFeeChecker),
 		ante.NewSetPubKeyDecorator(options.AccountKeeper), // SetPubKeyDecorator must be called before all signature verification decorators
