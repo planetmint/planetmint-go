@@ -29,10 +29,9 @@ func TestMsgServer(t *testing.T) {
 }
 
 func TestMsgServerNotarizeAsset(t *testing.T) {
-	//sk, pk := sample.KeyPair()
 	ext_sk, ppk := sample.ExtendedKeyPair(config.PlmntNetParams)
-	xskKey, err := hdkeychain.NewKeyFromString(ext_sk)
-	privKey, err := xskKey.ECPrivKey()
+	xskKey, _ := hdkeychain.NewKeyFromString(ext_sk)
+	privKey, _ := xskKey.ECPrivKey()
 	byte_key := privKey.Serialize()
 	sk := hex.EncodeToString(byte_key)
 	cid, signatureHex := sample.Asset(sk)
@@ -54,7 +53,7 @@ func TestMsgServerNotarizeAssetMachineNotFound(t *testing.T) {
 }
 
 func TestMsgServerNotarizeAssetInvalidAsset(t *testing.T) {
-	_, pk := sample.KeyPair()
+	_, pk := sample.ExtendedKeyPair(config.PlmntNetParams)
 	msg := types.NewMsgNotarizeAsset(pk, "cid", "sign", pk)
 	msgServer, ctx := setupMsgServer(t)
 	_, err := msgServer.NotarizeAsset(ctx, msg)
