@@ -18,8 +18,11 @@ func (k msgServer) NotarizeAsset(goCtx context.Context, msg *types.MsgNotarizeAs
 	if !found {
 		return nil, errors.New("machine not found")
 	}
-
-	valid := util.ValidateSignature(msg.Hash, msg.Signature, msg.PubKey)
+	hex_pub_key, err := util.GetHexPubKey(msg.PubKey)
+	if err != nil {
+		return nil, errors.New("could not convert xpub key to hex pub key")
+	}
+	valid := util.ValidateSignature(msg.Hash, msg.Signature, hex_pub_key)
 	if !valid {
 		return nil, errors.New("invalid signature")
 	}
@@ -33,4 +36,8 @@ func (k msgServer) NotarizeAsset(goCtx context.Context, msg *types.MsgNotarizeAs
 	k.StoreAsset(ctx, asset)
 
 	return &types.MsgNotarizeAssetResponse{}, nil
+}
+
+func getHexPubKey(s string) {
+	panic("unimplemented")
 }
