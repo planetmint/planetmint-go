@@ -9,6 +9,7 @@ import (
 
 type MachineKeeper interface {
 	GetMachineIndex(ctx sdk.Context, pubKey string) (val types.MachineIndex, found bool)
+	GetTrustAnchor(ctx sdk.Context, pubKey string) (val types.TrustAnchor, activated bool, found bool)
 }
 
 // AccountKeeper defines the contract needed for AccountKeeper related APIs.

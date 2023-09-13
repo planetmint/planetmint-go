@@ -34,6 +34,17 @@ func (cm CheckMachineDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate 
 					return ctx, errorsmod.Wrapf(machinetypes.ErrMachineNotFound, "error during CheckTx or ReCheckTx")
 				}
 			}
+		case "/planetmintgo.machine.MsgAttestMachine":
+			attestMsg, ok := msg.(*machinetypes.MsgAttestMachine)
+			if ok {
+				_, activated, found := cm.mk.GetTrustAnchor(ctx, attestMsg.Machine.MachineId)
+				if !found {
+					return ctx, errorsmod.Wrapf(machinetypes.ErrTrustAnchorNotFound, "error during CheckTx or ReCheckTx")
+				}
+				if activated {
+					return ctx, errorsmod.Wrapf(machinetypes.ErrTrustAnchorAlreadyInUse, "error during CheckTx or ReCheckTx")
+				}
+			}
 		default:
 			continue
 		}
