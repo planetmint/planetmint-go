@@ -2,7 +2,9 @@ package ante
 
 import (
 	assettypes "planetmint-go/x/asset/types"
+	machinetypes "planetmint-go/x/machine/types"
 
+	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
@@ -29,7 +31,7 @@ func (cm CheckMachineDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate 
 			if ok {
 				_, found := cm.mk.GetMachineIndex(ctx, notarizeMsg.PubKey)
 				if !found {
-					return ctx, sdkerrors.Wrapf(sdkerrors.ErrLogic, "machine not found")
+					return ctx, errorsmod.Wrapf(machinetypes.ErrMachineNotFound, "error during CheckTx or ReCheckTx")
 				}
 			}
 		default:
@@ -57,19 +59,19 @@ type HandlerOptions struct {
 // signer.
 func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 	if options.AccountKeeper == nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "account keeper is required for ante builder")
+		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, "account keeper is required for ante builder")
 	}
 
 	if options.BankKeeper == nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "bank keeper is required for ante builder")
+		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, "bank keeper is required for ante builder")
 	}
 
 	if options.SignModeHandler == nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "sign mode handler is required for ante builder")
+		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, "sign mode handler is required for ante builder")
 	}
 
 	if options.MachineKeeper == nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "machine keeper is required for ante builder")
+		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, "machine keeper is required for ante builder")
 	}
 
 	anteDecorators := []sdk.AnteDecorator{
