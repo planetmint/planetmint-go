@@ -1,7 +1,9 @@
 package keeper_test
 
 import (
+	"encoding/hex"
 	"fmt"
+	"strings"
 	"testing"
 
 	keepertest "planetmint-go/testutil/keeper"
@@ -16,7 +18,12 @@ import (
 func createNTrustAnchor(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.TrustAnchor {
 	items := make([]types.TrustAnchor, n)
 	for i := range items {
-		items[i].Pubkey = fmt.Sprintf("pubkey%v", i)
+		pk := fmt.Sprintf("pubkey%v", i)
+		if i%2 == 1 {
+			pk = strings.ToUpper(pk)
+		}
+
+		items[i].Pubkey = hex.EncodeToString([]byte(pk))
 		var activated bool
 		if i%2 == 1 {
 			activated = true

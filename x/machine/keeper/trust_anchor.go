@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"encoding/hex"
 	"planetmint-go/x/machine/types"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
@@ -16,12 +17,14 @@ func (k Keeper) StoreTrustAnchor(ctx sdk.Context, ta types.TrustAnchor, activate
 	} else {
 		appendValue = []byte{0}
 	}
-	store.Set(GetTrustAnchorBytes(ta.Pubkey), appendValue)
+	pubKey_bytes, _ := getTrustAnchorBytes(ta.Pubkey)
+	store.Set(pubKey_bytes, appendValue)
 }
 
 func (k Keeper) GetTrustAnchor(ctx sdk.Context, pubKey string) (val types.TrustAnchor, activated bool, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.taStoreKey), types.KeyPrefix(types.TrustAnchorKey))
-	trustAnchorActivated := store.Get(GetTrustAnchorBytes(pubKey))
+	pubKey_bytes, _ := getTrustAnchorBytes(pubKey)
+	trustAnchorActivated := store.Get(pubKey_bytes)
 
 	if trustAnchorActivated == nil {
 		return val, false, false
@@ -36,6 +39,6 @@ func (k Keeper) GetTrustAnchor(ctx sdk.Context, pubKey string) (val types.TrustA
 	}
 }
 
-func GetTrustAnchorBytes(pubKey string) []byte {
-	return []byte(pubKey)
+func getTrustAnchorBytes(pubKey string) ([]byte, error) {
+	return hex.DecodeString(pubKey)
 }
