@@ -35,8 +35,9 @@ func TestMsgServerNotarizeAsset(t *testing.T) {
 	byte_key := privKey.Serialize()
 	sk := hex.EncodeToString(byte_key)
 	cid, signatureHex := sample.Asset(sk)
+	cid_hex := hex.EncodeToString([]byte(cid))
 
-	msg := types.NewMsgNotarizeAsset(sk, cid, signatureHex, ppk)
+	msg := types.NewMsgNotarizeAsset(sk, cid_hex, signatureHex, ppk)
 	msgServer, ctx := setupMsgServer(t)
 	res, err := msgServer.NotarizeAsset(ctx, msg)
 	if assert.NoError(t, err) {
@@ -52,9 +53,28 @@ func TestMsgServerNotarizeAssetMachineNotFound(t *testing.T) {
 	assert.EqualError(t, err, "machine not found")
 }
 
-func TestMsgServerNotarizeAssetInvalidAsset(t *testing.T) {
+func TestMsgServerNotarizeAssetInvalidCID(t *testing.T) {
 	_, pk := sample.ExtendedKeyPair(config.PlmntNetParams)
 	msg := types.NewMsgNotarizeAsset(pk, "cid", "sign", pk)
+	msgServer, ctx := setupMsgServer(t)
+	_, err := msgServer.NotarizeAsset(ctx, msg)
+	assert.EqualError(t, err, "invalid message hex string")
+}
+
+func TestMsgServerNotarizeAssetInvalidAssetSignatureType(t *testing.T) {
+	_, pk := sample.ExtendedKeyPair(config.PlmntNetParams)
+	hex_string := hex.EncodeToString([]byte("cid"))
+	msg := types.NewMsgNotarizeAsset(pk, hex_string, "sign", pk)
+	msgServer, ctx := setupMsgServer(t)
+	_, err := msgServer.NotarizeAsset(ctx, msg)
+	assert.EqualError(t, err, "invalid signature hex string")
+}
+
+func TestMsgServerNotarizeAssetInvalidAssetSignature(t *testing.T) {
+	_, pk := sample.ExtendedKeyPair(config.PlmntNetParams)
+	hex_string_cid := hex.EncodeToString([]byte("cid"))
+	hex_string_sid := hex.EncodeToString([]byte("sign"))
+	msg := types.NewMsgNotarizeAsset(pk, hex_string_cid, hex_string_sid, pk)
 	msgServer, ctx := setupMsgServer(t)
 	_, err := msgServer.NotarizeAsset(ctx, msg)
 	assert.EqualError(t, err, "invalid signature")

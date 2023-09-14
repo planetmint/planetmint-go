@@ -28,7 +28,8 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 	privKey, _ := xskKey.ECPrivKey()
 	byte_key := privKey.Serialize()
 	sk := hex.EncodeToString(byte_key)
-	cidHash, signature := sample.Asset(sk)
+	cid, signatureHex := sample.Asset(sk)
+	cid_hex := hex.EncodeToString([]byte(cid))
 
 	testCases := []struct {
 		name   string
@@ -39,18 +40,38 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 			"machine not found",
 			assettypes.MsgNotarizeAsset{
 				Creator:   addr.String(),
-				Hash:      cidHash,
-				Signature: signature,
+				Hash:      cid_hex,
+				Signature: signatureHex,
 				PubKey:    "human pubkey",
 			},
 			"machine not found",
 		},
 		{
+			"invalid message hex string",
+			assettypes.MsgNotarizeAsset{
+				Creator:   addr.String(),
+				Hash:      "cid",
+				Signature: "invalid signature",
+				PubKey:    xPubKey,
+			},
+			"invalid message hex string",
+		},
+		{
+			"invalid signature hex string",
+			assettypes.MsgNotarizeAsset{
+				Creator:   addr.String(),
+				Hash:      cid_hex,
+				Signature: "invalid signature",
+				PubKey:    xPubKey,
+			},
+			"invalid signature hex string",
+		},
+		{
 			"invalid signature",
 			assettypes.MsgNotarizeAsset{
 				Creator:   addr.String(),
-				Hash:      cidHash,
-				Signature: "invalid signature",
+				Hash:      cid_hex,
+				Signature: hex.EncodeToString([]byte("invalid signature")),
 				PubKey:    xPubKey,
 			},
 			"invalid signature",
@@ -59,8 +80,8 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 			"valid notarization",
 			assettypes.MsgNotarizeAsset{
 				Creator:   addr.String(),
-				Hash:      cidHash,
-				Signature: signature,
+				Hash:      cid_hex,
+				Signature: signatureHex,
 				PubKey:    xPubKey,
 			},
 			"planetmintgo.asset.MsgNotarizeAsset",

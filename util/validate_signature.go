@@ -2,24 +2,37 @@ package util
 
 import (
 	"encoding/hex"
+	"errors"
 
 	"github.com/btcsuite/btcd/btcutil/hdkeychain"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 )
 
-func ValidateSignature(message string, signature string, publicKey string) bool {
+func ValidateSignature(message string, signature string, publicKey string) (bool, error) {
 	// Convert the message, signature, and public key from hex to bytes
-	messageBytes, _ := hex.DecodeString(message)
-	signatureBytes, _ := hex.DecodeString(signature)
-	publicKeyBytes, _ := hex.DecodeString(publicKey)
+	messageBytes, err := hex.DecodeString(message)
+	if err != nil {
+		return false, errors.New("invalid message hex string")
+	}
+	signatureBytes, err := hex.DecodeString(signature)
+	if err != nil {
+		return false, errors.New("invalid signature hex string")
+	}
+	publicKeyBytes, err := hex.DecodeString(publicKey)
+	if err != nil {
+		return false, errors.New("invalid public key hex string")
+	}
 
 	// Create a secp256k1 public key object
 	pubKey := &secp256k1.PubKey{Key: publicKeyBytes}
 
 	// Verify the signature
 	isValid := pubKey.VerifySignature(messageBytes, signatureBytes)
-
-	return isValid
+	if !isValid {
+		return false, errors.New("invalid signature")
+	} else {
+		return isValid, nil
+	}
 }
 
 func GetHexPubKey(ext_pub_key string) (string, error) {
