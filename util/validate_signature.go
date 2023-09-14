@@ -14,6 +14,11 @@ func ValidateSignature(message string, signature string, publicKey string) (bool
 	if err != nil {
 		return false, errors.New("invalid message hex string")
 	}
+	return ValidateSignatureByteMsg(messageBytes, signature, publicKey)
+}
+
+func ValidateSignatureByteMsg(message []byte, signature string, publicKey string) (bool, error) {
+	// Convert  signature, and public key from hex to bytes
 	signatureBytes, err := hex.DecodeString(signature)
 	if err != nil {
 		return false, errors.New("invalid signature hex string")
@@ -27,7 +32,7 @@ func ValidateSignature(message string, signature string, publicKey string) (bool
 	pubKey := &secp256k1.PubKey{Key: publicKeyBytes}
 
 	// Verify the signature
-	isValid := pubKey.VerifySignature(messageBytes, signatureBytes)
+	isValid := pubKey.VerifySignature(message, signatureBytes)
 	if !isValid {
 		return false, errors.New("invalid signature")
 	} else {

@@ -22,7 +22,7 @@ func (k msgServer) NotarizeAsset(goCtx context.Context, msg *types.MsgNotarizeAs
 	if err != nil {
 		return nil, errors.New("could not convert xpub key to hex pub key")
 	}
-	valid, err := util.ValidateSignature(msg.Hash, msg.Signature, hex_pub_key)
+	valid, err := util.ValidateSignatureByteMsg([]byte(msg.Hash), msg.Signature, hex_pub_key)
 	if !valid {
 		return nil, err
 	}

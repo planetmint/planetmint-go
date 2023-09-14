@@ -132,7 +132,6 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 	byte_key := privKey.Serialize()
 	sk := hex.EncodeToString(byte_key)
 	cid, signatureHex := sample.Asset(sk)
-	cid_hex := hex.EncodeToString([]byte(cid))
 
 	testCases := []struct {
 		name   string
@@ -142,7 +141,7 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 		{
 			"machine not found",
 			[]string{
-				cid_hex,
+				cid,
 				signatureHex,
 				"pubkey",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
@@ -152,21 +151,9 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 			"machine not found",
 		},
 		{
-			"invalid message hex string",
-			[]string{
-				"cid",
-				"signature",
-				xPubKey,
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
-				"--yes",
-			},
-			"invalid message hex string",
-		},
-		{
 			"invalid signature hex string",
 			[]string{
-				cid_hex,
+				cid,
 				"signature",
 				xPubKey,
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
@@ -178,7 +165,7 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 		{
 			"invalid signature",
 			[]string{
-				cid_hex,
+				cid,
 				hex.EncodeToString([]byte("signature")),
 				xPubKey,
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
@@ -190,7 +177,7 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 		{
 			"valid notarization",
 			[]string{
-				cid_hex,
+				cid,
 				signatureHex,
 				xPubKey,
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),

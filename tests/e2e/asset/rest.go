@@ -29,7 +29,6 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 	byte_key := privKey.Serialize()
 	sk := hex.EncodeToString(byte_key)
 	cid, signatureHex := sample.Asset(sk)
-	cid_hex := hex.EncodeToString([]byte(cid))
 
 	testCases := []struct {
 		name   string
@@ -40,27 +39,17 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 			"machine not found",
 			assettypes.MsgNotarizeAsset{
 				Creator:   addr.String(),
-				Hash:      cid_hex,
+				Hash:      cid,
 				Signature: signatureHex,
 				PubKey:    "human pubkey",
 			},
 			"machine not found",
 		},
 		{
-			"invalid message hex string",
-			assettypes.MsgNotarizeAsset{
-				Creator:   addr.String(),
-				Hash:      "cid",
-				Signature: "invalid signature",
-				PubKey:    xPubKey,
-			},
-			"invalid message hex string",
-		},
-		{
 			"invalid signature hex string",
 			assettypes.MsgNotarizeAsset{
 				Creator:   addr.String(),
-				Hash:      cid_hex,
+				Hash:      cid,
 				Signature: "invalid signature",
 				PubKey:    xPubKey,
 			},
@@ -70,7 +59,7 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 			"invalid signature",
 			assettypes.MsgNotarizeAsset{
 				Creator:   addr.String(),
-				Hash:      cid_hex,
+				Hash:      cid,
 				Signature: hex.EncodeToString([]byte("invalid signature")),
 				PubKey:    xPubKey,
 			},
@@ -80,7 +69,7 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 			"valid notarization",
 			assettypes.MsgNotarizeAsset{
 				Creator:   addr.String(),
-				Hash:      cid_hex,
+				Hash:      cid,
 				Signature: signatureHex,
 				PubKey:    xPubKey,
 			},
