@@ -2,13 +2,14 @@ package keeper
 
 import (
 	"encoding/hex"
+	"errors"
 	"planetmint-go/x/machine/types"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func (k Keeper) StoreTrustAnchor(ctx sdk.Context, ta types.TrustAnchor, activated bool) {
+func (k Keeper) StoreTrustAnchor(ctx sdk.Context, ta types.TrustAnchor, activated bool) error {
 	store := prefix.NewStore(ctx.KVStore(k.taStoreKey), types.KeyPrefix(types.TrustAnchorKey))
 	// if activated is set to true then store 1 else 0
 	var appendValue []byte
@@ -17,13 +18,20 @@ func (k Keeper) StoreTrustAnchor(ctx sdk.Context, ta types.TrustAnchor, activate
 	} else {
 		appendValue = []byte{0}
 	}
-	pubKey_bytes, _ := getTrustAnchorBytes(ta.Pubkey)
+	pubKey_bytes, err := getTrustAnchorBytes(ta.Pubkey)
+	if err != nil {
+		return errors.New("the given public key could not be decoded (malformed string)")
+	}
 	store.Set(pubKey_bytes, appendValue)
+	return nil
 }
 
 func (k Keeper) GetTrustAnchor(ctx sdk.Context, pubKey string) (val types.TrustAnchor, activated bool, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.taStoreKey), types.KeyPrefix(types.TrustAnchorKey))
-	pubKey_bytes, _ := getTrustAnchorBytes(pubKey)
+	pubKey_bytes, err := getTrustAnchorBytes(pubKey)
+	if err != nil {
+		return val, false, false
+	}
 	trustAnchorActivated := store.Get(pubKey_bytes)
 
 	if trustAnchorActivated == nil {

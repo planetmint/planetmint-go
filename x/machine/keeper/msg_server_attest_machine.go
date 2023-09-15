@@ -59,9 +59,11 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 
 	k.StoreMachine(ctx, *msg.Machine)
 	k.StoreMachineIndex(ctx, *msg.Machine)
-	k.StoreTrustAnchor(ctx, ta, true)
-
-	return &types.MsgAttestMachineResponse{}, nil
+	err = k.StoreTrustAnchor(ctx, ta, true)
+	if err != nil {
+		return nil, err
+	}
+	return &types.MsgAttestMachineResponse{}, err
 }
 
 func validateExtendedPublicKey(issuer string, cfg chaincfg.Params) bool {
