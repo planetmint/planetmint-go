@@ -23,9 +23,8 @@ func (k msgServer) RegisterTrustAnchor(goCtx context.Context, msg *types.MsgRegi
 		return nil, errors.New("trust anchor is already registered")
 	}
 
-	k.StoreTrustAnchor(ctx, *msg.TrustAnchor, false)
-
-	return &types.MsgRegisterTrustAnchorResponse{}, nil
+	err := k.StoreTrustAnchor(ctx, *msg.TrustAnchor, false)
+	return &types.MsgRegisterTrustAnchorResponse{}, err
 }
 
 func validatePublicKey(pubkey string) bool {

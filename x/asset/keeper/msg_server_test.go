@@ -52,9 +52,20 @@ func TestMsgServerNotarizeAssetMachineNotFound(t *testing.T) {
 	assert.EqualError(t, err, "machine not found")
 }
 
-func TestMsgServerNotarizeAssetInvalidAsset(t *testing.T) {
+func TestMsgServerNotarizeAssetInvalidAssetSignatureType(t *testing.T) {
 	_, pk := sample.ExtendedKeyPair(config.PlmntNetParams)
-	msg := types.NewMsgNotarizeAsset(pk, "cid", "sign", pk)
+	hex_string := hex.EncodeToString([]byte("cid"))
+	msg := types.NewMsgNotarizeAsset(pk, hex_string, "sign", pk)
+	msgServer, ctx := setupMsgServer(t)
+	_, err := msgServer.NotarizeAsset(ctx, msg)
+	assert.EqualError(t, err, "invalid signature hex string")
+}
+
+func TestMsgServerNotarizeAssetInvalidAssetSignature(t *testing.T) {
+	_, pk := sample.ExtendedKeyPair(config.PlmntNetParams)
+	hex_string_cid := hex.EncodeToString([]byte("cid"))
+	hex_string_sid := hex.EncodeToString([]byte("sign"))
+	msg := types.NewMsgNotarizeAsset(pk, hex_string_cid, hex_string_sid, pk)
 	msgServer, ctx := setupMsgServer(t)
 	_, err := msgServer.NotarizeAsset(ctx, msg)
 	assert.EqualError(t, err, "invalid signature")

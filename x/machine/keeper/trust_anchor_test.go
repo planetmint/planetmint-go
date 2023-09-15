@@ -1,7 +1,9 @@
 package keeper_test
 
 import (
+	"encoding/hex"
 	"fmt"
+	"strings"
 	"testing"
 
 	keepertest "planetmint-go/testutil/keeper"
@@ -13,24 +15,30 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func createNTrustAnchor(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.TrustAnchor {
+func createNTrustAnchor(t *testing.T, keeper *keeper.Keeper, ctx sdk.Context, n int) []types.TrustAnchor {
 	items := make([]types.TrustAnchor, n)
 	for i := range items {
-		items[i].Pubkey = fmt.Sprintf("pubkey%v", i)
+		pk := fmt.Sprintf("pubkey%v", i)
+		if i%2 == 1 {
+			pk = strings.ToUpper(pk)
+		}
+
+		items[i].Pubkey = hex.EncodeToString([]byte(pk))
 		var activated bool
 		if i%2 == 1 {
 			activated = true
 		} else {
 			activated = false
 		}
-		keeper.StoreTrustAnchor(ctx, items[i], activated)
+		err := keeper.StoreTrustAnchor(ctx, items[i], activated)
+		assert.False(t, (err != nil))
 	}
 	return items
 }
 
 func TestGetTrustAnchor(t *testing.T) {
 	keeper, ctx := keepertest.MachineKeeper(t)
-	items := createNTrustAnchor(keeper, ctx, 10)
+	items := createNTrustAnchor(t, keeper, ctx, 10)
 	for i, item := range items {
 		ta, activated, found := keeper.GetTrustAnchor(ctx, item.Pubkey)
 		assert.True(t, found)
@@ -45,11 +53,29 @@ func TestGetTrustAnchor(t *testing.T) {
 
 func TestUpdateTrustAnchor(t *testing.T) {
 	keeper, ctx := keepertest.MachineKeeper(t)
-	items := createNTrustAnchor(keeper, ctx, 10)
+	items := createNTrustAnchor(t, keeper, ctx, 10)
 	for _, item := range items {
 		ta, activated, _ := keeper.GetTrustAnchor(ctx, item.Pubkey)
 		if !activated {
-			keeper.StoreTrustAnchor(ctx, ta, true)
+			err := keeper.StoreTrustAnchor(ctx, ta, true)
+			assert.False(t, (err != nil))
+		}
+	}
+
+	for _, item := range items {
+		_, activated, _ := keeper.GetTrustAnchor(ctx, item.Pubkey)
+		assert.True(t, activated)
+	}
+}
+
+func TestUpdateTrustAnchorInvalidPubKey(t *testing.T) {
+	keeper, ctx := keepertest.MachineKeeper(t)
+	items := createNTrustAnchor(t, keeper, ctx, 10)
+	for _, item := range items {
+		ta, activated, _ := keeper.GetTrustAnchor(ctx, item.Pubkey)
+		if !activated {
+			err := keeper.StoreTrustAnchor(ctx, ta, true)
+			assert.False(t, (err != nil))
 		}
 	}
 

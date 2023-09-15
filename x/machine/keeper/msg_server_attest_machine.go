@@ -33,9 +33,9 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 		return nil, errors.New("trust anchor has already been used for attestation")
 	}
 
-	isValidMachineId := util.ValidateSignature(msg.Machine.MachineId, msg.Machine.MachineIdSignature, msg.Machine.MachineId)
+	isValidMachineId, err := util.ValidateSignature(msg.Machine.MachineId, msg.Machine.MachineIdSignature, msg.Machine.MachineId)
 	if !isValidMachineId {
-		return nil, errors.New("invalid machine id")
+		return nil, err
 	}
 
 	isValidIssuerPlanetmint := validateExtendedPublicKey(msg.Machine.IssuerPlanetmint, config.PlmntNetParams)
@@ -59,9 +59,11 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 
 	k.StoreMachine(ctx, *msg.Machine)
 	k.StoreMachineIndex(ctx, *msg.Machine)
-	k.StoreTrustAnchor(ctx, ta, true)
-
-	return &types.MsgAttestMachineResponse{}, nil
+	err = k.StoreTrustAnchor(ctx, ta, true)
+	if err != nil {
+		return nil, err
+	}
+	return &types.MsgAttestMachineResponse{}, err
 }
 
 func validateExtendedPublicKey(issuer string, cfg chaincfg.Params) bool {
