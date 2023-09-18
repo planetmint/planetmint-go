@@ -3,11 +3,11 @@ version: 1
 accounts:
   - name: alice
     coins:
-      - 20000token
+      - 20000plmnt
       - 200000000stake
   - name: bob
     coins:
-      - 10000token
+      - 100000000plmnt
       - 100000000stake
 client:
   openapi:
@@ -15,7 +15,7 @@ client:
 faucet:
   name: bob
   coins:
-    - 5token
+    - 100000000plmnt
     - 100000stake
 validators:
   - name: alice
