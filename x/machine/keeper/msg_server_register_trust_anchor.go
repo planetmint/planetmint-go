@@ -24,6 +24,9 @@ func (k msgServer) RegisterTrustAnchor(goCtx context.Context, msg *types.MsgRegi
 	}
 
 	err := k.StoreTrustAnchor(ctx, *msg.TrustAnchor, false)
+	if err != nil {
+		return nil, err
+	}
 	return &types.MsgRegisterTrustAnchorResponse{}, err
 }
 
