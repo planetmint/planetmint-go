@@ -8,5 +8,7 @@ import (
 
 // x/machine module sentinel errors
 var (
-	ErrSample = errorsmod.Register(ModuleName, 1100, "sample error")
+	ErrMachineNotFound         = errorsmod.Register(ModuleName, 2, "machine not found")
+	ErrTrustAnchorNotFound     = errorsmod.Register(ModuleName, 3, "trust anchor not found")
+	ErrTrustAnchorAlreadyInUse = errorsmod.Register(ModuleName, 4, "trust anchor already in use")
 )
