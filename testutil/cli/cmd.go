@@ -3,7 +3,7 @@ package cli
 import (
 	"context"
 	"encoding/json"
-	"planetmint-go/testutil"
+	"github.com/planetmint/planetmint-go/testutil"
 	"regexp"
 
 	"github.com/cosmos/cosmos-sdk/testutil/network"

@@ -1,7 +1,7 @@
 package types
 
 import (
-	machinetypes "planetmint-go/x/machine/types"
+	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"

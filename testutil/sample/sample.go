@@ -4,8 +4,8 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"planetmint-go/config"
-	machinetypes "planetmint-go/x/machine/types"
+	"github.com/planetmint/planetmint-go/config"
+	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 
 	"github.com/btcsuite/btcd/btcutil/hdkeychain"
 	"github.com/btcsuite/btcd/chaincfg"

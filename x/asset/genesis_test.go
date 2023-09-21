@@ -3,11 +3,11 @@ package asset_test
 import (
 	"testing"
 
+	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
+	"github.com/planetmint/planetmint-go/testutil/nullify"
+	"github.com/planetmint/planetmint-go/x/asset"
+	"github.com/planetmint/planetmint-go/x/asset/types"
 	"github.com/stretchr/testify/require"
-	keepertest "planetmint-go/testutil/keeper"
-	"planetmint-go/testutil/nullify"
-	"planetmint-go/x/asset"
-	"planetmint-go/x/asset/types"
 )
 
 func TestGenesis(t *testing.T) {

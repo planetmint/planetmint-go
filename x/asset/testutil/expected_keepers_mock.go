@@ -5,7 +5,7 @@
 package testutil
 
 import (
-	types1 "planetmint-go/x/machine/types"
+	types1 "github.com/planetmint/planetmint-go/x/machine/types"
 	reflect "reflect"
 
 	types "github.com/cosmos/cosmos-sdk/types"

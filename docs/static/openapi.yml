@@ -46437,7 +46437,7 @@ paths:
                         }
       tags:
         - Query
-  /planetmint-go/asset/params:
+  /github.com/planetmint/planetmint-go/asset/params:
     get:
       summary: Parameters queries the parameters of the module.
       operationId: PlanetmintgoAssetParams
@@ -46473,7 +46473,7 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
-  /planetmint-go/dao/params:
+  /github.com/planetmint/planetmint-go/dao/params:
     get:
       summary: Parameters queries the parameters of the module.
       operationId: PlanetmintgoDaoParams
@@ -46509,7 +46509,7 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
-  /planetmint-go/machine/get_machine_by_public_key/{publicKey}:
+  /github.com/planetmint/planetmint-go/machine/get_machine_by_public_key/{publicKey}:
     get:
       summary: Queries a list of GetMachineByPublicKey items.
       operationId: PlanetmintgoMachineGetMachineByPublicKey
@@ -46583,7 +46583,7 @@ paths:
           type: string
       tags:
         - Query
-  /planetmint-go/machine/get_trust_anchor_status/{machineid}:
+  /github.com/planetmint/planetmint-go/machine/get_trust_anchor_status/{machineid}:
     get:
       summary: Queries a list of GetTrustAnchorStatus items.
       operationId: PlanetmintgoMachineGetTrustAnchorStatus
@@ -46622,7 +46622,7 @@ paths:
           type: string
       tags:
         - Query
-  /planetmint-go/machine/params:
+  /github.com/planetmint/planetmint-go/machine/params:
     get:
       summary: Parameters queries the parameters of the module.
       operationId: PlanetmintgoMachineParams

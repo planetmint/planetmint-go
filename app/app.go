@@ -109,23 +109,23 @@ import (
 	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
 	"github.com/spf13/cast"
 
-	machinemodule "planetmint-go/x/machine"
-	machinemodulekeeper "planetmint-go/x/machine/keeper"
-	machinemoduletypes "planetmint-go/x/machine/types"
+	machinemodule "github.com/planetmint/planetmint-go/x/machine"
+	machinemodulekeeper "github.com/planetmint/planetmint-go/x/machine/keeper"
+	machinemoduletypes "github.com/planetmint/planetmint-go/x/machine/types"
 
-	assetmodule "planetmint-go/x/asset"
-	assetmodulekeeper "planetmint-go/x/asset/keeper"
-	assetmoduletypes "planetmint-go/x/asset/types"
+	assetmodule "github.com/planetmint/planetmint-go/x/asset"
+	assetmodulekeeper "github.com/planetmint/planetmint-go/x/asset/keeper"
+	assetmoduletypes "github.com/planetmint/planetmint-go/x/asset/types"
 
-	daomodule "planetmint-go/x/dao"
-	daomodulekeeper "planetmint-go/x/dao/keeper"
-	daomoduletypes "planetmint-go/x/dao/types"
+	daomodule "github.com/planetmint/planetmint-go/x/dao"
+	daomodulekeeper "github.com/planetmint/planetmint-go/x/dao/keeper"
+	daomoduletypes "github.com/planetmint/planetmint-go/x/dao/types"
 
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
-	pmante "planetmint-go/app/ante"
-	appparams "planetmint-go/app/params"
-	"planetmint-go/docs"
+	pmante "github.com/planetmint/planetmint-go/app/ante"
+	appparams "github.com/planetmint/planetmint-go/app/params"
+	"github.com/planetmint/planetmint-go/docs"
 )
 
 const (

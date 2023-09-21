@@ -6,8 +6,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	"planetmint-go/x/machine/keeper"
-	"planetmint-go/x/machine/types"
+	"github.com/planetmint/planetmint-go/x/machine/keeper"
+	"github.com/planetmint/planetmint-go/x/machine/types"
 )
 
 func SimulateMsgAttestMachine(

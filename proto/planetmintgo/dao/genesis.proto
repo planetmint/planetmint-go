@@ -4,7 +4,7 @@ package planetmintgo.dao;
 import "gogoproto/gogo.proto";
 import "planetmintgo/dao/params.proto";
 
-option go_package = "planetmint-go/x/dao/types";
+option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
 
 // GenesisState defines the dao module's genesis state.
 message GenesisState {

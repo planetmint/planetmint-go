@@ -6,13 +6,13 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "planetmintgo/asset/params.proto";
 
-option go_package = "planetmint-go/x/asset/types";
+option go_package = "github.com/planetmint/planetmint-go/x/asset/types";
 
 // Query defines the gRPC querier service.
 service Query {
   // Parameters queries the parameters of the module.
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/planetmint-go/asset/params";
+    option (google.api.http).get = "/github.com/planetmint/planetmint-go/asset/params";
   }
 }
 

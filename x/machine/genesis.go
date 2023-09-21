@@ -2,8 +2,8 @@ package machine
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"planetmint-go/x/machine/keeper"
-	"planetmint-go/x/machine/types"
+	"github.com/planetmint/planetmint-go/x/machine/keeper"
+	"github.com/planetmint/planetmint-go/x/machine/types"
 )
 
 // InitGenesis initializes the module's state from a provided genesis state.

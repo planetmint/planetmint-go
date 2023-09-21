@@ -3,12 +3,12 @@ package asset
 import (
 	"encoding/hex"
 	"fmt"
-	"planetmint-go/testutil"
-	"planetmint-go/testutil/sample"
+	"github.com/planetmint/planetmint-go/testutil"
+	"github.com/planetmint/planetmint-go/testutil/sample"
 
 	"github.com/btcsuite/btcd/btcutil/hdkeychain"
 
-	assettypes "planetmint-go/x/asset/types"
+	assettypes "github.com/planetmint/planetmint-go/x/asset/types"
 
 	txtypes "github.com/cosmos/cosmos-sdk/types/tx"
 )

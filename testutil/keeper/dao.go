@@ -12,9 +12,9 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/planetmint/planetmint-go/x/dao/keeper"
+	"github.com/planetmint/planetmint-go/x/dao/types"
 	"github.com/stretchr/testify/require"
-	"planetmint-go/x/dao/keeper"
-	"planetmint-go/x/dao/types"
 )
 
 func DaoKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {

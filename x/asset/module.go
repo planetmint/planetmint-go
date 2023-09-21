@@ -16,9 +16,9 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"planetmint-go/x/asset/client/cli"
-	"planetmint-go/x/asset/keeper"
-	"planetmint-go/x/asset/types"
+	"github.com/planetmint/planetmint-go/x/asset/client/cli"
+	"github.com/planetmint/planetmint-go/x/asset/keeper"
+	"github.com/planetmint/planetmint-go/x/asset/types"
 )
 
 var (

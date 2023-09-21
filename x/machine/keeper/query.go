@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"planetmint-go/x/machine/types"
+	"github.com/planetmint/planetmint-go/x/machine/types"
 )
 
 var _ types.QueryServer = Keeper{}

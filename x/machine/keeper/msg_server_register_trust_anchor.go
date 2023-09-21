@@ -5,7 +5,7 @@ import (
 	"encoding/hex"
 	"errors"
 
-	"planetmint-go/x/machine/types"
+	"github.com/planetmint/planetmint-go/x/machine/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

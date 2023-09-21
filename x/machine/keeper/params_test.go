@@ -3,9 +3,9 @@ package keeper_test
 import (
 	"testing"
 
+	testkeeper "github.com/planetmint/planetmint-go/testutil/keeper"
+	"github.com/planetmint/planetmint-go/x/machine/types"
 	"github.com/stretchr/testify/require"
-	testkeeper "planetmint-go/testutil/keeper"
-	"planetmint-go/x/machine/types"
 )
 
 func TestGetParams(t *testing.T) {

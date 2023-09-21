@@ -2,15 +2,15 @@ package dao
 
 import (
 	"fmt"
-	"planetmint-go/config"
-	"planetmint-go/testutil/network"
-	"planetmint-go/testutil/sample"
+	"github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/testutil/network"
+	"github.com/planetmint/planetmint-go/testutil/sample"
 
 	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	clitestutil "planetmint-go/testutil/cli"
+	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"

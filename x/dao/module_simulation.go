@@ -3,9 +3,9 @@ package dao
 import (
 	"math/rand"
 
-	"planetmint-go/testutil/sample"
-	daosimulation "planetmint-go/x/dao/simulation"
-	"planetmint-go/x/dao/types"
+	"github.com/planetmint/planetmint-go/testutil/sample"
+	daosimulation "github.com/planetmint/planetmint-go/x/dao/simulation"
+	"github.com/planetmint/planetmint-go/x/dao/types"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"

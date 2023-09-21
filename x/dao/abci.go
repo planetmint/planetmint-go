@@ -1,7 +1,7 @@
 package dao
 
 import (
-	"planetmint-go/x/dao/keeper"
+	"github.com/planetmint/planetmint-go/x/dao/keeper"
 
 	abci "github.com/cometbft/cometbft/abci/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"

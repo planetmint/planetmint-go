@@ -1,8 +1,8 @@
 package keeper_test
 
 import (
-	keepertest "planetmint-go/testutil/keeper"
-	"planetmint-go/x/machine/types"
+	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
+	"github.com/planetmint/planetmint-go/x/machine/types"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"

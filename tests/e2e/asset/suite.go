@@ -4,13 +4,14 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"planetmint-go/config"
-	"planetmint-go/testutil/network"
-	"planetmint-go/testutil/sample"
 
-	clitestutil "planetmint-go/testutil/cli"
-	assetcli "planetmint-go/x/asset/client/cli"
-	machinecli "planetmint-go/x/machine/client/cli"
+	"github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/testutil/network"
+	"github.com/planetmint/planetmint-go/testutil/sample"
+
+	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
+	assetcli "github.com/planetmint/planetmint-go/x/asset/client/cli"
+	machinecli "github.com/planetmint/planetmint-go/x/machine/client/cli"
 
 	"github.com/btcsuite/btcd/btcutil/hdkeychain"
 	"github.com/cosmos/cosmos-sdk/client/flags"

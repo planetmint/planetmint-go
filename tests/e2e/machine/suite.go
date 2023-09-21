@@ -3,10 +3,10 @@ package machine
 import (
 	"encoding/json"
 	"fmt"
-	clitestutil "planetmint-go/testutil/cli"
-	"planetmint-go/testutil/network"
-	"planetmint-go/testutil/sample"
-	machinecli "planetmint-go/x/machine/client/cli"
+	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
+	"github.com/planetmint/planetmint-go/testutil/network"
+	"github.com/planetmint/planetmint-go/testutil/sample"
+	machinecli "github.com/planetmint/planetmint-go/x/machine/client/cli"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"

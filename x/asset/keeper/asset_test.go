@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"testing"
 
-	keepertest "planetmint-go/testutil/keeper"
-	"planetmint-go/x/asset/keeper"
-	"planetmint-go/x/asset/types"
+	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
+	"github.com/planetmint/planetmint-go/x/asset/keeper"
+	"github.com/planetmint/planetmint-go/x/asset/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/assert"

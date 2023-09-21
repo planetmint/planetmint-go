@@ -5,7 +5,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
 
-	"planetmint-go/x/dao/types"
+	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
 func CmdQueryParams() *cobra.Command {

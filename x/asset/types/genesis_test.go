@@ -3,7 +3,7 @@ package types_test
 import (
 	"testing"
 
-	"planetmint-go/x/asset/types"
+	"github.com/planetmint/planetmint-go/x/asset/types"
 
 	"github.com/stretchr/testify/require"
 )

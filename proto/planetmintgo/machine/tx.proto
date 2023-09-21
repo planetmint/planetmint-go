@@ -5,7 +5,7 @@ package planetmintgo.machine;
 import "planetmintgo/machine/machine.proto";
 import "planetmintgo/machine/trust_anchor.proto";
 
-option go_package = "planetmint-go/x/machine/types";
+option go_package = "github.com/planetmint/planetmint-go/x/machine/types";
 
 // Msg defines the Msg service.
 service Msg {

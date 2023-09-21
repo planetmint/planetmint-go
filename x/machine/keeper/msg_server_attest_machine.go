@@ -5,9 +5,9 @@ import (
 	"errors"
 	"strconv"
 
-	config "planetmint-go/config"
-	"planetmint-go/util"
-	"planetmint-go/x/machine/types"
+	config "github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/util"
+	"github.com/planetmint/planetmint-go/x/machine/types"
 
 	"github.com/btcsuite/btcd/btcutil/hdkeychain"
 	"github.com/btcsuite/btcd/chaincfg"

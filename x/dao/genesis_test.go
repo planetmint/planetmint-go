@@ -3,11 +3,11 @@ package dao_test
 import (
 	"testing"
 
+	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
+	"github.com/planetmint/planetmint-go/testutil/nullify"
+	"github.com/planetmint/planetmint-go/x/dao"
+	"github.com/planetmint/planetmint-go/x/dao/types"
 	"github.com/stretchr/testify/require"
-	keepertest "planetmint-go/testutil/keeper"
-	"planetmint-go/testutil/nullify"
-	"planetmint-go/x/dao"
-	"planetmint-go/x/dao/types"
 )
 
 func TestGenesis(t *testing.T) {

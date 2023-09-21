@@ -8,7 +8,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	// "github.com/cosmos/cosmos-sdk/client/flags"
-	"planetmint-go/x/dao/types"
+	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
 var (
