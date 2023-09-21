@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"planetmint-go/x/asset/types"
+	"github.com/planetmint/planetmint-go/x/asset/types"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"

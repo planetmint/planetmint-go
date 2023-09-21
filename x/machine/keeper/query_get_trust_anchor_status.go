@@ -3,7 +3,7 @@ package keeper
 import (
 	"context"
 
-	"planetmint-go/x/machine/types"
+	"github.com/planetmint/planetmint-go/x/machine/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"google.golang.org/grpc/codes"

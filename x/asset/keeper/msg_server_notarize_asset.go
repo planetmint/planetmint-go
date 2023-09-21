@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"planetmint-go/util"
-	"planetmint-go/x/asset/types"
+	"github.com/planetmint/planetmint-go/util"
+	"github.com/planetmint/planetmint-go/x/asset/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

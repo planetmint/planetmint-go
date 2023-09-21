@@ -8,26 +8,26 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 import "planetmintgo/machine/params.proto";
 import "planetmintgo/machine/machine.proto";
 
-option go_package = "planetmint-go/x/machine/types";
+option go_package = "github.com/planetmint/planetmint-go/x/machine/types";
 
 // Query defines the gRPC querier service.
 service Query {
   
   // Parameters queries the parameters of the module.
   rpc Params (QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/planetmint-go/machine/params";
+    option (google.api.http).get = "/github.com/planetmint/planetmint-go/machine/params";
   
   }
   
   // Queries a list of GetMachineByPublicKey items.
   rpc GetMachineByPublicKey (QueryGetMachineByPublicKeyRequest) returns (QueryGetMachineByPublicKeyResponse) {
-    option (google.api.http).get = "/planetmint-go/machine/get_machine_by_public_key/{publicKey}";
+    option (google.api.http).get = "/github.com/planetmint/planetmint-go/machine/get_machine_by_public_key/{publicKey}";
   
   }
   
   // Queries a list of GetTrustAnchorStatus items.
   rpc GetTrustAnchorStatus (QueryGetTrustAnchorStatusRequest) returns (QueryGetTrustAnchorStatusResponse) {
-    option (google.api.http).get = "/planetmint-go/machine/get_trust_anchor_status/{machineid}";
+    option (google.api.http).get = "/github.com/planetmint/planetmint-go/machine/get_trust_anchor_status/{machineid}";
   
   }
 }

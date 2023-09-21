@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"planetmint-go/x/dao/types"
+	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
 var _ types.QueryServer = Keeper{}

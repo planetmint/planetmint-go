@@ -2,9 +2,9 @@ package machine
 
 import (
 	"fmt"
-	"planetmint-go/testutil"
-	"planetmint-go/testutil/sample"
-	machinetypes "planetmint-go/x/machine/types"
+	"github.com/planetmint/planetmint-go/testutil"
+	"github.com/planetmint/planetmint-go/testutil/sample"
+	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 
 	txtypes "github.com/cosmos/cosmos-sdk/types/tx"
 )
@@ -58,7 +58,7 @@ func (s *E2ETestSuite) TestAttestMachineREST() {
 	s.Require().NoError(err)
 	s.Require().Equal(uint32(0), txRes.TxResponse.Code)
 
-	queryMachineUrl := fmt.Sprintf("%s/planetmint-go/machine/get_machine_by_public_key/%s", baseURL, pubKey)
+	queryMachineUrl := fmt.Sprintf("%s/github.com/planetmint/planetmint-go/machine/get_machine_by_public_key/%s", baseURL, pubKey)
 	queryMachineRes, err := testutil.GetRequest(queryMachineUrl)
 	s.Require().NoError(err)
 

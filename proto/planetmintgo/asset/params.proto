@@ -3,7 +3,7 @@ package planetmintgo.asset;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "planetmint-go/x/asset/types";
+option go_package = "github.com/planetmint/planetmint-go/x/asset/types";
 
 // Params defines the parameters for the module.
 message Params {

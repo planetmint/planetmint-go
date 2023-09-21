@@ -3,7 +3,7 @@ package keeper
 import (
 	"encoding/hex"
 	"errors"
-	"planetmint-go/x/machine/types"
+	"github.com/planetmint/planetmint-go/x/machine/types"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"

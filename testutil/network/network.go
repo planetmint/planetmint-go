@@ -17,7 +17,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/stretchr/testify/require"
 
-	"planetmint-go/app"
+	"github.com/planetmint/planetmint-go/app"
 )
 
 type (

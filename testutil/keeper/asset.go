@@ -3,12 +3,12 @@ package keeper
 import (
 	"testing"
 
-	"planetmint-go/config"
-	"planetmint-go/testutil/sample"
-	"planetmint-go/x/asset/keeper"
-	"planetmint-go/x/asset/types"
+	"github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/testutil/sample"
+	"github.com/planetmint/planetmint-go/x/asset/keeper"
+	"github.com/planetmint/planetmint-go/x/asset/types"
 
-	assettestutils "planetmint-go/x/asset/testutil"
+	assettestutils "github.com/planetmint/planetmint-go/x/asset/testutil"
 
 	tmdb "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"

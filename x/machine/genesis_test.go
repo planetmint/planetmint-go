@@ -3,11 +3,11 @@ package machine_test
 import (
 	"testing"
 
+	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
+	"github.com/planetmint/planetmint-go/testutil/nullify"
+	"github.com/planetmint/planetmint-go/x/machine"
+	"github.com/planetmint/planetmint-go/x/machine/types"
 	"github.com/stretchr/testify/require"
-	keepertest "planetmint-go/testutil/keeper"
-	"planetmint-go/testutil/nullify"
-	"planetmint-go/x/machine"
-	"planetmint-go/x/machine/types"
 )
 
 func TestGenesis(t *testing.T) {

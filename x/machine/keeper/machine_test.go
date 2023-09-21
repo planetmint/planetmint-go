@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	keepertest "planetmint-go/testutil/keeper"
-	"planetmint-go/x/machine/keeper"
-	"planetmint-go/x/machine/types"
+	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
+	"github.com/planetmint/planetmint-go/x/machine/keeper"
+	"github.com/planetmint/planetmint-go/x/machine/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/assert"

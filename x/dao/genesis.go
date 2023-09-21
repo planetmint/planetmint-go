@@ -2,8 +2,8 @@ package dao
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"planetmint-go/x/dao/keeper"
-	"planetmint-go/x/dao/types"
+	"github.com/planetmint/planetmint-go/x/dao/keeper"
+	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
 // InitGenesis initializes the module's state from a provided genesis state.

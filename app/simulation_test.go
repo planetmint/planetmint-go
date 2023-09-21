@@ -36,7 +36,7 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/stretchr/testify/require"
 
-	"planetmint-go/app"
+	"github.com/planetmint/planetmint-go/app"
 )
 
 const SIMULATION_SETUP_FAILED = "simulation setup failed"

@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	testkeeper "github.com/planetmint/planetmint-go/testutil/keeper"
+	"github.com/planetmint/planetmint-go/x/dao/types"
 	"github.com/stretchr/testify/require"
-	testkeeper "planetmint-go/testutil/keeper"
-	"planetmint-go/x/dao/types"
 )
 
 func TestParamsQuery(t *testing.T) {

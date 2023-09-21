@@ -1,8 +1,8 @@
 package ante
 
 import (
-	assettypes "planetmint-go/x/asset/types"
-	machinetypes "planetmint-go/x/machine/types"
+	assettypes "github.com/planetmint/planetmint-go/x/asset/types"
+	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"

@@ -6,10 +6,10 @@ import (
 	"strings"
 	"testing"
 
-	keepertest "planetmint-go/testutil/keeper"
+	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
 
-	"planetmint-go/x/machine/keeper"
-	"planetmint-go/x/machine/types"
+	"github.com/planetmint/planetmint-go/x/machine/keeper"
+	"github.com/planetmint/planetmint-go/x/machine/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/assert"

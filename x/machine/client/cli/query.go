@@ -10,7 +10,7 @@ import (
 	// "github.com/cosmos/cosmos-sdk/client/flags"
 	// sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"planetmint-go/x/machine/types"
+	"github.com/planetmint/planetmint-go/x/machine/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module

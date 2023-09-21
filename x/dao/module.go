@@ -12,9 +12,9 @@ import (
 
 	abci "github.com/cometbft/cometbft/abci/types"
 
-	"planetmint-go/x/dao/client/cli"
-	"planetmint-go/x/dao/keeper"
-	"planetmint-go/x/dao/types"
+	"github.com/planetmint/planetmint-go/x/dao/client/cli"
+	"github.com/planetmint/planetmint-go/x/dao/keeper"
+	"github.com/planetmint/planetmint-go/x/dao/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"

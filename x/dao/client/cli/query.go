@@ -7,7 +7,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 
-	"planetmint-go/x/dao/types"
+	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module

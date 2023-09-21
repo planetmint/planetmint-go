@@ -2,8 +2,8 @@ package asset
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"planetmint-go/x/asset/keeper"
-	"planetmint-go/x/asset/types"
+	"github.com/planetmint/planetmint-go/x/asset/keeper"
+	"github.com/planetmint/planetmint-go/x/asset/types"
 )
 
 // InitGenesis initializes the module's state from a provided genesis state.

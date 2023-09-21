@@ -3,8 +3,8 @@ package types_test
 import (
 	"testing"
 
+	"github.com/planetmint/planetmint-go/x/dao/types"
 	"github.com/stretchr/testify/require"
-	"planetmint-go/x/dao/types"
 )
 
 func TestGenesisState_Validate(t *testing.T) {

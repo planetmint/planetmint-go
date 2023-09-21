@@ -5,11 +5,11 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"planetmint-go/config"
-	keepertest "planetmint-go/testutil/keeper"
-	"planetmint-go/testutil/sample"
-	"planetmint-go/x/asset/keeper"
-	"planetmint-go/x/asset/types"
+	"github.com/planetmint/planetmint-go/config"
+	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
+	"github.com/planetmint/planetmint-go/testutil/sample"
+	"github.com/planetmint/planetmint-go/x/asset/keeper"
+	"github.com/planetmint/planetmint-go/x/asset/types"
 
 	"github.com/btcsuite/btcd/btcutil/hdkeychain"
 	sdk "github.com/cosmos/cosmos-sdk/types"

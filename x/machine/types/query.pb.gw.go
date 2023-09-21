@@ -339,11 +339,11 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"planetmint-go", "machine", "params"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4}, []string{"github.com", "planetmint", "planetmint-go", "machine", "params"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_GetMachineByPublicKey_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"planetmint-go", "machine", "get_machine_by_public_key", "publicKey"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_GetMachineByPublicKey_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"github.com", "planetmint", "planetmint-go", "machine", "get_machine_by_public_key", "publicKey"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_GetTrustAnchorStatus_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"planetmint-go", "machine", "get_trust_anchor_status", "machineid"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_GetTrustAnchorStatus_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"github.com", "planetmint", "planetmint-go", "machine", "get_trust_anchor_status", "machineid"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (

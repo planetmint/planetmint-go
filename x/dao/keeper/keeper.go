@@ -12,8 +12,8 @@ import (
 	disttypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
-	"planetmint-go/config"
-	"planetmint-go/x/dao/types"
+	"github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
 type (

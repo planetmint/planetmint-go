@@ -8,9 +8,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
-	"planetmint-go/testutil/sample"
-	machinesimulation "planetmint-go/x/machine/simulation"
-	"planetmint-go/x/machine/types"
+	"github.com/planetmint/planetmint-go/testutil/sample"
+	machinesimulation "github.com/planetmint/planetmint-go/x/machine/simulation"
+	"github.com/planetmint/planetmint-go/x/machine/types"
 )
 
 // avoid unused import issue

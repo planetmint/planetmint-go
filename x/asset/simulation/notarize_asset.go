@@ -6,8 +6,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	"planetmint-go/x/asset/keeper"
-	"planetmint-go/x/asset/types"
+	"github.com/planetmint/planetmint-go/x/asset/keeper"
+	"github.com/planetmint/planetmint-go/x/asset/types"
 )
 
 func SimulateMsgNotarizeAsset(

@@ -2,7 +2,7 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"planetmint-go/x/dao/types"
+	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
 // GetParams get all parameters as types.Params

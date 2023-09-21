@@ -1,7 +1,7 @@
 package asset
 
 import (
-	"planetmint-go/testutil/network"
+	"github.com/planetmint/planetmint-go/testutil/network"
 	"testing"
 
 	"github.com/stretchr/testify/suite"

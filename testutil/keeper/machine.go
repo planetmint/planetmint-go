@@ -3,8 +3,8 @@ package keeper
 import (
 	"testing"
 
-	"planetmint-go/x/machine/keeper"
-	"planetmint-go/x/machine/types"
+	"github.com/planetmint/planetmint-go/x/machine/keeper"
+	"github.com/planetmint/planetmint-go/x/machine/types"
 
 	tmdb "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"

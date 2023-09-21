@@ -3,7 +3,7 @@ package cmd
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"planetmint-go/app"
+	"github.com/planetmint/planetmint-go/app"
 )
 
 func initSDKConfig() *sdk.Config {

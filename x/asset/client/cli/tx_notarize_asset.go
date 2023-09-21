@@ -6,8 +6,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	"github.com/planetmint/planetmint-go/x/asset/types"
 	"github.com/spf13/cobra"
-	"planetmint-go/x/asset/types"
 )
 
 var _ = strconv.Itoa(0)

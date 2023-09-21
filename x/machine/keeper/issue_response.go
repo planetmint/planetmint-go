@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	config "planetmint-go/config"
+	config "github.com/planetmint/planetmint-go/config"
 	"strconv"
 
 	"github.com/cometbft/cometbft/libs/log"

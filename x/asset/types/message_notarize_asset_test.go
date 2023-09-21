@@ -3,7 +3,7 @@ package types
 import (
 	"testing"
 
-	"planetmint-go/testutil/sample"
+	"github.com/planetmint/planetmint-go/testutil/sample"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
