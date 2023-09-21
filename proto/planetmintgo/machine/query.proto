@@ -24,6 +24,12 @@ service Query {
     option (google.api.http).get = "/planetmint-go/machine/get_machine_by_public_key/{publicKey}";
   
   }
+  
+  // Queries a list of GetTrustAnchorStatus items.
+  rpc GetTrustAnchorStatus (QueryGetTrustAnchorStatusRequest) returns (QueryGetTrustAnchorStatusResponse) {
+    option (google.api.http).get = "/planetmint-go/machine/get_trust_anchor_status/{machineid}";
+  
+  }
 }
 // QueryParamsRequest is request type for the Query/Params RPC method.
 message QueryParamsRequest {}
@@ -41,5 +47,14 @@ message QueryGetMachineByPublicKeyRequest {
 
 message QueryGetMachineByPublicKeyResponse {
   Machine machine = 1;
+}
+
+message QueryGetTrustAnchorStatusRequest {
+  string machineid = 1;
+}
+
+message QueryGetTrustAnchorStatusResponse {
+  string machineid   = 1;
+  bool   isactivated = 2;
 }
 

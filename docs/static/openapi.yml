@@ -46583,6 +46583,45 @@ paths:
           type: string
       tags:
         - Query
+  /planetmint-go/machine/get_trust_anchor_status/{machineid}:
+    get:
+      summary: Queries a list of GetTrustAnchorStatus items.
+      operationId: PlanetmintgoMachineGetTrustAnchorStatus
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              machineid:
+                type: string
+              isactivated:
+                type: boolean
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: machineid
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
   /planetmint-go/machine/params:
     get:
       summary: Parameters queries the parameters of the module.
@@ -75479,6 +75518,13 @@ definitions:
             format: int64
           machineIdSignature:
             type: string
+  planetmintgo.machine.QueryGetTrustAnchorStatusResponse:
+    type: object
+    properties:
+      machineid:
+        type: string
+      isactivated:
+        type: boolean
   planetmintgo.machine.QueryParamsResponse:
     type: object
     properties:
