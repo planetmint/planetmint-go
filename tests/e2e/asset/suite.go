@@ -163,6 +163,7 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 				"--yes",
 			},
 			"invalid signature hex string",
+			false,
 		},
 		{
 			"invalid signature",

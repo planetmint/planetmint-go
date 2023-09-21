@@ -56,6 +56,7 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 				PubKey:    xPubKey,
 			},
 			"invalid signature hex string",
+			false,
 		},
 		{
 			"invalid signature",
