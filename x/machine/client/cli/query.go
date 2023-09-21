@@ -28,6 +28,7 @@ func GetQueryCmd(queryRoute string) *cobra.Command {
 	cmd.AddCommand(CmdGetMachineByPublicKey())
 
 	cmd.AddCommand(CmdGetTrustAnchorStatus())
+	cmd.AddCommand(CmdGetMachineByAddress())
 
 	// this line is used by starport scaffolding # 1
 

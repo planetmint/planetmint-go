@@ -24,6 +24,7 @@ func MachineKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	issuerPlanetmintIndexStoreKey := sdk.NewKVStoreKey(types.IssuerPlanetmintIndexKey)
 	issuerLiquidIndexStoreKey := sdk.NewKVStoreKey(types.IssuerLiquidIndexKey)
 	trustAnchorStoreKey := sdk.NewKVStoreKey(types.TrustAnchorKey)
+	addressStoreKey := sdk.NewKVStoreKey(types.AddressIndexKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 
 	db := tmdb.NewMemDB()
@@ -33,6 +34,7 @@ func MachineKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	stateStore.MountStoreWithDB(issuerPlanetmintIndexStoreKey, storetypes.StoreTypeIAVL, db)
 	stateStore.MountStoreWithDB(issuerLiquidIndexStoreKey, storetypes.StoreTypeIAVL, db)
 	stateStore.MountStoreWithDB(trustAnchorStoreKey, storetypes.StoreTypeIAVL, db)
+	stateStore.MountStoreWithDB(addressStoreKey, storetypes.StoreTypeIAVL, db)
 	stateStore.MountStoreWithDB(memStoreKey, storetypes.StoreTypeMemory, nil)
 	require.NoError(t, stateStore.LoadLatestVersion())
 
@@ -53,6 +55,7 @@ func MachineKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		issuerPlanetmintIndexStoreKey,
 		issuerLiquidIndexStoreKey,
 		trustAnchorStoreKey,
+		addressStoreKey,
 		memStoreKey,
 		paramsSubspace,
 	)

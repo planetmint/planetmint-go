@@ -30,23 +30,27 @@ func (k Keeper) StoreMachineIndex(ctx sdk.Context, machine types.Machine) {
 	taIndexStore := prefix.NewStore(ctx.KVStore(k.taIndexStoreKey), types.KeyPrefix(types.TAIndexKey))
 	issuerPlanetmintIndexStore := prefix.NewStore(ctx.KVStore(k.issuerPlanetmintIndexStoreKey), types.KeyPrefix(types.IssuerPlanetmintIndexKey))
 	issuerLiquidIndexStore := prefix.NewStore(ctx.KVStore(k.issuerLiquidIndexStoreKey), types.KeyPrefix(types.IssuerLiquidIndexKey))
+	addressIndexStore := prefix.NewStore(ctx.KVStore(k.addressIndexStoreKey), types.KeyPrefix(types.AddressIndexKey))
 
 	index := types.MachineIndex{
 		MachineId:        machine.MachineId,
 		IssuerPlanetmint: machine.IssuerPlanetmint,
 		IssuerLiquid:     machine.IssuerLiquid,
+		Address:          machine.Address,
 	}
 
 	machineIdIndexKey := GetMachineBytes(machine.MachineId)
 	issuerPlanetmintIndexKey := GetMachineBytes(machine.IssuerPlanetmint)
 	issuerLiquidIndexKey := GetMachineBytes(machine.IssuerLiquid)
+	addressIndexKey := GetMachineBytes(machine.Address)
 	indexAppendValue := k.cdc.MustMarshal(&index)
 	taIndexStore.Set(machineIdIndexKey, indexAppendValue)
 	issuerPlanetmintIndexStore.Set(issuerPlanetmintIndexKey, indexAppendValue)
 	issuerLiquidIndexStore.Set(issuerLiquidIndexKey, indexAppendValue)
+	addressIndexStore.Set(addressIndexKey, indexAppendValue)
 }
 
-func (k Keeper) GetMachineIndex(ctx sdk.Context, pubKey string) (val types.MachineIndex, found bool) {
+func (k Keeper) GetMachineIndexByPubKey(ctx sdk.Context, pubKey string) (val types.MachineIndex, found bool) {
 	taIndexStore := prefix.NewStore(ctx.KVStore(k.taIndexStoreKey), types.KeyPrefix(types.TAIndexKey))
 	issuerPlanetmintIndexStore := prefix.NewStore(ctx.KVStore(k.issuerPlanetmintIndexStoreKey), types.KeyPrefix(types.IssuerPlanetmintIndexKey))
 	issuerLiquidIndexStore := prefix.NewStore(ctx.KVStore(k.issuerLiquidIndexStoreKey), types.KeyPrefix(types.IssuerLiquidIndexKey))
@@ -72,6 +76,22 @@ func (k Keeper) GetMachineIndex(ctx sdk.Context, pubKey string) (val types.Machi
 	ilIndex := issuerLiquidIndexStore.Get(keyBytes)
 	if ilIndex != nil {
 		if err := k.cdc.Unmarshal(ilIndex, &val); err != nil {
+			return val, false
+		}
+		return val, true
+	}
+
+	return val, false
+}
+
+func (k Keeper) GetMachineIndexByAddress(ctx sdk.Context, address string) (val types.MachineIndex, found bool) {
+	addressIndexStore := prefix.NewStore(ctx.KVStore(k.addressIndexStoreKey), types.KeyPrefix(types.AddressIndexKey))
+
+	keyBytes := GetMachineBytes(address)
+
+	adIndex := addressIndexStore.Get(keyBytes)
+	if adIndex != nil {
+		if err := k.cdc.Unmarshal(adIndex, &val); err != nil {
 			return val, false
 		}
 		return val, true

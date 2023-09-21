@@ -313,7 +313,7 @@ func New(
 		feegrant.StoreKey, evidencetypes.StoreKey, ibctransfertypes.StoreKey, icahosttypes.StoreKey,
 		capabilitytypes.StoreKey, group.StoreKey, icacontrollertypes.StoreKey, consensusparamtypes.StoreKey,
 		machinemoduletypes.StoreKey, machinemoduletypes.TAIndexKey, machinemoduletypes.IssuerPlanetmintIndexKey, machinemoduletypes.IssuerLiquidIndexKey,
-		machinemoduletypes.TrustAnchorKey,
+		machinemoduletypes.TrustAnchorKey, machinemoduletypes.AddressIndexKey,
 		assetmoduletypes.StoreKey,
 		daomoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
@@ -545,6 +545,7 @@ func New(
 		keys[machinemoduletypes.IssuerPlanetmintIndexKey],
 		keys[machinemoduletypes.IssuerLiquidIndexKey],
 		keys[machinemoduletypes.TrustAnchorKey],
+		keys[machinemoduletypes.AddressIndexKey],
 		keys[machinemoduletypes.MemStoreKey],
 		app.GetSubspace(machinemoduletypes.ModuleName),
 	)

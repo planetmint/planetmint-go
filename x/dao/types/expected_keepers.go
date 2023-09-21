@@ -18,5 +18,6 @@ type BankKeeper interface {
 	SpendableCoins(ctx sdk.Context, addr sdk.AccAddress) sdk.Coins
 	SendCoinsFromModuleToAccount(ctx sdk.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error
 	BlockedAddr(addr sdk.AccAddress) bool
+	MintCoins(ctx sdk.Context, moduleName string, amt sdk.Coins) error
 	// Methods imported from bank should be defined here
 }

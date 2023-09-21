@@ -13,7 +13,7 @@ import (
 func (k msgServer) NotarizeAsset(goCtx context.Context, msg *types.MsgNotarizeAsset) (*types.MsgNotarizeAssetResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	_, found := k.machineKeeper.GetMachineIndex(ctx, msg.PubKey)
+	_, found := k.machineKeeper.GetMachineIndexByPubKey(ctx, msg.PubKey)
 
 	if !found {
 		return nil, errors.New("machine not found")

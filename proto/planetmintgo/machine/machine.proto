@@ -17,6 +17,7 @@ message Machine {
   Metadata metadata = 10; 
   uint32 type = 11;
   string machineIdSignature = 12;
+  string address = 13;
 }
 
 message Metadata {
@@ -31,4 +32,5 @@ message MachineIndex {
   string machineId = 1;
   string issuerPlanetmint = 2; 
   string issuerLiquid = 3; 
+  string address = 4;
 }
