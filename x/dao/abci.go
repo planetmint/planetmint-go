@@ -57,7 +57,10 @@ func isValidatorBlockProposer(ctx sdk.Context, proposerAddress []byte) bool {
 	}
 
 	var keyFile KeyFile
-	json.Unmarshal(jsonBytes, &keyFile)
+	err = json.Unmarshal(jsonBytes, &keyFile)
+	if err != nil {
+		logger.Error("error while unmarshaling key file", err)
+	}
 
 	return hexProposerAddress == strings.ToLower(keyFile.Address)
 }
