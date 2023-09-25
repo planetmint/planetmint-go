@@ -16,8 +16,10 @@ func (k Keeper) GetAssetsByPubKey(goCtx context.Context, req *types.QueryGetAsse
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Process the query
-	_ = ctx
+	cids, found := k.GetCidsByPublicKey(ctx, req.GetExtPubKey())
+	if !found {
+		return nil, status.Error(codes.NotFound, "no CIDs found")
+	}
 
-	return &types.QueryGetAssetsByPubKeyResponse{}, nil
+	return &types.QueryGetAssetsByPubKeyResponse{Transactions: cids}, nil
 }

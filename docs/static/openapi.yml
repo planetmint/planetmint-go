@@ -46601,6 +46601,47 @@ paths:
           type: boolean
       tags:
         - Query
+  /planetmint/planetmint-go/asset/get_notarized_asset/{cid}:
+    get:
+      summary: Queries a list of GetNotarizedAsset items.
+      operationId: PlanetmintgoAssetGetNotarizedAsset
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              cid:
+                type: string
+              signature:
+                type: string
+              pubkey:
+                type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
   /github.com/planetmint/planetmint-go/dao/params:
     get:
       summary: Parameters queries the parameters of the module.
@@ -75563,6 +75604,15 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
+  planetmintgo.asset.QueryGetNotarizedAssetResponse:
+    type: object
+    properties:
+      cid:
+        type: string
+      signature:
+        type: string
+      pubkey:
+        type: string
   planetmintgo.asset.QueryParamsResponse:
     type: object
     properties:
