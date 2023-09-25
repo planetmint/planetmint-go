@@ -174,8 +174,8 @@ func (m *QueryGetCIDsByPubKeyRequest) GetPagination() *query.PageRequest {
 }
 
 type QueryGetCIDsByPubKeyResponse struct {
-	CIDs []string            `protobuf:"bytes,1,rep,name=cids,proto3" json:"cids,omitempty"`
-	Pagination   *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	CIDs       []string            `protobuf:"bytes,1,rep,name=cids,proto3" json:"cids,omitempty"`
+	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
 func (m *QueryGetCIDsByPubKeyResponse) Reset()         { *m = QueryGetCIDsByPubKeyResponse{} }
