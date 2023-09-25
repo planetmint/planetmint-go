@@ -1,7 +1,6 @@
 package keeper_test
 
 import (
-	"fmt"
 	"testing"
 
 	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
@@ -17,7 +16,6 @@ func TestGetMachineByAddress(t *testing.T) {
 	keeper, ctx := keepertest.MachineKeeper(t)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNMachine(keeper, ctx, 1)
-	fmt.Println(msgs[0].Amount)
 	for _, tc := range []struct {
 		desc     string
 		request  *types.QueryGetMachineByAddressRequest
