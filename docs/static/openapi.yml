@@ -46473,17 +46473,17 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
-  /planetmint/planetmint-go/asset/get_assets_by_pub_key/{extPubKey}/{lookupPeriodInMin}:
+  /planetmint/planetmint-go/asset/get_cids_by_pub_key/{extPubKey}/{lookupPeriodInMin}:
     get:
-      summary: Queries a list of GetAssetsByPubKey items.
-      operationId: PlanetmintgoAssetGetAssetsByPubKey
+      summary: Queries a list of GetCIDsByPubKey items.
+      operationId: PlanetmintgoAssetGetCIDsByPubKey
       responses:
         '200':
           description: A successful response.
           schema:
             type: object
             properties:
-              transactions:
+              cids:
                 type: array
                 items:
                   type: string
@@ -75571,10 +75571,10 @@ definitions:
   planetmintgo.asset.Params:
     type: object
     description: Params defines the parameters for the module.
-  planetmintgo.asset.QueryGetAssetsByPubKeyResponse:
+  planetmintgo.asset.QueryGetCIDsByPubKeyResponse:
     type: object
     properties:
-      transactions:
+      cids:
         type: array
         items:
           type: string

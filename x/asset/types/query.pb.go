@@ -113,24 +113,24 @@ func (m *QueryParamsResponse) GetParams() Params {
 	return Params{}
 }
 
-type QueryGetAssetsByPubKeyRequest struct {
+type QueryGetCIDsByPubKeyRequest struct {
 	ExtPubKey         string             `protobuf:"bytes,1,opt,name=extPubKey,proto3" json:"extPubKey,omitempty"`
 	LookupPeriodInMin uint64             `protobuf:"varint,2,opt,name=lookupPeriodInMin,proto3" json:"lookupPeriodInMin,omitempty"`
 	Pagination        *query.PageRequest `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QueryGetAssetsByPubKeyRequest) Reset()         { *m = QueryGetAssetsByPubKeyRequest{} }
-func (m *QueryGetAssetsByPubKeyRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryGetAssetsByPubKeyRequest) ProtoMessage()    {}
-func (*QueryGetAssetsByPubKeyRequest) Descriptor() ([]byte, []int) {
+func (m *QueryGetCIDsByPubKeyRequest) Reset()         { *m = QueryGetCIDsByPubKeyRequest{} }
+func (m *QueryGetCIDsByPubKeyRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetCIDsByPubKeyRequest) ProtoMessage()    {}
+func (*QueryGetCIDsByPubKeyRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_5832a953a81817c0, []int{2}
 }
-func (m *QueryGetAssetsByPubKeyRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryGetCIDsByPubKeyRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryGetAssetsByPubKeyRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryGetCIDsByPubKeyRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryGetAssetsByPubKeyRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryGetCIDsByPubKeyRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -140,56 +140,56 @@ func (m *QueryGetAssetsByPubKeyRequest) XXX_Marshal(b []byte, deterministic bool
 		return b[:n], nil
 	}
 }
-func (m *QueryGetAssetsByPubKeyRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryGetAssetsByPubKeyRequest.Merge(m, src)
+func (m *QueryGetCIDsByPubKeyRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetCIDsByPubKeyRequest.Merge(m, src)
 }
-func (m *QueryGetAssetsByPubKeyRequest) XXX_Size() int {
+func (m *QueryGetCIDsByPubKeyRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryGetAssetsByPubKeyRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryGetAssetsByPubKeyRequest.DiscardUnknown(m)
+func (m *QueryGetCIDsByPubKeyRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetCIDsByPubKeyRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryGetAssetsByPubKeyRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryGetCIDsByPubKeyRequest proto.InternalMessageInfo
 
-func (m *QueryGetAssetsByPubKeyRequest) GetExtPubKey() string {
+func (m *QueryGetCIDsByPubKeyRequest) GetExtPubKey() string {
 	if m != nil {
 		return m.ExtPubKey
 	}
 	return ""
 }
 
-func (m *QueryGetAssetsByPubKeyRequest) GetLookupPeriodInMin() uint64 {
+func (m *QueryGetCIDsByPubKeyRequest) GetLookupPeriodInMin() uint64 {
 	if m != nil {
 		return m.LookupPeriodInMin
 	}
 	return 0
 }
 
-func (m *QueryGetAssetsByPubKeyRequest) GetPagination() *query.PageRequest {
+func (m *QueryGetCIDsByPubKeyRequest) GetPagination() *query.PageRequest {
 	if m != nil {
 		return m.Pagination
 	}
 	return nil
 }
 
-type QueryGetAssetsByPubKeyResponse struct {
-	Transactions []string            `protobuf:"bytes,1,rep,name=transactions,proto3" json:"transactions,omitempty"`
+type QueryGetCIDsByPubKeyResponse struct {
+	CIDs []string            `protobuf:"bytes,1,rep,name=cids,proto3" json:"cids,omitempty"`
 	Pagination   *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QueryGetAssetsByPubKeyResponse) Reset()         { *m = QueryGetAssetsByPubKeyResponse{} }
-func (m *QueryGetAssetsByPubKeyResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryGetAssetsByPubKeyResponse) ProtoMessage()    {}
-func (*QueryGetAssetsByPubKeyResponse) Descriptor() ([]byte, []int) {
+func (m *QueryGetCIDsByPubKeyResponse) Reset()         { *m = QueryGetCIDsByPubKeyResponse{} }
+func (m *QueryGetCIDsByPubKeyResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetCIDsByPubKeyResponse) ProtoMessage()    {}
+func (*QueryGetCIDsByPubKeyResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_5832a953a81817c0, []int{3}
 }
-func (m *QueryGetAssetsByPubKeyResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryGetCIDsByPubKeyResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryGetAssetsByPubKeyResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryGetCIDsByPubKeyResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryGetAssetsByPubKeyResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryGetCIDsByPubKeyResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -199,26 +199,26 @@ func (m *QueryGetAssetsByPubKeyResponse) XXX_Marshal(b []byte, deterministic boo
 		return b[:n], nil
 	}
 }
-func (m *QueryGetAssetsByPubKeyResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryGetAssetsByPubKeyResponse.Merge(m, src)
+func (m *QueryGetCIDsByPubKeyResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetCIDsByPubKeyResponse.Merge(m, src)
 }
-func (m *QueryGetAssetsByPubKeyResponse) XXX_Size() int {
+func (m *QueryGetCIDsByPubKeyResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryGetAssetsByPubKeyResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryGetAssetsByPubKeyResponse.DiscardUnknown(m)
+func (m *QueryGetCIDsByPubKeyResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetCIDsByPubKeyResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryGetAssetsByPubKeyResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryGetCIDsByPubKeyResponse proto.InternalMessageInfo
 
-func (m *QueryGetAssetsByPubKeyResponse) GetTransactions() []string {
+func (m *QueryGetCIDsByPubKeyResponse) GetCIDs() []string {
 	if m != nil {
-		return m.Transactions
+		return m.CIDs
 	}
 	return nil
 }
 
-func (m *QueryGetAssetsByPubKeyResponse) GetPagination() *query.PageResponse {
+func (m *QueryGetCIDsByPubKeyResponse) GetPagination() *query.PageResponse {
 	if m != nil {
 		return m.Pagination
 	}
@@ -332,8 +332,8 @@ func (m *QueryGetNotarizedAssetResponse) GetPubkey() string {
 func init() {
 	proto.RegisterType((*QueryParamsRequest)(nil), "planetmintgo.asset.QueryParamsRequest")
 	proto.RegisterType((*QueryParamsResponse)(nil), "planetmintgo.asset.QueryParamsResponse")
-	proto.RegisterType((*QueryGetAssetsByPubKeyRequest)(nil), "planetmintgo.asset.QueryGetAssetsByPubKeyRequest")
-	proto.RegisterType((*QueryGetAssetsByPubKeyResponse)(nil), "planetmintgo.asset.QueryGetAssetsByPubKeyResponse")
+	proto.RegisterType((*QueryGetCIDsByPubKeyRequest)(nil), "planetmintgo.asset.QueryGetCIDsByPubKeyRequest")
+	proto.RegisterType((*QueryGetCIDsByPubKeyResponse)(nil), "planetmintgo.asset.QueryGetCIDsByPubKeyResponse")
 	proto.RegisterType((*QueryGetNotarizedAssetRequest)(nil), "planetmintgo.asset.QueryGetNotarizedAssetRequest")
 	proto.RegisterType((*QueryGetNotarizedAssetResponse)(nil), "planetmintgo.asset.QueryGetNotarizedAssetResponse")
 }
@@ -396,8 +396,8 @@ const _ = grpc.SupportPackageIsVersion4
 type QueryClient interface {
 	// Parameters queries the parameters of the module.
 	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
-	// Queries a list of GetAssetsByPubKey items.
-	GetAssetsByPubKey(ctx context.Context, in *QueryGetAssetsByPubKeyRequest, opts ...grpc.CallOption) (*QueryGetAssetsByPubKeyResponse, error)
+	// Queries a list of GetCIDsByPubKey items.
+	GetCIDsByPubKey(ctx context.Context, in *QueryGetCIDsByPubKeyRequest, opts ...grpc.CallOption) (*QueryGetCIDsByPubKeyResponse, error)
 	// Queries a list of GetNotarizedAsset items.
 	GetNotarizedAsset(ctx context.Context, in *QueryGetNotarizedAssetRequest, opts ...grpc.CallOption) (*QueryGetNotarizedAssetResponse, error)
 }
@@ -419,9 +419,9 @@ func (c *queryClient) Params(ctx context.Context, in *QueryParamsRequest, opts .
 	return out, nil
 }
 
-func (c *queryClient) GetAssetsByPubKey(ctx context.Context, in *QueryGetAssetsByPubKeyRequest, opts ...grpc.CallOption) (*QueryGetAssetsByPubKeyResponse, error) {
-	out := new(QueryGetAssetsByPubKeyResponse)
-	err := c.cc.Invoke(ctx, "/planetmintgo.asset.Query/GetAssetsByPubKey", in, out, opts...)
+func (c *queryClient) GetCIDsByPubKey(ctx context.Context, in *QueryGetCIDsByPubKeyRequest, opts ...grpc.CallOption) (*QueryGetCIDsByPubKeyResponse, error) {
+	out := new(QueryGetCIDsByPubKeyResponse)
+	err := c.cc.Invoke(ctx, "/planetmintgo.asset.Query/GetCIDsByPubKey", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -441,8 +441,8 @@ func (c *queryClient) GetNotarizedAsset(ctx context.Context, in *QueryGetNotariz
 type QueryServer interface {
 	// Parameters queries the parameters of the module.
 	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
-	// Queries a list of GetAssetsByPubKey items.
-	GetAssetsByPubKey(context.Context, *QueryGetAssetsByPubKeyRequest) (*QueryGetAssetsByPubKeyResponse, error)
+	// Queries a list of GetCIDsByPubKey items.
+	GetCIDsByPubKey(context.Context, *QueryGetCIDsByPubKeyRequest) (*QueryGetCIDsByPubKeyResponse, error)
 	// Queries a list of GetNotarizedAsset items.
 	GetNotarizedAsset(context.Context, *QueryGetNotarizedAssetRequest) (*QueryGetNotarizedAssetResponse, error)
 }
@@ -454,8 +454,8 @@ type UnimplementedQueryServer struct {
 func (*UnimplementedQueryServer) Params(ctx context.Context, req *QueryParamsRequest) (*QueryParamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Params not implemented")
 }
-func (*UnimplementedQueryServer) GetAssetsByPubKey(ctx context.Context, req *QueryGetAssetsByPubKeyRequest) (*QueryGetAssetsByPubKeyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAssetsByPubKey not implemented")
+func (*UnimplementedQueryServer) GetCIDsByPubKey(ctx context.Context, req *QueryGetCIDsByPubKeyRequest) (*QueryGetCIDsByPubKeyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCIDsByPubKey not implemented")
 }
 func (*UnimplementedQueryServer) GetNotarizedAsset(ctx context.Context, req *QueryGetNotarizedAssetRequest) (*QueryGetNotarizedAssetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNotarizedAsset not implemented")
@@ -483,20 +483,20 @@ func _Query_Params_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_GetAssetsByPubKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryGetAssetsByPubKeyRequest)
+func _Query_GetCIDsByPubKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetCIDsByPubKeyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).GetAssetsByPubKey(ctx, in)
+		return srv.(QueryServer).GetCIDsByPubKey(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/planetmintgo.asset.Query/GetAssetsByPubKey",
+		FullMethod: "/planetmintgo.asset.Query/GetCIDsByPubKey",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).GetAssetsByPubKey(ctx, req.(*QueryGetAssetsByPubKeyRequest))
+		return srv.(QueryServer).GetCIDsByPubKey(ctx, req.(*QueryGetCIDsByPubKeyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -528,8 +528,8 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Query_Params_Handler,
 		},
 		{
-			MethodName: "GetAssetsByPubKey",
-			Handler:    _Query_GetAssetsByPubKey_Handler,
+			MethodName: "GetCIDsByPubKey",
+			Handler:    _Query_GetCIDsByPubKey_Handler,
 		},
 		{
 			MethodName: "GetNotarizedAsset",
@@ -596,7 +596,7 @@ func (m *QueryParamsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryGetAssetsByPubKeyRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryGetCIDsByPubKeyRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -606,12 +606,12 @@ func (m *QueryGetAssetsByPubKeyRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryGetAssetsByPubKeyRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryGetCIDsByPubKeyRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryGetAssetsByPubKeyRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryGetCIDsByPubKeyRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -643,7 +643,7 @@ func (m *QueryGetAssetsByPubKeyRequest) MarshalToSizedBuffer(dAtA []byte) (int, 
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryGetAssetsByPubKeyResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryGetCIDsByPubKeyResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -653,12 +653,12 @@ func (m *QueryGetAssetsByPubKeyResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryGetAssetsByPubKeyResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryGetCIDsByPubKeyResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryGetAssetsByPubKeyResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryGetCIDsByPubKeyResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -675,11 +675,11 @@ func (m *QueryGetAssetsByPubKeyResponse) MarshalToSizedBuffer(dAtA []byte) (int,
 		i--
 		dAtA[i] = 0x12
 	}
-	if len(m.Transactions) > 0 {
-		for iNdEx := len(m.Transactions) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.Transactions[iNdEx])
-			copy(dAtA[i:], m.Transactions[iNdEx])
-			i = encodeVarintQuery(dAtA, i, uint64(len(m.Transactions[iNdEx])))
+	if len(m.CIDs) > 0 {
+		for iNdEx := len(m.CIDs) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.CIDs[iNdEx])
+			copy(dAtA[i:], m.CIDs[iNdEx])
+			i = encodeVarintQuery(dAtA, i, uint64(len(m.CIDs[iNdEx])))
 			i--
 			dAtA[i] = 0xa
 		}
@@ -792,7 +792,7 @@ func (m *QueryParamsResponse) Size() (n int) {
 	return n
 }
 
-func (m *QueryGetAssetsByPubKeyRequest) Size() (n int) {
+func (m *QueryGetCIDsByPubKeyRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -812,14 +812,14 @@ func (m *QueryGetAssetsByPubKeyRequest) Size() (n int) {
 	return n
 }
 
-func (m *QueryGetAssetsByPubKeyResponse) Size() (n int) {
+func (m *QueryGetCIDsByPubKeyResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if len(m.Transactions) > 0 {
-		for _, s := range m.Transactions {
+	if len(m.CIDs) > 0 {
+		for _, s := range m.CIDs {
 			l = len(s)
 			n += 1 + l + sovQuery(uint64(l))
 		}
@@ -1004,7 +1004,7 @@ func (m *QueryParamsResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryGetAssetsByPubKeyRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryGetCIDsByPubKeyRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1027,10 +1027,10 @@ func (m *QueryGetAssetsByPubKeyRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryGetAssetsByPubKeyRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryGetCIDsByPubKeyRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryGetAssetsByPubKeyRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryGetCIDsByPubKeyRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1141,7 +1141,7 @@ func (m *QueryGetAssetsByPubKeyRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryGetAssetsByPubKeyResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryGetCIDsByPubKeyResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1164,15 +1164,15 @@ func (m *QueryGetAssetsByPubKeyResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryGetAssetsByPubKeyResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryGetCIDsByPubKeyResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryGetAssetsByPubKeyResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryGetCIDsByPubKeyResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Transactions", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field CIDs", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1200,7 +1200,7 @@ func (m *QueryGetAssetsByPubKeyResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Transactions = append(m.Transactions, string(dAtA[iNdEx:postIndex]))
+			m.CIDs = append(m.CIDs, string(dAtA[iNdEx:postIndex]))
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {

@@ -18,9 +18,9 @@ service Query {
   
   }
   
-  // Queries a list of GetAssetsByPubKey items.
-  rpc GetAssetsByPubKey (QueryGetAssetsByPubKeyRequest) returns (QueryGetAssetsByPubKeyResponse) {
-    option (google.api.http).get = "/planetmint/planetmint-go/asset/get_assets_by_pub_key/{extPubKey}/{lookupPeriodInMin}";
+  // Queries a list of GetCIDsByPubKey items.
+  rpc GetCIDsByPubKey (QueryGetCIDsByPubKeyRequest) returns (QueryGetCIDsByPubKeyResponse) {
+    option (google.api.http).get = "/planetmint/planetmint-go/asset/get_cids_by_pub_key/{extPubKey}/{lookupPeriodInMin}";
   
   }
   
@@ -40,14 +40,14 @@ message QueryParamsResponse {
   Params params = 1 [(gogoproto.nullable) = false];
 }
 
-message QueryGetAssetsByPubKeyRequest {
+message QueryGetCIDsByPubKeyRequest {
   string                                extPubKey         = 1;
   uint64                                lookupPeriodInMin = 2;
   cosmos.base.query.v1beta1.PageRequest pagination        = 3;
 }
 
-message QueryGetAssetsByPubKeyResponse {
-  repeated string                                 transactions = 1;
+message QueryGetCIDsByPubKeyResponse {
+  repeated string                                 cids = 1;
            cosmos.base.query.v1beta1.PageResponse pagination   = 2;
 }
 

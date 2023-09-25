@@ -23,7 +23,7 @@ func (k Keeper) GetAsset(ctx sdk.Context, hash string) (val types.Asset, found b
 	return val, true
 }
 
-func (k Keeper) GetAssetsByPublicKey(ctx sdk.Context, pubkey string) (assetArray []types.Asset, found bool) {
+func (k Keeper) GetCIDsByPublicKey(ctx sdk.Context, pubkey string) (assetArray []types.Asset, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AssetKey))
 
 	reverseIterator := store.ReverseIterator(nil, nil)

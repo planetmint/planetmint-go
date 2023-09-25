@@ -19,24 +19,24 @@ func TestGetNotarizedAssetByPubKey(t *testing.T) {
 	assets, _ := keeper.GetCidsByPublicKey(ctx, "pubkey_search")
 	for _, tc := range []struct {
 		desc     string
-		request  *types.QueryGetAssetsByPubKeyRequest
-		response *types.QueryGetAssetsByPubKeyResponse
+		request  *types.QueryGetCIDsByPubKeyRequest
+		response *types.QueryGetCIDsByPubKeyResponse
 		err      error
 	}{
 		{
 			desc:     "cid found",
-			request:  &types.QueryGetAssetsByPubKeyRequest{ExtPubKey: "pubkey_search"},
-			response: &types.QueryGetAssetsByPubKeyResponse{Transactions: assets},
+			request:  &types.QueryGetCIDsByPubKeyRequest{ExtPubKey: "pubkey_search"},
+			response: &types.QueryGetCIDsByPubKeyResponse{CIDs: assets},
 		},
 		{
 			desc:    "cid not found",
-			request: &types.QueryGetAssetsByPubKeyRequest{ExtPubKey: "invalid key"},
+			request: &types.QueryGetCIDsByPubKeyRequest{ExtPubKey: "invalid key"},
 			err:     status.Error(codes.NotFound, "no CIDs found"),
 		},
 	} {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
-			response, err := keeper.GetAssetsByPubKey(wctx, tc.request)
+			response, err := keeper.GetCIDsByPubKey(wctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {

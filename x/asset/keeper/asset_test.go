@@ -52,10 +52,10 @@ func TestGetCids(t *testing.T) {
 func TestGetAssetByPubKeys(t *testing.T) {
 	keeper, ctx := keepertest.AssetKeeper(t)
 	_ = createNAsset(keeper, ctx, 10)
-	assets, found := keeper.GetAssetsByPublicKey(ctx, "pubkey_search")
+	assets, found := keeper.GetCIDsByPublicKey(ctx, "pubkey_search")
 	assert.True(t, found)
 	assert.Equal(t, len(assets), 5)
-	assets, found = keeper.GetAssetsByPublicKey(ctx, "pubkey")
+	assets, found = keeper.GetCIDsByPublicKey(ctx, "pubkey")
 	assert.True(t, found)
 	assert.Equal(t, len(assets), 5)
 }

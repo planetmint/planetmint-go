@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) GetAssetsByPubKey(goCtx context.Context, req *types.QueryGetAssetsByPubKeyRequest) (*types.QueryGetAssetsByPubKeyResponse, error) {
+func (k Keeper) GetCIDsByPubKey(goCtx context.Context, req *types.QueryGetCIDsByPubKeyRequest) (*types.QueryGetCIDsByPubKeyResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -21,5 +21,5 @@ func (k Keeper) GetAssetsByPubKey(goCtx context.Context, req *types.QueryGetAsse
 		return nil, status.Error(codes.NotFound, "no CIDs found")
 	}
 
-	return &types.QueryGetAssetsByPubKeyResponse{Transactions: cids}, nil
+	return &types.QueryGetCIDsByPubKeyResponse{CIDs: cids}, nil
 }

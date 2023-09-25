@@ -12,10 +12,10 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdGetAssetsByPubKey() *cobra.Command {
+func CmdGetCIDsByPubKey() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-assets-by-pub-key [ext-pub-key] [lookup-period-in-min]",
-		Short: "Query get_assets_by_pub_key",
+		Short: "Query get_cids_by_pub_key",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			reqExtPubKey := args[0]
@@ -31,7 +31,7 @@ func CmdGetAssetsByPubKey() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryGetAssetsByPubKeyRequest{
+			params := &types.QueryGetCIDsByPubKeyRequest{
 
 				ExtPubKey:         reqExtPubKey,
 				LookupPeriodInMin: reqLookupPeriodInMin,
@@ -43,7 +43,7 @@ func CmdGetAssetsByPubKey() *cobra.Command {
 			}
 			params.Pagination = pageReq
 
-			res, err := queryClient.GetAssetsByPubKey(cmd.Context(), params)
+			res, err := queryClient.GetCIDsByPubKey(cmd.Context(), params)
 			if err != nil {
 				return err
 			}
