@@ -12,6 +12,8 @@ const (
 
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_dao"
+
+	ChallengeKey = "Dao/Challenge"
 )
 
 func KeyPrefix(p string) []byte {
