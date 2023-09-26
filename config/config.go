@@ -20,6 +20,7 @@ token-denom = "{{ .PlmntConfig.TokenDenom }}"
 stake-denom = "{{ .PlmntConfig.StakeDenom }}"
 fee-denom = "{{ .PlmntConfig.FeeDenom }}"
 config-root-dir = "{{ .PlmntConfig.ConfigRootDir }}"
+pop-epochs = {{ .PlmntConfig.PoPEpochs }}
 `
 
 // Config defines Planetmint's top level configuration
@@ -31,6 +32,7 @@ type Config struct {
 	StakeDenom       string `mapstructure:"stake-denom" json:"stake-denom"`
 	FeeDenom         string `mapstructure:"fee-denom" json:"fee-denom"`
 	ConfigRootDir    string `mapstructure:"config-root-dir" json:"config-root-dir"`
+	PoPEpochs        int    `mapstructure:"pop-epochs" json:"pop-epochs"`
 }
 
 // cosmos-sdk wide global singleton
@@ -54,6 +56,7 @@ func DefaultConfig() *Config {
 		StakeDenom:       "plmntstake",
 		FeeDenom:         "plmnt",
 		ConfigRootDir:    filepath.Join(currentUser.HomeDir, ".planetmint-go"),
+		PoPEpochs:        24, // 24 CometBFT epochs of 5s equate 120s
 	}
 }
 
