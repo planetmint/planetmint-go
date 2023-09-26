@@ -139,3 +139,9 @@ func (mr *MockMachineKeeperMockRecorder) GetMachineIndexByPubKey(ctx, pubKey int
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMachineIndexByPubKey", reflect.TypeOf((*MockMachineKeeper)(nil).GetMachineIndexByPubKey), ctx, pubKey)
 }
+
+// GetMachineIndexByPubKey indicates an expected call of GetMachineIndexByPubKey.
+func (mr *MockMachineKeeperMockRecorder) GetMachineIndexByAddress(ctx, address interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMachineIndexByAddress", reflect.TypeOf((*MockMachineKeeper)(nil).GetMachineIndexByAddress), ctx, address)
+}

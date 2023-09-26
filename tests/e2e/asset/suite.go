@@ -1,7 +1,6 @@
 package asset
 
 import (
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 
@@ -13,7 +12,6 @@ import (
 	assetcli "github.com/planetmint/planetmint-go/x/asset/client/cli"
 	machinecli "github.com/planetmint/planetmint-go/x/machine/client/cli"
 
-	"github.com/btcsuite/btcd/btcutil/hdkeychain"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
@@ -63,6 +61,8 @@ func (s *E2ETestSuite) SetupSuite() {
 		"--yes",
 		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 	}
+	str := addr.String()
+	str = str + ""
 	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
 	s.Require().NoError(err)
 
@@ -127,12 +127,13 @@ func (s *E2ETestSuite) TearDownSuite() {
 // TestNotarizeAsset notarizes asset over cli
 func (s *E2ETestSuite) TestNotarizeAsset() {
 	val := s.network.Validators[0]
+	k, err := val.ClientCtx.Keyring.Key(sample.Name)
+	s.Require().NoError(err)
 
-	xskKey, _ := hdkeychain.NewKeyFromString(xPrvKey)
-	privKey, _ := xskKey.ECPrivKey()
-	byte_key := privKey.Serialize()
-	sk := hex.EncodeToString(byte_key)
-	cid, _ := sample.Asset(sk)
+	addr, err := k.GetAddress()
+	str := addr.String()
+	str = str + ""
+	cid := sample.Asset()
 
 	testCases := []struct {
 		name             string

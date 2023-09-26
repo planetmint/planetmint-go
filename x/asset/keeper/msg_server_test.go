@@ -34,7 +34,7 @@ func TestMsgServerNotarizeAsset(t *testing.T) {
 	privKey, _ := xskKey.ECPrivKey()
 	byte_key := privKey.Serialize()
 	sk := hex.EncodeToString(byte_key)
-	cid, _ := sample.Asset(sk)
+	cid := sample.Asset()
 
 	msg := types.NewMsgNotarizeAsset(sk, cid)
 	msgServer, ctx := setupMsgServer(t)

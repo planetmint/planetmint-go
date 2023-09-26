@@ -108,16 +108,9 @@ func Metadata() machinetypes.Metadata {
 	}
 }
 
-func Asset(sk string) (string, string) {
-	cid := "cid"
-
-	skBytes, _ := hex.DecodeString(sk)
-	privKey := &secp256k1.PrivKey{Key: skBytes}
-
-	sign, _ := privKey.Sign([]byte(cid))
-	signatureHex := hex.EncodeToString(sign)
-
-	return cid, signatureHex
+func Asset() string {
+	cid := "cid0"
+	return cid
 }
 
 func ExtendedKeyPair(cfg chaincfg.Params) (string, string) {
