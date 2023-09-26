@@ -14,13 +14,11 @@ var _ = strconv.Itoa(0)
 
 func CmdNotarizeAsset() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "notarize-asset [hash] [signature] [pub-key]",
+		Use:   "notarize-asset [cid] ",
 		Short: "Broadcast message notarize-asset",
-		Args:  cobra.ExactArgs(3),
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argHash := args[0]
-			argSignature := args[1]
-			argPubKey := args[2]
+			argCid := args[0]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -29,9 +27,7 @@ func CmdNotarizeAsset() *cobra.Command {
 
 			msg := types.NewMsgNotarizeAsset(
 				clientCtx.GetFromAddress().String(),
-				argHash,
-				argSignature,
-				argPubKey,
+				argCid,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

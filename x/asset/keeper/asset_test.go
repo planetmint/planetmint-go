@@ -13,14 +13,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func createNAsset(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Asset {
-	items := make([]types.Asset, n)
+func createNAsset(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.MsgNotarizeAsset {
+	items := make([]types.MsgNotarizeAsset, n)
 	for i := range items {
 		hash := sha256.Sum256([]byte(strconv.FormatInt(int64(i), 2)))
 		hashStr := string(hash[:])
-		items[i].Hash = hashStr
-		items[i].Pubkey = "pubkey"
-		items[i].Signature = "sign"
+		items[i].Cid = hashStr
+		items[i].Creator = "plmnt_address"
 		keeper.StoreAsset(ctx, items[i])
 	}
 	return items
@@ -30,7 +29,7 @@ func TestGetAsset(t *testing.T) {
 	keeper, ctx := keepertest.AssetKeeper(t)
 	items := createNAsset(keeper, ctx, 10)
 	for _, item := range items {
-		asset, found := keeper.GetAsset(ctx, item.Hash)
+		asset, found := keeper.GetAsset(ctx, item.Cid)
 		assert.True(t, found)
 		assert.Equal(t, item, asset)
 	}

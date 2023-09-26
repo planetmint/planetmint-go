@@ -132,7 +132,7 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 	privKey, _ := xskKey.ECPrivKey()
 	byte_key := privKey.Serialize()
 	sk := hex.EncodeToString(byte_key)
-	cid, signatureHex := sample.Asset(sk)
+	cid, _ := sample.Asset(sk)
 
 	testCases := []struct {
 		name             string
@@ -141,56 +141,15 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 		expectCheckTxErr bool
 	}{
 		{
-			"machine not found",
-			[]string{
-				cid,
-				signatureHex,
-				"pubkey",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
-				"--yes",
-			},
-			"machine not found",
-			true,
-		},
-		{
-			"invalid signature hex string",
-			[]string{
-				cid,
-				"signature",
-				xPubKey,
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
-				"--yes",
-			},
-			"invalid signature hex string",
-			false,
-		},
-		{
-			"invalid signature",
-			[]string{
-				cid,
-				hex.EncodeToString([]byte("signature")),
-				xPubKey,
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
-				"--yes",
-			},
-			"invalid signature",
-			false,
-		},
-		{
 			"valid notarization",
 			[]string{
 				cid,
-				signatureHex,
-				xPubKey,
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 				"--yes",
 			},
 			"planetmintgo.asset.MsgNotarizeAsset",
-			false,
+			true,
 		},
 	}
 

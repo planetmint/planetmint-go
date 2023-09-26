@@ -7,23 +7,23 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func (k Keeper) StoreAsset(ctx sdk.Context, asset types.Asset) {
+func (k Keeper) StoreAsset(ctx sdk.Context, msg types.MsgNotarizeAsset) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AssetKey))
-	appendValue := k.cdc.MustMarshal(&asset)
-	store.Set(GetAssetHashBytes(asset.Hash), appendValue)
+	store.Set(GetAssetCIDBytes(msg.GetCid()), []byte(msg.GetCreator()))
 }
 
-func (k Keeper) GetAsset(ctx sdk.Context, hash string) (val types.Asset, found bool) {
+func (k Keeper) GetAsset(ctx sdk.Context, cid string) (msg types.MsgNotarizeAsset, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AssetKey))
-	asset := store.Get(GetAssetHashBytes(hash))
-	if asset == nil {
-		return val, false
+	creator_bytes := store.Get(GetAssetCIDBytes(cid))
+	if creator_bytes == nil {
+		return msg, false
 	}
-	k.cdc.MustUnmarshal(asset, &val)
-	return val, true
+	msg.Cid = cid
+	msg.Creator = string(creator_bytes)
+	return msg, true
 }
 
-func GetAssetHashBytes(hash string) []byte {
-	bz := []byte(hash)
+func GetAssetCIDBytes(cid string) []byte {
+	bz := []byte(cid)
 	return bz
 }

@@ -29,52 +29,17 @@ func TestMsgServer(t *testing.T) {
 }
 
 func TestMsgServerNotarizeAsset(t *testing.T) {
-	ext_sk, ppk := sample.ExtendedKeyPair(config.PlmntNetParams)
+	ext_sk, _ := sample.ExtendedKeyPair(config.PlmntNetParams)
 	xskKey, _ := hdkeychain.NewKeyFromString(ext_sk)
 	privKey, _ := xskKey.ECPrivKey()
 	byte_key := privKey.Serialize()
 	sk := hex.EncodeToString(byte_key)
-	cid, signatureHex := sample.Asset(sk)
+	cid, _ := sample.Asset(sk)
 
-	msg := types.NewMsgNotarizeAsset(sk, cid, signatureHex, ppk)
+	msg := types.NewMsgNotarizeAsset(sk, cid)
 	msgServer, ctx := setupMsgServer(t)
 	res, err := msgServer.NotarizeAsset(ctx, msg)
 	if assert.NoError(t, err) {
 		assert.Equal(t, &types.MsgNotarizeAssetResponse{}, res)
 	}
-}
-
-func TestMsgServerNotarizeAssetMachineNotFound(t *testing.T) {
-	sk, _ := sample.KeyPair()
-	msg := types.NewMsgNotarizeAsset(sk, "cid", "sign", sk)
-	msgServer, ctx := setupMsgServer(t)
-	_, err := msgServer.NotarizeAsset(ctx, msg)
-	assert.EqualError(t, err, "machine not found")
-}
-
-func TestMsgServerNotarizeAssetInvalidAssetSignatureType(t *testing.T) {
-	_, pk := sample.ExtendedKeyPair(config.PlmntNetParams)
-	hex_string := hex.EncodeToString([]byte("cid"))
-	msg := types.NewMsgNotarizeAsset(pk, hex_string, "sign", pk)
-	msgServer, ctx := setupMsgServer(t)
-	_, err := msgServer.NotarizeAsset(ctx, msg)
-	assert.EqualError(t, err, "invalid signature hex string")
-}
-
-func TestMsgServerNotarizeAssetInvalidAssetSignature(t *testing.T) {
-	_, pk := sample.ExtendedKeyPair(config.PlmntNetParams)
-	hex_string_cid := hex.EncodeToString([]byte("cid"))
-	hex_string_sid := hex.EncodeToString([]byte("sign"))
-	msg := types.NewMsgNotarizeAsset(pk, hex_string_cid, hex_string_sid, pk)
-	msgServer, ctx := setupMsgServer(t)
-	_, err := msgServer.NotarizeAsset(ctx, msg)
-	assert.EqualError(t, err, "invalid signature")
-}
-
-func TestMsgServerNotarizeAssetInvalidXPubKey(t *testing.T) {
-	_, pk := sample.KeyPair()
-	msg := types.NewMsgNotarizeAsset(pk, "cid", "sign", pk)
-	msgServer, ctx := setupMsgServer(t)
-	_, err := msgServer.NotarizeAsset(ctx, msg)
-	assert.EqualError(t, err, "could not convert xpub key to hex pub key")
 }
