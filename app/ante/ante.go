@@ -29,7 +29,7 @@ func (cm CheckMachineDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate 
 		case "/planetmintgo.asset.MsgNotarizeAsset":
 			notarizeMsg, ok := msg.(*assettypes.MsgNotarizeAsset)
 			if ok {
-				_, found := cm.mk.GetMachineIndex(ctx, notarizeMsg.PubKey)
+				_, found := cm.mk.GetMachineIndexByPubKey(ctx, notarizeMsg.PubKey)
 				if !found {
 					return ctx, errorsmod.Wrapf(machinetypes.ErrMachineNotFound, "error during CheckTx or ReCheckTx")
 				}

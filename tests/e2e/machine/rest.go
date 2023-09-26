@@ -38,6 +38,7 @@ func (s *E2ETestSuite) TestAttestMachineREST() {
 
 	// Create Attest Machine TX
 	machine := sample.Machine(sample.Name, pubKey, prvKey)
+	machine.Address = addr.String()
 	msg := machinetypes.MsgAttestMachine{
 		Creator: addr.String(),
 		Machine: &machine,

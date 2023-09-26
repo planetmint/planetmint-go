@@ -22,6 +22,8 @@ const (
 	IssuerLiquidIndexKey = "Machine/IssuerLiquidIndex/"
 
 	TrustAnchorKey = "Machine/trustAnchor/"
+
+	AddressIndexKey = "Machine/address"
 )
 
 func KeyPrefix(p string) []byte {

@@ -10,14 +10,14 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) GetMachineByPublicKey(goCtx context.Context, req *types.QueryGetMachineByPublicKeyRequest) (*types.QueryGetMachineByPublicKeyResponse, error) {
+func (k Keeper) GetMachineByAddress(goCtx context.Context, req *types.QueryGetMachineByAddressRequest) (*types.QueryGetMachineByAddressResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	machineIndex, found := k.GetMachineIndexByPubKey(ctx, req.PublicKey)
+	machineIndex, found := k.GetMachineIndexByAddress(ctx, req.Address)
 	if !found {
 		return nil, status.Error(codes.NotFound, "machine not found")
 	}
@@ -27,5 +27,5 @@ func (k Keeper) GetMachineByPublicKey(goCtx context.Context, req *types.QueryGet
 		return nil, status.Error(codes.Internal, "error while fetching machine")
 	}
 
-	return &types.QueryGetMachineByPublicKeyResponse{Machine: &machine}, nil
+	return &types.QueryGetMachineByAddressResponse{Machine: &machine}, nil
 }
