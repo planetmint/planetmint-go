@@ -8,6 +8,7 @@ message Challenge {
   string initiator = 1; 
   string challenger = 2; 
   string challangee = 3; 
-  string result = 4; 
-  string description = 5; 
+  uint64 height = 4;
+  string result = 5; 
+  string description = 6; 
 }
