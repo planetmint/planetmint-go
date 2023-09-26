@@ -59,6 +59,7 @@ func Secp256k1AccAddress() sdk.AccAddress {
 	return sdk.AccAddress(addr)
 }
 
+// TODO: make address deterministic for test cases
 func Machine(name, pubKey string, prvKey string) machinetypes.Machine {
 	metadata := Metadata()
 	_, liquidPubKey := ExtendedKeyPair(config.LiquidNetParams)
@@ -69,6 +70,8 @@ func Machine(name, pubKey string, prvKey string) machinetypes.Machine {
 	pubKeyBytes, _ := hex.DecodeString(pubKey)
 	sign, _ := sk.Sign(pubKeyBytes)
 	signatureHex := hex.EncodeToString(sign)
+
+	addr := Secp256k1AccAddress()
 
 	m := machinetypes.Machine{
 		Name:               name,
@@ -83,6 +86,7 @@ func Machine(name, pubKey string, prvKey string) machinetypes.Machine {
 		Metadata:           &metadata,
 		Type:               1,
 		MachineIdSignature: signatureHex,
+		Address:            addr.String(),
 	}
 	return m
 }

@@ -8,7 +8,8 @@ import (
 )
 
 type MachineKeeper interface {
-	GetMachineIndex(ctx sdk.Context, pubKey string) (val types.MachineIndex, found bool)
+	GetMachineIndexByPubKey(ctx sdk.Context, pubKey string) (val types.MachineIndex, found bool)
+	GetMachineIndexByAddress(ctx sdk.Context, address string) (val types.MachineIndex, found bool)
 	GetTrustAnchor(ctx sdk.Context, pubKey string) (val types.TrustAnchor, activated bool, found bool)
 }
 

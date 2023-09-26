@@ -2,6 +2,8 @@ package config
 
 import (
 	"encoding/json"
+	"os/user"
+	"path/filepath"
 	"sync"
 )
 
@@ -17,6 +19,7 @@ watchmen-port = {{ .PlmntConfig.WatchmenPort }}
 token-denom = "{{ .PlmntConfig.TokenDenom }}"
 stake-denom = "{{ .PlmntConfig.StakeDenom }}"
 fee-denom = "{{ .PlmntConfig.FeeDenom }}"
+config-root-dir = "{{ .PlmntConfig.ConfigRootDir }}"
 `
 
 // Config defines Planetmint's top level configuration
@@ -27,6 +30,7 @@ type Config struct {
 	TokenDenom       string `mapstructure:"token-denom" json:"token-denom"`
 	StakeDenom       string `mapstructure:"stake-denom" json:"stake-denom"`
 	FeeDenom         string `mapstructure:"fee-denom" json:"fee-denom"`
+	ConfigRootDir    string `mapstructure:"config-root-dir" json:"config-root-dir"`
 }
 
 // cosmos-sdk wide global singleton
@@ -37,6 +41,11 @@ var (
 
 // DefaultConfig returns planetmint's default configuration.
 func DefaultConfig() *Config {
+	currentUser, err := user.Current()
+	if err != nil {
+		panic(err)
+	}
+
 	return &Config{
 		OSCServicePort:   8766,
 		WatchmenEndpoint: "lab.r3c.network",
@@ -44,6 +53,7 @@ func DefaultConfig() *Config {
 		TokenDenom:       "plmnt",
 		StakeDenom:       "plmntstake",
 		FeeDenom:         "plmnt",
+		ConfigRootDir:    filepath.Join(currentUser.HomeDir, ".planetmint-go"),
 	}
 }
 

@@ -30,6 +30,12 @@ service Query {
     option (google.api.http).get = "/github.com/planetmint/planetmint-go/machine/get_trust_anchor_status/{machineid}";
   
   }
+  
+  // Queries a list of GetMachineByAddress items.
+  rpc GetMachineByAddress (QueryGetMachineByAddressRequest) returns (QueryGetMachineByAddressResponse) {
+    option (google.api.http).get = "/planetmint-go/machine/get_machine_by_address/{address}";
+  
+  }
 }
 // QueryParamsRequest is request type for the Query/Params RPC method.
 message QueryParamsRequest {}
@@ -56,5 +62,13 @@ message QueryGetTrustAnchorStatusRequest {
 message QueryGetTrustAnchorStatusResponse {
   string machineid   = 1;
   bool   isactivated = 2;
+}
+
+message QueryGetMachineByAddressRequest {
+  string address = 1;
+}
+
+message QueryGetMachineByAddressResponse {
+  Machine machine = 1;
 }
 

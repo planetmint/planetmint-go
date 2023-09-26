@@ -20,6 +20,7 @@ type (
 		issuerPlanetmintIndexStoreKey storetypes.StoreKey
 		issuerLiquidIndexStoreKey     storetypes.StoreKey
 		taStoreKey                    storetypes.StoreKey
+		addressIndexStoreKey          storetypes.StoreKey
 		memKey                        storetypes.StoreKey
 		paramstore                    paramtypes.Subspace
 	}
@@ -32,6 +33,7 @@ func NewKeeper(
 	issuerPlanetmintIndexStoreKey,
 	issuerLiquidIndexStoreKey,
 	taStoreKey,
+	addressIndexStoreKey,
 	memKey storetypes.StoreKey,
 	ps paramtypes.Subspace,
 ) *Keeper {
@@ -47,6 +49,7 @@ func NewKeeper(
 		issuerPlanetmintIndexStoreKey: issuerPlanetmintIndexStoreKey,
 		issuerLiquidIndexStoreKey:     issuerLiquidIndexStoreKey,
 		taStoreKey:                    taStoreKey,
+		addressIndexStoreKey:          addressIndexStoreKey,
 		memKey:                        memKey,
 		paramstore:                    ps,
 	}

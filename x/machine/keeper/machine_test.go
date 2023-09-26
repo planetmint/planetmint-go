@@ -18,6 +18,7 @@ func createNMachine(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Machi
 		items[i].MachineId = fmt.Sprintf("machineId%v", i)
 		items[i].IssuerPlanetmint = fmt.Sprintf("issuerPlanetmint%v", i)
 		items[i].IssuerLiquid = fmt.Sprintf("issuerLiquid%v", i)
+		items[i].Address = fmt.Sprintf("address%v", i)
 		keeper.StoreMachine(ctx, items[i])
 		keeper.StoreMachineIndex(ctx, items[i])
 	}
@@ -32,6 +33,7 @@ func TestGetMachine(t *testing.T) {
 			MachineId:        item.MachineId,
 			IssuerPlanetmint: item.IssuerPlanetmint,
 			IssuerLiquid:     item.IssuerLiquid,
+			Address:          item.Address,
 		}
 		machineById, found := keeper.GetMachine(ctx, index)
 		assert.True(t, found)
@@ -39,7 +41,7 @@ func TestGetMachine(t *testing.T) {
 	}
 }
 
-func TestGetMachineIndex(t *testing.T) {
+func TestGetMachineIndexByPubKey(t *testing.T) {
 	keeper, ctx := keepertest.MachineKeeper(t)
 	items := createNMachine(keeper, ctx, 10)
 	for _, item := range items {
@@ -47,8 +49,9 @@ func TestGetMachineIndex(t *testing.T) {
 			MachineId:        item.MachineId,
 			IssuerPlanetmint: item.IssuerPlanetmint,
 			IssuerLiquid:     item.IssuerLiquid,
+			Address:          item.Address,
 		}
-		index, found := keeper.GetMachineIndex(ctx, item.MachineId)
+		index, found := keeper.GetMachineIndexByPubKey(ctx, item.MachineId)
 		assert.True(t, found)
 		assert.Equal(t, expectedIndex, index)
 	}
