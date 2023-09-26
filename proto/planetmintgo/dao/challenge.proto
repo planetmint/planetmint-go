@@ -9,6 +9,6 @@ message Challenge {
   string challenger = 2; 
   string challangee = 3; 
   uint64 height = 4;
-  string result = 5; 
+  bool success = 5; 
   string description = 6; 
 }
