@@ -21,9 +21,7 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 
 	addr, err := k.GetAddress()
 	s.Require().NoError(err)
-	str := addr.String()
 	cid := sample.Asset()
-	str = str + ""
 	testCases := []struct {
 		name             string
 		msg              assettypes.MsgNotarizeAsset

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 
@@ -21,10 +20,8 @@ import (
 )
 
 var (
-	pubKey  string
-	prvKey  string
-	xPubKey string
-	xPrvKey string
+	pubKey string
+	prvKey string
 )
 
 // E2ETestSuite struct definition of asset suite
@@ -61,8 +58,7 @@ func (s *E2ETestSuite) SetupSuite() {
 		"--yes",
 		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 	}
-	str := addr.String()
-	str = str + ""
+
 	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
 	s.Require().NoError(err)
 
@@ -78,7 +74,6 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.Require().NoError(s.network.WaitForNextBlock())
 
 	prvKey, pubKey = sample.KeyPair()
-	xPrvKey, xPubKey = sample.ExtendedKeyPair(config.PlmntNetParams)
 
 	ta := sample.TrustAnchor(pubKey)
 	taJSON, err := json.Marshal(&ta)
@@ -130,9 +125,7 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 	k, err := val.ClientCtx.Keyring.Key(sample.Name)
 	s.Require().NoError(err)
 
-	addr, err := k.GetAddress()
-	str := addr.String()
-	str = str + ""
+	addr, _ := k.GetAddress()
 	cid := sample.Asset()
 
 	testCases := []struct {

@@ -100,7 +100,7 @@ func (s *E2ETestSuite) TestAttestMachine() {
 
 	k, err := val.ClientCtx.Keyring.Key(sample.Name)
 	s.Require().NoError(err)
-	addr, err := k.GetAddress()
+	addr, _ := k.GetAddress()
 
 	machine := sample.Machine(sample.Name, pubKey, prvKey, addr.String())
 	machineJSON, err := json.Marshal(&machine)
