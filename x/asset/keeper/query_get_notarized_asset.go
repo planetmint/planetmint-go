@@ -21,5 +21,5 @@ func (k Keeper) GetNotarizedAsset(goCtx context.Context, req *types.QueryGetNota
 		return nil, status.Error(codes.NotFound, "cid not found")
 	}
 
-	return &types.QueryGetNotarizedAssetResponse{Cid: asset.GetHash(), Signature: asset.GetSignature(), Pubkey: asset.GetPubkey()}, nil
+	return &types.QueryGetNotarizedAssetResponse{Cid: asset.GetCid()}, nil
 }

@@ -1,12 +1,10 @@
 package asset
 
 import (
-	"encoding/hex"
 	"fmt"
+
 	"github.com/planetmint/planetmint-go/testutil"
 	"github.com/planetmint/planetmint-go/testutil/sample"
-
-	"github.com/btcsuite/btcd/btcutil/hdkeychain"
 
 	assettypes "github.com/planetmint/planetmint-go/x/asset/types"
 
@@ -23,13 +21,7 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 
 	addr, err := k.GetAddress()
 	s.Require().NoError(err)
-
-	xskKey, _ := hdkeychain.NewKeyFromString(xPrvKey)
-	privKey, _ := xskKey.ECPrivKey()
-	byte_key := privKey.Serialize()
-	sk := hex.EncodeToString(byte_key)
-	cid, signatureHex := sample.Asset(sk)
-
+	cid := sample.Asset()
 	testCases := []struct {
 		name             string
 		msg              assettypes.MsgNotarizeAsset
@@ -37,48 +29,31 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 		expectCheckTxErr bool
 	}{
 		{
+			"invalid address",
+			assettypes.MsgNotarizeAsset{
+				Creator: "invalid creator address",
+				Cid:     cid,
+			},
+			"invalid address",
+			true,
+		},
+		{
 			"machine not found",
 			assettypes.MsgNotarizeAsset{
-				Creator:   addr.String(),
-				Hash:      cid,
-				Signature: signatureHex,
-				PubKey:    "human pubkey",
+				Creator: "cosmos12qydd0w5ff4sww54dxm0sreznxlex8wfrg86c5",
+				Cid:     cid,
 			},
 			"machine not found",
 			true,
 		},
 		{
-			"invalid signature hex string",
-			assettypes.MsgNotarizeAsset{
-				Creator:   addr.String(),
-				Hash:      cid,
-				Signature: "invalid signature",
-				PubKey:    xPubKey,
-			},
-			"invalid signature hex string",
-			false,
-		},
-		{
-			"invalid signature",
-			assettypes.MsgNotarizeAsset{
-				Creator:   addr.String(),
-				Hash:      cid,
-				Signature: hex.EncodeToString([]byte("invalid signature")),
-				PubKey:    xPubKey,
-			},
-			"invalid signature",
-			false,
-		},
-		{
 			"valid notarization",
 			assettypes.MsgNotarizeAsset{
-				Creator:   addr.String(),
-				Hash:      cid,
-				Signature: signatureHex,
-				PubKey:    xPubKey,
+				Creator: addr.String(),
+				Cid:     cid,
 			},
-			"planetmintgo.asset.MsgNotarizeAsset",
-			false,
+			"[]",
+			true,
 		},
 	}
 

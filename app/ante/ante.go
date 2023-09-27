@@ -29,7 +29,7 @@ func (cm CheckMachineDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate 
 		case "/planetmintgo.asset.MsgNotarizeAsset":
 			notarizeMsg, ok := msg.(*assettypes.MsgNotarizeAsset)
 			if ok {
-				_, found := cm.mk.GetMachineIndexByPubKey(ctx, notarizeMsg.PubKey)
+				_, found := cm.mk.GetMachineIndexByAddress(ctx, notarizeMsg.GetCreator())
 				if !found {
 					return ctx, errorsmod.Wrapf(machinetypes.ErrMachineNotFound, "error during CheckTx or ReCheckTx")
 				}
@@ -37,6 +37,9 @@ func (cm CheckMachineDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate 
 		case "/planetmintgo.machine.MsgAttestMachine":
 			attestMsg, ok := msg.(*machinetypes.MsgAttestMachine)
 			if ok {
+				if attestMsg.GetCreator() != attestMsg.Machine.GetAddress() {
+					return ctx, errorsmod.Wrapf(machinetypes.ErrMachineIsNotCreator, "error during CheckTx or ReCheckTx")
+				}
 				_, activated, found := cm.mk.GetTrustAnchor(ctx, attestMsg.Machine.MachineId)
 				if !found {
 					return ctx, errorsmod.Wrapf(machinetypes.ErrTrustAnchorNotFound, "error during CheckTx or ReCheckTx")

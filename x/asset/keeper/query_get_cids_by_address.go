@@ -9,17 +9,17 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) GetCIDsByPubKey(goCtx context.Context, req *types.QueryGetCIDsByPubKeyRequest) (*types.QueryGetCIDsByPubKeyResponse, error) {
+func (k Keeper) GetCIDsByAddress(goCtx context.Context, req *types.QueryGetCIDsByAddressRequest) (*types.QueryGetCIDsByAddressResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	cids, found := k.GetCidsByPublicKey(ctx, req.GetExtPubKey())
+	cids, found := k.GetCidsByAddress(ctx, req.GetAddress())
 	if !found {
 		return nil, status.Error(codes.NotFound, "no CIDs found")
 	}
 
-	return &types.QueryGetCIDsByPubKeyResponse{CIDs: cids}, nil
+	return &types.QueryGetCIDsByAddressResponse{Cids: cids}, nil
 }
