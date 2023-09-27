@@ -57,7 +57,6 @@ message QueryGetNotarizedAssetRequest {
 
 message QueryGetNotarizedAssetResponse {
   string cid       = 1;
-  string signature = 2;
-  string pubkey    = 3;
+  string address = 2;
 }
 
