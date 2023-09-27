@@ -3,6 +3,7 @@ package machine
 import (
 	"encoding/json"
 	"fmt"
+
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
@@ -97,7 +98,11 @@ func (s *E2ETestSuite) TestAttestMachine() {
 
 	assert.Contains(s.T(), rawLog, "planetmintgo.machine.MsgRegisterTrustAnchor")
 
-	machine := sample.Machine(sample.Name, pubKey, prvKey)
+	k, err := val.ClientCtx.Keyring.Key(sample.Name)
+	s.Require().NoError(err)
+	addr, err := k.GetAddress()
+
+	machine := sample.Machine(sample.Name, pubKey, prvKey, addr.String())
 	machineJSON, err := json.Marshal(&machine)
 	s.Require().NoError(err)
 

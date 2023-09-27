@@ -23,6 +23,22 @@ func (k Keeper) GetAsset(ctx sdk.Context, cid string) (msg types.MsgNotarizeAsse
 	return msg, true
 }
 
+func (k Keeper) GetCidsByAddress(ctx sdk.Context, address string) (cids []string, found bool) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AssetKey))
+
+	reverseIterator := store.ReverseIterator(nil, nil)
+	defer reverseIterator.Close()
+	for ; reverseIterator.Valid(); reverseIterator.Next() {
+		address_bytes := reverseIterator.Value()
+		cid_bytes := reverseIterator.Key()
+
+		if string(address_bytes) == address {
+			cids = append(cids, string(cid_bytes))
+		}
+	}
+	return cids, len(cids) > 0
+}
+
 func GetAssetCIDBytes(cid string) []byte {
 	bz := []byte(cid)
 	return bz

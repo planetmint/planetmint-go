@@ -31,9 +31,18 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 		expectCheckTxErr bool
 	}{
 		{
+			"invalid address",
+			assettypes.MsgNotarizeAsset{
+				Creator: "invalid creator address",
+				Cid:     cid,
+			},
+			"invalid address",
+			true,
+		},
+		{
 			"machine not found",
 			assettypes.MsgNotarizeAsset{
-				Creator: addr.String(),
+				Creator: "cosmos12qydd0w5ff4sww54dxm0sreznxlex8wfrg86c5",
 				Cid:     cid,
 			},
 			"machine not found",
@@ -45,7 +54,7 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 				Creator: addr.String(),
 				Cid:     cid,
 			},
-			"planetmintgo.asset.MsgNotarizeAsset",
+			"[]",
 			true,
 		},
 	}

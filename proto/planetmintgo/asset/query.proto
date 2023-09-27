@@ -1,4 +1,5 @@
 syntax = "proto3";
+
 package planetmintgo.asset;
 
 import "gogoproto/gogo.proto";
@@ -10,17 +11,53 @@ option go_package = "github.com/planetmint/planetmint-go/x/asset/types";
 
 // Query defines the gRPC querier service.
 service Query {
+  
   // Parameters queries the parameters of the module.
-  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+  rpc Params (QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/github.com/planetmint/planetmint-go/asset/params";
+  
+  }
+  
+  // Queries a list of GetCIDsByAddress items.
+  rpc GetCIDsByAddress (QueryGetCIDsByAddressRequest) returns (QueryGetCIDsByAddressResponse) {
+    option (google.api.http).get = "/planetmint/planetmint-go/asset/get_cids_by_address/{address}/{lookupPeriodInMin}";
+  
+  }
+  
+  // Queries a list of GetNotarizedAsset items.
+  rpc GetNotarizedAsset (QueryGetNotarizedAssetRequest) returns (QueryGetNotarizedAssetResponse) {
+    option (google.api.http).get = "/planetmint/planetmint-go/asset/get_notarized_asset/{cid}";
+  
   }
 }
-
 // QueryParamsRequest is request type for the Query/Params RPC method.
 message QueryParamsRequest {}
 
 // QueryParamsResponse is response type for the Query/Params RPC method.
 message QueryParamsResponse {
+  
   // params holds all the parameters of this module.
   Params params = 1 [(gogoproto.nullable) = false];
 }
+
+message QueryGetCIDsByAddressRequest {
+  string                                address         = 1;
+  uint64                                lookupPeriodInMin = 2;
+  cosmos.base.query.v1beta1.PageRequest pagination        = 3;
+}
+
+message QueryGetCIDsByAddressResponse {
+  repeated string                                 cids = 1;
+           cosmos.base.query.v1beta1.PageResponse pagination   = 2;
+}
+
+message QueryGetNotarizedAssetRequest {
+  string cid = 1;
+}
+
+message QueryGetNotarizedAssetResponse {
+  string cid       = 1;
+  string signature = 2;
+  string pubkey    = 3;
+}
+

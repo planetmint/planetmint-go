@@ -6,7 +6,7 @@ package types
 import (
 	context "context"
 	fmt "fmt"
-	_ "github.com/cosmos/cosmos-sdk/types/query"
+	query "github.com/cosmos/cosmos-sdk/types/query"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	grpc1 "github.com/cosmos/gogoproto/grpc"
 	proto "github.com/cosmos/gogoproto/proto"
@@ -113,34 +113,272 @@ func (m *QueryParamsResponse) GetParams() Params {
 	return Params{}
 }
 
+type QueryGetCIDsByAddressRequest struct {
+	Address           string             `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+	LookupPeriodInMin uint64             `protobuf:"varint,2,opt,name=lookupPeriodInMin,proto3" json:"lookupPeriodInMin,omitempty"`
+	Pagination        *query.PageRequest `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryGetCIDsByAddressRequest) Reset()         { *m = QueryGetCIDsByAddressRequest{} }
+func (m *QueryGetCIDsByAddressRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetCIDsByAddressRequest) ProtoMessage()    {}
+func (*QueryGetCIDsByAddressRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5832a953a81817c0, []int{2}
+}
+func (m *QueryGetCIDsByAddressRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetCIDsByAddressRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetCIDsByAddressRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetCIDsByAddressRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetCIDsByAddressRequest.Merge(m, src)
+}
+func (m *QueryGetCIDsByAddressRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetCIDsByAddressRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetCIDsByAddressRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetCIDsByAddressRequest proto.InternalMessageInfo
+
+func (m *QueryGetCIDsByAddressRequest) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+func (m *QueryGetCIDsByAddressRequest) GetLookupPeriodInMin() uint64 {
+	if m != nil {
+		return m.LookupPeriodInMin
+	}
+	return 0
+}
+
+func (m *QueryGetCIDsByAddressRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryGetCIDsByAddressResponse struct {
+	Cids       []string            `protobuf:"bytes,1,rep,name=cids,proto3" json:"cids,omitempty"`
+	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryGetCIDsByAddressResponse) Reset()         { *m = QueryGetCIDsByAddressResponse{} }
+func (m *QueryGetCIDsByAddressResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetCIDsByAddressResponse) ProtoMessage()    {}
+func (*QueryGetCIDsByAddressResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5832a953a81817c0, []int{3}
+}
+func (m *QueryGetCIDsByAddressResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetCIDsByAddressResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetCIDsByAddressResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetCIDsByAddressResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetCIDsByAddressResponse.Merge(m, src)
+}
+func (m *QueryGetCIDsByAddressResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetCIDsByAddressResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetCIDsByAddressResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetCIDsByAddressResponse proto.InternalMessageInfo
+
+func (m *QueryGetCIDsByAddressResponse) GetCids() []string {
+	if m != nil {
+		return m.Cids
+	}
+	return nil
+}
+
+func (m *QueryGetCIDsByAddressResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryGetNotarizedAssetRequest struct {
+	Cid string `protobuf:"bytes,1,opt,name=cid,proto3" json:"cid,omitempty"`
+}
+
+func (m *QueryGetNotarizedAssetRequest) Reset()         { *m = QueryGetNotarizedAssetRequest{} }
+func (m *QueryGetNotarizedAssetRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetNotarizedAssetRequest) ProtoMessage()    {}
+func (*QueryGetNotarizedAssetRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5832a953a81817c0, []int{4}
+}
+func (m *QueryGetNotarizedAssetRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetNotarizedAssetRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetNotarizedAssetRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetNotarizedAssetRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetNotarizedAssetRequest.Merge(m, src)
+}
+func (m *QueryGetNotarizedAssetRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetNotarizedAssetRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetNotarizedAssetRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetNotarizedAssetRequest proto.InternalMessageInfo
+
+func (m *QueryGetNotarizedAssetRequest) GetCid() string {
+	if m != nil {
+		return m.Cid
+	}
+	return ""
+}
+
+type QueryGetNotarizedAssetResponse struct {
+	Cid       string `protobuf:"bytes,1,opt,name=cid,proto3" json:"cid,omitempty"`
+	Signature string `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty"`
+	Pubkey    string `protobuf:"bytes,3,opt,name=pubkey,proto3" json:"pubkey,omitempty"`
+}
+
+func (m *QueryGetNotarizedAssetResponse) Reset()         { *m = QueryGetNotarizedAssetResponse{} }
+func (m *QueryGetNotarizedAssetResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetNotarizedAssetResponse) ProtoMessage()    {}
+func (*QueryGetNotarizedAssetResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5832a953a81817c0, []int{5}
+}
+func (m *QueryGetNotarizedAssetResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetNotarizedAssetResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetNotarizedAssetResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetNotarizedAssetResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetNotarizedAssetResponse.Merge(m, src)
+}
+func (m *QueryGetNotarizedAssetResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetNotarizedAssetResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetNotarizedAssetResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetNotarizedAssetResponse proto.InternalMessageInfo
+
+func (m *QueryGetNotarizedAssetResponse) GetCid() string {
+	if m != nil {
+		return m.Cid
+	}
+	return ""
+}
+
+func (m *QueryGetNotarizedAssetResponse) GetSignature() string {
+	if m != nil {
+		return m.Signature
+	}
+	return ""
+}
+
+func (m *QueryGetNotarizedAssetResponse) GetPubkey() string {
+	if m != nil {
+		return m.Pubkey
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*QueryParamsRequest)(nil), "planetmintgo.asset.QueryParamsRequest")
 	proto.RegisterType((*QueryParamsResponse)(nil), "planetmintgo.asset.QueryParamsResponse")
+	proto.RegisterType((*QueryGetCIDsByAddressRequest)(nil), "planetmintgo.asset.QueryGetCIDsByAddressRequest")
+	proto.RegisterType((*QueryGetCIDsByAddressResponse)(nil), "planetmintgo.asset.QueryGetCIDsByAddressResponse")
+	proto.RegisterType((*QueryGetNotarizedAssetRequest)(nil), "planetmintgo.asset.QueryGetNotarizedAssetRequest")
+	proto.RegisterType((*QueryGetNotarizedAssetResponse)(nil), "planetmintgo.asset.QueryGetNotarizedAssetResponse")
 }
 
 func init() { proto.RegisterFile("planetmintgo/asset/query.proto", fileDescriptor_5832a953a81817c0) }
 
 var fileDescriptor_5832a953a81817c0 = []byte{
-	// 302 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x90, 0xb1, 0x4b, 0x03, 0x31,
-	0x14, 0xc6, 0x2f, 0xa2, 0x37, 0xc4, 0x2d, 0x76, 0x90, 0x43, 0x52, 0xb9, 0x41, 0x45, 0xf0, 0xc2,
-	0xb5, 0x8b, 0xae, 0x5d, 0x1d, 0xd4, 0x8e, 0x6e, 0xb9, 0x12, 0xe2, 0x41, 0x2f, 0x2f, 0xbd, 0xe4,
-	0xc4, 0xae, 0xfe, 0x05, 0x82, 0xce, 0xfe, 0x3d, 0x1d, 0x0b, 0x2e, 0x4e, 0x22, 0x77, 0xfe, 0x21,
-	0xd2, 0xe4, 0xc0, 0x6a, 0x0b, 0x76, 0x7b, 0xbc, 0xef, 0xf7, 0x7d, 0xf9, 0xf2, 0x30, 0xd5, 0x63,
-	0xae, 0x84, 0x2d, 0x72, 0x65, 0x25, 0x30, 0x6e, 0x8c, 0xb0, 0x6c, 0x52, 0x89, 0x72, 0x9a, 0xe8,
-	0x12, 0x2c, 0x10, 0xb2, 0xac, 0x27, 0x4e, 0x8f, 0x3a, 0x12, 0x24, 0x38, 0x99, 0x2d, 0x26, 0x4f,
-	0x46, 0x07, 0x12, 0x40, 0x8e, 0x05, 0xe3, 0x3a, 0x67, 0x5c, 0x29, 0xb0, 0xdc, 0xe6, 0xa0, 0x4c,
-	0xab, 0x9e, 0x8e, 0xc0, 0x14, 0x60, 0x58, 0xc6, 0x8d, 0xf0, 0x0f, 0xb0, 0xfb, 0x34, 0x13, 0x96,
-	0xa7, 0x4c, 0x73, 0x99, 0x2b, 0x07, 0xb7, 0x6c, 0x77, 0x4d, 0x27, 0xcd, 0x4b, 0x5e, 0xb4, 0x61,
-	0x71, 0x07, 0x93, 0x9b, 0x45, 0xc4, 0xb5, 0x5b, 0x0e, 0xc5, 0xa4, 0x12, 0xc6, 0xc6, 0x57, 0x78,
-	0xef, 0xd7, 0xd6, 0x68, 0x50, 0x46, 0x90, 0x73, 0x1c, 0x7a, 0xf3, 0x3e, 0x3a, 0x44, 0x27, 0xbb,
-	0xbd, 0x28, 0x59, 0xfd, 0x52, 0xe2, 0x3d, 0x83, 0xed, 0xd9, 0x47, 0x37, 0x18, 0xb6, 0x7c, 0xef,
-	0x15, 0xe1, 0x1d, 0x97, 0x48, 0x5e, 0x10, 0x0e, 0x3d, 0x42, 0x8e, 0xd6, 0xd9, 0x57, 0xdb, 0x44,
-	0xc7, 0xff, 0x72, 0xbe, 0x5f, 0x7c, 0xf1, 0xf8, 0xf6, 0xf5, 0xbc, 0xd5, 0x27, 0x29, 0x93, 0xb9,
-	0xbd, 0xab, 0xb2, 0x64, 0x04, 0x05, 0xfb, 0xf1, 0x2e, 0x8d, 0x67, 0x7f, 0xae, 0x31, 0xb8, 0x9c,
-	0xd5, 0x14, 0xcd, 0x6b, 0x8a, 0x3e, 0x6b, 0x8a, 0x9e, 0x1a, 0x1a, 0xcc, 0x1b, 0x1a, 0xbc, 0x37,
-	0x34, 0xb8, 0x4d, 0x37, 0xc9, 0x7a, 0x68, 0xd3, 0xec, 0x54, 0x0b, 0x93, 0x85, 0xee, 0xb6, 0xfd,
-	0xef, 0x00, 0x00, 0x00, 0xff, 0xff, 0xb3, 0x8d, 0x19, 0xe9, 0x12, 0x02, 0x00, 0x00,
+	// 585 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x54, 0x3f, 0x6f, 0xd3, 0x4e,
+	0x18, 0x8e, 0xdb, 0xfc, 0xf2, 0x53, 0x8e, 0xa5, 0x3d, 0x2a, 0x14, 0x59, 0xc1, 0xad, 0x3c, 0xb4,
+	0x11, 0x02, 0x1f, 0x4e, 0x17, 0x2a, 0xa6, 0x04, 0x44, 0x55, 0x21, 0x20, 0x35, 0x13, 0x2c, 0xd1,
+	0x39, 0x3e, 0xb9, 0xa7, 0x26, 0x3e, 0xd7, 0x77, 0x46, 0x84, 0x90, 0x85, 0x4f, 0x80, 0x04, 0x9f,
+	0x83, 0x85, 0x99, 0xbd, 0x63, 0x05, 0x0b, 0x13, 0x42, 0x09, 0x1f, 0x04, 0xf9, 0xee, 0xa2, 0x24,
+	0x75, 0x42, 0xda, 0xed, 0xf5, 0xfb, 0xef, 0x79, 0xee, 0x79, 0x1f, 0x19, 0x58, 0x71, 0x17, 0x47,
+	0x44, 0xf4, 0x68, 0x24, 0x42, 0x86, 0x30, 0xe7, 0x44, 0xa0, 0xb3, 0x94, 0x24, 0x7d, 0x27, 0x4e,
+	0x98, 0x60, 0x10, 0xce, 0xd6, 0x1d, 0x59, 0x37, 0xb7, 0x42, 0x16, 0x32, 0x59, 0x46, 0x59, 0xa4,
+	0x3a, 0xcd, 0x6a, 0xc8, 0x58, 0xd8, 0x25, 0x08, 0xc7, 0x14, 0xe1, 0x28, 0x62, 0x02, 0x0b, 0xca,
+	0x22, 0xae, 0xab, 0x77, 0x3a, 0x8c, 0xf7, 0x18, 0x47, 0x3e, 0xe6, 0x44, 0x01, 0xa0, 0x37, 0xae,
+	0x4f, 0x04, 0x76, 0x51, 0x8c, 0x43, 0x1a, 0xc9, 0x66, 0xdd, 0xbb, 0xbd, 0x80, 0x53, 0x8c, 0x13,
+	0xdc, 0xd3, 0xcb, 0xec, 0x2d, 0x00, 0x8f, 0xb3, 0x15, 0x2d, 0x99, 0xf4, 0xc8, 0x59, 0x4a, 0xb8,
+	0xb0, 0x5f, 0x80, 0x9b, 0x73, 0x59, 0x1e, 0xb3, 0x88, 0x13, 0xf8, 0x00, 0x94, 0xd4, 0x70, 0xc5,
+	0xd8, 0x31, 0x6a, 0x37, 0xea, 0xa6, 0x93, 0x7f, 0x92, 0xa3, 0x66, 0x9a, 0xc5, 0xf3, 0x5f, 0xdb,
+	0x05, 0x4f, 0xf7, 0xdb, 0x5f, 0x0c, 0x50, 0x95, 0x1b, 0x0f, 0x89, 0x78, 0x74, 0xf4, 0x98, 0x37,
+	0xfb, 0x8d, 0x20, 0x48, 0x08, 0x9f, 0x20, 0xc2, 0x0a, 0xf8, 0x1f, 0xab, 0x8c, 0xdc, 0x5d, 0xf6,
+	0x26, 0x9f, 0xf0, 0x2e, 0xd8, 0xec, 0x32, 0x76, 0x9a, 0xc6, 0x2d, 0x92, 0x50, 0x16, 0x1c, 0x45,
+	0xcf, 0x68, 0x54, 0x59, 0xdb, 0x31, 0x6a, 0x45, 0x2f, 0x5f, 0x80, 0x4f, 0x00, 0x98, 0x8a, 0x50,
+	0x59, 0x97, 0x34, 0x77, 0x1d, 0xa5, 0x98, 0x93, 0x29, 0xe6, 0xa8, 0x93, 0x68, 0xc5, 0x9c, 0x16,
+	0x0e, 0x89, 0xe6, 0xe0, 0xcd, 0x4c, 0xda, 0xef, 0xc1, 0xed, 0x25, 0x7c, 0xb5, 0x16, 0x10, 0x14,
+	0x3b, 0x34, 0xc8, 0xd8, 0xae, 0xd7, 0xca, 0x9e, 0x8c, 0xe1, 0xe1, 0x1c, 0xf8, 0x9a, 0x04, 0xdf,
+	0x5b, 0x09, 0xae, 0x16, 0xce, 0xa1, 0xbb, 0x53, 0xf4, 0xe7, 0x4c, 0xe0, 0x84, 0xbe, 0x23, 0x41,
+	0x23, 0x53, 0x77, 0x22, 0xd7, 0x06, 0x58, 0xef, 0xd0, 0x40, 0x4b, 0x95, 0x85, 0xf6, 0x09, 0xb0,
+	0x96, 0x8d, 0x68, 0xc6, 0xb9, 0x19, 0x58, 0x05, 0x65, 0x4e, 0xc3, 0x08, 0x8b, 0x34, 0x21, 0x92,
+	0x6e, 0xd9, 0x9b, 0x26, 0xe0, 0x2d, 0x50, 0x8a, 0x53, 0xff, 0x94, 0xf4, 0xa5, 0x8c, 0x65, 0x4f,
+	0x7f, 0xd5, 0xbf, 0x16, 0xc1, 0x7f, 0x12, 0x0a, 0x7e, 0x36, 0x40, 0x49, 0x9d, 0x1b, 0xee, 0x2e,
+	0xb2, 0x42, 0xde, 0x59, 0xe6, 0xde, 0xca, 0x3e, 0xc5, 0xd6, 0x3e, 0xf8, 0xf0, 0xe3, 0xcf, 0xa7,
+	0xb5, 0x7d, 0xe8, 0xa2, 0x90, 0x8a, 0x93, 0xd4, 0x77, 0x3a, 0xac, 0x87, 0xa6, 0xb3, 0x33, 0xe1,
+	0xbd, 0x4b, 0xce, 0x86, 0xdf, 0x0d, 0xb0, 0x71, 0xf9, 0x6e, 0xf0, 0xfe, 0x52, 0xe0, 0x25, 0x96,
+	0x34, 0xdd, 0x6b, 0x4c, 0x68, 0xd2, 0xaf, 0x24, 0xe9, 0x97, 0xf0, 0x78, 0x15, 0xd3, 0x90, 0x88,
+	0x76, 0x66, 0x99, 0xb6, 0xdf, 0x6f, 0x6b, 0xa3, 0xa3, 0x81, 0x0e, 0x86, 0x68, 0x90, 0xf3, 0xf5,
+	0x10, 0x7e, 0x33, 0xc0, 0x66, 0xee, 0xb6, 0xf0, 0x9f, 0x1c, 0x17, 0x5a, 0xc7, 0xac, 0x5f, 0x67,
+	0x44, 0xbf, 0xab, 0x21, 0xdf, 0xf5, 0x10, 0x1e, 0x5c, 0xe5, 0x5d, 0xd1, 0x64, 0x47, 0x5b, 0xe5,
+	0x06, 0x1d, 0x1a, 0x0c, 0x9b, 0x4f, 0xcf, 0x47, 0x96, 0x71, 0x31, 0xb2, 0x8c, 0xdf, 0x23, 0xcb,
+	0xf8, 0x38, 0xb6, 0x0a, 0x17, 0x63, 0xab, 0xf0, 0x73, 0x6c, 0x15, 0x5e, 0xbb, 0x57, 0x39, 0xf0,
+	0x5b, 0x0d, 0x20, 0xfa, 0x31, 0xe1, 0x7e, 0x49, 0xfe, 0xbc, 0xf6, 0xff, 0x06, 0x00, 0x00, 0xff,
+	0xff, 0x66, 0xad, 0x26, 0x89, 0x73, 0x05, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -157,6 +395,10 @@ const _ = grpc.SupportPackageIsVersion4
 type QueryClient interface {
 	// Parameters queries the parameters of the module.
 	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
+	// Queries a list of GetCIDsByAddress items.
+	GetCIDsByAddress(ctx context.Context, in *QueryGetCIDsByAddressRequest, opts ...grpc.CallOption) (*QueryGetCIDsByAddressResponse, error)
+	// Queries a list of GetNotarizedAsset items.
+	GetNotarizedAsset(ctx context.Context, in *QueryGetNotarizedAssetRequest, opts ...grpc.CallOption) (*QueryGetNotarizedAssetResponse, error)
 }
 
 type queryClient struct {
@@ -176,10 +418,32 @@ func (c *queryClient) Params(ctx context.Context, in *QueryParamsRequest, opts .
 	return out, nil
 }
 
+func (c *queryClient) GetCIDsByAddress(ctx context.Context, in *QueryGetCIDsByAddressRequest, opts ...grpc.CallOption) (*QueryGetCIDsByAddressResponse, error) {
+	out := new(QueryGetCIDsByAddressResponse)
+	err := c.cc.Invoke(ctx, "/planetmintgo.asset.Query/GetCIDsByAddress", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) GetNotarizedAsset(ctx context.Context, in *QueryGetNotarizedAssetRequest, opts ...grpc.CallOption) (*QueryGetNotarizedAssetResponse, error) {
+	out := new(QueryGetNotarizedAssetResponse)
+	err := c.cc.Invoke(ctx, "/planetmintgo.asset.Query/GetNotarizedAsset", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 type QueryServer interface {
 	// Parameters queries the parameters of the module.
 	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
+	// Queries a list of GetCIDsByAddress items.
+	GetCIDsByAddress(context.Context, *QueryGetCIDsByAddressRequest) (*QueryGetCIDsByAddressResponse, error)
+	// Queries a list of GetNotarizedAsset items.
+	GetNotarizedAsset(context.Context, *QueryGetNotarizedAssetRequest) (*QueryGetNotarizedAssetResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
@@ -188,6 +452,12 @@ type UnimplementedQueryServer struct {
 
 func (*UnimplementedQueryServer) Params(ctx context.Context, req *QueryParamsRequest) (*QueryParamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Params not implemented")
+}
+func (*UnimplementedQueryServer) GetCIDsByAddress(ctx context.Context, req *QueryGetCIDsByAddressRequest) (*QueryGetCIDsByAddressResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCIDsByAddress not implemented")
+}
+func (*UnimplementedQueryServer) GetNotarizedAsset(ctx context.Context, req *QueryGetNotarizedAssetRequest) (*QueryGetNotarizedAssetResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetNotarizedAsset not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
@@ -212,6 +482,42 @@ func _Query_Params_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_GetCIDsByAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetCIDsByAddressRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).GetCIDsByAddress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/planetmintgo.asset.Query/GetCIDsByAddress",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).GetCIDsByAddress(ctx, req.(*QueryGetCIDsByAddressRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_GetNotarizedAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetNotarizedAssetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).GetNotarizedAsset(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/planetmintgo.asset.Query/GetNotarizedAsset",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).GetNotarizedAsset(ctx, req.(*QueryGetNotarizedAssetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Query_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "planetmintgo.asset.Query",
 	HandlerType: (*QueryServer)(nil),
@@ -219,6 +525,14 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Params",
 			Handler:    _Query_Params_Handler,
+		},
+		{
+			MethodName: "GetCIDsByAddress",
+			Handler:    _Query_GetCIDsByAddress_Handler,
+		},
+		{
+			MethodName: "GetNotarizedAsset",
+			Handler:    _Query_GetNotarizedAsset_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -281,6 +595,171 @@ func (m *QueryParamsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *QueryGetCIDsByAddressRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetCIDsByAddressRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetCIDsByAddressRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.LookupPeriodInMin != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.LookupPeriodInMin))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Address)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetCIDsByAddressResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetCIDsByAddressResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetCIDsByAddressResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Cids) > 0 {
+		for iNdEx := len(m.Cids) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Cids[iNdEx])
+			copy(dAtA[i:], m.Cids[iNdEx])
+			i = encodeVarintQuery(dAtA, i, uint64(len(m.Cids[iNdEx])))
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetNotarizedAssetRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetNotarizedAssetRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetNotarizedAssetRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Cid) > 0 {
+		i -= len(m.Cid)
+		copy(dAtA[i:], m.Cid)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Cid)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetNotarizedAssetResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetNotarizedAssetResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetNotarizedAssetResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Pubkey) > 0 {
+		i -= len(m.Pubkey)
+		copy(dAtA[i:], m.Pubkey)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Pubkey)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Signature) > 0 {
+		i -= len(m.Signature)
+		copy(dAtA[i:], m.Signature)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Signature)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Cid) > 0 {
+		i -= len(m.Cid)
+		copy(dAtA[i:], m.Cid)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Cid)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
 	offset -= sovQuery(v)
 	base := offset
@@ -309,6 +788,79 @@ func (m *QueryParamsResponse) Size() (n int) {
 	_ = l
 	l = m.Params.Size()
 	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryGetCIDsByAddressRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Address)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	if m.LookupPeriodInMin != 0 {
+		n += 1 + sovQuery(uint64(m.LookupPeriodInMin))
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetCIDsByAddressResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Cids) > 0 {
+		for _, s := range m.Cids {
+			l = len(s)
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetNotarizedAssetRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Cid)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetNotarizedAssetResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Cid)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	l = len(m.Signature)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	l = len(m.Pubkey)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
 	return n
 }
 
@@ -429,6 +981,489 @@ func (m *QueryParamsResponse) Unmarshal(dAtA []byte) error {
 			if err := m.Params.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetCIDsByAddressRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetCIDsByAddressRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetCIDsByAddressRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LookupPeriodInMin", wireType)
+			}
+			m.LookupPeriodInMin = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.LookupPeriodInMin |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetCIDsByAddressResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetCIDsByAddressResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetCIDsByAddressResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Cids", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Cids = append(m.Cids, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetNotarizedAssetRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetNotarizedAssetRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetNotarizedAssetRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Cid", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Cid = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetNotarizedAssetResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetNotarizedAssetResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetNotarizedAssetResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Cid", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Cid = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signature", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signature = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pubkey", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Pubkey = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

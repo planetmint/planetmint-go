@@ -30,7 +30,7 @@ func TestMsgServerAttestMachine(t *testing.T) {
 	sk, pk := sample.KeyPair()
 	ta := sample.TrustAnchor(pk)
 	taMsg := types.NewMsgRegisterTrustAnchor(pk, &ta)
-	machine := sample.Machine(pk, pk, sk)
+	machine := sample.Machine(pk, pk, sk, "")
 	msg := types.NewMsgAttestMachine(pk, &machine)
 	msgServer, ctx := setupMsgServer(t)
 	_, err := msgServer.RegisterTrustAnchor(ctx, taMsg)
@@ -45,7 +45,7 @@ func TestMsgServerAttestMachineInvalidLiquidKey(t *testing.T) {
 	sk, pk := sample.KeyPair()
 	ta := sample.TrustAnchor(pk)
 	taMsg := types.NewMsgRegisterTrustAnchor(pk, &ta)
-	machine := sample.Machine(pk, pk, sk)
+	machine := sample.Machine(pk, pk, sk, "")
 	machine.IssuerLiquid = "invalidkey"
 	msg := types.NewMsgAttestMachine(pk, &machine)
 	msgServer, ctx := setupMsgServer(t)

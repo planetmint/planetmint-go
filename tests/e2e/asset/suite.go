@@ -85,7 +85,7 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.Require().NoError(err)
 	args = []string{
 		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, addr.String()),
 		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 		"--yes",
 		string(taJSON),
@@ -95,7 +95,7 @@ func (s *E2ETestSuite) SetupSuite() {
 
 	s.Require().NoError(s.network.WaitForNextBlock())
 
-	machine := sample.Machine(sample.Name, pubKey, prvKey)
+	machine := sample.Machine(sample.Name, pubKey, prvKey, addr.String())
 	machineJSON, err := json.Marshal(&machine)
 	s.Require().NoError(err)
 
@@ -145,11 +145,11 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 			"valid notarization",
 			[]string{
 				cid,
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, addr.String()),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 				"--yes",
 			},
-			"planetmintgo.asset.MsgNotarizeAsset",
+			"[]",
 			true,
 		},
 	}

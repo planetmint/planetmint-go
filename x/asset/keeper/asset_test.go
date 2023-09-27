@@ -20,6 +20,9 @@ func createNAsset(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.MsgNota
 		hashStr := string(hash[:])
 		items[i].Cid = hashStr
 		items[i].Creator = "plmnt_address"
+		if i%2 == 0 {
+			items[i].Creator = "plmnt_address1"
+		}
 		keeper.StoreAsset(ctx, items[i])
 	}
 	return items
@@ -33,4 +36,24 @@ func TestGetAsset(t *testing.T) {
 		assert.True(t, found)
 		assert.Equal(t, item, asset)
 	}
+}
+func TestGetCids(t *testing.T) {
+	keeper, ctx := keepertest.AssetKeeper(t)
+	items := createNAsset(keeper, ctx, 10)
+	for _, item := range items {
+		asset, found := keeper.GetAsset(ctx, item.Cid)
+		assert.True(t, found)
+		assert.Equal(t, item, asset)
+	}
+}
+
+func TestGetAssetByPubKeys(t *testing.T) {
+	keeper, ctx := keepertest.AssetKeeper(t)
+	_ = createNAsset(keeper, ctx, 10)
+	assets, found := keeper.GetCidsByAddress(ctx, "plmnt_address")
+	assert.True(t, found)
+	assert.Equal(t, len(assets), 5)
+	assets, found = keeper.GetCidsByAddress(ctx, "plmnt_address1")
+	assert.True(t, found)
+	assert.Equal(t, len(assets), 5)
 }
