@@ -1,0 +1,14 @@
+syntax = "proto3";
+package planetmintgo.dao;
+
+option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
+
+message Challenge {
+  
+  string initiator = 1; 
+  string challenger = 2; 
+  string challangee = 3; 
+  uint64 height = 4;
+  bool success = 5; 
+  string description = 6; 
+}
