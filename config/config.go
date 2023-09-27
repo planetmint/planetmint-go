@@ -21,6 +21,8 @@ stake-denom = "{{ .PlmntConfig.StakeDenom }}"
 fee-denom = "{{ .PlmntConfig.FeeDenom }}"
 config-root-dir = "{{ .PlmntConfig.ConfigRootDir }}"
 pop-epochs = {{ .PlmntConfig.PoPEpochs }}
+issuance-endpoint = "{{ .PlmntConfig.IssuanceEndpoint }}"
+issuance-port = {{ .PlmntConfig.IssuancePort }}
 `
 
 // Config defines Planetmint's top level configuration
@@ -33,6 +35,8 @@ type Config struct {
 	FeeDenom         string `mapstructure:"fee-denom" json:"fee-denom"`
 	ConfigRootDir    string `mapstructure:"config-root-dir" json:"config-root-dir"`
 	PoPEpochs        int    `mapstructure:"pop-epochs" json:"pop-epochs"`
+	IssuanceEndpoint string `mapstructure:"issuance-endpoint" json:"issuance-endpoint"`
+	IssuancePort     int    `mapstructure:"issuance-port" json:"issuance-port"`
 }
 
 // cosmos-sdk wide global singleton
@@ -57,6 +61,8 @@ func DefaultConfig() *Config {
 		FeeDenom:         "plmnt",
 		ConfigRootDir:    filepath.Join(currentUser.HomeDir, ".planetmint-go"),
 		PoPEpochs:        24, // 24 CometBFT epochs of 5s equate 120s
+		IssuanceEndpoint: "lab.r3c.network",
+		IssuancePort:     7401,
 	}
 }
 
