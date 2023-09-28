@@ -133,3 +133,53 @@ func (s *E2ETestSuite) TestAttestMachine() {
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdGetMachineByPublicKey(), args)
 	s.Require().NoError(err)
 }
+
+func (s *E2ETestSuite) TestInvalidAttestMachine() {
+	val := s.network.Validators[0]
+
+	// already used in REST test case
+	prvKey, pubKey := sample.KeyPair(1)
+
+	k, err := val.ClientCtx.Keyring.Key(sample.Name)
+	s.Require().NoError(err)
+	addr, _ := k.GetAddress()
+
+	machine := sample.Machine(sample.Name, pubKey, prvKey, addr.String())
+	machineJSON, err := json.Marshal(&machine)
+	s.Require().NoError(err)
+
+	args := []string{
+		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
+		"--yes",
+		string(machineJSON),
+	}
+
+	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
+	s.Require().NoError(err)
+
+	txResponse, err := clitestutil.GetTxResponseFromOut(out)
+	s.Require().NoError(err)
+	s.Require().Equal(int(txResponse.Code), int(4))
+
+	unregisteredPubKey, unregisteredPrivKey := sample.KeyPair(2)
+	machine = sample.Machine(sample.Name, unregisteredPubKey, unregisteredPrivKey, addr.String())
+	machineJSON, err = json.Marshal(&machine)
+	s.Require().NoError(err)
+
+	args = []string{
+		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
+		"--yes",
+		string(machineJSON),
+	}
+
+	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
+	s.Require().NoError(err)
+
+	txResponse, err = clitestutil.GetTxResponseFromOut(out)
+	s.Require().NoError(err)
+	s.Require().Equal(int(txResponse.Code), int(3))
+}
