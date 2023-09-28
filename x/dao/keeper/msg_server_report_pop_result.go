@@ -20,7 +20,10 @@ func (k msgServer) ReportPopResult(goCtx context.Context, msg *types.MsgReportPo
 		return nil, errorsmod.Wrapf(types.ErrInvalidChallenge, err.Error())
 	}
 
-	k.issuePoPRewards(*msg.Challenge)
+	err = k.issuePoPRewards(*msg.Challenge)
+	if err != nil {
+		return nil, errorsmod.Wrapf(types.ErrFailedPoPRewardsIssuance, err.Error())
+	}
 	k.StoreChallenge(ctx, *msg.Challenge)
 
 	return &types.MsgReportPopResultResponse{}, nil

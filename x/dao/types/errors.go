@@ -8,5 +8,6 @@ import (
 
 // x/dao module sentinel errors
 var (
-	ErrInvalidChallenge = errorsmod.Register(ModuleName, 2, "invalid challenge")
+	ErrInvalidChallenge         = errorsmod.Register(ModuleName, 2, "invalid challenge")
+	ErrFailedPoPRewardsIssuance = errorsmod.Register(ModuleName, 3, "PoP rewards issuance failed")
 )
