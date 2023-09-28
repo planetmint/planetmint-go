@@ -23,9 +23,7 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type Asset struct {
-	Hash      string `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
-	Signature string `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty"`
-	Pubkey    string `protobuf:"bytes,3,opt,name=pubkey,proto3" json:"pubkey,omitempty"`
+	Cid string `protobuf:"bytes,1,opt,name=cid,proto3" json:"cid,omitempty"`
 }
 
 func (m *Asset) Reset()         { *m = Asset{} }
@@ -61,23 +59,9 @@ func (m *Asset) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Asset proto.InternalMessageInfo
 
-func (m *Asset) GetHash() string {
+func (m *Asset) GetCid() string {
 	if m != nil {
-		return m.Hash
-	}
-	return ""
-}
-
-func (m *Asset) GetSignature() string {
-	if m != nil {
-		return m.Signature
-	}
-	return ""
-}
-
-func (m *Asset) GetPubkey() string {
-	if m != nil {
-		return m.Pubkey
+		return m.Cid
 	}
 	return ""
 }
@@ -89,19 +73,16 @@ func init() {
 func init() { proto.RegisterFile("planetmintgo/asset/asset.proto", fileDescriptor_03dd37a25f684e6e) }
 
 var fileDescriptor_03dd37a25f684e6e = []byte{
-	// 179 bytes of a gzipped FileDescriptorProto
+	// 143 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0x2b, 0xc8, 0x49, 0xcc,
 	0x4b, 0x2d, 0xc9, 0xcd, 0xcc, 0x2b, 0x49, 0xcf, 0xd7, 0x4f, 0x2c, 0x2e, 0x4e, 0x2d, 0x81, 0x90,
-	0x7a, 0x05, 0x45, 0xf9, 0x25, 0xf9, 0x42, 0x42, 0xc8, 0xf2, 0x7a, 0x60, 0x19, 0xa5, 0x40, 0x2e,
-	0x56, 0x47, 0x10, 0x43, 0x48, 0x88, 0x8b, 0x25, 0x23, 0xb1, 0x38, 0x43, 0x82, 0x51, 0x81, 0x51,
-	0x83, 0x33, 0x08, 0xcc, 0x16, 0x92, 0xe1, 0xe2, 0x2c, 0xce, 0x4c, 0xcf, 0x4b, 0x2c, 0x29, 0x2d,
-	0x4a, 0x95, 0x60, 0x02, 0x4b, 0x20, 0x04, 0x84, 0xc4, 0xb8, 0xd8, 0x0a, 0x4a, 0x93, 0xb2, 0x53,
-	0x2b, 0x25, 0x98, 0xc1, 0x52, 0x50, 0x9e, 0x93, 0xf7, 0x89, 0x47, 0x72, 0x8c, 0x17, 0x1e, 0xc9,
-	0x31, 0x3e, 0x78, 0x24, 0xc7, 0x38, 0xe1, 0xb1, 0x1c, 0xc3, 0x85, 0xc7, 0x72, 0x0c, 0x37, 0x1e,
-	0xcb, 0x31, 0x44, 0x19, 0xa6, 0x67, 0x96, 0x64, 0x94, 0x26, 0xe9, 0x25, 0xe7, 0xe7, 0xea, 0x23,
-	0xdc, 0x82, 0xc4, 0xd4, 0x4d, 0xcf, 0xd7, 0xaf, 0x80, 0xba, 0xbc, 0xa4, 0xb2, 0x20, 0xb5, 0x38,
-	0x89, 0x0d, 0xec, 0x74, 0x63, 0x40, 0x00, 0x00, 0x00, 0xff, 0xff, 0x9b, 0xe4, 0xfc, 0x55, 0xdc,
-	0x00, 0x00, 0x00,
+	0x7a, 0x05, 0x45, 0xf9, 0x25, 0xf9, 0x42, 0x42, 0xc8, 0xf2, 0x7a, 0x60, 0x19, 0x25, 0x49, 0x2e,
+	0x56, 0x47, 0x10, 0x43, 0x48, 0x80, 0x8b, 0x39, 0x39, 0x33, 0x45, 0x82, 0x51, 0x81, 0x51, 0x83,
+	0x33, 0x08, 0xc4, 0x74, 0xf2, 0x3e, 0xf1, 0x48, 0x8e, 0xf1, 0xc2, 0x23, 0x39, 0xc6, 0x07, 0x8f,
+	0xe4, 0x18, 0x27, 0x3c, 0x96, 0x63, 0xb8, 0xf0, 0x58, 0x8e, 0xe1, 0xc6, 0x63, 0x39, 0x86, 0x28,
+	0xc3, 0xf4, 0xcc, 0x92, 0x8c, 0xd2, 0x24, 0xbd, 0xe4, 0xfc, 0x5c, 0x7d, 0x84, 0x99, 0x48, 0x4c,
+	0xdd, 0xf4, 0x7c, 0xfd, 0x0a, 0xa8, 0x0b, 0x4a, 0x2a, 0x0b, 0x52, 0x8b, 0x93, 0xd8, 0xc0, 0x4e,
+	0x30, 0x06, 0x04, 0x00, 0x00, 0xff, 0xff, 0xbc, 0x38, 0x8c, 0xdf, 0xa4, 0x00, 0x00, 0x00,
 }
 
 func (m *Asset) Marshal() (dAtA []byte, err error) {
@@ -124,24 +105,10 @@ func (m *Asset) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.Pubkey) > 0 {
-		i -= len(m.Pubkey)
-		copy(dAtA[i:], m.Pubkey)
-		i = encodeVarintAsset(dAtA, i, uint64(len(m.Pubkey)))
-		i--
-		dAtA[i] = 0x1a
-	}
-	if len(m.Signature) > 0 {
-		i -= len(m.Signature)
-		copy(dAtA[i:], m.Signature)
-		i = encodeVarintAsset(dAtA, i, uint64(len(m.Signature)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.Hash) > 0 {
-		i -= len(m.Hash)
-		copy(dAtA[i:], m.Hash)
-		i = encodeVarintAsset(dAtA, i, uint64(len(m.Hash)))
+	if len(m.Cid) > 0 {
+		i -= len(m.Cid)
+		copy(dAtA[i:], m.Cid)
+		i = encodeVarintAsset(dAtA, i, uint64(len(m.Cid)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -165,15 +132,7 @@ func (m *Asset) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.Hash)
-	if l > 0 {
-		n += 1 + l + sovAsset(uint64(l))
-	}
-	l = len(m.Signature)
-	if l > 0 {
-		n += 1 + l + sovAsset(uint64(l))
-	}
-	l = len(m.Pubkey)
+	l = len(m.Cid)
 	if l > 0 {
 		n += 1 + l + sovAsset(uint64(l))
 	}
@@ -217,7 +176,7 @@ func (m *Asset) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Hash", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Cid", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -245,71 +204,7 @@ func (m *Asset) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Hash = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Signature", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAsset
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthAsset
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthAsset
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Signature = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Pubkey", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAsset
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthAsset
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthAsset
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Pubkey = string(dAtA[iNdEx:postIndex])
+			m.Cid = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

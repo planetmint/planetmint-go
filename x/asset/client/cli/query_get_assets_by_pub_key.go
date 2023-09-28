@@ -12,13 +12,13 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdGetCIDsByPubKey() *cobra.Command {
+func CmdGetCIDsByAddress() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-assets-by-pub-key [ext-pub-key] [lookup-period-in-min]",
-		Short: "Query get_cids_by_pub_key",
+		Short: "Query get_cids_by_address",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			reqExtPubKey := args[0]
+			reqAddress := args[0]
 			reqLookupPeriodInMin, err := cast.ToUint64E(args[1])
 			if err != nil {
 				return err
@@ -31,9 +31,9 @@ func CmdGetCIDsByPubKey() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryGetCIDsByPubKeyRequest{
+			params := &types.QueryGetCIDsByAddressRequest{
 
-				ExtPubKey:         reqExtPubKey,
+				Address:           reqAddress,
 				LookupPeriodInMin: reqLookupPeriodInMin,
 			}
 
@@ -43,7 +43,7 @@ func CmdGetCIDsByPubKey() *cobra.Command {
 			}
 			params.Pagination = pageReq
 
-			res, err := queryClient.GetCIDsByPubKey(cmd.Context(), params)
+			res, err := queryClient.GetCIDsByAddress(cmd.Context(), params)
 			if err != nil {
 				return err
 			}

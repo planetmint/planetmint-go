@@ -7,57 +7,39 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func (k Keeper) StoreAsset(ctx sdk.Context, asset types.Asset) {
+func (k Keeper) StoreAsset(ctx sdk.Context, msg types.MsgNotarizeAsset) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AssetKey))
-	appendValue := k.cdc.MustMarshal(&asset)
-	store.Set(GetAssetHashBytes(asset.Hash), appendValue)
+	store.Set(GetAssetCIDBytes(msg.GetCid()), []byte(msg.GetCreator()))
 }
 
-func (k Keeper) GetAsset(ctx sdk.Context, hash string) (val types.Asset, found bool) {
+func (k Keeper) GetAsset(ctx sdk.Context, cid string) (msg types.MsgNotarizeAsset, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AssetKey))
-	asset := store.Get(GetAssetHashBytes(hash))
-	if asset == nil {
-		return val, false
+	creator_bytes := store.Get(GetAssetCIDBytes(cid))
+	if creator_bytes == nil {
+		return msg, false
 	}
-	k.cdc.MustUnmarshal(asset, &val)
-	return val, true
+	msg.Cid = cid
+	msg.Creator = string(creator_bytes)
+	return msg, true
 }
 
-func (k Keeper) GetCIDsByPublicKey(ctx sdk.Context, pubkey string) (assetArray []types.Asset, found bool) {
+func (k Keeper) GetCidsByAddress(ctx sdk.Context, address string) (cids []string, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AssetKey))
 
 	reverseIterator := store.ReverseIterator(nil, nil)
 	defer reverseIterator.Close()
-	var asset types.Asset
 	for ; reverseIterator.Valid(); reverseIterator.Next() {
-		lastValue := reverseIterator.Value()
+		address_bytes := reverseIterator.Value()
+		cid_bytes := reverseIterator.Key()
 
-		k.cdc.MustUnmarshal(lastValue, &asset)
-		if asset.GetPubkey() == pubkey {
-			assetArray = append(assetArray, asset)
-		}
-	}
-	return assetArray, len(assetArray) > 0
-}
-
-func (k Keeper) GetCidsByPublicKey(ctx sdk.Context, pubkey string) (cids []string, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AssetKey))
-
-	reverseIterator := store.ReverseIterator(nil, nil)
-	defer reverseIterator.Close()
-	var asset types.Asset
-	for ; reverseIterator.Valid(); reverseIterator.Next() {
-		lastValue := reverseIterator.Value()
-
-		k.cdc.MustUnmarshal(lastValue, &asset)
-		if asset.GetPubkey() == pubkey {
-			cids = append(cids, asset.GetHash())
+		if string(address_bytes) == address {
+			cids = append(cids, string(cid_bytes))
 		}
 	}
 	return cids, len(cids) > 0
 }
 
-func GetAssetHashBytes(hash string) []byte {
-	bz := []byte(hash)
+func GetAssetCIDBytes(cid string) []byte {
+	bz := []byte(cid)
 	return bz
 }

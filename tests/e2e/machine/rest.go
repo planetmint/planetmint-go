@@ -2,6 +2,7 @@ package machine
 
 import (
 	"fmt"
+
 	"github.com/planetmint/planetmint-go/testutil"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
@@ -37,8 +38,7 @@ func (s *E2ETestSuite) TestAttestMachineREST() {
 	s.Require().NoError(s.network.WaitForNextBlock())
 
 	// Create Attest Machine TX
-	machine := sample.Machine(sample.Name, pubKey, prvKey)
-	machine.Address = addr.String()
+	machine := sample.Machine(sample.Name, pubKey, prvKey, addr.String())
 	msg := machinetypes.MsgAttestMachine{
 		Creator: addr.String(),
 		Machine: &machine,

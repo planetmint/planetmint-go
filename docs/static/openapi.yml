@@ -46473,10 +46473,10 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
-  /planetmint/planetmint-go/asset/get_cids_by_pub_key/{extPubKey}/{lookupPeriodInMin}:
+  /planetmint/planetmint-go/asset/get_cids_by_address/{address}/{lookupPeriodInMin}:
     get:
-      summary: Queries a list of GetCIDsByPubKey items.
-      operationId: PlanetmintgoAssetGetCIDsByPubKey
+      summary: Queries a list of GetCIDsByAddress items.
+      operationId: PlanetmintgoAssetGetCIDsByAddress
       responses:
         '200':
           description: A successful response.
@@ -46534,7 +46534,7 @@ paths:
                       type: string
                   additionalProperties: {}
       parameters:
-        - name: extPubKey
+        - name: address
           in: path
           required: true
           type: string
@@ -75649,7 +75649,7 @@ definitions:
   planetmintgo.asset.Params:
     type: object
     description: Params defines the parameters for the module.
-  planetmintgo.asset.QueryGetCIDsByPubKeyResponse:
+  planetmintgo.asset.QueryGetCIDsByAddressResponse:
     type: object
     properties:
       cids:

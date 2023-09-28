@@ -10,12 +10,10 @@ const TypeMsgNotarizeAsset = "notarize_asset"
 
 var _ sdk.Msg = &MsgNotarizeAsset{}
 
-func NewMsgNotarizeAsset(creator string, hash string, signature string, pubKey string) *MsgNotarizeAsset {
+func NewMsgNotarizeAsset(creator string, cid string) *MsgNotarizeAsset {
 	return &MsgNotarizeAsset{
-		Creator:   creator,
-		Hash:      hash,
-		Signature: signature,
-		PubKey:    pubKey,
+		Creator: creator,
+		Cid:     cid,
 	}
 }
 

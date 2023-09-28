@@ -13,17 +13,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func createNAsset(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Asset {
-	items := make([]types.Asset, n)
+func createNAsset(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.MsgNotarizeAsset {
+	items := make([]types.MsgNotarizeAsset, n)
 	for i := range items {
 		hash := sha256.Sum256([]byte(strconv.FormatInt(int64(i), 2)))
 		hashStr := string(hash[:])
-
-		items[i].Hash = hashStr
-		items[i].Pubkey = "pubkey"
-		items[i].Signature = "sign"
-		if i%2 == 1 {
-			items[i].Pubkey = "pubkey_search"
+		items[i].Cid = hashStr
+		items[i].Creator = "plmnt_address"
+		if i%2 == 0 {
+			items[i].Creator = "plmnt_address1"
 		}
 		keeper.StoreAsset(ctx, items[i])
 	}
@@ -34,7 +32,7 @@ func TestGetAsset(t *testing.T) {
 	keeper, ctx := keepertest.AssetKeeper(t)
 	items := createNAsset(keeper, ctx, 10)
 	for _, item := range items {
-		asset, found := keeper.GetAsset(ctx, item.Hash)
+		asset, found := keeper.GetAsset(ctx, item.Cid)
 		assert.True(t, found)
 		assert.Equal(t, item, asset)
 	}
@@ -43,7 +41,7 @@ func TestGetCids(t *testing.T) {
 	keeper, ctx := keepertest.AssetKeeper(t)
 	items := createNAsset(keeper, ctx, 10)
 	for _, item := range items {
-		asset, found := keeper.GetAsset(ctx, item.Hash)
+		asset, found := keeper.GetAsset(ctx, item.Cid)
 		assert.True(t, found)
 		assert.Equal(t, item, asset)
 	}
@@ -52,21 +50,10 @@ func TestGetCids(t *testing.T) {
 func TestGetAssetByPubKeys(t *testing.T) {
 	keeper, ctx := keepertest.AssetKeeper(t)
 	_ = createNAsset(keeper, ctx, 10)
-	assets, found := keeper.GetCIDsByPublicKey(ctx, "pubkey_search")
+	assets, found := keeper.GetCidsByAddress(ctx, "plmnt_address")
 	assert.True(t, found)
 	assert.Equal(t, len(assets), 5)
-	assets, found = keeper.GetCIDsByPublicKey(ctx, "pubkey")
-	assert.True(t, found)
-	assert.Equal(t, len(assets), 5)
-}
-
-func TestGetCidsByPubKeys(t *testing.T) {
-	keeper, ctx := keepertest.AssetKeeper(t)
-	_ = createNAsset(keeper, ctx, 10)
-	assets, found := keeper.GetCidsByPublicKey(ctx, "pubkey_search")
-	assert.True(t, found)
-	assert.Equal(t, len(assets), 5)
-	assets, found = keeper.GetCidsByPublicKey(ctx, "pubkey")
+	assets, found = keeper.GetCidsByAddress(ctx, "plmnt_address1")
 	assert.True(t, found)
 	assert.Equal(t, len(assets), 5)
 }

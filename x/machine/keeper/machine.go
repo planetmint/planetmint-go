@@ -43,6 +43,7 @@ func (k Keeper) StoreMachineIndex(ctx sdk.Context, machine types.Machine) {
 	issuerPlanetmintIndexKey := GetMachineBytes(machine.IssuerPlanetmint)
 	issuerLiquidIndexKey := GetMachineBytes(machine.IssuerLiquid)
 	addressIndexKey := GetMachineBytes(machine.Address)
+
 	indexAppendValue := k.cdc.MustMarshal(&index)
 	taIndexStore.Set(machineIdIndexKey, indexAppendValue)
 	issuerPlanetmintIndexStore.Set(issuerPlanetmintIndexKey, indexAppendValue)

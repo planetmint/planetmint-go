@@ -10,9 +10,7 @@ service Msg {
 }
 message MsgNotarizeAsset {
   string creator   = 1;
-  string hash      = 2;
-  string signature = 3;
-  string pubKey    = 4;
+  string cid       = 2;
 }
 
 message MsgNotarizeAssetResponse {}

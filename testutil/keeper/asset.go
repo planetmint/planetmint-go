@@ -51,12 +51,13 @@ func AssetKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	sk, pk := sample.KeyPair()
 	_, ppk := sample.ExtendedKeyPair(config.PlmntNetParams)
 	_, lpk := sample.ExtendedKeyPair(config.LiquidNetParams)
+
 	id := sample.MachineIndex(pk, ppk, lpk)
 	mk.EXPECT().GetMachineIndexByPubKey(ctx, pk).Return(id, true).AnyTimes()
 	mk.EXPECT().GetMachineIndexByPubKey(ctx, ppk).Return(id, true).AnyTimes()
 	mk.EXPECT().GetMachineIndexByPubKey(ctx, sk).Return(id, false).AnyTimes()
-	mk.EXPECT().GetMachine(ctx, id).Return(sample.Machine(pk, pk, sk), true).AnyTimes()
-	mk.EXPECT().GetMachine(ctx, sk).Return(sample.Machine(pk, pk, sk), false).AnyTimes()
+	mk.EXPECT().GetMachine(ctx, id).Return(sample.Machine(pk, pk, sk, ""), true).AnyTimes()
+	mk.EXPECT().GetMachine(ctx, sk).Return(sample.Machine(pk, pk, sk, ""), false).AnyTimes()
 
 	k := keeper.NewKeeper(
 		cdc,

@@ -24,8 +24,8 @@ func TestGetNotarizedAsset(t *testing.T) {
 	}{
 		{
 			desc:     "cid found",
-			request:  &types.QueryGetNotarizedAssetRequest{Cid: msgs[0].GetHash()},
-			response: &types.QueryGetNotarizedAssetResponse{Cid: msgs[0].GetHash(), Signature: msgs[0].GetSignature(), Pubkey: msgs[0].GetPubkey()},
+			request:  &types.QueryGetNotarizedAssetRequest{Cid: msgs[0].GetCid()},
+			response: &types.QueryGetNotarizedAssetResponse{Cid: msgs[0].GetCid()},
 		},
 		{
 			desc:    "cid not found",

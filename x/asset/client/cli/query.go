@@ -25,7 +25,7 @@ func GetQueryCmd(queryRoute string) *cobra.Command {
 	}
 
 	cmd.AddCommand(CmdQueryParams())
-	cmd.AddCommand(CmdGetCIDsByPubKey())
+	cmd.AddCommand(CmdGetCIDsByAddress())
 
 	cmd.AddCommand(CmdGetNotarizedAsset())
 

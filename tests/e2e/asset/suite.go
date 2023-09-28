@@ -1,11 +1,9 @@
 package asset
 
 import (
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 
-	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 
@@ -13,7 +11,6 @@ import (
 	assetcli "github.com/planetmint/planetmint-go/x/asset/client/cli"
 	machinecli "github.com/planetmint/planetmint-go/x/machine/client/cli"
 
-	"github.com/btcsuite/btcd/btcutil/hdkeychain"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
@@ -23,10 +20,8 @@ import (
 )
 
 var (
-	pubKey  string
-	prvKey  string
-	xPubKey string
-	xPrvKey string
+	pubKey string
+	prvKey string
 )
 
 // E2ETestSuite struct definition of asset suite
@@ -63,6 +58,7 @@ func (s *E2ETestSuite) SetupSuite() {
 		"--yes",
 		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 	}
+
 	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
 	s.Require().NoError(err)
 
@@ -78,14 +74,13 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.Require().NoError(s.network.WaitForNextBlock())
 
 	prvKey, pubKey = sample.KeyPair()
-	xPrvKey, xPubKey = sample.ExtendedKeyPair(config.PlmntNetParams)
 
 	ta := sample.TrustAnchor(pubKey)
 	taJSON, err := json.Marshal(&ta)
 	s.Require().NoError(err)
 	args = []string{
 		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, addr.String()),
 		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 		"--yes",
 		string(taJSON),
@@ -95,7 +90,7 @@ func (s *E2ETestSuite) SetupSuite() {
 
 	s.Require().NoError(s.network.WaitForNextBlock())
 
-	machine := sample.Machine(sample.Name, pubKey, prvKey)
+	machine := sample.Machine(sample.Name, pubKey, prvKey, addr.String())
 	machineJSON, err := json.Marshal(&machine)
 	s.Require().NoError(err)
 
@@ -127,12 +122,11 @@ func (s *E2ETestSuite) TearDownSuite() {
 // TestNotarizeAsset notarizes asset over cli
 func (s *E2ETestSuite) TestNotarizeAsset() {
 	val := s.network.Validators[0]
+	k, err := val.ClientCtx.Keyring.Key(sample.Name)
+	s.Require().NoError(err)
 
-	xskKey, _ := hdkeychain.NewKeyFromString(xPrvKey)
-	privKey, _ := xskKey.ECPrivKey()
-	byte_key := privKey.Serialize()
-	sk := hex.EncodeToString(byte_key)
-	cid, signatureHex := sample.Asset(sk)
+	addr, _ := k.GetAddress()
+	cid := sample.Asset()
 
 	testCases := []struct {
 		name             string
@@ -141,56 +135,15 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 		expectCheckTxErr bool
 	}{
 		{
-			"machine not found",
-			[]string{
-				cid,
-				signatureHex,
-				"pubkey",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
-				"--yes",
-			},
-			"machine not found",
-			true,
-		},
-		{
-			"invalid signature hex string",
-			[]string{
-				cid,
-				"signature",
-				xPubKey,
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
-				"--yes",
-			},
-			"invalid signature hex string",
-			false,
-		},
-		{
-			"invalid signature",
-			[]string{
-				cid,
-				hex.EncodeToString([]byte("signature")),
-				xPubKey,
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
-				"--yes",
-			},
-			"invalid signature",
-			false,
-		},
-		{
 			"valid notarization",
 			[]string{
 				cid,
-				signatureHex,
-				xPubKey,
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, addr.String()),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 				"--yes",
 			},
-			"planetmintgo.asset.MsgNotarizeAsset",
-			false,
+			"[]",
+			true,
 		},
 	}
 
