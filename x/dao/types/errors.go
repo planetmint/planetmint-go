@@ -8,5 +8,5 @@ import (
 
 // x/dao module sentinel errors
 var (
-	ErrSample = errorsmod.Register(ModuleName, 1100, "sample error")
+	ErrInvalidChallenge = errorsmod.Register(ModuleName, 2, "invalid challenge")
 )

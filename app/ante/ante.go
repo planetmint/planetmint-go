@@ -2,6 +2,7 @@ package ante
 
 import (
 	assettypes "github.com/planetmint/planetmint-go/x/asset/types"
+	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 
 	errorsmod "cosmossdk.io/errors"
@@ -46,6 +47,14 @@ func (cm CheckMachineDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate 
 				}
 				if activated {
 					return ctx, errorsmod.Wrapf(machinetypes.ErrTrustAnchorAlreadyInUse, "error during CheckTx or ReCheckTx")
+				}
+			}
+		case "planetmintgo.dao.MsgReportPoPResult":
+			popMsg, ok := msg.(*daotypes.MsgReportPopResult)
+			if ok {
+				_, found := cm.mk.GetMachineIndexByAddress(ctx, popMsg.GetCreator())
+				if !found {
+					return ctx, errorsmod.Wrapf(machinetypes.ErrMachineNotFound, "error during CheckTx or ReCheckTx")
 				}
 			}
 		default:
