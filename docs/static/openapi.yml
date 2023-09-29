@@ -46613,9 +46613,7 @@ paths:
             properties:
               cid:
                 type: string
-              signature:
-                type: string
-              pubkey:
+              address:
                 type: string
         default:
           description: An unexpected error response.
@@ -75687,9 +75685,7 @@ definitions:
     properties:
       cid:
         type: string
-      signature:
-        type: string
-      pubkey:
+      address:
         type: string
   planetmintgo.asset.QueryParamsResponse:
     type: object
