@@ -25,13 +25,9 @@ func (k msgServer) isNFTCreationRequest(machine *types.Machine) bool {
 func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMachine) (*types.MsgAttestMachineResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	ta, activated, found := k.GetTrustAnchor(ctx, msg.Machine.MachineId)
-	if !found {
-		return nil, errors.New("no preregistered trust anchor found for machine id")
-	}
-	if activated {
-		return nil, errors.New("trust anchor has already been used for attestation")
-	}
+	// the ante handler verifies that the MachineID exists. Additional result checks got moved to the ante-handler
+	// and removed from here due to inconsistency or checking the same thing over and over again.
+	ta, _, _ := k.GetTrustAnchor(ctx, msg.Machine.MachineId)
 
 	isValidMachineId, err := util.ValidateSignature(msg.Machine.MachineId, msg.Machine.MachineIdSignature, msg.Machine.MachineId)
 	if !isValidMachineId {
