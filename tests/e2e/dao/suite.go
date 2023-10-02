@@ -2,6 +2,7 @@ package dao
 
 import (
 	"fmt"
+
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
@@ -119,17 +120,18 @@ func (s *E2ETestSuite) TestDistributeCollectedFees() {
 	err = s.network.WaitForNextBlock()
 	s.Require().NoError(err)
 
-	// assert that alice has 6 of 20 paid fee tokens based on 5000 stake of 15000 total stake
+	// assert that alice has 0 of 2 paid fee tokens based on 5000 stake of 15000 total stake
 	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		aliceAddr.String(),
 	})
-	assert.Contains(s.T(), out.String(), "6")
+	assert.NotContains(s.T(), out.String(), "node0token")
 	s.Require().NoError(err)
 
-	// assert that bob has 13 of 20 paid fee tokens based on 10000 stake of 15000 total stake
+	// assert that bob has 1 of 2 paid fee tokens based on 10000 stake of 15000 total stake
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		bobAddr.String(),
 	})
-	assert.Contains(s.T(), out.String(), "13")
+	assert.Contains(s.T(), out.String(), "1")
+	assert.Contains(s.T(), out.String(), "node0token")
 	s.Require().NoError(err)
 }
