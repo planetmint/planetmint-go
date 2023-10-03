@@ -29,7 +29,7 @@ const Name = "machine"
 const Amount = "1000stake"
 
 // Fees is the amount of fees to use in tests
-const Fees = "2stake"
+const Fees = "1stake"
 
 // DefaultDerivationPath is the BIP44Prefix for PLMNT (see https://github.com/satoshilabs/slips/blob/master/slip-0044.md)
 const DefaultDerivationPath = "m/44'/8680'/0'/0/0"
