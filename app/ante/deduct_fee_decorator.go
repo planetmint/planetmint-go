@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	errorsmod "cosmossdk.io/errors"
-	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -45,21 +44,21 @@ func checkTxFee(ctx sdk.Context, tx sdk.Tx) (sdk.Coins, error) {
 	}
 
 	feeCoins := feeTx.GetFee()
-	gas := feeTx.GetGas()
 
 	if ctx.IsCheckTx() {
-		// min-gas-prices is used to determine which coins are to be deducted and if they are provided as fee
 		minGasPrices := ctx.MinGasPrices()
 		if !minGasPrices.IsZero() {
-			requiredFees := make(sdk.Coins, len(minGasPrices))
-
-			// Determine the required fees by multiplying each required minimum gas
-			// price by the gas limit, where fee = ceil(minGasPrice * gasLimit).
-			glDec := sdkmath.LegacyNewDec(int64(gas))
-			for i, gp := range minGasPrices {
-				fee := gp.Amount.Mul(glDec)
-				requiredFees[i] = sdk.NewCoin(gp.Denom, fee.Ceil().RoundInt())
+			feeDenoms := feeCoins.Denoms()
+			if len(feeDenoms) != 1 {
+				return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidCoins, "fee must be exactly one coin; got: %s", feeDenoms)
 			}
+
+			gasDenom := minGasPrices.GetDenomByIndex(0)
+			if !sdk.SliceContains[string](feeDenoms, gasDenom) {
+				return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidCoins, "received wrong fee denom; got: %s required: %s", feeDenoms[0], gasDenom)
+			}
+
+			requiredFees := sdk.Coins{sdk.NewCoin(gasDenom, sdk.OneInt())}
 
 			if !feeCoins.IsAnyGTE(requiredFees) {
 				return nil, errorsmod.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, requiredFees)
@@ -159,11 +158,7 @@ func (dfd DeductFeeDecorator) deductFees(bankKeeper authtypes.BankKeeper, ctx sd
 		return errorsmod.Wrapf(sdkerrors.ErrInsufficientFee, "invalid fee amount: %s", fees)
 	}
 
-	// take exactly on token as fee no matter what is provided
-	denoms := fees.Denoms()
-	feesToCollect := sdk.Coins{sdk.NewCoin(denoms[0], sdk.OneInt())}
-
-	err := bankKeeper.SendCoinsFromAccountToModule(ctx, acc.GetAddress(), authtypes.FeeCollectorName, feesToCollect)
+	err := bankKeeper.SendCoinsFromAccountToModule(ctx, acc.GetAddress(), authtypes.FeeCollectorName, fees)
 	if err != nil {
 		return errorsmod.Wrapf(sdkerrors.ErrInsufficientFunds, err.Error())
 	}
