@@ -3,7 +3,6 @@ package keeper
 import (
 	"context"
 	"encoding/hex"
-	"errors"
 
 	"github.com/planetmint/planetmint-go/x/machine/types"
 
@@ -15,12 +14,12 @@ func (k msgServer) RegisterTrustAnchor(goCtx context.Context, msg *types.MsgRegi
 
 	isValidTrustAnchorPubkey := validatePublicKey(msg.TrustAnchor.Pubkey)
 	if !isValidTrustAnchorPubkey {
-		return nil, errors.New("invalid trust anchor pubkey")
+		return nil, types.ErrInvalidTrustAnchorKey
 	}
 
 	_, _, found := k.GetTrustAnchor(ctx, msg.TrustAnchor.Pubkey)
 	if found {
-		return nil, errors.New("trust anchor is already registered")
+		return nil, types.ErrTrustAnchorAlreadyRegistered
 	}
 
 	err := k.StoreTrustAnchor(ctx, *msg.TrustAnchor, false)
