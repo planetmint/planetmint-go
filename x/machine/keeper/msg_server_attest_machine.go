@@ -42,7 +42,8 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 	if !isValidIssuerLiquid {
 		return nil, errorsmod.Wrap(types.ErrInvalidKey, "liquid")
 	}
-	if k.isNFTCreationRequest(msg.Machine) {
+
+	if k.isNFTCreationRequest(msg.Machine) && util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress) {
 		err := k.issueMachineNFT(msg.Machine)
 		if err != nil {
 			return nil, types.ErrNFTIssuanceFailed
