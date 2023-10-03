@@ -52,7 +52,7 @@ func TestMsgServerAttestMachineInvalidLiquidKey(t *testing.T) {
 	_, err := msgServer.RegisterTrustAnchor(ctx, taMsg)
 	assert.NoError(t, err)
 	_, err = msgServer.AttestMachine(ctx, msg)
-	assert.EqualError(t, err, "invalid liquid key")
+	assert.EqualError(t, err, "liquid: invalid key")
 }
 
 func TestMsgServerRegisterTrustAnchor(t *testing.T) {

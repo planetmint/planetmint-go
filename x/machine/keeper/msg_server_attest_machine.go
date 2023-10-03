@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"errors"
 	"strconv"
 
 	config "github.com/planetmint/planetmint-go/config"
@@ -13,6 +12,7 @@ import (
 	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/crgimenes/go-osc"
 
+	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -36,21 +36,21 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 
 	isValidIssuerPlanetmint := validateExtendedPublicKey(msg.Machine.IssuerPlanetmint, config.PlmntNetParams)
 	if !isValidIssuerPlanetmint {
-		return nil, errors.New("invalid planetmint key")
+		return nil, errorsmod.Wrap(types.ErrInvalidKey, "planetmint")
 	}
 	isValidIssuerLiquid := validateExtendedPublicKey(msg.Machine.IssuerLiquid, config.LiquidNetParams)
 	if !isValidIssuerLiquid {
-		return nil, errors.New("invalid liquid key")
+		return nil, errorsmod.Wrap(types.ErrInvalidKey, "liquid")
 	}
 	if k.isNFTCreationRequest(msg.Machine) {
 		err := k.issueMachineNFT(msg.Machine)
 		if err != nil {
-			return nil, errors.New("an error occurred while issuing the machine NFT")
+			return nil, types.ErrNFTIssuanceFailed
 		}
 	}
 
 	if msg.Machine.GetType() == 0 { // 0 == RDDL_MACHINE_UNDEFINED
-		return nil, errors.New("the machine type has to be defined")
+		return nil, types.ErrMachineTypeUndefined
 	}
 
 	k.StoreMachine(ctx, *msg.Machine)
