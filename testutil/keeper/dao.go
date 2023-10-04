@@ -21,12 +21,16 @@ func DaoKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 	challengeStoreKey := storetypes.NewMemoryStoreKey(types.ChallengeKey)
+	mintRequestHashStoreKey := storetypes.NewMemoryStoreKey(types.MintRequestHashKey)
+	mintRequestAddressStoreKey := storetypes.NewMemoryStoreKey(types.MintRequestAddressKey)
 
 	db := tmdb.NewMemDB()
 	stateStore := store.NewCommitMultiStore(db)
 	stateStore.MountStoreWithDB(storeKey, storetypes.StoreTypeIAVL, db)
 	stateStore.MountStoreWithDB(memStoreKey, storetypes.StoreTypeMemory, nil)
 	stateStore.MountStoreWithDB(challengeStoreKey, storetypes.StoreTypeIAVL, db)
+	stateStore.MountStoreWithDB(mintRequestHashStoreKey, storetypes.StoreTypeIAVL, db)
+	stateStore.MountStoreWithDB(mintRequestAddressStoreKey, storetypes.StoreTypeIAVL, db)
 
 	require.NoError(t, stateStore.LoadLatestVersion())
 
@@ -44,6 +48,8 @@ func DaoKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		storeKey,
 		memStoreKey,
 		challengeStoreKey,
+		mintRequestHashStoreKey,
+		mintRequestAddressStoreKey,
 		paramsSubspace,
 		nil,
 		nil,
