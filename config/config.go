@@ -15,6 +15,7 @@ const DefaultConfigTemplate = `
 [planetmint]
 
 asset-registry-endpoint = "{{ .PlmntConfig.AssetRegistryEndpoint }}"
+token-denom = "{{ .PlmntConfig.TokenDenom }}"
 stake-denom = "{{ .PlmntConfig.StakeDenom }}"
 fee-denom = "{{ .PlmntConfig.FeeDenom }}"
 config-root-dir = "{{ .PlmntConfig.ConfigRootDir }}"
