@@ -78,6 +78,8 @@ func validateExtendedPublicKey(issuer string, cfg chaincfg.Params) bool {
 }
 
 func (k msgServer) issueNFTAsset(name string, machine_address string) (asset_id string, contract string, err error) {
+	conf := config.GetConfig()
+
 	cmdName := "poetry"
 	cmdArgs := []string{"run", "python", "issuer_service/issue2liquid.py", name, machine_address}
 
@@ -85,7 +87,7 @@ func (k msgServer) issueNFTAsset(name string, machine_address string) (asset_id 
 	cmd := exec.Command(cmdName, cmdArgs...)
 
 	// If you want to set the working directory
-	cmd.Dir = "/home/jeckel/develop/rddl/issuer_service" // Replace with your directory path
+	cmd.Dir = conf.IssuanceServiceDir
 
 	// Capture the output
 	var stdout, stderr bytes.Buffer
