@@ -15,8 +15,6 @@ const DefaultConfigTemplate = `
 [planetmint]
 
 asset-registry-endpoint = "{{ .PlmntConfig.AssetRegistryEndpoint }}"
-watchmen-port = {{ .PlmntConfig.WatchmenPort }}
-token-denom = "{{ .PlmntConfig.TokenDenom }}"
 stake-denom = "{{ .PlmntConfig.StakeDenom }}"
 fee-denom = "{{ .PlmntConfig.FeeDenom }}"
 config-root-dir = "{{ .PlmntConfig.ConfigRootDir }}"
@@ -30,7 +28,6 @@ issuance-service-dir = {{ .PlmntConfig.IssuanceServiceDir }}
 // Config defines Planetmint's top level configuration
 type Config struct {
 	AssetRegistryEndpoint string `mapstructure:"asset-registry-endpoint " json:"asset-registry-endpoint "`
-	WatchmenPort          int    `mapstructure:"watchmen-port" json:"watchmen-port"`
 	TokenDenom            string `mapstructure:"token-denom" json:"token-denom"`
 	StakeDenom            string `mapstructure:"stake-denom" json:"stake-denom"`
 	FeeDenom              string `mapstructure:"fee-denom" json:"fee-denom"`
@@ -56,7 +53,6 @@ func DefaultConfig() *Config {
 
 	return &Config{
 		AssetRegistryEndpoint: "https://assets.rddl.io/register_asset",
-		WatchmenPort:          7401,
 		TokenDenom:            "plmnt",
 		StakeDenom:            "plmntstake",
 		FeeDenom:              "plmnt",
