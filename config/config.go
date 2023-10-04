@@ -23,6 +23,7 @@ config-root-dir = "{{ .PlmntConfig.ConfigRootDir }}"
 pop-epochs = {{ .PlmntConfig.PoPEpochs }}
 issuance-endpoint = "{{ .PlmntConfig.IssuanceEndpoint }}"
 issuance-port = {{ .PlmntConfig.IssuancePort }}
+mint-address = "{{ .PlmntConfig.MintAddress }}"
 `
 
 // Config defines Planetmint's top level configuration
@@ -37,6 +38,7 @@ type Config struct {
 	PoPEpochs        int    `mapstructure:"pop-epochs" json:"pop-epochs"`
 	IssuanceEndpoint string `mapstructure:"issuance-endpoint" json:"issuance-endpoint"`
 	IssuancePort     int    `mapstructure:"issuance-port" json:"issuance-port"`
+	MintAddress      string `mapstructure:"mint-address" json:"mint-address"`
 }
 
 // cosmos-sdk wide global singleton
@@ -63,6 +65,7 @@ func DefaultConfig() *Config {
 		PoPEpochs:        24, // 24 CometBFT epochs of 5s equate 120s
 		IssuanceEndpoint: "lab.r3c.network",
 		IssuancePort:     7401,
+		MintAddress:      "default",
 	}
 }
 
