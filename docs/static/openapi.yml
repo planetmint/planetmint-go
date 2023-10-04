@@ -75694,6 +75694,18 @@ definitions:
         description: params holds all the parameters of this module.
         type: object
     description: QueryParamsResponse is response type for the Query/Params RPC method.
+  planetmintgo.dao.MintRequest:
+    type: object
+    properties:
+      beneficiary:
+        type: string
+      amount:
+        type: string
+        format: uint64
+      liquidTxHash:
+        type: string
+  planetmintgo.dao.MsgMintTokenResponse:
+    type: object
   planetmintgo.dao.Params:
     type: object
     description: Params defines the parameters for the module.
