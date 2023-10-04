@@ -20,6 +20,7 @@ type HandlerOptions struct {
 	SigGasConsumer         func(meter sdk.GasMeter, sig signing.SignatureV2, params authtypes.Params) error
 	TxFeeChecker           TxFeeChecker
 	MachineKeeper          MachineKeeper
+	MintAddress            string
 }
 
 // NewAnteHandler returns an AnteHandler that checks and increments sequence
@@ -41,6 +42,9 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 	if options.MachineKeeper == nil {
 		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, "machine keeper is required for ante builder")
 	}
+	if options.MintAddress == "" {
+		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, "mint address is required for ante builder")
+	}
 
 	anteDecorators := []sdk.AnteDecorator{
 		ante.NewSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
@@ -49,6 +53,7 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		ante.NewTxTimeoutHeightDecorator(),
 		ante.NewValidateMemoDecorator(options.AccountKeeper),
 		NewCheckMachineDecorator(options.MachineKeeper),
+		NewCheckMintAddressDecorator(options.MintAddress),
 		ante.NewConsumeGasForTxSizeDecorator(options.AccountKeeper),
 		NewDeductFeeDecorator(options.AccountKeeper, options.BankKeeper, options.FeegrantKeeper, options.TxFeeChecker),
 		ante.NewSetPubKeyDecorator(options.AccountKeeper), // SetPubKeyDecorator must be called before all signature verification decorators

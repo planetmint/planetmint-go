@@ -10,8 +10,7 @@ import (
 func (k msgServer) MintToken(goCtx context.Context, msg *types.MsgMintToken) (*types.MsgMintTokenResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Handling the message
-	_ = ctx
+	k.StoreMintRequest(ctx, *msg.MintRequest)
 
 	return &types.MsgMintTokenResponse{}, nil
 }

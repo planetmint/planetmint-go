@@ -125,6 +125,7 @@ import (
 
 	pmante "github.com/planetmint/planetmint-go/app/ante"
 	appparams "github.com/planetmint/planetmint-go/app/params"
+	pmfg "github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/docs"
 )
 
@@ -315,7 +316,7 @@ func New(
 		machinemoduletypes.StoreKey, machinemoduletypes.TAIndexKey, machinemoduletypes.IssuerPlanetmintIndexKey, machinemoduletypes.IssuerLiquidIndexKey,
 		machinemoduletypes.TrustAnchorKey, machinemoduletypes.AddressIndexKey,
 		assetmoduletypes.StoreKey,
-		daomoduletypes.StoreKey, daomoduletypes.ChallengeKey,
+		daomoduletypes.StoreKey, daomoduletypes.ChallengeKey, daomoduletypes.MintRequestHashKey, daomoduletypes.MintRequestAddressKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -567,6 +568,8 @@ func New(
 		keys[daomoduletypes.StoreKey],
 		keys[daomoduletypes.MemStoreKey],
 		keys[daomoduletypes.ChallengeKey],
+		keys[daomoduletypes.MintRequestHashKey],
+		keys[daomoduletypes.MintRequestAddressKey],
 		app.GetSubspace(daomoduletypes.ModuleName),
 
 		app.BankKeeper,
@@ -766,6 +769,7 @@ func New(
 	app.MountMemoryStores(memKeys)
 
 	// initialize BaseApp
+	cfg := pmfg.GetConfig()
 	anteHandler, err := pmante.NewAnteHandler(
 		pmante.HandlerOptions{
 			AccountKeeper:   app.AccountKeeper,
@@ -774,6 +778,7 @@ func New(
 			FeegrantKeeper:  app.FeeGrantKeeper,
 			SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
 			MachineKeeper:   app.MachineKeeper,
+			MintAddress:     cfg.MintAddress,
 		},
 	)
 	if err != nil {
