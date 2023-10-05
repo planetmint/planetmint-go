@@ -315,7 +315,7 @@ func New(
 		machinemoduletypes.StoreKey, machinemoduletypes.TAIndexKey, machinemoduletypes.IssuerPlanetmintIndexKey, machinemoduletypes.IssuerLiquidIndexKey,
 		machinemoduletypes.TrustAnchorKey, machinemoduletypes.AddressIndexKey,
 		assetmoduletypes.StoreKey,
-		daomoduletypes.StoreKey, daomoduletypes.ChallengeKey,
+		daomoduletypes.StoreKey, daomoduletypes.ChallengeKey, daomoduletypes.MintRequestHashKey, daomoduletypes.MintRequestAddressKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -550,7 +550,6 @@ func New(
 		app.GetSubspace(machinemoduletypes.ModuleName),
 	)
 	machineModule := machinemodule.NewAppModule(appCodec, app.MachineKeeper, app.AccountKeeper, app.BankKeeper)
-	go app.MachineKeeper.IssueResponseHandler(logger)
 
 	app.AssetKeeper = *assetmodulekeeper.NewKeeper(
 		appCodec,
@@ -567,6 +566,8 @@ func New(
 		keys[daomoduletypes.StoreKey],
 		keys[daomoduletypes.MemStoreKey],
 		keys[daomoduletypes.ChallengeKey],
+		keys[daomoduletypes.MintRequestHashKey],
+		keys[daomoduletypes.MintRequestAddressKey],
 		app.GetSubspace(daomoduletypes.ModuleName),
 
 		app.BankKeeper,

@@ -1,0 +1,11 @@
+syntax = "proto3";
+package planetmintgo.dao;
+
+option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
+
+message MintRequest {
+  
+  string beneficiary = 1; 
+  uint64 amount = 2; 
+  string liquidTxHash = 3; 
+}

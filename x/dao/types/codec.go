@@ -9,12 +9,14 @@ import (
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgReissueRDDLProposal{}, "dao/ReissueRDDLProposal", nil)
+	cdc.RegisterConcrete(&MsgMintToken{}, "dao/MintToken", nil)
 	// this line is used by starport scaffolding # 2
 }
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgReissueRDDLProposal{},
+		&MsgMintToken{},
 	)
 	// this line is used by starport scaffolding # 3
 

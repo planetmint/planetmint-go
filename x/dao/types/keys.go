@@ -14,6 +14,10 @@ const (
 	MemStoreKey = "mem_dao"
 
 	ChallengeKey = "Dao/Challenge"
+
+	MintRequestAddressKey = "Dao/MintRequestAddress"
+
+	MintRequestHashKey = "Dao/MintRequestHash"
 )
 
 func KeyPrefix(p string) []byte {
