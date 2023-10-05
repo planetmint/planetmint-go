@@ -46721,6 +46721,56 @@ paths:
           type: string
       tags:
         - Query
+  /planetmint/planetmint-go/dao/mint_requests_by_address/{address}:
+    get:
+      summary: Queries a list of MintRequestsByAddress items.
+      operationId: PlanetmintgoDaoMintRequestsByAddress
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              mintRequests:
+                type: object
+                properties:
+                  mintRequest:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        beneficiary:
+                          type: string
+                        amount:
+                          type: string
+                          format: uint64
+                        liquidTxHash:
+                          type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
   /github.com/planetmint/planetmint-go/machine/get_machine_by_public_key/{publicKey}:
     get:
       summary: Queries a list of GetMachineByPublicKey items.
@@ -75749,6 +75799,21 @@ definitions:
         format: uint64
       liquidTxHash:
         type: string
+  planetmintgo.dao.MintRequests:
+    type: object
+    properties:
+      mintRequest:
+        type: array
+        items:
+          type: object
+          properties:
+            beneficiary:
+              type: string
+            amount:
+              type: string
+              format: uint64
+            liquidTxHash:
+              type: string
   planetmintgo.dao.MsgMintTokenResponse:
     type: object
   planetmintgo.dao.Params:
@@ -75767,6 +75832,24 @@ definitions:
             format: uint64
           liquidTxHash:
             type: string
+  planetmintgo.dao.QueryMintRequestsByAddressResponse:
+    type: object
+    properties:
+      mintRequests:
+        type: object
+        properties:
+          mintRequest:
+            type: array
+            items:
+              type: object
+              properties:
+                beneficiary:
+                  type: string
+                amount:
+                  type: string
+                  format: uint64
+                liquidTxHash:
+                  type: string
   planetmintgo.dao.QueryParamsResponse:
     type: object
     properties:
