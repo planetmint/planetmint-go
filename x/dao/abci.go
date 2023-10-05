@@ -35,7 +35,7 @@ func initRDDLReissuanceProcess(ctx sdk.Context, proposerAddress []byte, blk_heig
 	hexProposerAddress := hex.EncodeToString(proposerAddress)
 
 	// Construct the command
-	cmd := exec.Command("planetmint-god", "tx", "dao", "reissue-rddl-proposal", hexProposerAddress, tx_unsigned, strconv.Itoa(blk_height))
+	cmd := exec.Command("planetmint-god", "tx", "dao", "reissue-rddl-proposal", hexProposerAddress, tx_unsigned, strconv.FormatInt(blk_height, 10))
 
 	// Start the command in a non-blocking way
 	err = cmd.Start()
