@@ -18,6 +18,8 @@ const (
 	MintRequestAddressKey = "Dao/MintRequestAddress"
 
 	MintRequestHashKey = "Dao/MintRequestHash"
+
+	ReissuanceBlockHeightKey = "Dao/ReissuanceBlockHeight"
 )
 
 func KeyPrefix(p string) []byte {
