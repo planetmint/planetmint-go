@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/planetmint/planetmint-go/config"
+	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 
 	"github.com/btcsuite/btcd/btcutil/hdkeychain"
@@ -134,5 +135,13 @@ func ExtendedKeyPair(cfg chaincfg.Params) (string, string) {
 func TrustAnchor(pubkey string) machinetypes.TrustAnchor {
 	return machinetypes.TrustAnchor{
 		Pubkey: pubkey,
+	}
+}
+
+func MintRequest(beneficiaryAddr string, amount uint64, txhash string) daotypes.MintRequest {
+	return daotypes.MintRequest{
+		Beneficiary:  beneficiaryAddr,
+		Amount:       amount,
+		LiquidTxHash: txhash,
 	}
 }

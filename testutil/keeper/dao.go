@@ -12,9 +12,12 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/golang/mock/gomock"
 	"github.com/planetmint/planetmint-go/x/dao/keeper"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 	"github.com/stretchr/testify/require"
+
+	daotestutil "github.com/planetmint/planetmint-go/x/dao/testutil"
 )
 
 func DaoKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
@@ -43,6 +46,10 @@ func DaoKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		memStoreKey,
 		"DaoParams",
 	)
+
+	ctrl := gomock.NewController(t)
+	bk := daotestutil.NewMockBankKeeper(ctrl)
+
 	k := keeper.NewKeeper(
 		cdc,
 		storeKey,
@@ -51,7 +58,7 @@ func DaoKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		mintRequestHashStoreKey,
 		mintRequestAddressStoreKey,
 		paramsSubspace,
-		nil,
+		bk,
 		nil,
 	)
 
