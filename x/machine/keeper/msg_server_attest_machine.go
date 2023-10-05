@@ -1,8 +1,15 @@
 package keeper
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"io"
+	"log"
+	"net/http"
+	"os/exec"
 	"strconv"
+	"strings"
 
 	config "github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/util"
@@ -10,7 +17,6 @@ import (
 
 	"github.com/btcsuite/btcd/btcutil/hdkeychain"
 	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/crgimenes/go-osc"
 
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -72,24 +78,90 @@ func validateExtendedPublicKey(issuer string, cfg chaincfg.Params) bool {
 	return isValidExtendedPublicKey
 }
 
-func (k msgServer) issueMachineNFT(machine *types.Machine) error {
+func (k msgServer) issueNFTAsset(name string, machine_address string) (asset_id string, contract string, err error) {
 	conf := config.GetConfig()
-	client := osc.NewClient(conf.WatchmenEndpoint, conf.WatchmenPort)
-	machine_precision := strconv.FormatInt(int64(machine.Precision), 10)
-	machine_amount := strconv.FormatInt(int64(machine.Amount), 10)
-	machine_type := strconv.FormatUint(uint64(machine.GetType()), 10)
 
-	msg := osc.NewMessage("/rddl/issue")
-	msg.Append(machine.Name)
-	msg.Append(machine.Ticker)
-	msg.Append(machine.Domain)
-	msg.Append(machine_amount)
-	msg.Append("1")
-	msg.Append(machine_precision)
-	msg.Append(machine.Metadata.GetAdditionalDataCID())
-	msg.Append(machine.GetIssuerPlanetmint())
-	msg.Append(machine_type)
-	err := client.Send(msg)
+	cmdName := "poetry"
+	cmdArgs := []string{"run", "python", "issuer_service/issue2liquid.py", name, machine_address}
 
-	return err
+	// Create a new command
+	cmd := exec.Command(cmdName, cmdArgs...)
+
+	// If you want to set the working directory
+	cmd.Dir = conf.IssuanceServiceDir
+
+	// Capture the output
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+
+	// Execute the command
+	err = cmd.Run()
+	if err != nil {
+		log.Fatalf("cmd.Run() failed with %s\n", err)
+		err = errorsmod.Wrap(types.ErrMachineNFTIssuance, stderr.String())
+	}
+	lines := strings.Split(stdout.String(), "\n")
+	if len(lines) == 3 {
+		asset_id = lines[0]
+		contract = lines[1]
+	} else {
+		err = errorsmod.Wrap(types.ErrMachineNFTIssuanceNoOutput, stderr.String())
+	}
+	return asset_id, contract, err
+}
+func (k msgServer) registerAsset(asset_id string, contract string) error {
+
+	conf := config.GetConfig()
+
+	// Create your request payload
+	data := map[string]interface{}{
+		"asset_id": asset_id,
+		"contract": contract,
+	}
+
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return errorsmod.Wrap(types.ErrAssetRegistryReqFailure, "Marshall "+err.Error())
+	}
+
+	req, err := http.NewRequest("POST", conf.AssetRegistryEndpoint, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return errorsmod.Wrap(types.ErrAssetRegistryReqFailure, "Request creation: "+err.Error())
+	}
+
+	// Set headers
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("accept", "application/json")
+
+	// Send request
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return errorsmod.Wrap(types.ErrAssetRegistryReqSending, err.Error())
+	}
+	defer resp.Body.Close()
+
+	// Read response
+	if resp.StatusCode > 299 {
+		return errorsmod.Wrap(types.ErrAssetRegistryRepsonse, "Error reading response body:"+strconv.Itoa(resp.StatusCode))
+	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return errorsmod.Wrap(types.ErrAssetRegistryRepsonse, "Error reading response body:"+err.Error())
+	}
+	result_obj := string(body)
+	if strings.Contains(result_obj, asset_id) {
+		return nil
+	} else {
+		return errorsmod.Wrap(types.ErrAssetRegistryRepsonse, "does not confirm asset registration")
+	}
+}
+
+func (k msgServer) issueMachineNFT(machine *types.Machine) error {
+	asset_id, contract, err := k.issueNFTAsset(machine.Name, machine.Address)
+	if err != nil {
+		return err
+	}
+	return k.registerAsset(asset_id, contract)
 }
