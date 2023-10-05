@@ -14,7 +14,7 @@ func (k Keeper) StoreReissuance(ctx sdk.Context, reissuance types.Reissuance) {
 	store.Set(getReissuanceBytes(reissuance.BlockHeight), appendValue)
 }
 
-func (k Keeper) GetReissuance(ctx sdk.Context, height uint64) (val types.Challenge, found bool) {
+func (k Keeper) GetReissuance(ctx sdk.Context, height uint64) (val types.Reissuance, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReissuanceBlockHeightKey))
 	reissuance := store.Get(getReissuanceBytes(height))
 	if reissuance == nil {
