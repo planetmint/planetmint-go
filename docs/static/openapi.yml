@@ -75818,6 +75818,8 @@ definitions:
     type: object
   planetmintgo.dao.MsgReissueRDDLProposalResponse:
     type: object
+  planetmintgo.dao.MsgReissueRDDLResultResponse:
+    type: object
   planetmintgo.dao.Params:
     type: object
     description: Params defines the parameters for the module.
