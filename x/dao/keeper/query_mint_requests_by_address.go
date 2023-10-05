@@ -16,8 +16,10 @@ func (k Keeper) MintRequestsByAddress(goCtx context.Context, req *types.QueryMin
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Process the query
-	_ = ctx
+	mintRequests, found := k.GetMintRequestsByAddress(ctx, req.GetAddress())
+	if !found {
+		return nil, status.Error(codes.NotFound, "mint requests not found")
+	}
 
-	return &types.QueryMintRequestsByAddressResponse{}, nil
+	return &types.QueryMintRequestsByAddressResponse{MintRequests: &mintRequests}, nil
 }
