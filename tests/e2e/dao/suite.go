@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/planetmint/planetmint-go/config"
@@ -18,6 +19,8 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+
+	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
 )
 
 var (
@@ -134,5 +137,64 @@ func (s *E2ETestSuite) TestDistributeCollectedFees() {
 	})
 	assert.Contains(s.T(), out.String(), "node0token")
 	assert.Contains(s.T(), out.String(), "13")
+	s.Require().NoError(err)
+}
+
+func (s *E2ETestSuite) TestMintToken() {
+	conf := config.GetConfig()
+	val := s.network.Validators[0]
+
+	// val.Address.String()
+
+	mintRequest := sample.MintRequest(aliceAddr.String(), 1000, "hash")
+	mrJSON, err := json.Marshal(&mintRequest)
+	s.Require().NoError(err)
+
+	// send mint token request from non mint address
+	args := []string{
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Moniker),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
+		"--yes",
+		string(mrJSON),
+	}
+
+	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdMintToken(), args)
+	s.Require().NoError(err)
+
+	txResponse, err := clitestutil.GetTxResponseFromOut(out)
+	s.Require().NoError(err)
+	s.Require().Equal(int(txResponse.Code), int(2))
+
+	// set mint address to val.address
+	conf.MintAddress = val.Address.String()
+	conf.SetPlanetmintConfig(conf)
+
+	// send mint token request from mint address
+	args = []string{
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Moniker),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
+		"--yes",
+		string(mrJSON),
+	}
+
+	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdMintToken(), args)
+	s.Require().NoError(err)
+
+	txResponse, err = clitestutil.GetTxResponseFromOut(out)
+	s.Require().NoError(err)
+	s.Require().Equal(int(txResponse.Code), int(0))
+
+	s.Require().NoError(s.network.WaitForNextBlock())
+	rawLog, err := clitestutil.GetRawLogFromTxResponse(val, txResponse)
+	s.Require().NoError(err)
+
+	assert.Contains(s.T(), rawLog, "planetmintgo.dao.MsgMintToken")
+
+	// assert that alice has actually received the minted tokens 10000 (initial supply) + 1000 (minted) = 11000 (total)
+	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
+		aliceAddr.String(),
+	})
+	assert.Contains(s.T(), out.String(), "plmnt")
+	assert.Contains(s.T(), out.String(), "11000")
 	s.Require().NoError(err)
 }

@@ -1,7 +1,19 @@
 syntax = "proto3";
+
 package planetmintgo.dao;
+
+import "planetmintgo/dao/mint_request.proto";
 
 option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
 
 // Msg defines the Msg service.
-service Msg {}
+service Msg {
+  rpc MintToken (MsgMintToken) returns (MsgMintTokenResponse);
+}
+message MsgMintToken {
+  string      creator     = 1;
+  MintRequest mintRequest = 2;
+}
+
+message MsgMintTokenResponse {}
+
