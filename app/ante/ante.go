@@ -50,6 +50,7 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		ante.NewValidateMemoDecorator(options.AccountKeeper),
 		NewCheckMachineDecorator(options.MachineKeeper),
 		NewCheckMintAddressDecorator(),
+		NewCheckReissuanceDecorator(),
 		ante.NewConsumeGasForTxSizeDecorator(options.AccountKeeper),
 		NewDeductFeeDecorator(options.AccountKeeper, options.BankKeeper, options.FeegrantKeeper, options.TxFeeChecker),
 		ante.NewSetPubKeyDecorator(options.AccountKeeper), // SetPubKeyDecorator must be called before all signature verification decorators
