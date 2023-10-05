@@ -13,6 +13,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/golang/mock/gomock"
+	"github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/testutil/sample"
 	"github.com/planetmint/planetmint-go/x/dao/keeper"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 	"github.com/stretchr/testify/require"
@@ -21,6 +23,8 @@ import (
 )
 
 func DaoKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
+	cfg := config.GetConfig()
+
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 	challengeStoreKey := storetypes.NewMemoryStoreKey(types.ChallengeKey)
@@ -47,8 +51,16 @@ func DaoKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		"DaoParams",
 	)
 
+	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
+
 	ctrl := gomock.NewController(t)
 	bk := daotestutil.NewMockBankKeeper(ctrl)
+
+	amt := sdk.NewCoins(sdk.NewCoin(cfg.TokenDenom, sdk.NewIntFromUint64(1000)))
+	beneficiaryAddr, _ := sdk.AccAddressFromBech32(sample.ConstBech32Addr)
+
+	bk.EXPECT().MintCoins(ctx, types.ModuleName, amt).Return(nil).AnyTimes()
+	bk.EXPECT().SendCoinsFromModuleToAccount(ctx, types.ModuleName, beneficiaryAddr, amt).Return(nil).AnyTimes()
 
 	k := keeper.NewKeeper(
 		cdc,
@@ -61,8 +73,6 @@ func DaoKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		bk,
 		nil,
 	)
-
-	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
 
 	// Initialize params
 	k.SetParams(ctx, types.DefaultParams())

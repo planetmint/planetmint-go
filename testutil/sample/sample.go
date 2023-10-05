@@ -35,6 +35,9 @@ const Fees = "1stake"
 // DefaultDerivationPath is the BIP44Prefix for PLMNT (see https://github.com/satoshilabs/slips/blob/master/slip-0044.md)
 const DefaultDerivationPath = "m/44'/8680'/0'/0/0"
 
+// ConstantBech32Addr for mocks
+const ConstBech32Addr = "cosmos1fkmmfvjf39hurp2ls3whtv73266jhh2n49202g"
+
 // KeyPair returns a sample private / public keypair
 func KeyPair(optional ...int) (string, string) {
 	secret := "Don't tell anybody"

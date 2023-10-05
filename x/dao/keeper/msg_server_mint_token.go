@@ -19,7 +19,6 @@ func (k msgServer) MintToken(goCtx context.Context, msg *types.MsgMintToken) (*t
 	}
 
 	amt := msg.GetMintRequest().GetAmount()
-	// TODO: if sent as hex decode before creating AccAddress
 	beneficiary := msg.GetMintRequest().GetBeneficiary()
 	beneficiaryAddr, err := sdk.AccAddressFromBech32(beneficiary)
 	if err != nil {
