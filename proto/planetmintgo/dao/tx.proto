@@ -1,7 +1,19 @@
 syntax = "proto3";
+
 package planetmintgo.dao;
 
 option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
 
 // Msg defines the Msg service.
-service Msg {}
+service Msg {
+  rpc ReissueRDDLProposal (MsgReissueRDDLProposal) returns (MsgReissueRDDLProposalResponse);
+}
+message MsgReissueRDDLProposal {
+  string creator     = 1;
+  string proposer    = 2;
+  string tx          = 3;
+  uint64 blockheight = 4;
+}
+
+message MsgReissueRDDLProposalResponse {}
+
