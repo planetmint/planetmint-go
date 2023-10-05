@@ -125,7 +125,6 @@ import (
 
 	pmante "github.com/planetmint/planetmint-go/app/ante"
 	appparams "github.com/planetmint/planetmint-go/app/params"
-	pmfg "github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/docs"
 )
 
@@ -769,7 +768,6 @@ func New(
 	app.MountMemoryStores(memKeys)
 
 	// initialize BaseApp
-	cfg := pmfg.GetConfig()
 	anteHandler, err := pmante.NewAnteHandler(
 		pmante.HandlerOptions{
 			AccountKeeper:   app.AccountKeeper,
@@ -778,7 +776,6 @@ func New(
 			FeegrantKeeper:  app.FeeGrantKeeper,
 			SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
 			MachineKeeper:   app.MachineKeeper,
-			MintAddress:     cfg.MintAddress,
 		},
 	)
 	if err != nil {
