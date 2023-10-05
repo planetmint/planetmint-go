@@ -16,8 +16,10 @@ func (k Keeper) GetMintRequestsByHash(goCtx context.Context, req *types.QueryGet
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Process the query
-	_ = ctx
+	mintRequest, found := k.GetMintRequestByHash(ctx, req.GetHash())
+	if !found {
+		return nil, status.Error(codes.NotFound, "mint request not found")
+	}
 
-	return &types.QueryGetMintRequestsByHashResponse{}, nil
+	return &types.QueryGetMintRequestsByHashResponse{MintRequest: &mintRequest}, nil
 }

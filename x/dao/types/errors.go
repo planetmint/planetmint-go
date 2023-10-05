@@ -12,4 +12,5 @@ var (
 	ErrMintFailed         = errorsmod.Register(ModuleName, 3, "minting failed")
 	ErrTransferFailed     = errorsmod.Register(ModuleName, 4, "transfer failed")
 	ErrInvalidAddress     = errorsmod.Register(ModuleName, 5, "invalid address")
+	ErrAlreadyMinted      = errorsmod.Register(ModuleName, 6, "already minted")
 )
