@@ -3,8 +3,6 @@ package dao
 import (
 	"encoding/hex"
 	"fmt"
-	"os/exec"
-	"strconv"
 
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/util"
@@ -19,32 +17,16 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	proposerAddress := req.Header.GetProposerAddress()
 
 	// Check if node is block proposer
+
 	if isPoPHeight(req.Header.GetHeight()) && util.IsValidatorBlockProposer(ctx, proposerAddress) {
 		// TODO: implement PoP trigger
 		fmt.Println("TODO: implement PoP trigger")
-		err := initRDDLReissuanceProcess(ctx, proposerAddress, req.Header.GetHeight())
+		hexProposerAddress := hex.EncodeToString(proposerAddress)
+		err := util.InitRDDLReissuanceProcess(ctx, hexProposerAddress, req.Header.GetHeight())
 		if err != nil {
 			logger.Error("error while issuing RDDL", err)
 		}
 	}
-}
-
-func initRDDLReissuanceProcess(ctx sdk.Context, proposerAddress []byte, blk_height int64) error {
-	tx_unsigned, err := util.GetUnsignedReissuanceTransaction()
-	//blk_height := 0 //get_last_PoPBlockHeight() // TODO: to be read form the upcoming PoP-store
-	hexProposerAddress := hex.EncodeToString(proposerAddress)
-
-	// Construct the command
-	cmd := exec.Command("planetmint-god", "tx", "dao", "reissue-rddl-proposal", hexProposerAddress, tx_unsigned, strconv.FormatInt(blk_height, 10))
-
-	// Start the command in a non-blocking way
-	err = cmd.Start()
-	if err != nil {
-		fmt.Printf("Error starting command: %s\n", err)
-	} else {
-		fmt.Println("Command started in background")
-	}
-	return err
 }
 
 func isPoPHeight(height int64) bool {
