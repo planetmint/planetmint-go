@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os/exec"
+	"strconv"
 	"strings"
 
 	config "github.com/planetmint/planetmint-go/config"
@@ -143,7 +144,7 @@ func (k msgServer) registerAsset(asset_id string, contract string) error {
 
 	// Read response
 	if resp.StatusCode > 299 {
-		return errorsmod.Wrap(types.ErrAssetRegistryRepsonse, "Error reading response body:"+string(resp.StatusCode))
+		return errorsmod.Wrap(types.ErrAssetRegistryRepsonse, "Error reading response body:"+strconv.Itoa(resp.StatusCode))
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
