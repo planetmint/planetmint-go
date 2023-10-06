@@ -46734,7 +46734,7 @@ paths:
               mintRequests:
                 type: object
                 properties:
-                  mintRequest:
+                  Requests:
                     type: array
                     items:
                       type: object
@@ -75802,7 +75802,7 @@ definitions:
   planetmintgo.dao.MintRequests:
     type: object
     properties:
-      mintRequest:
+      Requests:
         type: array
         items:
           type: object
@@ -75838,7 +75838,7 @@ definitions:
       mintRequests:
         type: object
         properties:
-          mintRequest:
+          Requests:
             type: array
             items:
               type: object
