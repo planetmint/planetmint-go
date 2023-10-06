@@ -13,7 +13,7 @@ func InitRDDLReissuanceProcess(ctx sdk.Context, proposerAddress string, blk_heig
 	//blk_height := 0 //get_last_PoPBlockHeight() // TODO: to be read form the upcoming PoP-store
 
 	// Construct the command
-	cmd := exec.Command("planetmint-god", "tx", "dao", "reissue-rddl-proposal", hexProposerAddress, tx_unsigned, strconv.FormatInt(blk_height, 10))
+	cmd := exec.Command("planetmint-god", "tx", "dao", "reissue-rddl-proposal", proposerAddress, tx_unsigned, strconv.FormatInt(blk_height, 10))
 
 	// Start the command in a non-blocking way
 	err = cmd.Start()
@@ -27,7 +27,7 @@ func InitRDDLReissuanceProcess(ctx sdk.Context, proposerAddress string, blk_heig
 
 func SendRDDLReissuanceResult(ctx sdk.Context, proposerAddress string, txID string, blk_height uint64) error {
 	// Construct the command
-	cmd := exec.Command("planetmint-god", "tx", "dao", "reissue-rddl-result", hexProposerAddress, txID, strconv.FormatInt(blk_height, 10))
+	cmd := exec.Command("planetmint-god", "tx", "dao", "reissue-rddl-result", proposerAddress, txID, strconv.FormatUint(blk_height, 10))
 
 	// Start the command in a non-blocking way
 	err := cmd.Start()
