@@ -24,6 +24,25 @@ func (k Keeper) LookupReissuance(ctx sdk.Context, height uint64) (val types.Reis
 	return val, true
 }
 
+func (k Keeper) getReissuancesPage(ctx sdk.Context, key []byte, offset uint64, page_size uint64, all bool, reverse bool) (reissuances []types.Reissuance) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReissuanceBlockHeightKey))
+
+	iterator := store.Iterator(nil, nil)
+	defer iterator.Close()
+	if reverse {
+		iterator = store.ReverseIterator(nil, nil)
+		defer iterator.Close()
+	}
+
+	for ; iterator.Valid(); iterator.Next() {
+		reissuance := iterator.Value()
+		var reissuance_org types.Reissuance
+		k.cdc.MustUnmarshal(reissuance, &reissuance_org)
+		reissuances = append(reissuances, reissuance_org)
+	}
+	return reissuances
+}
+
 func getReissuanceBytes(height uint64) []byte {
 	// Adding 1 because 0 will be interpreted as nil, which is an invalid key
 	return big.NewInt(int64(height + 1)).Bytes()

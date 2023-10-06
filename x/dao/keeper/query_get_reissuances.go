@@ -16,8 +16,9 @@ func (k Keeper) GetReissuances(goCtx context.Context, req *types.QueryGetReissua
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Process the query
-	_ = ctx
+	reissuances := k.getReissuancesPage(ctx, req.Pagination.GetKey(),
+		req.Pagination.GetOffset(), req.Pagination.GetLimit(),
+		req.Pagination.GetCountTotal(), req.Pagination.GetReverse())
 
-	return &types.QueryGetReissuancesResponse{}, nil
+	return &types.QueryGetReissuancesResponse{Reissuance: &reissuances[0]}, nil
 }
