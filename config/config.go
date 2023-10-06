@@ -25,7 +25,7 @@ rpc-port = {{ .PlmntConfig.RPCPort }}
 rpc-user = "{{ .PlmntConfig.RPCUser }}"
 rpc-password = "{{ .PlmntConfig.RPCPassword }}"
 mint-address = "{{ .PlmntConfig.MintAddress }}"
-issuance-service-dir = {{ .PlmntConfig.IssuanceServiceDir }}
+issuance-service-dir = "{{ .PlmntConfig.IssuanceServiceDir }}"
 `
 
 // Config defines Planetmint's top level configuration
