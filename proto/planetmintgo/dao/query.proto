@@ -38,6 +38,12 @@ service Query {
     option (google.api.http).get = "/planetmint/planetmint-go/dao/get_reissuance/{blockHeight}";
   
   }
+  
+  // Queries a list of GetReissuances items.
+  rpc GetReissuances (QueryGetReissuancesRequest) returns (QueryGetReissuancesResponse) {
+    option (google.api.http).get = "/planetmint/planetmint-go/dao/get_reissuances";
+  
+  }
 }
 // QueryParamsRequest is request type for the Query/Params RPC method.
 message QueryParamsRequest {}
@@ -71,5 +77,14 @@ message QueryGetReissuanceRequest {
 
 message QueryGetReissuanceResponse {
   Reissuance reissuance = 1;
+}
+
+message QueryGetReissuancesRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryGetReissuancesResponse {
+  Reissuance                             reissuance = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
