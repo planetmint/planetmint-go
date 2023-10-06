@@ -23,7 +23,7 @@ pop-epochs = {{ .PlmntConfig.PoPEpochs }}
 issuance-endpoint = "{{ .PlmntConfig.IssuanceEndpoint }}"
 issuance-port = {{ .PlmntConfig.IssuancePort }}
 mint-address = "{{ .PlmntConfig.MintAddress }}"
-issuance-service-dir = {{ .PlmntConfig.IssuanceServiceDir }}
+issuance-service-dir = "{{ .PlmntConfig.IssuanceServiceDir }}"
 `
 
 // Config defines Planetmint's top level configuration
