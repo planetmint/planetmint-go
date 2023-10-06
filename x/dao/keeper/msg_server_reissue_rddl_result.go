@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"strconv"
 
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -11,18 +12,18 @@ import (
 func (k msgServer) ReissueRDDLResult(goCtx context.Context, msg *types.MsgReissueRDDLResult) (*types.MsgReissueRDDLResultResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	reissuance, found := k.GetReissuance(ctx, msg.GetBlockHeight())
+	reissuance, found := k.LookupReissuance(ctx, msg.GetBlockHeight())
 	if found != true {
-		return nil, errorsmod.Wrapf(types.ErrReissuanceNotFound, " for provided block height %u", msg.GetBlockHeight())
+		return nil, errorsmod.Wrapf(types.ErrReissuanceNotFound, " for provided block height %s", strconv.FormatUint(msg.GetBlockHeight(), 10))
 	}
 	if reissuance.GetBlockHeight() != msg.GetBlockHeight() {
-		return nil, errorsmod.Wrapf(types.ErrWrongBlockHeight, " for provided block height %u", msg.GetBlockHeight())
+		return nil, errorsmod.Wrapf(types.ErrWrongBlockHeight, " for provided block height %s", strconv.FormatUint(msg.GetBlockHeight(), 10))
 	}
 	if reissuance.GetProposer() != msg.GetProposer() {
-		return nil, errorsmod.Wrapf(types.ErrInvalidProposer, " for provided block height %u", msg.GetBlockHeight())
+		return nil, errorsmod.Wrapf(types.ErrInvalidProposer, " for provided block height %s", strconv.FormatUint(msg.GetBlockHeight(), 10))
 	}
 	if reissuance.GetTxId() != "" {
-		return nil, errorsmod.Wrapf(types.ErrTXAlreadySet, " for provided block height %u", msg.GetBlockHeight())
+		return nil, errorsmod.Wrapf(types.ErrTXAlreadySet, " for provided block height %s", strconv.FormatUint(msg.GetBlockHeight(), 10))
 	}
 	reissuance.TxId = msg.GetTxId()
 	k.StoreReissuance(ctx, reissuance)

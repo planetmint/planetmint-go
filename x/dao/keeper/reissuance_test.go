@@ -12,7 +12,7 @@ import (
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
-func createNReissuance(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Reissuance {
+func createNReissuances(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Reissuance {
 	items := make([]types.Reissuance, n)
 	for i := range items {
 		items[i].BlockHeight = uint64(i)
@@ -24,12 +24,12 @@ func createNReissuance(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Re
 	return items
 }
 
-func TestGetResponse(t *testing.T) {
+func TestGetReissuances(t *testing.T) {
 	keeper, ctx := keepertest.DaoKeeper(t)
-	items := createNChallenge(keeper, ctx, 10)
+	items := createNReissuances(keeper, ctx, 10)
 	for _, item := range items {
-		challenge, found := keeper.GetChallenge(ctx, item.Height)
+		reissuance, found := keeper.LookupReissuance(ctx, item.BlockHeight)
 		assert.True(t, found)
-		assert.Equal(t, item, challenge)
+		assert.Equal(t, item, reissuance)
 	}
 }

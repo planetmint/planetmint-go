@@ -8,6 +8,7 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 import "planetmintgo/dao/params.proto";
 import "planetmintgo/dao/mint_request.proto";
 import "planetmintgo/dao/mint_requests.proto";
+import "planetmintgo/dao/reissuance.proto";
 
 option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
 
@@ -29,6 +30,12 @@ service Query {
   // Queries a list of MintRequestsByAddress items.
   rpc MintRequestsByAddress (QueryMintRequestsByAddressRequest) returns (QueryMintRequestsByAddressResponse) {
     option (google.api.http).get = "/planetmint/planetmint-go/dao/mint_requests_by_address/{address}";
+  
+  }
+  
+  // Queries a list of GetReissuance items.
+  rpc GetReissuance (QueryGetReissuanceRequest) returns (QueryGetReissuanceResponse) {
+    option (google.api.http).get = "/planetmint/planetmint-go/dao/get_reissuance/{blockHeight}";
   
   }
 }
@@ -56,5 +63,13 @@ message QueryMintRequestsByAddressRequest {
 
 message QueryMintRequestsByAddressResponse {
   MintRequests mintRequests = 1;
+}
+
+message QueryGetReissuanceRequest {
+  uint64 blockHeight = 1;
+}
+
+message QueryGetReissuanceResponse {
+  Reissuance reissuance = 1;
 }
 
