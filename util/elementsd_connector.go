@@ -1,49 +1,43 @@
 package util
 
 import (
-	"log"
+	"bytes"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"os/exec"
 	"strconv"
+	"strings"
 
-	"github.com/btcsuite/btcd/chaincfg/chainhash"
-	"github.com/btcsuite/btcd/rpcclient"
-	"github.com/btcsuite/btcd/wire"
 	"github.com/planetmint/planetmint-go/config"
 )
 
-// TODO: define the final issuance
-func GetUnsignedReissuanceTransaction() (string, error) {
-	config := config.GetConfig()
-	// Create a new client instance
+type ReissueResult struct {
+	Txid string `json:"txid"`
+	Vin  int    `json:"vin"`
+}
 
-	connCfg := &rpcclient.ConnConfig{
-		Host:         config.RPCHost + ":" + strconv.Itoa(config.RPCPort),
-		User:         config.RPCUser,
-		Pass:         config.RPCPassword,
-		HTTPPostMode: true, // Bitcoin core only supports HTTP POST mode
-		DisableTLS:   true, // Bitcoin core does not provide TLS by default
+func ReissueAsset(reissue_tx string) (txid string, err error) {
+	conf := config.GetConfig()
+	cmd_args := strings.Split(reissue_tx, " ")
+	cmd := exec.Command("/usr/local/bin/elements-cli", "-rpcpassword="+conf.RPCPassword,
+		"-rpcuser="+conf.RPCUser, "-rpcport="+strconv.Itoa(conf.RPCPort), "-rpcconnect="+conf.RPCHost,
+		cmd_args[0], cmd_args[1], cmd_args[2])
+
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+
+	err = cmd.Run()
+	errstr := stderr.String()
+
+	if err != nil || len(errstr) > 0 {
+		fmt.Printf("Error starting command: %s\n", errstr)
+		err = errors.New("Reissuance of RDDL failed.")
+	} else {
+		var txobj ReissueResult
+		json.Unmarshal(stdout.Bytes(), &txobj)
+		txid = txobj.Txid
 	}
-
-	client, erro := rpcclient.New(connCfg, nil)
-	if erro != nil {
-		log.Fatal(erro)
-	}
-	defer client.Shutdown()
-
-	// Define the inputs and outputs for the raw transaction
-	txIn := wire.NewTxIn(&wire.OutPoint{
-		Hash:  chainhash.Hash{},
-		Index: 0,
-	}, nil, nil)
-
-	txOut := wire.NewTxOut(1000, nil) // 1000 satoshis, replace with your desired amount
-
-	// Create the raw transaction
-	rawTx := wire.NewMsgTx(wire.TxVersion)
-	rawTx.AddTxIn(txIn)
-	rawTx.AddTxOut(txOut)
-
-	// Serialize the transaction and convert to hex
-	//buf := []byte{}
-	var txHex = "12341234123412312342342341234123412341231234234234"
-	return txHex, erro
+	return txid, err
 }

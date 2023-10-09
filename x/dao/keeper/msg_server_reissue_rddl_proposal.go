@@ -15,10 +15,14 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 	if valid_result && msg.Proposer == validator_identity {
 		// 1. sign tx
 		// 2. broadcast tx
+		txID, err := util.ReissueAsset(msg.Tx)
+		if err == nil {
+			// 3. notarize result by notarizing the liquid tx-id
+			util.SendRDDLReissuanceResult(ctx, msg.GetProposer(), txID, msg.GetBlockheight())
+		} else {
+			//reissuance need to be initiated otherwise
+		}
 
-		txID := "asdlkufzaoisdfpoajf"
-		// 3. notarize result by notarizing the liquid tx-id
-		util.SendRDDLReissuanceResult(ctx, msg.GetProposer(), txID, msg.GetBlockheight())
 	}
 
 	var reissuance types.Reissuance

@@ -100,13 +100,14 @@ func (k msgServer) issueNFTAsset(name string, machine_address string) (asset_id 
 	if err != nil {
 		log.Fatalf("cmd.Run() failed with %s\n", err)
 		err = errorsmod.Wrap(types.ErrMachineNFTIssuance, stderr.String())
-	}
-	lines := strings.Split(stdout.String(), "\n")
-	if len(lines) == 3 {
-		asset_id = lines[0]
-		contract = lines[1]
 	} else {
-		err = errorsmod.Wrap(types.ErrMachineNFTIssuanceNoOutput, stderr.String())
+		lines := strings.Split(stdout.String(), "\n")
+		if len(lines) == 3 {
+			asset_id = lines[0]
+			contract = lines[1]
+		} else {
+			err = errorsmod.Wrap(types.ErrMachineNFTIssuanceNoOutput, stderr.String())
+		}
 	}
 	return asset_id, contract, err
 }

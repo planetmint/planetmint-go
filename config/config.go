@@ -26,6 +26,9 @@ rpc-user = "{{ .PlmntConfig.RPCUser }}"
 rpc-password = "{{ .PlmntConfig.RPCPassword }}"
 mint-address = "{{ .PlmntConfig.MintAddress }}"
 issuance-service-dir = "{{ .PlmntConfig.IssuanceServiceDir }}"
+reissuance-asset = "{{ .PlmntConfig.ReissuanceAsset }}"
+validator-address = "{{ .PlmntConfig.ReissuanceAsset }}"
+
 `
 
 // Config defines Planetmint's top level configuration
@@ -42,6 +45,8 @@ type Config struct {
 	RPCPassword           string `mapstructure:"rpc-password" json:"rpc-password"`
 	IssuanceServiceDir    string `mapstructure:"issuance-service-dir" json:"issuance-service-dir"`
 	MintAddress           string `mapstructure:"mint-address" json:"mint-address"`
+	ReissuanceAsset       string `mapstructure:"reissuance-asset" json:"reissuance-asset"`
+	ValidatorAddress      string `mapstructure:"validator-address" json:"validator-address"`
 }
 
 // cosmos-sdk wide global singleton
@@ -67,9 +72,11 @@ func DefaultConfig() *Config {
 		RPCHost:               "localhost",
 		RPCPort:               18884,
 		RPCUser:               "user",
-		RPCPassword:           "password",
+		RPCPassword:           "passwor",
 		IssuanceServiceDir:    "/opt/issuer_service",
 		MintAddress:           "default",
+		ReissuanceAsset:       "asset-id-or-name",
+		ValidatorAddress:      "plmnt1w5dww335zhh98pzv783hqre355ck3u4w4hjxcx",
 	}
 }
 

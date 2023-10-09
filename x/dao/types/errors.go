@@ -17,4 +17,6 @@ var (
 	ErrReissuanceNotFound = errorsmod.Register(ModuleName, 8, "reissuance not found")
 	ErrInvalidProposer    = errorsmod.Register(ModuleName, 9, "invalid proposer")
 	ErrTXAlreadySet       = errorsmod.Register(ModuleName, 10, "tx already set")
+	ErrReissuanceProposal = errorsmod.Register(ModuleName, 11, "invalid reissuance proposal")
+	ErrReissuanceFailed   = errorsmod.Register(ModuleName, 12, "reissuance of RDDL failed")
 )

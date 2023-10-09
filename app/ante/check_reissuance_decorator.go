@@ -1,7 +1,10 @@
 package ante
 
 import (
+	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/x/dao"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 )
 
@@ -15,12 +18,14 @@ func NewCheckReissuanceDecorator() CheckReissuanceDecorator {
 
 func (cmad CheckReissuanceDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (sdk.Context, error) {
 	for _, msg := range tx.GetMsgs() {
-		if sdk.MsgTypeURL(msg) == "/planetmintgo.dao.NewMsgReissueRDDLProposal" {
-			_, ok := msg.(*daotypes.MsgReissueRDDLProposal)
-			//reissueMsg, ok := msg.(*daotypes.NewMsgReissueRDDLProposal)
+		if sdk.MsgTypeURL(msg) == "/planetmintgo.dao.MsgReissueRDDLProposal" {
+			MsgProposal, ok := msg.(*daotypes.MsgReissueRDDLProposal)
 			if ok {
-				// TODO: verify if the messages related PoP (BlockHeight) reflects
-				//       what is actually traded within the raw transaction
+				conf := config.GetConfig()
+				isValid := dao.IsValidReissuanceCommand(MsgProposal.GetTx(), conf.ReissuanceAsset, MsgProposal.GetBlockheight())
+				if !isValid {
+					return ctx, errorsmod.Wrapf(daotypes.ErrReissuanceProposal, "error during CheckTx or ReCheckTx")
+				}
 			}
 		}
 	}

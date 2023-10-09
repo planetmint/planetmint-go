@@ -20,5 +20,10 @@ func (k Keeper) GetReissuances(goCtx context.Context, req *types.QueryGetReissua
 		req.Pagination.GetOffset(), req.Pagination.GetLimit(),
 		req.Pagination.GetCountTotal(), req.Pagination.GetReverse())
 
-	return &types.QueryGetReissuancesResponse{Reissuance: &reissuances[0]}, nil
+	if reissuances != nil {
+		return &types.QueryGetReissuancesResponse{Reissuance: &reissuances[0]}, nil
+	} else {
+		return &types.QueryGetReissuancesResponse{}, nil
+	}
+
 }
