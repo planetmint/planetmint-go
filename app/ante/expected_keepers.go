@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 )
 
 type MachineKeeper interface {
@@ -31,4 +32,8 @@ type BankKeeper interface {
 	IsSendEnabledCoins(ctx sdk.Context, coins ...sdk.Coin) error
 	SendCoins(ctx sdk.Context, from, to sdk.AccAddress, amt sdk.Coins) error
 	SendCoinsFromAccountToModule(ctx sdk.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error
+}
+
+type DaoKeeper interface {
+	GetMintRequestByHash(ctx sdk.Context, hash string) (val daotypes.MintRequest, found bool)
 }

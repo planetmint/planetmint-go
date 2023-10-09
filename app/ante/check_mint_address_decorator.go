@@ -8,11 +8,13 @@ import (
 )
 
 type CheckMintAddressDecorator struct {
-	MintAddress string
+	dk DaoKeeper
 }
 
-func NewCheckMintAddressDecorator() CheckMintAddressDecorator {
-	return CheckMintAddressDecorator{}
+func NewCheckMintAddressDecorator(dk DaoKeeper) CheckMintAddressDecorator {
+	return CheckMintAddressDecorator{
+		dk: dk,
+	}
 }
 
 func (cmad CheckMintAddressDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (sdk.Context, error) {
@@ -22,7 +24,11 @@ func (cmad CheckMintAddressDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, sim
 			if ok {
 				cfg := config.GetConfig()
 				if mintMsg.Creator != cfg.MintAddress {
-					return ctx, errorsmod.Wrapf(daotypes.ErrInvalidMintAddress, "expected: %s; got: %s", cmad.MintAddress, mintMsg.Creator)
+					return ctx, errorsmod.Wrapf(daotypes.ErrInvalidMintAddress, "expected: %s; got: %s", cfg.MintAddress, mintMsg.Creator)
+				}
+				_, found := cmad.dk.GetMintRequestByHash(ctx, mintMsg.GetMintRequest().GetLiquidTxHash())
+				if found {
+					return ctx, errorsmod.Wrapf(daotypes.ErrAlreadyMinted, "liquid tx hash %s has already been minted", mintMsg.GetMintRequest().GetLiquidTxHash())
 				}
 			}
 		}
