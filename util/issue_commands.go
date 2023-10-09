@@ -3,7 +3,6 @@ package util
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"os/exec"
 	"strconv"
 
@@ -24,15 +23,11 @@ func InitRDDLReissuanceProcess(ctx sdk.Context, proposerAddress string, tx_unsig
 
 	// Start the command in a non-blocking way
 	err := cmd.Start()
-	outstr := stdout.String()
 	errstr := stderr.String()
 	if err != nil || len(errstr) > 0 {
-		fmt.Printf("Error starting command: s\n", errstr)
 		if err == nil {
 			err = errors.New(errstr)
 		}
-	} else {
-		fmt.Println("Command started in background %s\n", outstr)
 	}
 	return err
 }
@@ -48,16 +43,11 @@ func SendRDDLReissuanceResult(ctx sdk.Context, proposerAddress string, txID stri
 	cmd.Stderr = &stderr
 	// Start the command in a non-blocking way
 	err := cmd.Start()
-	outstr := stdout.String()
 	errstr := stderr.String()
-
 	if err != nil || len(errstr) > 0 {
-		fmt.Printf("Error starting command: s\n", errstr)
 		if err == nil {
 			err = errors.New(errstr)
 		}
-	} else {
-		fmt.Println("Command started in background %s\n", outstr)
 	}
 	return err
 }
