@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -32,8 +31,7 @@ func ReissueAsset(reissue_tx string) (txid string, err error) {
 	errstr := stderr.String()
 
 	if err != nil || len(errstr) > 0 {
-		fmt.Printf("Error starting command: %s\n", errstr)
-		err = errors.New("Reissuance of RDDL failed.")
+		err = errors.New("reissuance of RDDL failed")
 	} else {
 		var txobj ReissueResult
 		json.Unmarshal(stdout.Bytes(), &txobj)

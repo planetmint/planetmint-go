@@ -53,7 +53,7 @@ func GetValidatorCometBFTIdentity(ctx sdk.Context) (string, bool) {
 
 func IsValidatorBlockProposer(ctx sdk.Context, proposerAddress []byte) bool {
 	validator_identity, valid_result := GetValidatorCometBFTIdentity(ctx)
-	if valid_result == false {
+	if !valid_result {
 		return false
 	}
 	hexProposerAddress := hex.EncodeToString(proposerAddress)

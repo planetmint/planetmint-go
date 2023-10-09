@@ -13,7 +13,7 @@ func (k msgServer) ReissueRDDLResult(goCtx context.Context, msg *types.MsgReissu
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	reissuance, found := k.LookupReissuance(ctx, msg.GetBlockHeight())
-	if found != true {
+	if !found {
 		return nil, errorsmod.Wrapf(types.ErrReissuanceNotFound, " for provided block height %s", strconv.FormatUint(msg.GetBlockHeight(), 10))
 	}
 	if reissuance.GetBlockHeight() != msg.GetBlockHeight() {
