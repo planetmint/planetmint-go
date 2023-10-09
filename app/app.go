@@ -775,6 +775,7 @@ func New(
 			FeegrantKeeper:  app.FeeGrantKeeper,
 			SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
 			MachineKeeper:   app.MachineKeeper,
+			DaoKeeper:       app.DaoKeeper,
 		},
 	)
 	if err != nil {

@@ -20,6 +20,7 @@ type HandlerOptions struct {
 	SigGasConsumer         func(meter sdk.GasMeter, sig signing.SignatureV2, params authtypes.Params) error
 	TxFeeChecker           TxFeeChecker
 	MachineKeeper          MachineKeeper
+	DaoKeeper              DaoKeeper
 }
 
 // NewAnteHandler returns an AnteHandler that checks and increments sequence
@@ -41,6 +42,9 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 	if options.MachineKeeper == nil {
 		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, "machine keeper is required for ante builder")
 	}
+	if options.DaoKeeper == nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, "dao keeper is required for ante builder")
+	}
 
 	anteDecorators := []sdk.AnteDecorator{
 		ante.NewSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
@@ -49,7 +53,7 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		ante.NewTxTimeoutHeightDecorator(),
 		ante.NewValidateMemoDecorator(options.AccountKeeper),
 		NewCheckMachineDecorator(options.MachineKeeper),
-		NewCheckMintAddressDecorator(),
+		NewCheckMintAddressDecorator(options.DaoKeeper),
 		NewCheckReissuanceDecorator(),
 		ante.NewConsumeGasForTxSizeDecorator(options.AccountKeeper),
 		NewDeductFeeDecorator(options.AccountKeeper, options.BankKeeper, options.FeegrantKeeper, options.TxFeeChecker),
