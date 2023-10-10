@@ -48,7 +48,7 @@ func SendRDDLReissuanceResult(ctx sdk.Context, proposerAddress string, txID stri
 	if keyring != "" {
 		cmd = exec.Command("planetmint-god", "tx", "dao", "reissue-rddl-result",
 			"--from", sending_validator_address, "-y", "--keyring-backend ", keyring,
-			proposerAddress, txID, strconv.FormatInt(blk_height, 10))
+			proposerAddress, txID, strconv.FormatUint(blk_height, 10))
 	}
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
