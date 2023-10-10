@@ -28,7 +28,10 @@ mint-address = "{{ .PlmntConfig.MintAddress }}"
 issuance-service-dir = "{{ .PlmntConfig.IssuanceServiceDir }}"
 reissuance-asset = "{{ .PlmntConfig.ReissuanceAsset }}"
 validator-address = "{{ .PlmntConfig.ReissuanceAsset }}"
-
+distribution-address-inv = "{{ .PlmntConfig.DistributionAddrInv }}"
+distribution-address-dap = "{{ .PlmntConfig.DistributionAddrDAO }}"
+distribution-address-pop = "{{ .PlmntConfig.DistributionAddrPoP }}"
+distribution-epochs = {{ .PlmntConfig.DistributionEpochs }}
 `
 
 // Config defines Planetmint's top level configuration
@@ -47,6 +50,10 @@ type Config struct {
 	MintAddress           string `mapstructure:"mint-address" json:"mint-address"`
 	ReissuanceAsset       string `mapstructure:"reissuance-asset" json:"reissuance-asset"`
 	ValidatorAddress      string `mapstructure:"validator-address" json:"validator-address"`
+	DistributionAddrInv   string `mapstructure:"distribution-address-inv" json:"distribution-address-inv"`
+	DistributionAddrDAO   string `mapstructure:"distribution-address-dao" json:"distribution-address-dao"`
+	DistributionAddrPoP   string `mapstructure:"distribution-address-pop" json:"distribution-address-pop"`
+	DistributionEpochs    int    `mapstructure:"distribution-epochs" json:"distribution-epochs"`
 }
 
 // cosmos-sdk wide global singleton
@@ -77,6 +84,10 @@ func DefaultConfig() *Config {
 		MintAddress:           "default",
 		ReissuanceAsset:       "asset-id-or-name",
 		ValidatorAddress:      "plmnt1w5dww335zhh98pzv783hqre355ck3u4w4hjxcx",
+		DistributionAddrInv:   "",
+		DistributionAddrDAO:   "",
+		DistributionAddrPoP:   "",
+		DistributionEpochs:    17280, // CometBFT epochs of 5s equate 1 day (12*60*24)
 	}
 }
 

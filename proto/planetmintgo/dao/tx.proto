@@ -3,6 +3,7 @@ syntax = "proto3";
 package planetmintgo.dao;
 
 import "planetmintgo/dao/mint_request.proto";
+import "planetmintgo/dao/distribution_order.proto";
 
 option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
 
@@ -11,6 +12,7 @@ service Msg {
   rpc ReissueRDDLProposal (MsgReissueRDDLProposal) returns (MsgReissueRDDLProposalResponse);
   rpc MintToken           (MsgMintToken          ) returns (MsgMintTokenResponse          );
   rpc ReissueRDDLResult   (MsgReissueRDDLResult  ) returns (MsgReissueRDDLResultResponse  );
+  rpc DistributionRequest (MsgDistributionRequest) returns (MsgDistributionRequestResponse);
 }
 message MsgReissueRDDLProposal {
   string creator     = 1;
@@ -36,4 +38,11 @@ message MsgReissueRDDLResult {
 }
 
 message MsgReissueRDDLResultResponse {}
+
+message MsgDistributionRequest {
+  string            creator      = 1;
+  DistributionOrder distribution = 2;
+}
+
+message MsgDistributionRequestResponse {}
 

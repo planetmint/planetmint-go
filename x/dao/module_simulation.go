@@ -32,6 +32,10 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgReissueRDDLResult int = 100
 
+	opWeightMsgDistributionRequest = "op_weight_msg_distribution_request"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgDistributionRequest int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -82,6 +86,17 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		daosimulation.SimulateMsgReissueRDDLResult(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
+	var weightMsgDistributionRequest int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgDistributionRequest, &weightMsgDistributionRequest, nil,
+		func(_ *rand.Rand) {
+			weightMsgDistributionRequest = defaultWeightMsgDistributionRequest
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgDistributionRequest,
+		daosimulation.SimulateMsgDistributionRequest(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
 	// this line is used by starport scaffolding # simapp/module/operation
 
 	return operations
@@ -103,6 +118,14 @@ func (am AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.Wei
 			defaultWeightMsgReissueRDDLResult,
 			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
 				daosimulation.SimulateMsgReissueRDDLResult(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgDistributionRequest,
+			defaultWeightMsgDistributionRequest,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				daosimulation.SimulateMsgDistributionRequest(am.accountKeeper, am.bankKeeper, am.keeper)
 				return nil
 			},
 		),
