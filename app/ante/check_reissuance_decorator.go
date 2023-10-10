@@ -8,9 +8,7 @@ import (
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 )
 
-type CheckReissuanceDecorator struct {
-	MintAddress string
-}
+type CheckReissuanceDecorator struct{}
 
 func NewCheckReissuanceDecorator() CheckReissuanceDecorator {
 	return CheckReissuanceDecorator{}

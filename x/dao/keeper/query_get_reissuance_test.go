@@ -23,12 +23,12 @@ func TestQueryGetReissuance(t *testing.T) {
 		err      error
 	}{
 		{
-			desc:     "mint request found",
+			desc:     "reissuance request found",
 			request:  &types.QueryGetReissuanceRequest{BlockHeight: 0},
 			response: &types.QueryGetReissuanceResponse{Reissuance: &items[0]},
 		},
 		{
-			desc:    "mint request not found",
+			desc:    "reissuance request not found",
 			request: &types.QueryGetReissuanceRequest{BlockHeight: 100},
 			err:     status.Error(codes.NotFound, "reissuance not found"),
 		},
