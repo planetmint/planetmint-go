@@ -18,7 +18,8 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 		txID, err := util.ReissueAsset(msg.Tx)
 		if err == nil {
 			// 3. notarize result by notarizing the liquid tx-id
-			util.SendRDDLReissuanceResult(ctx, msg.GetProposer(), txID, msg.GetBlockheight())
+			_ = util.SendRDDLReissuanceResult(ctx, msg.GetProposer(), txID, msg.GetBlockheight())
+			//TODO verify and  resolve error
 		}
 		//TODO: reissuance need to be initiated otherwise
 	}
