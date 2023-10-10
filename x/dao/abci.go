@@ -1,9 +1,9 @@
 package dao
 
 import (
+	"encoding/hex"
 	"fmt"
 
-	"github.com/crgimenes/go-osc"
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/keeper"
@@ -17,25 +17,19 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	proposerAddress := req.Header.GetProposerAddress()
 
 	// Check if node is block proposer
+
 	if isPoPHeight(req.Header.GetHeight()) && util.IsValidatorBlockProposer(ctx, proposerAddress) {
+		blockHeight := req.Header.GetHeight()
 		// TODO: implement PoP trigger
 		fmt.Println("TODO: implement PoP trigger")
-		err := issueRDDL()
+		hexProposerAddress := hex.EncodeToString(proposerAddress)
+		conf := config.GetConfig()
+		tx_unsigned := GetReissuanceCommand(conf.ReissuanceAsset, blockHeight)
+		err := util.InitRDDLReissuanceProcess(ctx, hexProposerAddress, tx_unsigned, blockHeight)
 		if err != nil {
-			logger.Error("error while issuing RDDL", err)
+			logger.Error("error while initializing RDDL issuance", err)
 		}
 	}
-}
-
-// TODO: define final message
-func issueRDDL() error {
-	cfg := config.GetConfig()
-	client := osc.NewClient(cfg.IssuanceEndpoint, cfg.IssuancePort)
-
-	msg := osc.NewMessage("/rddl/token")
-	err := client.Send(msg)
-
-	return err
 }
 
 func isPoPHeight(height int64) bool {

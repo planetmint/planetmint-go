@@ -20,10 +20,15 @@ stake-denom = "{{ .PlmntConfig.StakeDenom }}"
 fee-denom = "{{ .PlmntConfig.FeeDenom }}"
 config-root-dir = "{{ .PlmntConfig.ConfigRootDir }}"
 pop-epochs = {{ .PlmntConfig.PoPEpochs }}
-issuance-endpoint = "{{ .PlmntConfig.IssuanceEndpoint }}"
-issuance-port = {{ .PlmntConfig.IssuancePort }}
+rpc-host = "{{ .PlmntConfig.RPCHost }}"
+rpc-port = {{ .PlmntConfig.RPCPort }}
+rpc-user = "{{ .PlmntConfig.RPCUser }}"
+rpc-password = "{{ .PlmntConfig.RPCPassword }}"
 mint-address = "{{ .PlmntConfig.MintAddress }}"
 issuance-service-dir = "{{ .PlmntConfig.IssuanceServiceDir }}"
+reissuance-asset = "{{ .PlmntConfig.ReissuanceAsset }}"
+validator-address = "{{ .PlmntConfig.ReissuanceAsset }}"
+
 `
 
 // Config defines Planetmint's top level configuration
@@ -34,10 +39,14 @@ type Config struct {
 	FeeDenom              string `mapstructure:"fee-denom" json:"fee-denom"`
 	ConfigRootDir         string `mapstructure:"config-root-dir" json:"config-root-dir"`
 	PoPEpochs             int    `mapstructure:"pop-epochs" json:"pop-epochs"`
-	IssuanceEndpoint      string `mapstructure:"issuance-endpoint" json:"issuance-endpoint"`
-	IssuancePort          int    `mapstructure:"issuance-port" json:"issuance-port"`
+	RPCHost               string `mapstructure:"rpc-host" json:"rpc-host"`
+	RPCPort               int    `mapstructure:"rpc-port" json:"rpc-port"`
+	RPCUser               string `mapstructure:"rpc-user" json:"rpc-user"`
+	RPCPassword           string `mapstructure:"rpc-password" json:"rpc-password"`
 	IssuanceServiceDir    string `mapstructure:"issuance-service-dir" json:"issuance-service-dir"`
 	MintAddress           string `mapstructure:"mint-address" json:"mint-address"`
+	ReissuanceAsset       string `mapstructure:"reissuance-asset" json:"reissuance-asset"`
+	ValidatorAddress      string `mapstructure:"validator-address" json:"validator-address"`
 }
 
 // cosmos-sdk wide global singleton
@@ -60,10 +69,14 @@ func DefaultConfig() *Config {
 		FeeDenom:              "plmnt",
 		ConfigRootDir:         filepath.Join(currentUser.HomeDir, ".planetmint-go"),
 		PoPEpochs:             24, // 24 CometBFT epochs of 5s equate 120s
-		IssuanceEndpoint:      "lab.r3c.network",
-		IssuancePort:          7401,
+		RPCHost:               "localhost",
+		RPCPort:               18884,
+		RPCUser:               "user",
+		RPCPassword:           "passwor",
 		IssuanceServiceDir:    "/opt/issuer_service",
 		MintAddress:           "default",
+		ReissuanceAsset:       "asset-id-or-name",
+		ValidatorAddress:      "plmnt1w5dww335zhh98pzv783hqre355ck3u4w4hjxcx",
 	}
 }
 

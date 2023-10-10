@@ -24,9 +24,13 @@ var (
 )
 
 const (
-	opWeightMsgMintToken = "op_weight_msg_mint_token"
+	opWeightMsgReissueRDDLProposal = "op_weight_msg_reissue_rddl_proposal"
 	// TODO: Determine the simulation weight value
-	defaultWeightMsgMintToken int = 100
+	defaultWeightMsgReissueRDDLProposal int = 100
+
+	opWeightMsgReissueRDDLResult = "op_weight_msg_reissue_rddl_result"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgReissueRDDLResult int = 100
 
 	// this line is used by starport scaffolding # simapp/module/const
 )
@@ -56,15 +60,26 @@ func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedP
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
 	operations := make([]simtypes.WeightedOperation, 0)
 
-	var weightMsgMintToken int
-	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgMintToken, &weightMsgMintToken, nil,
+	var weightMsgReissueRDDLProposal int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgReissueRDDLProposal, &weightMsgReissueRDDLProposal, nil,
 		func(_ *rand.Rand) {
-			weightMsgMintToken = defaultWeightMsgMintToken
+			weightMsgReissueRDDLProposal = defaultWeightMsgReissueRDDLProposal
 		},
 	)
 	operations = append(operations, simulation.NewWeightedOperation(
-		weightMsgMintToken,
-		daosimulation.SimulateMsgMintToken(am.accountKeeper, am.bankKeeper, am.keeper),
+		weightMsgReissueRDDLProposal,
+		daosimulation.SimulateMsgReissueRDDLProposal(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgReissueRDDLResult int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgReissueRDDLResult, &weightMsgReissueRDDLResult, nil,
+		func(_ *rand.Rand) {
+			weightMsgReissueRDDLResult = defaultWeightMsgReissueRDDLResult
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgReissueRDDLResult,
+		daosimulation.SimulateMsgReissueRDDLResult(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
 	// this line is used by starport scaffolding # simapp/module/operation
@@ -76,10 +91,18 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 func (am AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.WeightedProposalMsg {
 	return []simtypes.WeightedProposalMsg{
 		simulation.NewWeightedProposalMsg(
-			opWeightMsgMintToken,
-			defaultWeightMsgMintToken,
+			opWeightMsgReissueRDDLProposal,
+			defaultWeightMsgReissueRDDLProposal,
 			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
-				daosimulation.SimulateMsgMintToken(am.accountKeeper, am.bankKeeper, am.keeper)
+				daosimulation.SimulateMsgReissueRDDLProposal(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgReissueRDDLResult,
+			defaultWeightMsgReissueRDDLResult,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				daosimulation.SimulateMsgReissueRDDLResult(am.accountKeeper, am.bankKeeper, am.keeper)
 				return nil
 			},
 		),

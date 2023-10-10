@@ -373,8 +373,6 @@ github.com/creachadair/taskgroup v0.4.2 h1:jsBLdAJE42asreGss2xZGZ8fJra7WtwnHWeJF
 github.com/creachadair/taskgroup v0.4.2/go.mod h1:qiXUOSrbwAY3u0JPGTzObbE3yf9hcXHDKBZ2ZjpCbgM=
 github.com/creack/pty v1.1.7/go.mod h1:lj5s0c3V2DBrqTV7llrYr5NG6My20zk30Fl46Y7DoTY=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
-github.com/crgimenes/go-osc v0.0.0-20230219003551-cc22b44f06a3 h1:ffNeIlr2uX5jgPWlJq3pveSl9a3B6lftpuX978PMzk8=
-github.com/crgimenes/go-osc v0.0.0-20230219003551-cc22b44f06a3/go.mod h1:VgRiOtg6gFJfgCY2fMvfyORGwDM3EQ7Z9s/aO0k6cu8=
 github.com/danieljoos/wincred v1.1.2 h1:QLdCxFs1/Yl4zduvBdcHB8goaYk9RARS2SgLLRuAyr0=
 github.com/danieljoos/wincred v1.1.2/go.mod h1:GijpziifJoIBfYh+S7BbkdUTU4LfM+QnGqR5Vl2tAx0=
 github.com/davecgh/go-spew v0.0.0-20171005155431-ecdeabc65495/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
