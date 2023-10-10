@@ -39,6 +39,23 @@ func (k Keeper) GetMintRequestByHash(ctx sdk.Context, hash string) (val types.Mi
 	return val, true
 }
 
+func (k Keeper) IterateAllMintRequests(ctx sdk.Context, cb func(types.MintRequest) bool) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MintRequestHashKey))
+
+	iterator := store.Iterator(nil, nil)
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var mintRequest types.MintRequest
+		val := iterator.Value()
+		k.cdc.MustUnmarshal(val, &mintRequest)
+
+		if cb(mintRequest) {
+			break
+		}
+	}
+}
+
 func getMintRequestKeyBytes(key string) []byte {
 	bz := []byte(key)
 	return bz
