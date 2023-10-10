@@ -50,8 +50,13 @@ func MintRequestInvariants(k *Keeper) sdk.Invariant {
 		})
 
 		// compare total amount == inital amounts + mint request amounts
-		broken := genAmount.Add(mintAmount) != totalAmount
+		broken := !math.Int.Equal(genAmount.Add(mintAmount), totalAmount)
 
-		return sdk.FormatInvariant(types.ModuleName, "mint request and genesis amount coins", fmt.Sprintf("asd", 1)), broken
+		return sdk.FormatInvariant(types.ModuleName, "mint request and genesis amount coins", fmt.Sprintf(
+			"\t Genesis PLMNT tokens: %v\n"+
+				"\t Minted PLMNT tokens: %v\n"+
+				"\t Total PLMNT tokens: %v\n",
+			genAmount, mintAmount, totalAmount,
+		)), broken
 	}
 }
