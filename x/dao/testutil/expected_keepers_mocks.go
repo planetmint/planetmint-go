@@ -9,6 +9,7 @@ import (
 
 	types "github.com/cosmos/cosmos-sdk/types"
 	types0 "github.com/cosmos/cosmos-sdk/x/auth/types"
+	types1 "github.com/cosmos/cosmos-sdk/x/bank/types"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -110,6 +111,32 @@ func (m *MockBankKeeper) BlockedAddr(addr types.AccAddress) bool {
 func (mr *MockBankKeeperMockRecorder) BlockedAddr(addr interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BlockedAddr", reflect.TypeOf((*MockBankKeeper)(nil).BlockedAddr), addr)
+}
+
+// ExportGenesis mocks base method.
+func (m *MockBankKeeper) ExportGenesis(ctx types.Context) *types1.GenesisState {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ExportGenesis", ctx)
+	ret0, _ := ret[0].(*types1.GenesisState)
+	return ret0
+}
+
+// ExportGenesis indicates an expected call of ExportGenesis.
+func (mr *MockBankKeeperMockRecorder) ExportGenesis(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExportGenesis", reflect.TypeOf((*MockBankKeeper)(nil).ExportGenesis), ctx)
+}
+
+// IterateAllBalances mocks base method.
+func (m *MockBankKeeper) IterateAllBalances(ctx types.Context, cb func(types.AccAddress, types.Coin) bool) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "IterateAllBalances", ctx, cb)
+}
+
+// IterateAllBalances indicates an expected call of IterateAllBalances.
+func (mr *MockBankKeeperMockRecorder) IterateAllBalances(ctx, cb interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IterateAllBalances", reflect.TypeOf((*MockBankKeeper)(nil).IterateAllBalances), ctx, cb)
 }
 
 // MintCoins mocks base method.
