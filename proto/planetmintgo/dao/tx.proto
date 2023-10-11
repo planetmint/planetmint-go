@@ -8,9 +8,10 @@ option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
 
 // Msg defines the Msg service.
 service Msg {
-  rpc ReissueRDDLProposal (MsgReissueRDDLProposal) returns (MsgReissueRDDLProposalResponse);
-  rpc MintToken           (MsgMintToken          ) returns (MsgMintTokenResponse          );
-  rpc ReissueRDDLResult   (MsgReissueRDDLResult  ) returns (MsgReissueRDDLResultResponse  );
+  rpc ReissueRDDLProposal   (MsgReissueRDDLProposal  ) returns (MsgReissueRDDLProposalResponse  );
+  rpc MintToken             (MsgMintToken            ) returns (MsgMintTokenResponse            );
+  rpc ReissueRDDLResult     (MsgReissueRDDLResult    ) returns (MsgReissueRDDLResultResponse    );
+  rpc PopDistributionResult (MsgPopDistributionResult) returns (MsgPopDistributionResultResponse);
 }
 message MsgReissueRDDLProposal {
   string creator     = 1;
@@ -36,4 +37,14 @@ message MsgReissueRDDLResult {
 }
 
 message MsgReissueRDDLResultResponse {}
+
+message MsgPopDistributionResult {
+  string creator    = 1;
+  uint64 lastPop    = 2;
+  string daoTx      = 3;
+  string investorTx = 4;
+  string popTx      = 5;
+}
+
+message MsgPopDistributionResultResponse {}
 

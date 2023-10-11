@@ -1,0 +1,21 @@
+syntax = "proto3";
+package planetmintgo.dao;
+
+option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
+
+message DistributionOrder {
+  
+
+  string daoAddr = 1; 
+  string daoAmount = 2; 
+  string daoTxid = 3;
+  string investorAddr = 4; 
+  string investorAmount = 5; 
+  string investorTxid = 6; 
+  string popAddr = 7; 
+  string popAmount = 8;
+  string popTxid = 9; 
+  uint64 firstPop = 10; 
+  uint64 lastPop = 11;
+  string proposer = 12;
+}

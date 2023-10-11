@@ -3,6 +3,8 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/planetmint/planetmint-go/util"
@@ -33,6 +35,35 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 	reissuance.Proposer = msg.GetProposer()
 	reissuance.Rawtx = msg.GetTx()
 	k.StoreReissuance(ctx, reissuance)
+
+	cmd_args := strings.Split(msg.Tx, " ")
+	pop_distribution, found := k.LookupPoPDistribution(ctx)
+	if found {
+		if pop_distribution.GetFirstPop() == 0 && pop_distribution.GetLastPop() == 0 {
+			pop_distribution.FirstPop = msg.GetBlockHeight()
+			pop_distribution.LastPop = msg.GetBlockHeight()
+			pop_distribution.RddlAmount = cmd_args[2]
+		} else {
+			pop_distribution.LastPop = msg.GetBlockHeight()
+			amount_to_add, err := strconv.ParseUint(cmd_args[2], 10, 64)
+			if err != nil {
+
+			}
+			previous_sum, err := strconv.ParseUint(cmd_args[2], 10, 64)
+			if err != nil {
+
+			}
+			new_value := previous_sum + amount_to_add
+			pop_distribution.RddlAmount = strconv.FormatUint(new_value, 10)
+
+		}
+
+	} else {
+		pop_distribution.FirstPop = msg.GetBlockHeight()
+		pop_distribution.LastPop = msg.GetBlockHeight()
+		pop_distribution.RddlAmount = cmd_args[2]
+	}
+	k.StorePoPDistribution(ctx, pop_distribution)
 
 	return &types.MsgReissueRDDLProposalResponse{}, nil
 }

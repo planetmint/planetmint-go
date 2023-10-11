@@ -1,0 +1,11 @@
+syntax = "proto3";
+package planetmintgo.dao;
+
+option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
+
+message PoPDistribution {
+  
+  string rddlAmount = 1; 
+  uint64 firstPop = 2; 
+  uint64 lastPop = 3; 
+}

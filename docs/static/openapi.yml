@@ -75991,6 +75991,8 @@ definitions:
               type: string
   planetmintgo.dao.MsgMintTokenResponse:
     type: object
+  planetmintgo.dao.MsgPopDistributionResultResponse:
+    type: object
   planetmintgo.dao.MsgReissueRDDLProposalResponse:
     type: object
   planetmintgo.dao.MsgReissueRDDLResultResponse:
