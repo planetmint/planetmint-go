@@ -23,7 +23,7 @@ func InitRDDLReissuanceProcess(ctx sdk.Context, proposerAddress string, tx_unsig
 	if planetmintKeyring != "" {
 		cmdArgStr = fmt.Sprintf("%s --keyring-backend %s", cmdArgStr, planetmintKeyring)
 	}
-
+	fmt.Println("REISSUE: create Proposal")
 	cmd := exec.Command("bash", "-c", cmdArgStr)
 
 	var stdout, stderr bytes.Buffer
@@ -52,7 +52,7 @@ func SendRDDLReissuanceResult(ctx sdk.Context, proposerAddress string, txID stri
 	if planetmintKeyring != "" {
 		cmdArgStr = fmt.Sprintf("%s --keyring-backend %s", cmdArgStr, planetmintKeyring)
 	}
-
+	fmt.Println("REISSUE: create Result")
 	cmd := exec.Command("bash", "-c", cmdArgStr)
 
 	var stdout, stderr bytes.Buffer

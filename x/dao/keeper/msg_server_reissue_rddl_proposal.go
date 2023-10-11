@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/planetmint/planetmint-go/util"
@@ -15,11 +16,14 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 	if valid_result && msg.Proposer == validator_identity {
 		// 1. sign tx
 		// 2. broadcast tx
+		fmt.Println("REISSUE: Asset")
 		txID, err := util.ReissueAsset(msg.Tx)
 		if err == nil {
 			// 3. notarize result by notarizing the liquid tx-id
 			_ = util.SendRDDLReissuanceResult(ctx, msg.GetProposer(), txID, msg.GetBlockheight())
 			//TODO verify and  resolve error
+		} else {
+			fmt.Println("REISSUE: Asset reissuance failure")
 		}
 		//TODO: reissuance need to be initiated otherwise
 	}
