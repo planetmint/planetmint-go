@@ -1,6 +1,8 @@
 package ante
 
 import (
+	"fmt"
+
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/planetmint/planetmint-go/config"
@@ -19,9 +21,11 @@ func (cmad CheckReissuanceDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simu
 		if sdk.MsgTypeURL(msg) == "/planetmintgo.dao.MsgReissueRDDLProposal" {
 			MsgProposal, ok := msg.(*daotypes.MsgReissueRDDLProposal)
 			if ok {
+				fmt.Println("REISSUE: receive Proposal")
 				conf := config.GetConfig()
 				isValid := dao.IsValidReissuanceCommand(MsgProposal.GetTx(), conf.ReissuanceAsset, MsgProposal.GetBlockheight())
 				if !isValid {
+					fmt.Println("REISSUE: Invalid Proposal")
 					return ctx, errorsmod.Wrapf(daotypes.ErrReissuanceProposal, "error during CheckTx or ReCheckTx")
 				}
 			}

@@ -28,6 +28,7 @@ mint-address = "{{ .PlmntConfig.MintAddress }}"
 issuance-service-dir = "{{ .PlmntConfig.IssuanceServiceDir }}"
 reissuance-asset = "{{ .PlmntConfig.ReissuanceAsset }}"
 validator-address = "{{ .PlmntConfig.ReissuanceAsset }}"
+planetmint-keyring = "{{ .PlmntConfig.PlanetmintKeyring }}"
 
 `
 
@@ -47,6 +48,7 @@ type Config struct {
 	MintAddress           string `mapstructure:"mint-address" json:"mint-address"`
 	ReissuanceAsset       string `mapstructure:"reissuance-asset" json:"reissuance-asset"`
 	ValidatorAddress      string `mapstructure:"validator-address" json:"validator-address"`
+	PlanetmintKeyring     string `mapstructure:"planetmint-keyring" json:"planetmint-keyring"`
 }
 
 // cosmos-sdk wide global singleton
@@ -77,6 +79,7 @@ func DefaultConfig() *Config {
 		MintAddress:           "default",
 		ReissuanceAsset:       "asset-id-or-name",
 		ValidatorAddress:      "plmnt1w5dww335zhh98pzv783hqre355ck3u4w4hjxcx",
+		PlanetmintKeyring:     "",
 	}
 }
 
