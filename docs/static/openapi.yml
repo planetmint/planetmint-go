@@ -46437,42 +46437,6 @@ paths:
                         }
       tags:
         - Query
-  /github.com/planetmint/planetmint-go/asset/params:
-    get:
-      summary: Parameters queries the parameters of the module.
-      operationId: PlanetmintgoAssetParams
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              params:
-                description: params holds all the parameters of this module.
-                type: object
-            description: >-
-              QueryParamsResponse is response type for the Query/Params RPC
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      tags:
-        - Query
   /planetmint/planetmint-go/asset/get_cids_by_address/{address}/{lookupPeriodInMin}:
     get:
       summary: Queries a list of GetCIDsByAddress items.
@@ -46640,10 +46604,10 @@ paths:
           type: string
       tags:
         - Query
-  /github.com/planetmint/planetmint-go/dao/params:
+  /planetmint/planetmint-go/asset/params:
     get:
       summary: Parameters queries the parameters of the module.
-      operationId: PlanetmintgoDaoParams
+      operationId: PlanetmintgoAssetParams
       responses:
         '200':
           description: A successful response.
@@ -46946,125 +46910,10 @@ paths:
           type: string
       tags:
         - Query
-  /github.com/planetmint/planetmint-go/machine/get_machine_by_public_key/{publicKey}:
-    get:
-      summary: Queries a list of GetMachineByPublicKey items.
-      operationId: PlanetmintgoMachineGetMachineByPublicKey
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              machine:
-                type: object
-                properties:
-                  name:
-                    type: string
-                  ticker:
-                    type: string
-                  domain:
-                    type: string
-                  reissue:
-                    type: boolean
-                  amount:
-                    type: string
-                    format: uint64
-                  precision:
-                    type: string
-                    format: uint64
-                  issuerPlanetmint:
-                    type: string
-                  issuerLiquid:
-                    type: string
-                  machineId:
-                    type: string
-                  metadata:
-                    type: object
-                    properties:
-                      gps:
-                        type: string
-                      device:
-                        type: string
-                      assetDefinition:
-                        type: string
-                      additionalDataCID:
-                        type: string
-                  type:
-                    type: integer
-                    format: int64
-                  machineIdSignature:
-                    type: string
-                  address:
-                    type: string
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: publicKey
-          in: path
-          required: true
-          type: string
-      tags:
-        - Query
-  /github.com/planetmint/planetmint-go/machine/get_trust_anchor_status/{machineid}:
-    get:
-      summary: Queries a list of GetTrustAnchorStatus items.
-      operationId: PlanetmintgoMachineGetTrustAnchorStatus
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              machineid:
-                type: string
-              isactivated:
-                type: boolean
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: machineid
-          in: path
-          required: true
-          type: string
-      tags:
-        - Query
-  /github.com/planetmint/planetmint-go/machine/params:
+  /planetmint/planetmint-go/dao/params:
     get:
       summary: Parameters queries the parameters of the module.
-      operationId: PlanetmintgoMachineParams
+      operationId: PlanetmintgoDaoParams
       responses:
         '200':
           description: A successful response.
@@ -47171,6 +47020,157 @@ paths:
           in: path
           required: true
           type: string
+      tags:
+        - Query
+  /planetmint/planetmint-go/machine/get_machine_by_public_key/{publicKey}:
+    get:
+      summary: Queries a list of GetMachineByPublicKey items.
+      operationId: PlanetmintgoMachineGetMachineByPublicKey
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              machine:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  ticker:
+                    type: string
+                  domain:
+                    type: string
+                  reissue:
+                    type: boolean
+                  amount:
+                    type: string
+                    format: uint64
+                  precision:
+                    type: string
+                    format: uint64
+                  issuerPlanetmint:
+                    type: string
+                  issuerLiquid:
+                    type: string
+                  machineId:
+                    type: string
+                  metadata:
+                    type: object
+                    properties:
+                      gps:
+                        type: string
+                      device:
+                        type: string
+                      assetDefinition:
+                        type: string
+                      additionalDataCID:
+                        type: string
+                  type:
+                    type: integer
+                    format: int64
+                  machineIdSignature:
+                    type: string
+                  address:
+                    type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: publicKey
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /planetmint/planetmint-go/machine/get_trust_anchor_status/{machineid}:
+    get:
+      summary: Queries a list of GetTrustAnchorStatus items.
+      operationId: PlanetmintgoMachineGetTrustAnchorStatus
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              machineid:
+                type: string
+              isactivated:
+                type: boolean
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: machineid
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /planetmint/planetmint-go/machine/params:
+    get:
+      summary: Parameters queries the parameters of the module.
+      operationId: PlanetmintgoMachineParams
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params holds all the parameters of this module.
+                type: object
+            description: >-
+              QueryParamsResponse is response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
       tags:
         - Query
 definitions:

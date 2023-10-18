@@ -14,7 +14,7 @@ service Query {
   
   // Parameters queries the parameters of the module.
   rpc Params (QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/github.com/planetmint/planetmint-go/asset/params";
+    option (google.api.http).get = "/planetmint/planetmint-go/asset/params";
   
   }
   
