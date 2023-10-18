@@ -75989,6 +75989,8 @@ definitions:
               format: uint64
             liquidTxHash:
               type: string
+  planetmintgo.dao.MsgDistributionResultResponse:
+    type: object
   planetmintgo.dao.MsgMintTokenResponse:
     type: object
   planetmintgo.dao.MsgPopDistributionResultResponse:

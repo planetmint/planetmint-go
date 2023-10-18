@@ -40,11 +40,11 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 	pop_distribution, found := k.LookupPoPDistribution(ctx)
 	if found {
 		if pop_distribution.GetFirstPop() == 0 && pop_distribution.GetLastPop() == 0 {
-			pop_distribution.FirstPop = msg.GetBlockHeight()
-			pop_distribution.LastPop = msg.GetBlockHeight()
+			pop_distribution.FirstPop = msg.GetBlockheight()
+			pop_distribution.LastPop = msg.GetBlockheight()
 			pop_distribution.RddlAmount = cmd_args[2]
 		} else {
-			pop_distribution.LastPop = msg.GetBlockHeight()
+			pop_distribution.LastPop = msg.GetBlockheight()
 			amount_to_add, err := strconv.ParseUint(cmd_args[2], 10, 64)
 			if err != nil {
 
@@ -59,8 +59,8 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 		}
 
 	} else {
-		pop_distribution.FirstPop = msg.GetBlockHeight()
-		pop_distribution.LastPop = msg.GetBlockHeight()
+		pop_distribution.FirstPop = msg.GetBlockheight()
+		pop_distribution.LastPop = msg.GetBlockheight()
 		pop_distribution.RddlAmount = cmd_args[2]
 	}
 	k.StorePoPDistribution(ctx, pop_distribution)

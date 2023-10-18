@@ -24,7 +24,7 @@ func (k Keeper) LookupDistributionOrder(ctx sdk.Context, lastPopHeight uint64) (
 	return val, true
 }
 
-func (k Keeper) getDistributionRequestPage(ctx sdk.Context, key []byte, offset uint64, page_size uint64, all bool, reverse bool) (distribution_orders []types.Reissuance) {
+func (k Keeper) getDistributionRequestPage(ctx sdk.Context, key []byte, offset uint64, page_size uint64, all bool, reverse bool) (distribution_orders []types.DistributionOrder) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DistributionKey))
 
 	iterator := store.Iterator(nil, nil)
