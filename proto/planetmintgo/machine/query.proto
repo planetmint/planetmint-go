@@ -15,19 +15,19 @@ service Query {
   
   // Parameters queries the parameters of the module.
   rpc Params (QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/github.com/planetmint/planetmint-go/machine/params";
+    option (google.api.http).get = "/planetmint/planetmint-go/machine/params";
   
   }
   
   // Queries a list of GetMachineByPublicKey items.
   rpc GetMachineByPublicKey (QueryGetMachineByPublicKeyRequest) returns (QueryGetMachineByPublicKeyResponse) {
-    option (google.api.http).get = "/github.com/planetmint/planetmint-go/machine/get_machine_by_public_key/{publicKey}";
+    option (google.api.http).get = "/planetmint/planetmint-go/machine/get_machine_by_public_key/{publicKey}";
   
   }
   
   // Queries a list of GetTrustAnchorStatus items.
   rpc GetTrustAnchorStatus (QueryGetTrustAnchorStatusRequest) returns (QueryGetTrustAnchorStatusResponse) {
-    option (google.api.http).get = "/github.com/planetmint/planetmint-go/machine/get_trust_anchor_status/{machineid}";
+    option (google.api.http).get = "/planetmint/planetmint-go/machine/get_trust_anchor_status/{machineid}";
   
   }
   
