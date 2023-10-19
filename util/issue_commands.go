@@ -15,16 +15,10 @@ func InitRDDLReissuanceProcess(ctx sdk.Context, proposerAddress string, tx_unsig
 	//get_last_PoPBlockHeight() // TODO: to be read form the upcoming PoP-store
 	// Construct the command
 	sending_validator_address := config.GetConfig().ValidatorAddress
-	planetmintKeyring := config.GetConfig().PlanetmintKeyring
-
-	cmdArgStr := fmt.Sprintf("planetmint-god tx dao reissue-rddl-proposal %s '%s' %s --from %s -y",
-		proposerAddress, tx_unsigned, strconv.FormatInt(blk_height, 10),
-		sending_validator_address)
-	if planetmintKeyring != "" {
-		cmdArgStr = fmt.Sprintf("%s --keyring-backend %s", cmdArgStr, planetmintKeyring)
-	}
 	fmt.Println("REISSUE: create Proposal")
-	cmd := exec.Command("bash", "-c", cmdArgStr)
+	cmd := exec.Command("planetmint-god", "tx", "dao", "reissue-rddl-proposal",
+		"--from", sending_validator_address, "-y",
+		proposerAddress, tx_unsigned, strconv.FormatInt(blk_height, 10))
 
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
@@ -44,16 +38,10 @@ func InitRDDLReissuanceProcess(ctx sdk.Context, proposerAddress string, tx_unsig
 func SendRDDLReissuanceResult(ctx sdk.Context, proposerAddress string, txID string, blk_height uint64) error {
 	// Construct the command
 	sending_validator_address := config.GetConfig().ValidatorAddress
-	planetmintKeyring := config.GetConfig().PlanetmintKeyring
-
-	cmdArgStr := fmt.Sprintf("planetmint-god tx dao reissue-rddl-result %s '%s' %s --from %s -y",
-		proposerAddress, txID, strconv.FormatUint(blk_height, 10),
-		sending_validator_address)
-	if planetmintKeyring != "" {
-		cmdArgStr = fmt.Sprintf("%s --keyring-backend %s", cmdArgStr, planetmintKeyring)
-	}
 	fmt.Println("REISSUE: create Result")
-	cmd := exec.Command("bash", "-c", cmdArgStr)
+	cmd := exec.Command("planetmint-god", "tx", "dao", "reissue-rddl-result",
+		"--from", sending_validator_address, "-y",
+		proposerAddress, txID, strconv.FormatUint(blk_height, 10))
 
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
