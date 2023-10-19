@@ -17,31 +17,31 @@ service Query {
   
   // Parameters queries the parameters of the module.
   rpc Params (QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/planetmint/planetmint-go/dao/params";
+    option (google.api.http).get = "/planetmint/dao/params";
   
   }
   
   // Queries a list of GetMintRequestsByHash items.
   rpc GetMintRequestsByHash (QueryGetMintRequestsByHashRequest) returns (QueryGetMintRequestsByHashResponse) {
-    option (google.api.http).get = "/planetmint/planetmint-go/dao/get_mint_requests_by_hash/{hash}";
+    option (google.api.http).get = "/planetmint/dao/get_mint_requests_by_hash/{hash}";
   
   }
   
   // Queries a list of MintRequestsByAddress items.
   rpc MintRequestsByAddress (QueryMintRequestsByAddressRequest) returns (QueryMintRequestsByAddressResponse) {
-    option (google.api.http).get = "/planetmint/planetmint-go/dao/mint_requests_by_address/{address}";
+    option (google.api.http).get = "/planetmint/dao/mint_requests_by_address/{address}";
   
   }
   
   // Queries a list of GetReissuance items.
   rpc GetReissuance (QueryGetReissuanceRequest) returns (QueryGetReissuanceResponse) {
-    option (google.api.http).get = "/planetmint/planetmint-go/dao/get_reissuance/{blockHeight}";
+    option (google.api.http).get = "/planetmint/dao/get_reissuance/{blockHeight}";
   
   }
   
   // Queries a list of GetReissuances items.
   rpc GetReissuances (QueryGetReissuancesRequest) returns (QueryGetReissuancesResponse) {
-    option (google.api.http).get = "/planetmint/planetmint-go/dao/get_reissuances";
+    option (google.api.http).get = "/planetmint/dao/get_reissuances";
   
   }
 }
