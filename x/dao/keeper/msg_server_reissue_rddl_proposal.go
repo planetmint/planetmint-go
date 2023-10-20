@@ -12,8 +12,8 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	logger := ctx.Logger()
 
-	validator_identity, valid_result := util.GetValidatorCometBFTIdentity(ctx)
-	if valid_result && msg.Proposer == validator_identity {
+	validatorIdentity, validResult := util.GetValidatorCometBFTIdentity(ctx)
+	if validResult && msg.Proposer == validatorIdentity {
 		// 1. sign tx
 		// 2. broadcast tx
 		logger.Debug("REISSUE: Asset")

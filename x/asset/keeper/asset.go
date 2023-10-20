@@ -14,12 +14,12 @@ func (k Keeper) StoreAsset(ctx sdk.Context, msg types.MsgNotarizeAsset) {
 
 func (k Keeper) GetAsset(ctx sdk.Context, cid string) (msg types.MsgNotarizeAsset, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AssetKey))
-	creator_bytes := store.Get(GetAssetCIDBytes(cid))
-	if creator_bytes == nil {
+	creatorBytes := store.Get(GetAssetCIDBytes(cid))
+	if creatorBytes == nil {
 		return msg, false
 	}
 	msg.Cid = cid
-	msg.Creator = string(creator_bytes)
+	msg.Creator = string(creatorBytes)
 	return msg, true
 }
 
@@ -29,11 +29,11 @@ func (k Keeper) GetCidsByAddress(ctx sdk.Context, address string) (cids []string
 	reverseIterator := store.ReverseIterator(nil, nil)
 	defer reverseIterator.Close()
 	for ; reverseIterator.Valid(); reverseIterator.Next() {
-		address_bytes := reverseIterator.Value()
-		cid_bytes := reverseIterator.Key()
+		addressBytes := reverseIterator.Value()
+		cidBytes := reverseIterator.Key()
 
-		if string(address_bytes) == address {
-			cids = append(cids, string(cid_bytes))
+		if string(addressBytes) == address {
+			cids = append(cids, string(cidBytes))
 		}
 	}
 	return cids, len(cids) > 0

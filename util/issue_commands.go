@@ -10,15 +10,15 @@ import (
 	"github.com/planetmint/planetmint-go/config"
 )
 
-func InitRDDLReissuanceProcess(ctx sdk.Context, proposerAddress string, tx_unsigned string, blk_height int64) error {
+func InitRDDLReissuanceProcess(ctx sdk.Context, proposerAddress string, txUnsigned string, blockHeight int64) error {
 	//get_last_PoPBlockHeight() // TODO: to be read form the upcoming PoP-store
 	logger := ctx.Logger()
 	// Construct the command
-	sending_validator_address := config.GetConfig().ValidatorAddress
+	sendingValidatorAddress := config.GetConfig().ValidatorAddress
 	logger.Debug("REISSUE: create Proposal")
 	cmd := exec.Command("planetmint-god", "tx", "dao", "reissue-rddl-proposal",
-		"--from", sending_validator_address, "-y",
-		proposerAddress, tx_unsigned, strconv.FormatInt(blk_height, 10))
+		"--from", sendingValidatorAddress, "-y",
+		proposerAddress, txUnsigned, strconv.FormatInt(blockHeight, 10))
 
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
@@ -35,14 +35,14 @@ func InitRDDLReissuanceProcess(ctx sdk.Context, proposerAddress string, tx_unsig
 	return err
 }
 
-func SendRDDLReissuanceResult(ctx sdk.Context, proposerAddress string, txID string, blk_height int64) error {
+func SendRDDLReissuanceResult(ctx sdk.Context, proposerAddress string, txID string, blockHeight int64) error {
 	logger := ctx.Logger()
 	// Construct the command
-	sending_validator_address := config.GetConfig().ValidatorAddress
+	sendingValidatorAddress := config.GetConfig().ValidatorAddress
 	logger.Debug("REISSUE: create Result")
 	cmd := exec.Command("planetmint-god", "tx", "dao", "reissue-rddl-result",
-		"--from", sending_validator_address, "-y",
-		proposerAddress, txID, strconv.FormatInt(blk_height, 10))
+		"--from", sendingValidatorAddress, "-y",
+		proposerAddress, txID, strconv.FormatInt(blockHeight, 10))
 
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout

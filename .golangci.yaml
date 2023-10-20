@@ -8,5 +8,17 @@ linters:
     - gosimple
     - govet
     - ineffassign
+    - nosnakecase
     - staticcheck
     - unused
+issues:
+  exclude-rules:
+    - path: codec\.go
+      linters:
+        - nosnakecase
+    - path: app\/simulation_test\.go
+      linters:
+        - nosnakecase
+    - path: testutil\/rest\.go
+      linters:
+        - nosnakecase
