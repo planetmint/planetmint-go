@@ -2,7 +2,6 @@ package dao
 
 import (
 	"encoding/hex"
-	"fmt"
 
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/util"
@@ -21,7 +20,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	if isPoPHeight(req.Header.GetHeight()) && util.IsValidatorBlockProposer(ctx, proposerAddress) {
 		blockHeight := req.Header.GetHeight()
 		// TODO: implement PoP trigger
-		fmt.Println("TODO: implement PoP trigger")
+		logger.Info("TODO: implement PoP trigger")
 		hexProposerAddress := hex.EncodeToString(proposerAddress)
 		conf := config.GetConfig()
 		tx_unsigned := GetReissuanceCommand(conf.ReissuanceAsset, blockHeight)

@@ -3,7 +3,6 @@ package keeper
 import (
 	"bytes"
 	"context"
-	"log"
 	"os/exec"
 	"strings"
 
@@ -46,7 +45,7 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 	}
 
 	if k.isNFTCreationRequest(msg.Machine) && util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress) {
-		_ = k.issueMachineNFT(msg.Machine)
+		_ = k.issueMachineNFT(ctx, msg.Machine)
 		//TODO create NFTCreationMessage to be stored by all nodes
 		// if err != nil {
 		// 	return nil, types.ErrNFTIssuanceFailed
@@ -75,8 +74,9 @@ func validateExtendedPublicKey(issuer string, cfg chaincfg.Params) bool {
 	return isValidExtendedPublicKey
 }
 
-func (k msgServer) issueNFTAsset(name string, machine_address string) (asset_id string, contract string, err error) {
+func (k msgServer) issueNFTAsset(ctx sdk.Context, name string, machine_address string) (asset_id string, contract string, err error) {
 	conf := config.GetConfig()
+	logger := ctx.Logger()
 
 	cmdName := "poetry"
 	cmdArgs := []string{"run", "python", "issuer_service/issue2liquid.py", name, machine_address}
@@ -95,7 +95,7 @@ func (k msgServer) issueNFTAsset(name string, machine_address string) (asset_id 
 	// Execute the command
 	err = cmd.Run()
 	if err != nil {
-		log.Printf("cmd.Run() failed with %s\n", err)
+		logger.Error("cmd.Run() failed with %s\n", err)
 		err = errorsmod.Wrap(types.ErrMachineNFTIssuance, stderr.String())
 	} else {
 		lines := strings.Split(stdout.String(), "\n")
@@ -109,8 +109,8 @@ func (k msgServer) issueNFTAsset(name string, machine_address string) (asset_id 
 	return asset_id, contract, err
 }
 
-func (k msgServer) issueMachineNFT(machine *types.Machine) error {
-	_, _, err := k.issueNFTAsset(machine.Name, machine.Address)
+func (k msgServer) issueMachineNFT(ctx sdk.Context, machine *types.Machine) error {
+	_, _, err := k.issueNFTAsset(ctx, machine.Name, machine.Address)
 	return err
 	// asset registration is not performed in case of NFT issuance for machines
 	//asset_id, contract, err := k.issueNFTAsset(machine.Name, machine.Address)
