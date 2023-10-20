@@ -3,7 +3,6 @@ package util
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"os/exec"
 	"strconv"
 
@@ -13,9 +12,10 @@ import (
 
 func InitRDDLReissuanceProcess(ctx sdk.Context, proposerAddress string, tx_unsigned string, blk_height int64) error {
 	//get_last_PoPBlockHeight() // TODO: to be read form the upcoming PoP-store
+	logger := ctx.Logger()
 	// Construct the command
 	sending_validator_address := config.GetConfig().ValidatorAddress
-	fmt.Println("REISSUE: create Proposal")
+	logger.Debug("REISSUE: create Proposal")
 	cmd := exec.Command("planetmint-god", "tx", "dao", "reissue-rddl-proposal",
 		"--from", sending_validator_address, "-y",
 		proposerAddress, tx_unsigned, strconv.FormatInt(blk_height, 10))
@@ -36,9 +36,10 @@ func InitRDDLReissuanceProcess(ctx sdk.Context, proposerAddress string, tx_unsig
 }
 
 func SendRDDLReissuanceResult(ctx sdk.Context, proposerAddress string, txID string, blk_height uint64) error {
+	logger := ctx.Logger()
 	// Construct the command
 	sending_validator_address := config.GetConfig().ValidatorAddress
-	fmt.Println("REISSUE: create Result")
+	logger.Debug("REISSUE: create Result")
 	cmd := exec.Command("planetmint-god", "tx", "dao", "reissue-rddl-result",
 		"--from", sending_validator_address, "-y",
 		proposerAddress, txID, strconv.FormatUint(blk_height, 10))

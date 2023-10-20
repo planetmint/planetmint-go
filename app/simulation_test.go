@@ -179,7 +179,7 @@ func TestAppStateDeterminism(t *testing.T) {
 				baseapp.SetChainID(chainID),
 			)
 
-			fmt.Printf(
+			logger.Info(
 				"running non-determinism simulation; seed %d: %d/%d, attempt: %d/%d\n",
 				config.Seed, i+1, numSeeds, j+1, numTimesToRunPerSeed,
 			)
@@ -283,12 +283,12 @@ func TestAppImportExport(t *testing.T) {
 		simtestutil.PrintStats(db)
 	}
 
-	fmt.Printf("exporting genesis...\n")
+	logger.Info("exporting genesis...\n")
 
 	exported, err := bApp.ExportAppStateAndValidators(false, []string{}, []string{})
 	require.NoError(t, err)
 
-	fmt.Printf("importing genesis...\n")
+	logger.Info("importing genesis...\n")
 
 	newDB, newDir, _, _, err := simtestutil.SetupSimulation(
 		config,
@@ -338,7 +338,7 @@ func TestAppImportExport(t *testing.T) {
 	newApp.ModuleManager().InitGenesis(ctxB, bApp.AppCodec(), genesisState)
 	newApp.StoreConsensusParams(ctxB, exported.ConsensusParams)
 
-	fmt.Printf("comparing stores...\n")
+	logger.Info("comparing stores...\n")
 
 	storeKeysPrefixes := []storeKeysPrefixes{
 		{bApp.GetKey(authtypes.StoreKey), newApp.GetKey(authtypes.StoreKey), [][]byte{}},
@@ -367,7 +367,7 @@ func TestAppImportExport(t *testing.T) {
 		failedKVAs, failedKVBs := sdk.DiffKVStores(storeA, storeB, skp.Prefixes)
 		require.Equal(t, len(failedKVAs), len(failedKVBs), "unequal sets of key-values to compare")
 
-		fmt.Printf("compared %d different key/value pairs between %s and %s\n", len(failedKVAs), skp.A, skp.B)
+		logger.Info("compared %d different key/value pairs between %s and %s\n", len(failedKVAs), skp.A, skp.B)
 		require.Equal(t, 0, len(failedKVAs), simtestutil.GetSimulationLog(skp.A.Name(), bApp.SimulationManager().StoreDecoders, failedKVAs, failedKVBs))
 	}
 }
@@ -439,16 +439,16 @@ func TestAppSimulationAfterImport(t *testing.T) {
 	}
 
 	if stopEarly {
-		fmt.Println("can't export or import a zero-validator genesis, exiting test...")
+		logger.Info("can't export or import a zero-validator genesis, exiting test...")
 		return
 	}
 
-	fmt.Printf("exporting genesis...\n")
+	logger.Info("exporting genesis...\n")
 
 	exported, err := bApp.ExportAppStateAndValidators(true, []string{}, []string{})
 	require.NoError(t, err)
 
-	fmt.Printf("importing genesis...\n")
+	logger.Info("importing genesis...\n")
 
 	newDB, newDir, _, _, err := simtestutil.SetupSimulation(
 		config,
