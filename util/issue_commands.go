@@ -35,14 +35,14 @@ func InitRDDLReissuanceProcess(ctx sdk.Context, proposerAddress string, tx_unsig
 	return err
 }
 
-func SendRDDLReissuanceResult(ctx sdk.Context, proposerAddress string, txID string, blk_height uint64) error {
+func SendRDDLReissuanceResult(ctx sdk.Context, proposerAddress string, txID string, blk_height int64) error {
 	logger := ctx.Logger()
 	// Construct the command
 	sending_validator_address := config.GetConfig().ValidatorAddress
 	logger.Debug("REISSUE: create Result")
 	cmd := exec.Command("planetmint-god", "tx", "dao", "reissue-rddl-result",
 		"--from", sending_validator_address, "-y",
-		proposerAddress, txID, strconv.FormatUint(blk_height, 10))
+		proposerAddress, txID, strconv.FormatInt(blk_height, 10))
 
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout

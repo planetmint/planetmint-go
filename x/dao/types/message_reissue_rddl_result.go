@@ -10,7 +10,7 @@ const TypeMsgReissueRDDLResult = "reissue_rddl_result"
 
 var _ sdk.Msg = &MsgReissueRDDLResult{}
 
-func NewMsgReissueRDDLResult(creator string, proposer string, txId string, blockHeight uint64) *MsgReissueRDDLResult {
+func NewMsgReissueRDDLResult(creator string, proposer string, txId string, blockHeight int64) *MsgReissueRDDLResult {
 	return &MsgReissueRDDLResult{
 		Creator:     creator,
 		Proposer:    proposer,

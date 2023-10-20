@@ -46706,7 +46706,7 @@ paths:
                     type: string
                   blockHeight:
                     type: string
-                    format: uint64
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -46730,7 +46730,7 @@ paths:
           in: path
           required: true
           type: string
-          format: uint64
+          format: int64
       tags:
         - Query
   /planetmint/dao/get_reissuances:
@@ -46754,7 +46754,7 @@ paths:
                     type: string
                   blockHeight:
                     type: string
-                    format: uint64
+                    format: int64
               pagination:
                 type: object
                 properties:
@@ -76025,7 +76025,7 @@ definitions:
             type: string
           blockHeight:
             type: string
-            format: uint64
+            format: int64
   planetmintgo.dao.QueryGetReissuancesResponse:
     type: object
     properties:
@@ -76040,7 +76040,7 @@ definitions:
             type: string
           blockHeight:
             type: string
-            format: uint64
+            format: int64
       pagination:
         type: object
         properties:
@@ -76103,7 +76103,7 @@ definitions:
         type: string
       blockHeight:
         type: string
-        format: uint64
+        format: int64
   planetmintgo.machine.Machine:
     type: object
     properties:

@@ -21,7 +21,7 @@ func CmdReissueRDDLResult() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argProposer := args[0]
 			argTxId := args[1]
-			argBlockHeight, err := cast.ToUint64E(args[2])
+			argBlockHeight, err := cast.ToInt64E(args[2])
 			if err != nil {
 				return err
 			}
