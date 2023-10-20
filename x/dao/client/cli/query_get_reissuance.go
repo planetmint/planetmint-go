@@ -18,7 +18,7 @@ func CmdGetReissuance() *cobra.Command {
 		Short: "Query get_reissuance",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			reqBlockHeight, err := cast.ToUint64E(args[0])
+			reqBlockHeight, err := cast.ToInt64E(args[0])
 			if err != nil {
 				return err
 			}

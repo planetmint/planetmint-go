@@ -14,16 +14,16 @@ func (k msgServer) ReissueRDDLResult(goCtx context.Context, msg *types.MsgReissu
 
 	reissuance, found := k.LookupReissuance(ctx, msg.GetBlockHeight())
 	if !found {
-		return nil, errorsmod.Wrapf(types.ErrReissuanceNotFound, " for provided block height %s", strconv.FormatUint(msg.GetBlockHeight(), 10))
+		return nil, errorsmod.Wrapf(types.ErrReissuanceNotFound, " for provided block height %s", strconv.FormatInt(msg.GetBlockHeight(), 10))
 	}
 	if reissuance.GetBlockHeight() != msg.GetBlockHeight() {
-		return nil, errorsmod.Wrapf(types.ErrWrongBlockHeight, " for provided block height %s", strconv.FormatUint(msg.GetBlockHeight(), 10))
+		return nil, errorsmod.Wrapf(types.ErrWrongBlockHeight, " for provided block height %s", strconv.FormatInt(msg.GetBlockHeight(), 10))
 	}
 	if reissuance.GetProposer() != msg.GetProposer() {
-		return nil, errorsmod.Wrapf(types.ErrInvalidProposer, " for provided block height %s", strconv.FormatUint(msg.GetBlockHeight(), 10))
+		return nil, errorsmod.Wrapf(types.ErrInvalidProposer, " for provided block height %s", strconv.FormatInt(msg.GetBlockHeight(), 10))
 	}
 	if reissuance.GetTxId() != "" {
-		return nil, errorsmod.Wrapf(types.ErrTXAlreadySet, " for provided block height %s", strconv.FormatUint(msg.GetBlockHeight(), 10))
+		return nil, errorsmod.Wrapf(types.ErrTXAlreadySet, " for provided block height %s", strconv.FormatInt(msg.GetBlockHeight(), 10))
 	}
 	reissuance.TxId = msg.GetTxId()
 	k.StoreReissuance(ctx, reissuance)

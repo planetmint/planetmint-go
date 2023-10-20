@@ -21,7 +21,7 @@ func CmdReissueRDDLProposal() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argProposer := args[0]
 			argTx := args[1]
-			argBlockheight, err := cast.ToUint64E(args[2])
+			argBlockHeight, err := cast.ToInt64E(args[2])
 			if err != nil {
 				return err
 			}
@@ -35,7 +35,7 @@ func CmdReissueRDDLProposal() *cobra.Command {
 				clientCtx.GetFromAddress().String(),
 				argProposer,
 				argTx,
-				argBlockheight,
+				argBlockHeight,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

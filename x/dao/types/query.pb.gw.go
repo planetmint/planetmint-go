@@ -175,7 +175,7 @@ func request_Query_GetReissuance_0(ctx context.Context, marshaler runtime.Marsha
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "blockHeight")
 	}
 
-	protoReq.BlockHeight, err = runtime.Uint64(val)
+	protoReq.BlockHeight, err = runtime.Int64(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "blockHeight", err)
@@ -202,7 +202,7 @@ func local_request_Query_GetReissuance_0(ctx context.Context, marshaler runtime.
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "blockHeight")
 	}
 
-	protoReq.BlockHeight, err = runtime.Uint64(val)
+	protoReq.BlockHeight, err = runtime.Int64(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "blockHeight", err)
