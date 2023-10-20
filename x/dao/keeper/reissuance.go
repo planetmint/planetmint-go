@@ -24,7 +24,7 @@ func (k Keeper) LookupReissuance(ctx sdk.Context, height int64) (val types.Reiss
 	return val, true
 }
 
-func (k Keeper) getReissuancesPage(ctx sdk.Context, key []byte, offset uint64, page_size uint64, all bool, reverse bool) (reissuances []types.Reissuance) {
+func (k Keeper) getReissuancesPage(ctx sdk.Context, key []byte, offset uint64, pageSize uint64, all bool, reverse bool) (reissuances []types.Reissuance) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReissuanceBlockHeightKey))
 
 	iterator := store.Iterator(nil, nil)
@@ -36,9 +36,9 @@ func (k Keeper) getReissuancesPage(ctx sdk.Context, key []byte, offset uint64, p
 
 	for ; iterator.Valid(); iterator.Next() {
 		reissuance := iterator.Value()
-		var reissuance_org types.Reissuance
-		k.cdc.MustUnmarshal(reissuance, &reissuance_org)
-		reissuances = append(reissuances, reissuance_org)
+		var reissuanceOrg types.Reissuance
+		k.cdc.MustUnmarshal(reissuance, &reissuanceOrg)
+		reissuances = append(reissuances, reissuanceOrg)
 	}
 	return reissuances
 }

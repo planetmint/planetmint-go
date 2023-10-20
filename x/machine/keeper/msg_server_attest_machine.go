@@ -74,12 +74,12 @@ func validateExtendedPublicKey(issuer string, cfg chaincfg.Params) bool {
 	return isValidExtendedPublicKey
 }
 
-func (k msgServer) issueNFTAsset(ctx sdk.Context, name string, machine_address string) (asset_id string, contract string, err error) {
+func (k msgServer) issueNFTAsset(ctx sdk.Context, name string, machineAddress string) (assetID string, contract string, err error) {
 	conf := config.GetConfig()
 	logger := ctx.Logger()
 
 	cmdName := "poetry"
-	cmdArgs := []string{"run", "python", "issuer_service/issue2liquid.py", name, machine_address}
+	cmdArgs := []string{"run", "python", "issuer_service/issue2liquid.py", name, machineAddress}
 
 	// Create a new command
 	cmd := exec.Command(cmdName, cmdArgs...)
@@ -100,22 +100,22 @@ func (k msgServer) issueNFTAsset(ctx sdk.Context, name string, machine_address s
 	} else {
 		lines := strings.Split(stdout.String(), "\n")
 		if len(lines) == 3 {
-			asset_id = lines[0]
+			assetID = lines[0]
 			contract = lines[1]
 		} else {
 			err = errorsmod.Wrap(types.ErrMachineNFTIssuanceNoOutput, stderr.String())
 		}
 	}
-	return asset_id, contract, err
+	return assetID, contract, err
 }
 
 func (k msgServer) issueMachineNFT(ctx sdk.Context, machine *types.Machine) error {
 	_, _, err := k.issueNFTAsset(ctx, machine.Name, machine.Address)
 	return err
 	// asset registration is not performed in case of NFT issuance for machines
-	//asset_id, contract, err := k.issueNFTAsset(machine.Name, machine.Address)
+	//assetID, contract, err := k.issueNFTAsset(machine.Name, machine.Address)
 	// if err != nil {
 	// 	return err
 	// }
-	//return k.registerAsset(asset_id, contract)
+	//return k.registerAsset(assetID, contract)
 }

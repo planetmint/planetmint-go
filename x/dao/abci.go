@@ -23,8 +23,8 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 		logger.Info("TODO: implement PoP trigger")
 		hexProposerAddress := hex.EncodeToString(proposerAddress)
 		conf := config.GetConfig()
-		tx_unsigned := GetReissuanceCommand(conf.ReissuanceAsset, blockHeight)
-		err := util.InitRDDLReissuanceProcess(ctx, hexProposerAddress, tx_unsigned, blockHeight)
+		txUnsigned := GetReissuanceCommand(conf.ReissuanceAsset, blockHeight)
+		err := util.InitRDDLReissuanceProcess(ctx, hexProposerAddress, txUnsigned, blockHeight)
 		if err != nil {
 			logger.Error("error while initializing RDDL issuance", err)
 		}

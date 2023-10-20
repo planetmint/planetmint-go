@@ -40,8 +40,8 @@ func ValidateSignatureByteMsg(message []byte, signature string, publicKey string
 	}
 }
 
-func GetHexPubKey(ext_pub_key string) (string, error) {
-	xpubKey, err := hdkeychain.NewKeyFromString(ext_pub_key)
+func GetHexPubKey(extPubKey string) (string, error) {
+	xpubKey, err := hdkeychain.NewKeyFromString(extPubKey)
 	if err != nil {
 		return "", err
 	}
@@ -49,6 +49,6 @@ func GetHexPubKey(ext_pub_key string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	byte_key := pubKey.SerializeCompressed()
-	return hex.EncodeToString(byte_key), nil
+	byteKey := pubKey.SerializeCompressed()
+	return hex.EncodeToString(byteKey), nil
 }

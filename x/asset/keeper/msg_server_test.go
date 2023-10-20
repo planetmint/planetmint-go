@@ -29,11 +29,11 @@ func TestMsgServer(t *testing.T) {
 }
 
 func TestMsgServerNotarizeAsset(t *testing.T) {
-	ext_sk, _ := sample.ExtendedKeyPair(config.PlmntNetParams)
-	xskKey, _ := hdkeychain.NewKeyFromString(ext_sk)
+	extSk, _ := sample.ExtendedKeyPair(config.PlmntNetParams)
+	xskKey, _ := hdkeychain.NewKeyFromString(extSk)
 	privKey, _ := xskKey.ECPrivKey()
-	byte_key := privKey.Serialize()
-	sk := hex.EncodeToString(byte_key)
+	byteKey := privKey.Serialize()
+	sk := hex.EncodeToString(byteKey)
 	cid := sample.Asset()
 
 	msg := types.NewMsgNotarizeAsset(sk, cid)

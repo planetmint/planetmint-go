@@ -3,6 +3,7 @@ package keeper
 import (
 	"encoding/hex"
 	"errors"
+
 	"github.com/planetmint/planetmint-go/x/machine/types"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
@@ -18,21 +19,21 @@ func (k Keeper) StoreTrustAnchor(ctx sdk.Context, ta types.TrustAnchor, activate
 	} else {
 		appendValue = []byte{0}
 	}
-	pubKey_bytes, err := getTrustAnchorBytes(ta.Pubkey)
+	pubKeyBytes, err := getTrustAnchorBytes(ta.Pubkey)
 	if err != nil {
 		return errors.New("the given public key could not be decoded (malformed string)")
 	}
-	store.Set(pubKey_bytes, appendValue)
+	store.Set(pubKeyBytes, appendValue)
 	return nil
 }
 
 func (k Keeper) GetTrustAnchor(ctx sdk.Context, pubKey string) (val types.TrustAnchor, activated bool, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.taStoreKey), types.KeyPrefix(types.TrustAnchorKey))
-	pubKey_bytes, err := getTrustAnchorBytes(pubKey)
+	pubKeyBytes, err := getTrustAnchorBytes(pubKey)
 	if err != nil {
 		return val, false, false
 	}
-	trustAnchorActivated := store.Get(pubKey_bytes)
+	trustAnchorActivated := store.Get(pubKeyBytes)
 
 	if trustAnchorActivated == nil {
 		return val, false, false
