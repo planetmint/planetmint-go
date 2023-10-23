@@ -2,8 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"os/user"
-	"path/filepath"
 	"sync"
 )
 
@@ -18,7 +16,6 @@ asset-registry-endpoint = "{{ .PlmntConfig.AssetRegistryEndpoint }}"
 token-denom = "{{ .PlmntConfig.TokenDenom }}"
 stake-denom = "{{ .PlmntConfig.StakeDenom }}"
 fee-denom = "{{ .PlmntConfig.FeeDenom }}"
-config-root-dir = "{{ .PlmntConfig.ConfigRootDir }}"
 pop-epochs = {{ .PlmntConfig.PoPEpochs }}
 rpc-host = "{{ .PlmntConfig.RPCHost }}"
 rpc-port = {{ .PlmntConfig.RPCPort }}
@@ -37,7 +34,7 @@ type Config struct {
 	TokenDenom            string `mapstructure:"token-denom" json:"token-denom"`
 	StakeDenom            string `mapstructure:"stake-denom" json:"stake-denom"`
 	FeeDenom              string `mapstructure:"fee-denom" json:"fee-denom"`
-	ConfigRootDir         string `mapstructure:"config-root-dir" json:"config-root-dir"`
+	ConfigRootDir         string
 	PoPEpochs             int    `mapstructure:"pop-epochs" json:"pop-epochs"`
 	RPCHost               string `mapstructure:"rpc-host" json:"rpc-host"`
 	RPCPort               int    `mapstructure:"rpc-port" json:"rpc-port"`
@@ -57,17 +54,12 @@ var (
 
 // DefaultConfig returns planetmint's default configuration.
 func DefaultConfig() *Config {
-	currentUser, err := user.Current()
-	if err != nil {
-		panic(err)
-	}
-
 	return &Config{
 		AssetRegistryEndpoint: "https://assets.rddl.io/register_asset",
 		TokenDenom:            "plmnt",
 		StakeDenom:            "plmntstake",
 		FeeDenom:              "plmnt",
-		ConfigRootDir:         filepath.Join(currentUser.HomeDir, ".planetmint-go"),
+		ConfigRootDir:         "",
 		PoPEpochs:             24, // 24 CometBFT epochs of 5s equate 120s
 		RPCHost:               "localhost",
 		RPCPort:               18884,
@@ -86,6 +78,11 @@ func GetConfig() *Config {
 		plmntConfig = DefaultConfig()
 	})
 	return plmntConfig
+}
+
+func (config *Config) SetRoot(root string) *Config {
+	config.ConfigRootDir = root
+	return config
 }
 
 // SetWatchmenConfig sets Planetmint's configuration
