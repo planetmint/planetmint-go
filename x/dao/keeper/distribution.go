@@ -40,23 +40,23 @@ func (k Keeper) GetLastDistributionOrder(ctx sdk.Context) (val types.Distributio
 	return val, found
 }
 
-func (k Keeper) getDistributionRequestPage(ctx sdk.Context, key []byte, offset uint64, page_size uint64, all bool, reverse bool) (distribution_orders []types.DistributionOrder) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DistributionKey))
+// func (k Keeper) getDistributionRequestPage(ctx sdk.Context, key []byte, offset uint64, page_size uint64, all bool, reverse bool) (distribution_orders []types.DistributionOrder) {
+// 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DistributionKey))
 
-	iterator := store.Iterator(nil, nil)
-	defer iterator.Close()
-	if reverse {
-		iterator = store.ReverseIterator(nil, nil)
-		defer iterator.Close()
-	}
-	for ; iterator.Valid(); iterator.Next() {
-		distribution_order := iterator.Value()
-		var distribution_order_org types.DistributionOrder
-		k.cdc.MustUnmarshal(distribution_order, &distribution_order_org)
-		distribution_orders = append(distribution_orders, distribution_order_org)
-	}
-	return distribution_orders
-}
+// 	iterator := store.Iterator(nil, nil)
+// 	defer iterator.Close()
+// 	if reverse {
+// 		iterator = store.ReverseIterator(nil, nil)
+// 		defer iterator.Close()
+// 	}
+// 	for ; iterator.Valid(); iterator.Next() {
+// 		distribution_order := iterator.Value()
+// 		var distribution_order_org types.DistributionOrder
+// 		k.cdc.MustUnmarshal(distribution_order, &distribution_order_org)
+// 		distribution_orders = append(distribution_orders, distribution_order_org)
+// 	}
+// 	return distribution_orders
+// }
 
 func getLastPopBytes(height uint64) []byte {
 	// Adding 1 because 0 will be interpreted as nil, which is an invalid key
