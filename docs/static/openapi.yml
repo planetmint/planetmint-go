@@ -75987,10 +75987,10 @@ definitions:
         type: string
       firstPop:
         type: string
-        format: uint64
+        format: int64
       lastPop:
         type: string
-        format: uint64
+        format: int64
       proposer:
         type: string
   planetmintgo.dao.MintRequest:
