@@ -75964,6 +75964,35 @@ definitions:
         description: params holds all the parameters of this module.
         type: object
     description: QueryParamsResponse is response type for the Query/Params RPC method.
+  planetmintgo.dao.DistributionOrder:
+    type: object
+    properties:
+      daoAddr:
+        type: string
+      daoAmount:
+        type: string
+      daoTxid:
+        type: string
+      investorAddr:
+        type: string
+      investorAmount:
+        type: string
+      investorTxid:
+        type: string
+      popAddr:
+        type: string
+      popAmount:
+        type: string
+      popTxid:
+        type: string
+      firstPop:
+        type: string
+        format: uint64
+      lastPop:
+        type: string
+        format: uint64
+      proposer:
+        type: string
   planetmintgo.dao.MintRequest:
     type: object
     properties:
@@ -75989,6 +76018,8 @@ definitions:
               format: uint64
             liquidTxHash:
               type: string
+  planetmintgo.dao.MsgDistributionRequestResponse:
+    type: object
   planetmintgo.dao.MsgDistributionResultResponse:
     type: object
   planetmintgo.dao.MsgMintTokenResponse:

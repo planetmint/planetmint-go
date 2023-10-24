@@ -2,7 +2,6 @@ package dao
 
 import (
 	"encoding/hex"
-	"fmt"
 
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/util"
@@ -17,24 +16,43 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	proposerAddress := req.Header.GetProposerAddress()
 
 	// Check if node is block proposer
-
-	if isPoPHeight(req.Header.GetHeight()) && util.IsValidatorBlockProposer(ctx, proposerAddress) {
+	// take the following actions only once, that's why we filter for the Block Proposer
+	if util.IsValidatorBlockProposer(ctx, proposerAddress) {
 		blockHeight := req.Header.GetHeight()
-		// TODO: implement PoP trigger
-		fmt.Println("TODO: implement PoP trigger")
-		hexProposerAddress := hex.EncodeToString(proposerAddress)
-		conf := config.GetConfig()
-		tx_unsigned := GetReissuanceCommand(conf.ReissuanceAsset, blockHeight)
-		err := util.InitRDDLReissuanceProcess(ctx, hexProposerAddress, tx_unsigned, blockHeight)
-		if err != nil {
-			logger.Error("error while initializing RDDL issuance", err)
+		if isPoPHeight(blockHeight) {
+			ctx.Logger().Debug("TODO: implement PoP trigger")
+			hexProposerAddress := hex.EncodeToString(proposerAddress)
+			conf := config.GetConfig()
+			tx_unsigned := keeper.GetReissuanceCommand(conf.ReissuanceAsset, blockHeight)
+			err := util.InitRDDLReissuanceProcess(ctx, hexProposerAddress, tx_unsigned, blockHeight)
+			if err != nil {
+				logger.Error("error while initializing RDDL issuance", err)
+			}
+		}
+		if isDistributionHeight(blockHeight) {
+			// initialize the distribution message
+			distribution, err := k.GetDistributenForReissuedTokens(ctx, blockHeight)
+			if err != nil {
+				logger.Error("error while computing the RDDL distribution ", err)
+			}
+			err = util.SendRDDLDistributionRequest(ctx, distribution)
+			if err == nil {
+				ctx.Logger().Error("sending the distribution request failed")
+			}
+
 		}
 	}
+
 }
 
 func isPoPHeight(height int64) bool {
 	cfg := config.GetConfig()
 	return height%int64(cfg.PoPEpochs) == 0
+}
+
+func isDistributionHeight(height int64) bool {
+	cfg := config.GetConfig()
+	return height%int64(cfg.DistributionEpochs) == 0
 }
 
 func EndBlocker(ctx sdk.Context, req abci.RequestEndBlock, k keeper.Keeper) {
