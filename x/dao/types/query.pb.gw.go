@@ -175,7 +175,7 @@ func request_Query_GetReissuance_0(ctx context.Context, marshaler runtime.Marsha
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "blockHeight")
 	}
 
-	protoReq.BlockHeight, err = runtime.Uint64(val)
+	protoReq.BlockHeight, err = runtime.Int64(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "blockHeight", err)
@@ -202,7 +202,7 @@ func local_request_Query_GetReissuance_0(ctx context.Context, marshaler runtime.
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "blockHeight")
 	}
 
-	protoReq.BlockHeight, err = runtime.Uint64(val)
+	protoReq.BlockHeight, err = runtime.Int64(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "blockHeight", err)
@@ -515,15 +515,15 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4}, []string{"github.com", "planetmint", "planetmint-go", "dao", "params"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"planetmint", "dao", "params"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_GetMintRequestsByHash_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"planetmint", "planetmint-go", "dao", "get_mint_requests_by_hash", "hash"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_GetMintRequestsByHash_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"planetmint", "dao", "get_mint_requests_by_hash", "hash"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_MintRequestsByAddress_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"planetmint", "planetmint-go", "dao", "mint_requests_by_address", "address"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_MintRequestsByAddress_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"planetmint", "dao", "mint_requests_by_address", "address"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_GetReissuance_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"planetmint", "planetmint-go", "dao", "get_reissuance", "blockHeight"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_GetReissuance_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"planetmint", "dao", "get_reissuance", "blockHeight"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_GetReissuances_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"planetmint", "planetmint-go", "dao", "get_reissuances"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_GetReissuances_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"planetmint", "dao", "get_reissuances"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (

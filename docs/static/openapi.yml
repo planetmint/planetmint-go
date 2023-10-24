@@ -46437,43 +46437,7 @@ paths:
                         }
       tags:
         - Query
-  /github.com/planetmint/planetmint-go/asset/params:
-    get:
-      summary: Parameters queries the parameters of the module.
-      operationId: PlanetmintgoAssetParams
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              params:
-                description: params holds all the parameters of this module.
-                type: object
-            description: >-
-              QueryParamsResponse is response type for the Query/Params RPC
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      tags:
-        - Query
-  /planetmint/planetmint-go/asset/get_cids_by_address/{address}/{lookupPeriodInMin}:
+  /planetmint/asset/get_cids_by_address/{address}/{lookupPeriodInMin}:
     get:
       summary: Queries a list of GetCIDsByAddress items.
       operationId: PlanetmintgoAssetGetCIDsByAddress
@@ -46601,7 +46565,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /planetmint/planetmint-go/asset/get_notarized_asset/{cid}:
+  /planetmint/asset/get_notarized_asset/{cid}:
     get:
       summary: Queries a list of GetNotarizedAsset items.
       operationId: PlanetmintgoAssetGetNotarizedAsset
@@ -46640,10 +46604,10 @@ paths:
           type: string
       tags:
         - Query
-  /github.com/planetmint/planetmint-go/dao/params:
+  /planetmint/asset/params:
     get:
       summary: Parameters queries the parameters of the module.
-      operationId: PlanetmintgoDaoParams
+      operationId: PlanetmintgoAssetParams
       responses:
         '200':
           description: A successful response.
@@ -46676,7 +46640,7 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
-  /planetmint/planetmint-go/dao/get_mint_requests_by_hash/{hash}:
+  /planetmint/dao/get_mint_requests_by_hash/{hash}:
     get:
       summary: Queries a list of GetMintRequestsByHash items.
       operationId: PlanetmintgoDaoGetMintRequestsByHash
@@ -46721,7 +46685,7 @@ paths:
           type: string
       tags:
         - Query
-  /planetmint/planetmint-go/dao/get_reissuance/{blockHeight}:
+  /planetmint/dao/get_reissuance/{blockHeight}:
     get:
       summary: Queries a list of GetReissuance items.
       operationId: PlanetmintgoDaoGetReissuance
@@ -46742,7 +46706,7 @@ paths:
                     type: string
                   blockHeight:
                     type: string
-                    format: uint64
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -46766,10 +46730,10 @@ paths:
           in: path
           required: true
           type: string
-          format: uint64
+          format: int64
       tags:
         - Query
-  /planetmint/planetmint-go/dao/get_reissuances:
+  /planetmint/dao/get_reissuances:
     get:
       summary: Queries a list of GetReissuances items.
       operationId: PlanetmintgoDaoGetReissuances
@@ -46790,7 +46754,7 @@ paths:
                     type: string
                   blockHeight:
                     type: string
-                    format: uint64
+                    format: int64
               pagination:
                 type: object
                 properties:
@@ -46896,7 +46860,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /planetmint/planetmint-go/dao/mint_requests_by_address/{address}:
+  /planetmint/dao/mint_requests_by_address/{address}:
     get:
       summary: Queries a list of MintRequestsByAddress items.
       operationId: PlanetmintgoDaoMintRequestsByAddress
@@ -46946,7 +46910,119 @@ paths:
           type: string
       tags:
         - Query
-  /github.com/planetmint/planetmint-go/machine/get_machine_by_public_key/{publicKey}:
+  /planetmint/dao/params:
+    get:
+      summary: Parameters queries the parameters of the module.
+      operationId: PlanetmintgoDaoParams
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params holds all the parameters of this module.
+                type: object
+            description: >-
+              QueryParamsResponse is response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /planetmint/machine/get_machine_by_address/{address}:
+    get:
+      summary: Queries a list of GetMachineByAddress items.
+      operationId: PlanetmintgoMachineGetMachineByAddress
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              machine:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  ticker:
+                    type: string
+                  domain:
+                    type: string
+                  reissue:
+                    type: boolean
+                  amount:
+                    type: string
+                    format: uint64
+                  precision:
+                    type: string
+                    format: uint64
+                  issuerPlanetmint:
+                    type: string
+                  issuerLiquid:
+                    type: string
+                  machineId:
+                    type: string
+                  metadata:
+                    type: object
+                    properties:
+                      gps:
+                        type: string
+                      device:
+                        type: string
+                      assetDefinition:
+                        type: string
+                      additionalDataCID:
+                        type: string
+                  type:
+                    type: integer
+                    format: int64
+                  machineIdSignature:
+                    type: string
+                  address:
+                    type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /planetmint/machine/get_machine_by_public_key/{publicKey}:
     get:
       summary: Queries a list of GetMachineByPublicKey items.
       operationId: PlanetmintgoMachineGetMachineByPublicKey
@@ -47022,7 +47098,7 @@ paths:
           type: string
       tags:
         - Query
-  /github.com/planetmint/planetmint-go/machine/get_trust_anchor_status/{machineid}:
+  /planetmint/machine/get_trust_anchor_status/{machineid}:
     get:
       summary: Queries a list of GetTrustAnchorStatus items.
       operationId: PlanetmintgoMachineGetTrustAnchorStatus
@@ -47061,7 +47137,7 @@ paths:
           type: string
       tags:
         - Query
-  /github.com/planetmint/planetmint-go/machine/params:
+  /planetmint/machine/params:
     get:
       summary: Parameters queries the parameters of the module.
       operationId: PlanetmintgoMachineParams
@@ -47095,82 +47171,6 @@ paths:
                     '@type':
                       type: string
                   additionalProperties: {}
-      tags:
-        - Query
-  /planetmint-go/machine/get_machine_by_address/{address}:
-    get:
-      summary: Queries a list of GetMachineByAddress items.
-      operationId: PlanetmintgoMachineGetMachineByAddress
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              machine:
-                type: object
-                properties:
-                  name:
-                    type: string
-                  ticker:
-                    type: string
-                  domain:
-                    type: string
-                  reissue:
-                    type: boolean
-                  amount:
-                    type: string
-                    format: uint64
-                  precision:
-                    type: string
-                    format: uint64
-                  issuerPlanetmint:
-                    type: string
-                  issuerLiquid:
-                    type: string
-                  machineId:
-                    type: string
-                  metadata:
-                    type: object
-                    properties:
-                      gps:
-                        type: string
-                      device:
-                        type: string
-                      assetDefinition:
-                        type: string
-                      additionalDataCID:
-                        type: string
-                  type:
-                    type: integer
-                    format: int64
-                  machineIdSignature:
-                    type: string
-                  address:
-                    type: string
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: address
-          in: path
-          required: true
-          type: string
       tags:
         - Query
 definitions:
@@ -76060,7 +76060,7 @@ definitions:
             type: string
           blockHeight:
             type: string
-            format: uint64
+            format: int64
   planetmintgo.dao.QueryGetReissuancesResponse:
     type: object
     properties:
@@ -76075,7 +76075,7 @@ definitions:
             type: string
           blockHeight:
             type: string
-            format: uint64
+            format: int64
       pagination:
         type: object
         properties:
@@ -76138,7 +76138,7 @@ definitions:
         type: string
       blockHeight:
         type: string
-        format: uint64
+        format: int64
   planetmintgo.machine.Machine:
     type: object
     properties:

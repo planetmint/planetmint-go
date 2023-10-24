@@ -3,12 +3,7 @@ package keeper
 import (
 	"bytes"
 	"context"
-	"encoding/json"
-	"io"
-	"log"
-	"net/http"
 	"os/exec"
-	"strconv"
 	"strings"
 
 	config "github.com/planetmint/planetmint-go/config"
@@ -50,10 +45,11 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 	}
 
 	if k.isNFTCreationRequest(msg.Machine) && util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress) {
-		err := k.issueMachineNFT(msg.Machine)
-		if err != nil {
-			return nil, types.ErrNFTIssuanceFailed
-		}
+		_ = k.issueMachineNFT(ctx, msg.Machine)
+		//TODO create NFTCreationMessage to be stored by all nodes
+		// if err != nil {
+		// 	return nil, types.ErrNFTIssuanceFailed
+		// }
 	}
 
 	if msg.Machine.GetType() == 0 { // 0 == RDDL_MACHINE_UNDEFINED
@@ -78,11 +74,12 @@ func validateExtendedPublicKey(issuer string, cfg chaincfg.Params) bool {
 	return isValidExtendedPublicKey
 }
 
-func (k msgServer) issueNFTAsset(name string, machine_address string) (asset_id string, contract string, err error) {
+func (k msgServer) issueNFTAsset(ctx sdk.Context, name string, machineAddress string) (assetID string, contract string, err error) {
 	conf := config.GetConfig()
+	logger := ctx.Logger()
 
 	cmdName := "poetry"
-	cmdArgs := []string{"run", "python", "issuer_service/issue2liquid.py", name, machine_address}
+	cmdArgs := []string{"run", "python", "issuer_service/issue2liquid.py", name, machineAddress}
 
 	// Create a new command
 	cmd := exec.Command(cmdName, cmdArgs...)
@@ -98,71 +95,27 @@ func (k msgServer) issueNFTAsset(name string, machine_address string) (asset_id 
 	// Execute the command
 	err = cmd.Run()
 	if err != nil {
-		log.Fatalf("cmd.Run() failed with %s\n", err)
+		logger.Error("cmd.Run() failed with %s\n", err)
 		err = errorsmod.Wrap(types.ErrMachineNFTIssuance, stderr.String())
 	} else {
 		lines := strings.Split(stdout.String(), "\n")
 		if len(lines) == 3 {
-			asset_id = lines[0]
+			assetID = lines[0]
 			contract = lines[1]
 		} else {
 			err = errorsmod.Wrap(types.ErrMachineNFTIssuanceNoOutput, stderr.String())
 		}
 	}
-	return asset_id, contract, err
-}
-func (k msgServer) registerAsset(asset_id string, contract string) error {
-
-	conf := config.GetConfig()
-
-	// Create your request payload
-	data := map[string]interface{}{
-		"asset_id": asset_id,
-		"contract": contract,
-	}
-
-	jsonData, err := json.Marshal(data)
-	if err != nil {
-		return errorsmod.Wrap(types.ErrAssetRegistryReqFailure, "Marshall "+err.Error())
-	}
-
-	req, err := http.NewRequest("POST", conf.AssetRegistryEndpoint, bytes.NewBuffer(jsonData))
-	if err != nil {
-		return errorsmod.Wrap(types.ErrAssetRegistryReqFailure, "Request creation: "+err.Error())
-	}
-
-	// Set headers
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("accept", "application/json")
-
-	// Send request
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return errorsmod.Wrap(types.ErrAssetRegistryReqSending, err.Error())
-	}
-	defer resp.Body.Close()
-
-	// Read response
-	if resp.StatusCode > 299 {
-		return errorsmod.Wrap(types.ErrAssetRegistryRepsonse, "Error reading response body:"+strconv.Itoa(resp.StatusCode))
-	}
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return errorsmod.Wrap(types.ErrAssetRegistryRepsonse, "Error reading response body:"+err.Error())
-	}
-	result_obj := string(body)
-	if strings.Contains(result_obj, asset_id) {
-		return nil
-	} else {
-		return errorsmod.Wrap(types.ErrAssetRegistryRepsonse, "does not confirm asset registration")
-	}
+	return assetID, contract, err
 }
 
-func (k msgServer) issueMachineNFT(machine *types.Machine) error {
-	asset_id, contract, err := k.issueNFTAsset(machine.Name, machine.Address)
-	if err != nil {
-		return err
-	}
-	return k.registerAsset(asset_id, contract)
+func (k msgServer) issueMachineNFT(ctx sdk.Context, machine *types.Machine) error {
+	_, _, err := k.issueNFTAsset(ctx, machine.Name, machine.Address)
+	return err
+	// asset registration is not performed in case of NFT issuance for machines
+	//assetID, contract, err := k.issueNFTAsset(machine.Name, machine.Address)
+	// if err != nil {
+	// 	return err
+	// }
+	//return k.registerAsset(assetID, contract)
 }

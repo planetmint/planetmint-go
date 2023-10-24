@@ -17,8 +17,8 @@ func createNDistributionOrder(keeper *keeper.Keeper, ctx sdk.Context, n int) []t
 	items := make([]types.DistributionOrder, n)
 	for i := range items {
 		var amount int = 10000
-		items[i].FirstPop = uint64(i)*1000 + 1
-		items[i].LastPop = uint64(i+1) * 1000
+		items[i].FirstPop = int64(i)*1000 + 1
+		items[i].LastPop = int64(i+1) * 1000
 		items[i].DaoAddr = fmt.Sprintf("DAO%v", i)
 		items[i].DaoAmount = fmt.Sprintf("%v", float64(amount)*types.PercentageDao)
 		items[i].InvestorAddr = fmt.Sprintf("INVESTOR%v", i)
@@ -59,23 +59,23 @@ func TestTokenDistribution(t *testing.T) {
 	assert.Nil(t, err2)
 	assert.Nil(t, err3)
 	sum := amount1 + amount2 + amount3
-	exp_sum := uint64(99869000000) * uint64(Amount1stBatch) // add the [0] of the
-	assert.Equal(t, exp_sum, sum)
+	expSum := uint64(99869000000) * uint64(Amount1stBatch) // add the [0] of the
+	assert.Equal(t, expSum, sum)
 
-	var last_distribution types.DistributionOrder
-	last_distribution.LastPop = 780
-	k.StoreDistributionOrder(ctx, last_distribution)
-	latest_distribution, err0 := k.GetDistributenForReissuedTokens(ctx, 999)
+	var lastDistribution types.DistributionOrder
+	lastDistribution.LastPop = 780
+	k.StoreDistributionOrder(ctx, lastDistribution)
+	lastDistribution, err0 := k.GetDistributenForReissuedTokens(ctx, 999)
 	assert.Nil(t, err0)
-	amount1, err1 = strconv.ParseUint(latest_distribution.DaoAmount, 10, 64)
-	amount2, err2 = strconv.ParseUint(latest_distribution.InvestorAmount, 10, 64)
-	amount3, err3 = strconv.ParseUint(latest_distribution.PopAmount, 10, 64)
+	amount1, err1 = strconv.ParseUint(lastDistribution.DaoAmount, 10, 64)
+	amount2, err2 = strconv.ParseUint(lastDistribution.InvestorAmount, 10, 64)
+	amount3, err3 = strconv.ParseUint(lastDistribution.PopAmount, 10, 64)
 	assert.Nil(t, err1)
 	assert.Nil(t, err2)
 	assert.Nil(t, err3)
 	sum = amount1 + amount2 + amount3
-	exp_sum = uint64(99869000000) * uint64(Amount2ndBatch) // add the [0] of the
-	assert.Equal(t, exp_sum, sum)
+	expSum = uint64(99869000000) * uint64(Amount2ndBatch) // add the [0] of the
+	assert.Equal(t, expSum, sum)
 	assert.Equal(t, reissuances, Amount1stBatch+Amount2ndBatch)
 
 }

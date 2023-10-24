@@ -19,7 +19,7 @@ func (k msgServer) DistributionResult(goCtx context.Context, msg *types.MsgDistr
 		distribution.InvestorTxid = msg.InvestorTxid
 		k.StoreDistributionOrder(ctx, distribution)
 	} else {
-		return nil, errorsmod.Wrapf(types.ErrDistributionNotFound, " for provided block height %s", strconv.FormatUint(msg.GetLastPop(), 10))
+		return nil, errorsmod.Wrapf(types.ErrDistributionNotFound, " for provided block height %s", strconv.FormatInt(msg.GetLastPop(), 10))
 	}
 
 	return &types.MsgDistributionResultResponse{}, nil

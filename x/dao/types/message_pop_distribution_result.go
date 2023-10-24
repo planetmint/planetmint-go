@@ -10,7 +10,7 @@ const TypeMsgPopDistributionResult = "pop_distribution_result"
 
 var _ sdk.Msg = &MsgPopDistributionResult{}
 
-func NewMsgPopDistributionResult(creator string, lastPop uint64, daoTx string, investorTx string, popTx string) *MsgPopDistributionResult {
+func NewMsgPopDistributionResult(creator string, lastPop int64, daoTx string, investorTx string, popTx string) *MsgPopDistributionResult {
 	return &MsgPopDistributionResult{
 		Creator:    creator,
 		LastPop:    lastPop,

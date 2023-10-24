@@ -20,7 +20,7 @@ message MsgReissueRDDLProposal {
   string creator     = 1;
   string proposer    = 2;
   string tx          = 3;
-  uint64 blockheight = 4;
+  int64  blockHeight = 4;
 }
 
 message MsgReissueRDDLProposalResponse {}
@@ -36,14 +36,14 @@ message MsgReissueRDDLResult {
   string creator     = 1;
   string proposer    = 2;
   string txId        = 3;
-  uint64 blockHeight = 4;
+  int64  blockHeight = 4;
 }
 
 message MsgReissueRDDLResultResponse {}
 
 message MsgPopDistributionResult {
   string creator    = 1;
-  uint64 lastPop    = 2;
+  int64 lastPop     = 2;
   string daoTx      = 3;
   string investorTx = 4;
   string popTx      = 5;
@@ -53,7 +53,7 @@ message MsgPopDistributionResultResponse {}
 
 message MsgDistributionResult {
   string creator      = 1;
-  uint64 lastPop      = 2;
+  int64 lastPop       = 2;
   string daoTxid      = 3;
   string investorTxid = 4;
   string popTxid      = 5;

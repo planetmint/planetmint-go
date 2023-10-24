@@ -19,7 +19,7 @@ func CmdPopDistributionResult() *cobra.Command {
 		Short: "Broadcast message PopDistributionResult",
 		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argLastPop, err := cast.ToUint64E(args[0])
+			argLastPop, err := cast.ToInt64E(args[0])
 			if err != nil {
 				return err
 			}

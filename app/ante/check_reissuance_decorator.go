@@ -15,15 +15,16 @@ func NewCheckReissuanceDecorator() CheckReissuanceDecorator {
 }
 
 func (cmad CheckReissuanceDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (sdk.Context, error) {
+	logger := ctx.Logger()
 	for _, msg := range tx.GetMsgs() {
 		if sdk.MsgTypeURL(msg) == "/planetmintgo.dao.MsgReissueRDDLProposal" {
 			MsgProposal, ok := msg.(*daotypes.MsgReissueRDDLProposal)
 			if ok {
-				ctx.Logger().Debug("REISSUE: receive Proposal")
+				logger.Debug("REISSUE: receive Proposal")
 				conf := config.GetConfig()
-				isValid := keeper.IsValidReissuanceCommand(MsgProposal.GetTx(), conf.ReissuanceAsset, MsgProposal.GetBlockheight())
+				isValid := keeper.IsValidReissuanceCommand(MsgProposal.GetTx(), conf.ReissuanceAsset, MsgProposal.GetBlockHeight())
 				if !isValid {
-					ctx.Logger().Debug("REISSUE: Invalid Proposal")
+					logger.Debug("REISSUE: Invalid Proposal")
 					return ctx, errorsmod.Wrapf(daotypes.ErrReissuanceProposal, "error during CheckTx or ReCheckTx")
 				}
 			}

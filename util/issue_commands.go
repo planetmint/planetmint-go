@@ -3,7 +3,6 @@ package util
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"os/exec"
 	"strconv"
 
@@ -12,10 +11,7 @@ import (
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
-func execCommand(cmdArgsStr string) error {
-
-	cmd := exec.Command("bash", "-c", cmdArgsStr)
-
+func execCommand(cmd *exec.Cmd) error {
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
@@ -31,62 +27,50 @@ func execCommand(cmdArgsStr string) error {
 	return err
 }
 
-func InitRDDLReissuanceProcess(ctx sdk.Context, proposerAddress string, tx_unsigned string, blk_height int64) error {
+func InitRDDLReissuanceProcess(ctx sdk.Context, proposerAddress string, txUnsigned string, blockHeight int64) error {
 	//get_last_PoPBlockHeight() // TODO: to be read form the upcoming PoP-store
+	logger := ctx.Logger()
 	// Construct the command
-	sending_validator_address := config.GetConfig().ValidatorAddress
-	planetmintKeyring := config.GetConfig().PlanetmintKeyring
+	sendingValidatorAddress := config.GetConfig().ValidatorAddress
+	logger.Debug("REISSUE: create Proposal")
+	cmd := exec.Command("planetmint-god", "tx", "dao", "reissue-rddl-proposal",
+		"--from", sendingValidatorAddress, "-y",
+		proposerAddress, txUnsigned, strconv.FormatInt(blockHeight, 10))
 
-	cmdArgStr := fmt.Sprintf("planetmint-god tx dao reissue-rddl-proposal %s '%s' %s --from %s -y",
-		proposerAddress, tx_unsigned, strconv.FormatInt(blk_height, 10),
-		sending_validator_address)
-	if planetmintKeyring != "" {
-		cmdArgStr = fmt.Sprintf("%s --keyring-backend %s", cmdArgStr, planetmintKeyring)
-	}
-	ctx.Logger().Debug("REISSUE: create Proposal")
-	return execCommand(cmdArgStr)
+	logger.Debug("REISSUE: create Proposal")
+	return execCommand(cmd)
 }
 
-func SendRDDLReissuanceResult(ctx sdk.Context, proposerAddress string, txID string, blk_height uint64) error {
+func SendRDDLReissuanceResult(ctx sdk.Context, proposerAddress string, txID string, blockHeight int64) error {
+	logger := ctx.Logger()
 	// Construct the command
-	sending_validator_address := config.GetConfig().ValidatorAddress
-	planetmintKeyring := config.GetConfig().PlanetmintKeyring
-
-	cmdArgStr := fmt.Sprintf("planetmint-god tx dao reissue-rddl-result %s '%s' %s --from %s -y",
-		proposerAddress, txID, strconv.FormatUint(blk_height, 10),
-		sending_validator_address)
-	if planetmintKeyring != "" {
-		cmdArgStr = fmt.Sprintf("%s --keyring-backend %s", cmdArgStr, planetmintKeyring)
-	}
-	ctx.Logger().Debug("REISSUE: create Result")
-	return execCommand(cmdArgStr)
+	sendingValidatorAddress := config.GetConfig().ValidatorAddress
+	logger.Debug("REISSUE: create Result")
+	cmd := exec.Command("planetmint-god", "tx", "dao", "reissue-rddl-result",
+		"--from", sendingValidatorAddress, "-y",
+		proposerAddress, txID, strconv.FormatInt(blockHeight, 10))
+	logger.Debug("REISSUE: create Result")
+	return execCommand(cmd)
 }
 
 func SendRDDLDistributionRequest(ctx sdk.Context, distribution types.DistributionOrder) error {
+	logger := ctx.Logger()
 	// Construct the command
-	sending_validator_address := config.GetConfig().ValidatorAddress
-	planetmintKeyring := config.GetConfig().PlanetmintKeyring
-
-	cmdArgStr := fmt.Sprintf("planetmint-god tx dao distribution-request '%s' --from %s -y",
-		distribution.String(), sending_validator_address)
-	if planetmintKeyring != "" {
-		cmdArgStr = fmt.Sprintf("%s --keyring-backend %s", cmdArgStr, planetmintKeyring)
-	}
-	ctx.Logger().Debug("REISSUE: create Result")
-	return execCommand(cmdArgStr)
+	sendingValidatorAddress := config.GetConfig().ValidatorAddress
+	cmd := exec.Command("planetmint-god", "tx", "dao", "distribution-request",
+		"--from", sendingValidatorAddress, "-y", "'"+distribution.String()+"'")
+	logger.Debug("REISSUE: create Result")
+	return execCommand(cmd)
 }
 
-func SendRDDLDistributionResult(ctx sdk.Context, last_pop string, dao_txid string, inv_txid string, pop_txid string) error {
+func SendRDDLDistributionResult(ctx sdk.Context, lastPoP string, daoTxid string, invTxid string, popTxid string) error {
+	logger := ctx.Logger()
 	// Construct the command
-	sending_validator_address := config.GetConfig().ValidatorAddress
-	planetmintKeyring := config.GetConfig().PlanetmintKeyring
-
-	cmdArgStr := fmt.Sprintf("planetmint-god tx dao distribution-result %s %s %s %s --from %s -y",
-		last_pop, dao_txid, inv_txid, pop_txid,
-		sending_validator_address)
-	if planetmintKeyring != "" {
-		cmdArgStr = fmt.Sprintf("%s --keyring-backend %s", cmdArgStr, planetmintKeyring)
-	}
-	ctx.Logger().Debug("REISSUE: create Result")
-	return execCommand(cmdArgStr)
+	sendingValidatorAddress := config.GetConfig().ValidatorAddress
+	logger.Debug("REISSUE: create Result")
+	cmd := exec.Command("planetmint-god", "tx", "dao", "distribution-result",
+		"--from", sendingValidatorAddress, "-y",
+		lastPoP, daoTxid, invTxid, popTxid)
+	logger.Debug("REISSUE: create Result")
+	return execCommand(cmd)
 }

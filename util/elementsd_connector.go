@@ -16,12 +16,12 @@ type ReissueResult struct {
 	Vin  int    `json:"vin"`
 }
 
-func ReissueAsset(reissue_tx string) (txid string, err error) {
+func ReissueAsset(reissueTx string) (txid string, err error) {
 	conf := config.GetConfig()
-	cmd_args := strings.Split(reissue_tx, " ")
+	cmdArgs := strings.Split(reissueTx, " ")
 	cmd := exec.Command("/usr/local/bin/elements-cli", "-rpcpassword="+conf.RPCPassword,
 		"-rpcuser="+conf.RPCUser, "-rpcport="+strconv.Itoa(conf.RPCPort), "-rpcconnect="+conf.RPCHost,
-		cmd_args[0], cmd_args[1], cmd_args[2])
+		cmdArgs[0], cmdArgs[1], cmdArgs[2])
 
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout

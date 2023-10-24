@@ -77,7 +77,7 @@ func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 				return err
 			}
 
-			customAppTemplate, customAppConfig := initAppConfig()
+			customAppTemplate, customAppConfig := initAppConfig(initClientCtx)
 			customTMConfig := initTendermintConfig()
 			return server.InterceptConfigsPreRunHandler(
 				cmd, customAppTemplate, customAppConfig, customTMConfig,
@@ -345,7 +345,7 @@ func (a appCreator) appExport(
 
 // initAppConfig helps to override default appConfig template and configs.
 // return "", nil if no custom configuration is required for the application.
-func initAppConfig() (string, interface{}) {
+func initAppConfig(clientCtx client.Context) (string, interface{}) {
 	// The following code snippet is just for reference.
 
 	type CustomAppConfig struct {
@@ -371,6 +371,7 @@ func initAppConfig() (string, interface{}) {
 	srvCfg.MinGasPrices = "0stake"
 
 	plmntCfg := planetmintconfig.DefaultConfig()
+	plmntCfg.SetRoot(clientCtx.HomeDir)
 
 	customAppConfig := CustomAppConfig{
 		Config:      *srvCfg,

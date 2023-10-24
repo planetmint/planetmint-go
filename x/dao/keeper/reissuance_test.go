@@ -15,7 +15,7 @@ import (
 func createNReissuances(k *keeper.Keeper, ctx sdk.Context, n int) []types.Reissuance {
 	items := make([]types.Reissuance, n)
 	for i := range items {
-		items[i].BlockHeight = uint64(i)
+		items[i].BlockHeight = int64(i)
 		items[i].Proposer = fmt.Sprintf("proposer_%v", i)
 		items[i].Rawtx = keeper.GetReissuanceCommand("asset_id", int64(i))
 		items[i].TxId = ""

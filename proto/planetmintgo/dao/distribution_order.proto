@@ -15,7 +15,7 @@ message DistributionOrder {
   string popAddr = 7; 
   string popAmount = 8;
   string popTxid = 9; 
-  uint64 firstPop = 10; 
-  uint64 lastPop = 11;
+  int64 firstPop = 10; 
+  int64 lastPop = 11;
   string proposer = 12;
 }
