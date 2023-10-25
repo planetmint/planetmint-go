@@ -2,8 +2,6 @@ package keeper
 
 import (
 	"context"
-	"strconv"
-	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/planetmint/planetmint-go/util"
@@ -34,35 +32,5 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 	reissuance.Proposer = msg.GetProposer()
 	reissuance.Rawtx = msg.GetTx()
 	k.StoreReissuance(ctx, reissuance)
-
-	cmdArgs := strings.Split(msg.Tx, " ")
-	popDistribution, found := k.LookupPoPDistribution(ctx)
-	if found {
-		if popDistribution.GetFirstPop() == 0 && popDistribution.GetLastPop() == 0 {
-			popDistribution.FirstPop = msg.GetBlockHeight()
-			popDistribution.LastPop = msg.GetBlockHeight()
-			popDistribution.RddlAmount = cmdArgs[2]
-		} else {
-			popDistribution.LastPop = msg.GetBlockHeight()
-			addedAmount, err := strconv.ParseUint(cmdArgs[2], 10, 64)
-			if err != nil {
-				ctx.Logger().Error("ReissueProposal: could not parse string to integer: ", err.Error())
-			}
-			previousSum, err := strconv.ParseUint(cmdArgs[2], 10, 64)
-			if err != nil {
-				ctx.Logger().Error("ReissueProposal: could not parse string to integer: ", err.Error())
-			}
-			newValue := previousSum + addedAmount
-			popDistribution.RddlAmount = strconv.FormatUint(newValue, 10)
-
-		}
-
-	} else {
-		popDistribution.FirstPop = msg.GetBlockHeight()
-		popDistribution.LastPop = msg.GetBlockHeight()
-		popDistribution.RddlAmount = cmdArgs[2]
-	}
-	k.StorePoPDistribution(ctx, popDistribution)
-
 	return &types.MsgReissueRDDLProposalResponse{}, nil
 }
