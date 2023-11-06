@@ -224,9 +224,8 @@ func (s *E2ETestSuite) TestMachineAllowanceAttestation() {
 		"--yes",
 	}
 
-	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, feegrant.NewCmdFeeGrant(), args)
+	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, feegrant.NewCmdFeeGrant(), args)
 	s.Require().NoError(err)
-	fmt.Println(out)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
 
@@ -244,9 +243,8 @@ func (s *E2ETestSuite) TestMachineAllowanceAttestation() {
 		string(machineJSON),
 	}
 
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
+	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
 	s.Require().NoError(err)
-	fmt.Println(out)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
 
