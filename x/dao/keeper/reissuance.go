@@ -9,11 +9,11 @@ import (
 )
 
 func GetReissuanceCommand(assetID string, BlockHeight int64) string {
-	return "reissueasset " + assetID + " 99869000000"
+	return "reissueasset " + assetID + " 998.69000000"
 }
 
 func IsValidReissuanceCommand(reissuanceStr string, assetID string, BlockHeight int64) bool {
-	expected := "reissueasset " + assetID + " 99869000000"
+	expected := "reissueasset " + assetID + " 998.69000000"
 	return reissuanceStr == expected
 }
 

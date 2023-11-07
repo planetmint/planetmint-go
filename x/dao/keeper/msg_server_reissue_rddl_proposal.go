@@ -23,7 +23,7 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 			_ = util.SendRDDLReissuanceResult(ctx, msg.GetProposer(), txID, msg.GetBlockHeight())
 			//TODO verify and  resolve error
 		} else {
-			logger.Debug("REISSUE: Asset reissuance failure")
+			logger.Error("REISSUE: Asset reissuance failure: " + err.Error())
 		}
 	}
 

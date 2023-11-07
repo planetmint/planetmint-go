@@ -31,7 +31,7 @@ func ReissueAsset(reissueTx string) (txid string, err error) {
 	errstr := stderr.String()
 
 	if err != nil || len(errstr) > 0 {
-		err = errors.New("reissuance of RDDL failed")
+		err = errors.New("reissuance of RDDL failed: " + errstr)
 	} else {
 		var txobj ReissueResult
 		err = json.Unmarshal(stdout.Bytes(), &txobj)

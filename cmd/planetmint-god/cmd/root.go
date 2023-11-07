@@ -370,7 +370,7 @@ func initAppConfig(clientCtx client.Context) (string, interface{}) {
 	// In simapp, we set the min gas prices to 0.
 	srvCfg.MinGasPrices = "0stake"
 
-	plmntCfg := planetmintconfig.DefaultConfig()
+	plmntCfg := planetmintconfig.GetConfig()
 	plmntCfg.SetRoot(clientCtx.HomeDir)
 
 	customAppConfig := CustomAppConfig{

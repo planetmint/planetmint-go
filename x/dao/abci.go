@@ -36,7 +36,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 				logger.Error("error while computing the RDDL distribution ", err)
 			}
 			err = util.SendRDDLDistributionRequest(ctx, distribution)
-			if err == nil {
+			if err != nil {
 				logger.Error("sending the distribution request failed")
 			}
 

@@ -63,7 +63,7 @@ func getLastPopBytes(height int64) []byte {
 	return big.NewInt(height + 1).Bytes()
 }
 
-func ComputeDistribution(lastReissuance int64, BlockHeight int64, amount uint64) (distribution types.DistributionOrder) {
+func ComputeDistribution(lastReissuance int64, BlockHeight int64, amount float64) (distribution types.DistributionOrder) {
 	conf := config.GetConfig()
 	distribution.FirstPop = lastReissuance
 	distribution.LastPop = BlockHeight
@@ -72,21 +72,21 @@ func ComputeDistribution(lastReissuance int64, BlockHeight int64, amount uint64)
 	distribution.InvestorAddr = conf.DistributionAddrInv
 	distribution.PopAddr = conf.DistributionAddrPoP
 
-	distribution.DaoAmount = strconv.FormatUint(uint64(float64(amount)*types.PercentageDao), 10)
-	distribution.InvestorAmount = strconv.FormatUint(uint64(float64(amount)*types.PercentageInvestor), 10)
-	distribution.PopAmount = strconv.FormatUint(uint64(float64(amount)*types.PercentagePop), 10)
+	distribution.DaoAmount = strconv.FormatFloat(amount*types.PercentageDao, 'e', 8, 64)
+	distribution.InvestorAmount = strconv.FormatFloat(amount*types.PercentageInvestor, 'e', 8, 64)
+	distribution.PopAmount = strconv.FormatFloat(amount*types.PercentagePop, 'e', 8, 64)
 
 	return distribution
 }
 
-func getUintFromTXString(ctx sdk.Context, tx string) (amount uint64, err error) {
+func getFloat64FromTXString(ctx sdk.Context, tx string) (amount float64, err error) {
 	subStrings := strings.Split(tx, " ")
 	if len(subStrings) < 3 {
 		ctx.Logger().Error("Reissue TX string is shorter than expected. " + tx)
 	} else {
 		value := subStrings[2]
 
-		amount, err = strconv.ParseUint(value, 10, 64)
+		amount, err = strconv.ParseFloat(value, 64)
 		if err != nil {
 			ctx.Logger().Error("Reissue TX string value is invalid " + subStrings[2])
 		}
@@ -102,11 +102,11 @@ func (k Keeper) GetDistributenForReissuedTokens(ctx sdk.Context, blockHeight int
 	}
 
 	reissuances := k.getReissuancesRange(ctx, lastPoP)
-	var overallAmount uint64 = 0
+	var overallAmount float64 = 0
 	for index, obj := range reissuances {
 		if (index == 0 && lastPoP == 0 && obj.BlockHeight == 0) || //corner case (beginning of he chain)
 			(int64(lastPoP) < int64(obj.BlockHeight) && int64(obj.BlockHeight) <= blockHeight) {
-			amount, err := getUintFromTXString(ctx, obj.Rawtx)
+			amount, err := getFloat64FromTXString(ctx, obj.Rawtx)
 			if err == nil {
 				overallAmount = overallAmount + amount
 			}
