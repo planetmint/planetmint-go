@@ -24,8 +24,7 @@ rpc-password = "{{ .PlmntConfig.RPCPassword }}"
 mint-address = "{{ .PlmntConfig.MintAddress }}"
 issuance-service-dir = "{{ .PlmntConfig.IssuanceServiceDir }}"
 reissuance-asset = "{{ .PlmntConfig.ReissuanceAsset }}"
-validator-address = "{{ .PlmntConfig.ReissuanceAsset }}"
-
+validator-address = "{{ .PlmntConfig.ValidatorAddress }}"
 `
 
 // Config defines Planetmint's top level configuration
