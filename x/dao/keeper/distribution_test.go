@@ -46,9 +46,10 @@ func TestDistributionOrder(t *testing.T) {
 
 func TestTokenDistribution(t *testing.T) {
 	k, ctx := keepertest.DaoKeeper(t)
+	var reissuanceValue uint64 = 99869000000
 	reissuances := 1000
-	Amount1stBatch := 781
-	Amount2ndBatch := 219
+	var Amount1stBatch uint64 = 781
+	var Amount2ndBatch uint64 = 219
 	_ = createNReissuances(k, ctx, reissuances)
 	distribution, err := k.GetDistributenForReissuedTokens(ctx, 780)
 	assert.Nil(t, err)
@@ -59,7 +60,7 @@ func TestTokenDistribution(t *testing.T) {
 	assert.Nil(t, err2)
 	assert.Nil(t, err3)
 	sum := amount1 + amount2 + amount3
-	expSum := uint64(99869000000) * uint64(Amount1stBatch) // add the [0] of the
+	expSum := reissuanceValue * Amount1stBatch // add the [0] of the
 	assert.Equal(t, expSum, sum)
 
 	var lastDistribution types.DistributionOrder
@@ -74,8 +75,8 @@ func TestTokenDistribution(t *testing.T) {
 	assert.Nil(t, err2)
 	assert.Nil(t, err3)
 	sum = amount1 + amount2 + amount3
-	expSum = uint64(99869000000) * uint64(Amount2ndBatch) // add the [0] of the
+	expSum = reissuanceValue * Amount2ndBatch // add the [0] of the
 	assert.Equal(t, expSum, sum)
-	assert.Equal(t, reissuances, Amount1stBatch+Amount2ndBatch)
+	assert.Equal(t, uint64(reissuances), Amount1stBatch+Amount2ndBatch)
 
 }
