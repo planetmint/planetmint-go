@@ -30,3 +30,7 @@ func (k Keeper) SetParams(ctx sdk.Context, params types.Params) error {
 
 	return nil
 }
+
+func (k Keeper) GetMintAddress(ctx sdk.Context) (mintAddress string) {
+	return k.GetParams(ctx).MintAddress
+}
