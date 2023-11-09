@@ -9,7 +9,7 @@ const TypeMsgUpdateParams = "update_params"
 
 var _ sdk.Msg = &MsgUpdateParams{}
 
-func NewMsgUpdateParams(creator string, params *Params) *MsgUpdateParams {
+func NewMsgUpdateParams(creator string, params Params) *MsgUpdateParams {
 	return &MsgUpdateParams{
 		Creator: creator,
 		Params:  params,

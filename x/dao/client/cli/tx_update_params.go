@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"encoding/json"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -32,7 +33,7 @@ func CmdUpdateParams() *cobra.Command {
 
 			msg := types.NewMsgUpdateParams(
 				clientCtx.GetFromAddress().String(),
-				argParams,
+				*argParams,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

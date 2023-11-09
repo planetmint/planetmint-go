@@ -4,6 +4,8 @@ package planetmintgo.dao;
 
 import "planetmintgo/dao/mint_request.proto";
 import "planetmintgo/dao/params.proto";
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
 
 option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
 
@@ -41,7 +43,10 @@ message MsgReissueRDDLResultResponse {}
 
 message MsgUpdateParams {
   string creator = 1;
-  Params params  = 2;
+  // params defines the x/dao parameters to update.
+  //
+  // NOTE: All parameters must be supplied.
+  Params params = 2 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
 }
 
 message MsgUpdateParamsResponse {}
