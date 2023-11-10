@@ -323,118 +323,6 @@ func (m *MsgReissueRDDLResultResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgReissueRDDLResultResponse proto.InternalMessageInfo
 
-type MsgPopDistributionResult struct {
-	Creator    string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
-	LastPop    int64  `protobuf:"varint,2,opt,name=lastPop,proto3" json:"lastPop,omitempty"`
-	DaoTx      string `protobuf:"bytes,3,opt,name=daoTx,proto3" json:"daoTx,omitempty"`
-	InvestorTx string `protobuf:"bytes,4,opt,name=investorTx,proto3" json:"investorTx,omitempty"`
-	PopTx      string `protobuf:"bytes,5,opt,name=popTx,proto3" json:"popTx,omitempty"`
-}
-
-func (m *MsgPopDistributionResult) Reset()         { *m = MsgPopDistributionResult{} }
-func (m *MsgPopDistributionResult) String() string { return proto.CompactTextString(m) }
-func (*MsgPopDistributionResult) ProtoMessage()    {}
-func (*MsgPopDistributionResult) Descriptor() ([]byte, []int) {
-	return fileDescriptor_7117c47dbc1828c7, []int{6}
-}
-func (m *MsgPopDistributionResult) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgPopDistributionResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgPopDistributionResult.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgPopDistributionResult) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgPopDistributionResult.Merge(m, src)
-}
-func (m *MsgPopDistributionResult) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgPopDistributionResult) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgPopDistributionResult.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgPopDistributionResult proto.InternalMessageInfo
-
-func (m *MsgPopDistributionResult) GetCreator() string {
-	if m != nil {
-		return m.Creator
-	}
-	return ""
-}
-
-func (m *MsgPopDistributionResult) GetLastPop() int64 {
-	if m != nil {
-		return m.LastPop
-	}
-	return 0
-}
-
-func (m *MsgPopDistributionResult) GetDaoTx() string {
-	if m != nil {
-		return m.DaoTx
-	}
-	return ""
-}
-
-func (m *MsgPopDistributionResult) GetInvestorTx() string {
-	if m != nil {
-		return m.InvestorTx
-	}
-	return ""
-}
-
-func (m *MsgPopDistributionResult) GetPopTx() string {
-	if m != nil {
-		return m.PopTx
-	}
-	return ""
-}
-
-type MsgPopDistributionResultResponse struct {
-}
-
-func (m *MsgPopDistributionResultResponse) Reset()         { *m = MsgPopDistributionResultResponse{} }
-func (m *MsgPopDistributionResultResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgPopDistributionResultResponse) ProtoMessage()    {}
-func (*MsgPopDistributionResultResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_7117c47dbc1828c7, []int{7}
-}
-func (m *MsgPopDistributionResultResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgPopDistributionResultResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgPopDistributionResultResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgPopDistributionResultResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgPopDistributionResultResponse.Merge(m, src)
-}
-func (m *MsgPopDistributionResultResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgPopDistributionResultResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgPopDistributionResultResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgPopDistributionResultResponse proto.InternalMessageInfo
-
 type MsgDistributionResult struct {
 	Creator      string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
 	LastPop      int64  `protobuf:"varint,2,opt,name=lastPop,proto3" json:"lastPop,omitempty"`
@@ -447,7 +335,7 @@ func (m *MsgDistributionResult) Reset()         { *m = MsgDistributionResult{} }
 func (m *MsgDistributionResult) String() string { return proto.CompactTextString(m) }
 func (*MsgDistributionResult) ProtoMessage()    {}
 func (*MsgDistributionResult) Descriptor() ([]byte, []int) {
-	return fileDescriptor_7117c47dbc1828c7, []int{8}
+	return fileDescriptor_7117c47dbc1828c7, []int{6}
 }
 func (m *MsgDistributionResult) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -518,7 +406,7 @@ func (m *MsgDistributionResultResponse) Reset()         { *m = MsgDistributionRe
 func (m *MsgDistributionResultResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgDistributionResultResponse) ProtoMessage()    {}
 func (*MsgDistributionResultResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_7117c47dbc1828c7, []int{9}
+	return fileDescriptor_7117c47dbc1828c7, []int{7}
 }
 func (m *MsgDistributionResultResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -556,7 +444,7 @@ func (m *MsgDistributionRequest) Reset()         { *m = MsgDistributionRequest{}
 func (m *MsgDistributionRequest) String() string { return proto.CompactTextString(m) }
 func (*MsgDistributionRequest) ProtoMessage()    {}
 func (*MsgDistributionRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_7117c47dbc1828c7, []int{10}
+	return fileDescriptor_7117c47dbc1828c7, []int{8}
 }
 func (m *MsgDistributionRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -606,7 +494,7 @@ func (m *MsgDistributionRequestResponse) Reset()         { *m = MsgDistributionR
 func (m *MsgDistributionRequestResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgDistributionRequestResponse) ProtoMessage()    {}
 func (*MsgDistributionRequestResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_7117c47dbc1828c7, []int{11}
+	return fileDescriptor_7117c47dbc1828c7, []int{9}
 }
 func (m *MsgDistributionRequestResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -642,8 +530,6 @@ func init() {
 	proto.RegisterType((*MsgMintTokenResponse)(nil), "planetmintgo.dao.MsgMintTokenResponse")
 	proto.RegisterType((*MsgReissueRDDLResult)(nil), "planetmintgo.dao.MsgReissueRDDLResult")
 	proto.RegisterType((*MsgReissueRDDLResultResponse)(nil), "planetmintgo.dao.MsgReissueRDDLResultResponse")
-	proto.RegisterType((*MsgPopDistributionResult)(nil), "planetmintgo.dao.MsgPopDistributionResult")
-	proto.RegisterType((*MsgPopDistributionResultResponse)(nil), "planetmintgo.dao.MsgPopDistributionResultResponse")
 	proto.RegisterType((*MsgDistributionResult)(nil), "planetmintgo.dao.MsgDistributionResult")
 	proto.RegisterType((*MsgDistributionResultResponse)(nil), "planetmintgo.dao.MsgDistributionResultResponse")
 	proto.RegisterType((*MsgDistributionRequest)(nil), "planetmintgo.dao.MsgDistributionRequest")
@@ -653,46 +539,42 @@ func init() {
 func init() { proto.RegisterFile("planetmintgo/dao/tx.proto", fileDescriptor_7117c47dbc1828c7) }
 
 var fileDescriptor_7117c47dbc1828c7 = []byte{
-	// 614 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x55, 0xcf, 0x6e, 0xd3, 0x4e,
-	0x10, 0xae, 0x9b, 0xe6, 0x97, 0x5f, 0x26, 0x11, 0x82, 0xed, 0x1f, 0x19, 0x8b, 0x9a, 0xc8, 0x95,
-	0x4a, 0x40, 0xc2, 0x46, 0xe1, 0x01, 0x90, 0x50, 0x24, 0xa8, 0x84, 0x45, 0xb4, 0xe4, 0xc4, 0xa5,
-	0x72, 0xe2, 0x95, 0xbb, 0x4a, 0xea, 0x75, 0xbc, 0x1b, 0x30, 0xe2, 0x82, 0x78, 0x02, 0x4e, 0x1c,
-	0xb8, 0xf2, 0x32, 0x1c, 0x7b, 0xe4, 0x88, 0x92, 0x17, 0x41, 0x59, 0xc7, 0x8e, 0x43, 0xb6, 0xa9,
-	0x85, 0xb8, 0xed, 0xcc, 0x7c, 0x33, 0xf3, 0xcd, 0x78, 0x3e, 0x19, 0xee, 0x46, 0x63, 0x2f, 0x24,
-	0xe2, 0x92, 0x86, 0x22, 0x60, 0x8e, 0xef, 0x31, 0x47, 0x24, 0x76, 0x14, 0x33, 0xc1, 0xd0, 0xed,
-	0x62, 0xc8, 0xf6, 0x3d, 0x66, 0x9c, 0x6c, 0x80, 0x17, 0xcf, 0xf3, 0x98, 0x4c, 0xa6, 0x84, 0x8b,
-	0x34, 0xcd, 0x78, 0xb8, 0x01, 0xf2, 0x29, 0x17, 0x31, 0x1d, 0x4c, 0x05, 0x65, 0xe1, 0x39, 0x8b,
-	0x7d, 0x12, 0xa7, 0x50, 0xeb, 0x93, 0x06, 0x47, 0x2e, 0x0f, 0x30, 0xa1, 0x9c, 0x4f, 0x09, 0xee,
-	0x76, 0x5f, 0xf5, 0x62, 0x16, 0x31, 0xee, 0x8d, 0x91, 0x0e, 0xb5, 0x61, 0x4c, 0x3c, 0xc1, 0x62,
-	0x5d, 0x6b, 0x69, 0xed, 0x3a, 0xce, 0x4c, 0x64, 0xc0, 0xff, 0x91, 0x44, 0x91, 0x58, 0xdf, 0x95,
-	0xa1, 0xdc, 0x46, 0xb7, 0x60, 0x57, 0x24, 0x7a, 0x45, 0x7a, 0x77, 0x45, 0x82, 0x5a, 0xd0, 0x18,
-	0x8c, 0xd9, 0x70, 0xf4, 0x92, 0xd0, 0xe0, 0x42, 0xe8, 0x7b, 0x2d, 0xad, 0x5d, 0xc1, 0x45, 0x97,
-	0xd5, 0x02, 0x53, 0xcd, 0x00, 0x13, 0x1e, 0xb1, 0x90, 0x13, 0x8b, 0x42, 0xd3, 0xe5, 0x81, 0x4b,
-	0x43, 0xd1, 0x67, 0x23, 0x12, 0x6e, 0x61, 0xf6, 0x0c, 0x1a, 0x8b, 0xa9, 0x71, 0xba, 0x0e, 0x49,
-	0xae, 0xd1, 0x39, 0xb6, 0xff, 0x5c, 0xa3, 0xed, 0xae, 0x40, 0xb8, 0x98, 0x61, 0x1d, 0xc1, 0x41,
-	0xb1, 0x55, 0x4e, 0xe1, 0xb3, 0x26, 0x03, 0x05, 0x96, 0x98, 0xf0, 0xe9, 0x58, 0xfc, 0xe5, 0x96,
-	0x10, 0xec, 0x89, 0xe4, 0xcc, 0x5f, 0xee, 0x49, 0xbe, 0x4b, 0x6c, 0xca, 0x84, 0x7b, 0x2a, 0x0e,
-	0x39, 0xc9, 0x6f, 0x1a, 0xe8, 0x2e, 0x0f, 0x7a, 0x2c, 0xea, 0x16, 0xbe, 0xf7, 0x8d, 0x44, 0x75,
-	0xa8, 0x8d, 0x3d, 0x2e, 0x7a, 0x2c, 0x92, 0x3c, 0x2b, 0x38, 0x33, 0xd1, 0x01, 0x54, 0x7d, 0x8f,
-	0xf5, 0xb3, 0xef, 0x99, 0x1a, 0xc8, 0x04, 0xa0, 0xe1, 0x3b, 0xc2, 0x05, 0x8b, 0xfb, 0x89, 0xe4,
-	0x59, 0xc7, 0x05, 0xcf, 0x22, 0x2b, 0x62, 0x51, 0x3f, 0xd1, 0xab, 0x69, 0x96, 0x34, 0x2c, 0x0b,
-	0x5a, 0xd7, 0x71, 0xcb, 0x07, 0xf8, 0xae, 0xc1, 0xa1, 0xcb, 0x83, 0x7f, 0xc4, 0x5e, 0x87, 0x9a,
-	0x24, 0x4c, 0xb3, 0x3d, 0x67, 0x26, 0xb2, 0xa0, 0xb9, 0xe2, 0x4b, 0xfd, 0xe5, 0x0c, 0x6b, 0xbe,
-	0x45, 0xb6, 0x24, 0x4e, 0xfd, 0xe5, 0x1c, 0x99, 0x69, 0xdd, 0x87, 0x63, 0x25, 0xc9, 0x7c, 0x8c,
-	0x8f, 0x52, 0x53, 0xeb, 0x00, 0x79, 0x5e, 0x5b, 0xc6, 0x78, 0x01, 0xcd, 0xa2, 0x48, 0x97, 0xa7,
-	0x7b, 0xb2, 0x79, 0xba, 0xc5, 0xb2, 0xaf, 0x17, 0x4a, 0xc6, 0x6b, 0x89, 0x4b, 0x39, 0x29, 0x9a,
-	0x67, 0xf4, 0x3a, 0x5f, 0xab, 0x50, 0x71, 0x79, 0x80, 0x26, 0xb0, 0xaf, 0xd2, 0x7d, 0x5b, 0x21,
-	0x17, 0xa5, 0x3e, 0x8d, 0x27, 0x65, 0x91, 0x59, 0x6b, 0xf4, 0x06, 0xea, 0x2b, 0x19, 0x9b, 0xca,
-	0xf4, 0x3c, 0x6e, 0x9c, 0x6e, 0x8f, 0xe7, 0x45, 0x47, 0x70, 0x67, 0x53, 0x97, 0xa7, 0x37, 0x71,
-	0x4b, 0x71, 0x86, 0x5d, 0x0e, 0x97, 0x37, 0x7b, 0x0f, 0x87, 0x6a, 0x7d, 0x3d, 0x52, 0x16, 0x52,
-	0x62, 0x8d, 0x4e, 0x79, 0x6c, 0xde, 0x38, 0x04, 0xa4, 0xe8, 0xfa, 0x40, 0x59, 0x49, 0xd1, 0xd2,
-	0x29, 0x09, 0xcc, 0xfb, 0x4d, 0x60, 0x5f, 0x75, 0xc1, 0xed, 0x12, 0x75, 0x24, 0xf2, 0x9a, 0xeb,
-	0xd8, 0x72, 0x98, 0xcf, 0xcf, 0x7e, 0xcc, 0x4c, 0xed, 0x6a, 0x66, 0x6a, 0xbf, 0x66, 0xa6, 0xf6,
-	0x65, 0x6e, 0xee, 0x5c, 0xcd, 0xcd, 0x9d, 0x9f, 0x73, 0x73, 0xe7, 0xad, 0x13, 0x50, 0x71, 0x31,
-	0x1d, 0xd8, 0x43, 0x76, 0xe9, 0xac, 0xaa, 0x16, 0x9e, 0x8f, 0x03, 0xe6, 0x24, 0xe9, 0xcf, 0xf3,
-	0x43, 0x44, 0xf8, 0xe0, 0x3f, 0xf9, 0x7b, 0x7b, 0xfa, 0x3b, 0x00, 0x00, 0xff, 0xff, 0xb3, 0x3e,
-	0x72, 0xfb, 0x5d, 0x07, 0x00, 0x00,
+	// 550 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x55, 0xc1, 0x6e, 0xd3, 0x40,
+	0x10, 0x8d, 0x93, 0x40, 0xe9, 0x24, 0x42, 0xb0, 0x85, 0xca, 0x58, 0xd4, 0x44, 0xae, 0x54, 0xc2,
+	0x01, 0x1b, 0x95, 0x0f, 0x40, 0x42, 0x91, 0xa0, 0x12, 0x16, 0xd5, 0xd2, 0x13, 0x97, 0xca, 0x89,
+	0x57, 0xee, 0x2a, 0xa9, 0xd7, 0xd9, 0xdd, 0x20, 0x23, 0x2e, 0x88, 0x2f, 0xe0, 0x07, 0x38, 0xf1,
+	0x33, 0x1c, 0x7b, 0xe4, 0x88, 0x92, 0x1f, 0x41, 0x59, 0xc7, 0x8e, 0x83, 0x97, 0xd4, 0xea, 0xcd,
+	0xb3, 0xef, 0xcd, 0xcc, 0xdb, 0x99, 0xb7, 0x09, 0x3c, 0x4a, 0x26, 0x41, 0x4c, 0xe4, 0x25, 0x8d,
+	0x65, 0xc4, 0xbc, 0x30, 0x60, 0x9e, 0x4c, 0xdd, 0x84, 0x33, 0xc9, 0xd0, 0xbd, 0x32, 0xe4, 0x86,
+	0x01, 0xb3, 0x0e, 0x2b, 0xe4, 0xe5, 0xe7, 0x39, 0x27, 0xd3, 0x19, 0x11, 0x32, 0x4b, 0xb3, 0x9e,
+	0x55, 0x48, 0x21, 0x15, 0x92, 0xd3, 0xe1, 0x4c, 0x52, 0x16, 0x9f, 0x33, 0x1e, 0x12, 0x9e, 0x51,
+	0x9d, 0xaf, 0x06, 0xec, 0xfb, 0x22, 0xc2, 0x84, 0x0a, 0x31, 0x23, 0x78, 0x30, 0x78, 0x77, 0xca,
+	0x59, 0xc2, 0x44, 0x30, 0x41, 0x26, 0xec, 0x8c, 0x38, 0x09, 0x24, 0xe3, 0xa6, 0xd1, 0x33, 0xfa,
+	0xbb, 0x38, 0x0f, 0x91, 0x05, 0x77, 0x12, 0xc5, 0x22, 0xdc, 0x6c, 0x2a, 0xa8, 0x88, 0xd1, 0x5d,
+	0x68, 0xca, 0xd4, 0x6c, 0xa9, 0xd3, 0xa6, 0x4c, 0x51, 0x0f, 0x3a, 0xc3, 0x09, 0x1b, 0x8d, 0xdf,
+	0x12, 0x1a, 0x5d, 0x48, 0xb3, 0xdd, 0x33, 0xfa, 0x2d, 0x5c, 0x3e, 0x72, 0x7a, 0x60, 0xeb, 0x15,
+	0x60, 0x22, 0x12, 0x16, 0x0b, 0xe2, 0x50, 0xe8, 0xfa, 0x22, 0xf2, 0x69, 0x2c, 0xcf, 0xd8, 0x98,
+	0xc4, 0x5b, 0x94, 0xbd, 0x82, 0xce, 0xf2, 0xd6, 0x38, 0x1b, 0x87, 0x12, 0xd7, 0x39, 0x3e, 0x70,
+	0xff, 0x1d, 0xa3, 0xeb, 0xaf, 0x49, 0xb8, 0x9c, 0xe1, 0xec, 0xc3, 0x83, 0x72, 0xab, 0x42, 0xc2,
+	0x37, 0x43, 0x01, 0x25, 0x95, 0x98, 0x88, 0xd9, 0x44, 0xde, 0x70, 0x4a, 0x08, 0xda, 0x32, 0x3d,
+	0x09, 0x57, 0x73, 0x52, 0xdf, 0x35, 0x26, 0x65, 0xc3, 0x63, 0x9d, 0x86, 0x42, 0xe4, 0x4f, 0x03,
+	0x1e, 0xfa, 0x22, 0x1a, 0x94, 0x96, 0x7d, 0xad, 0x4a, 0x13, 0x76, 0x26, 0x81, 0x90, 0xa7, 0x2c,
+	0x51, 0x22, 0x5b, 0x38, 0x0f, 0x97, 0x48, 0x18, 0xb0, 0xb3, 0x94, 0xe6, 0x32, 0xf3, 0x10, 0x39,
+	0xd0, 0xa5, 0xf1, 0x27, 0x22, 0x24, 0xe3, 0x0a, 0x6e, 0x2b, 0x78, 0xe3, 0x6c, 0x99, 0x9d, 0xb0,
+	0x44, 0xc1, 0xb7, 0xb2, 0xec, 0x55, 0xe8, 0x3c, 0x81, 0x03, 0xad, 0xc8, 0xe2, 0x1a, 0x5f, 0x94,
+	0x25, 0x37, 0x09, 0x6a, 0x3b, 0x5b, 0xae, 0xf1, 0x06, 0xba, 0x65, 0x8f, 0xaf, 0x36, 0x7f, 0x58,
+	0xdd, 0x7c, 0xb9, 0xec, 0xfb, 0xe5, 0x43, 0xc0, 0x1b, 0x89, 0x2b, 0x37, 0x6a, 0x9a, 0xe7, 0xf2,
+	0x8e, 0x7f, 0xb4, 0xa1, 0xe5, 0x8b, 0x08, 0x4d, 0x61, 0x4f, 0xf7, 0x6c, 0xfa, 0x1a, 0xb7, 0x69,
+	0xed, 0x6d, 0xbd, 0xa8, 0xcb, 0xcc, 0x5b, 0xa3, 0x0f, 0xb0, 0xbb, 0x7e, 0x05, 0xb6, 0x36, 0xbd,
+	0xc0, 0xad, 0xa3, 0xed, 0x78, 0x51, 0x74, 0x0c, 0xf7, 0xab, 0xb6, 0x3e, 0xba, 0x4e, 0x5b, 0xc6,
+	0xb3, 0xdc, 0x7a, 0xbc, 0xa2, 0x59, 0x0c, 0x48, 0x63, 0xcf, 0xa7, 0xda, 0x2a, 0x55, 0xa2, 0xe5,
+	0xd5, 0x24, 0x16, 0xfd, 0xa6, 0xb0, 0xa7, 0x33, 0x52, 0xbf, 0x46, 0x1d, 0xc5, 0xfc, 0xcf, 0x92,
+	0xb6, 0xf8, 0xe3, 0xf5, 0xc9, 0xaf, 0xb9, 0x6d, 0x5c, 0xcd, 0x6d, 0xe3, 0xcf, 0xdc, 0x36, 0xbe,
+	0x2f, 0xec, 0xc6, 0xd5, 0xc2, 0x6e, 0xfc, 0x5e, 0xd8, 0x8d, 0x8f, 0x5e, 0x44, 0xe5, 0xc5, 0x6c,
+	0xe8, 0x8e, 0xd8, 0xa5, 0xb7, 0xae, 0x5a, 0xfa, 0x7c, 0x1e, 0x31, 0x2f, 0xcd, 0xfe, 0x02, 0x3e,
+	0x27, 0x44, 0x0c, 0x6f, 0xab, 0x1f, 0xe9, 0x97, 0x7f, 0x03, 0x00, 0x00, 0xff, 0xff, 0x81, 0x80,
+	0x53, 0x54, 0x23, 0x06, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -710,7 +592,6 @@ type MsgClient interface {
 	ReissueRDDLProposal(ctx context.Context, in *MsgReissueRDDLProposal, opts ...grpc.CallOption) (*MsgReissueRDDLProposalResponse, error)
 	MintToken(ctx context.Context, in *MsgMintToken, opts ...grpc.CallOption) (*MsgMintTokenResponse, error)
 	ReissueRDDLResult(ctx context.Context, in *MsgReissueRDDLResult, opts ...grpc.CallOption) (*MsgReissueRDDLResultResponse, error)
-	PopDistributionResult(ctx context.Context, in *MsgPopDistributionResult, opts ...grpc.CallOption) (*MsgPopDistributionResultResponse, error)
 	DistributionResult(ctx context.Context, in *MsgDistributionResult, opts ...grpc.CallOption) (*MsgDistributionResultResponse, error)
 	DistributionRequest(ctx context.Context, in *MsgDistributionRequest, opts ...grpc.CallOption) (*MsgDistributionRequestResponse, error)
 }
@@ -750,15 +631,6 @@ func (c *msgClient) ReissueRDDLResult(ctx context.Context, in *MsgReissueRDDLRes
 	return out, nil
 }
 
-func (c *msgClient) PopDistributionResult(ctx context.Context, in *MsgPopDistributionResult, opts ...grpc.CallOption) (*MsgPopDistributionResultResponse, error) {
-	out := new(MsgPopDistributionResultResponse)
-	err := c.cc.Invoke(ctx, "/planetmintgo.dao.Msg/PopDistributionResult", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *msgClient) DistributionResult(ctx context.Context, in *MsgDistributionResult, opts ...grpc.CallOption) (*MsgDistributionResultResponse, error) {
 	out := new(MsgDistributionResultResponse)
 	err := c.cc.Invoke(ctx, "/planetmintgo.dao.Msg/DistributionResult", in, out, opts...)
@@ -782,7 +654,6 @@ type MsgServer interface {
 	ReissueRDDLProposal(context.Context, *MsgReissueRDDLProposal) (*MsgReissueRDDLProposalResponse, error)
 	MintToken(context.Context, *MsgMintToken) (*MsgMintTokenResponse, error)
 	ReissueRDDLResult(context.Context, *MsgReissueRDDLResult) (*MsgReissueRDDLResultResponse, error)
-	PopDistributionResult(context.Context, *MsgPopDistributionResult) (*MsgPopDistributionResultResponse, error)
 	DistributionResult(context.Context, *MsgDistributionResult) (*MsgDistributionResultResponse, error)
 	DistributionRequest(context.Context, *MsgDistributionRequest) (*MsgDistributionRequestResponse, error)
 }
@@ -799,9 +670,6 @@ func (*UnimplementedMsgServer) MintToken(ctx context.Context, req *MsgMintToken)
 }
 func (*UnimplementedMsgServer) ReissueRDDLResult(ctx context.Context, req *MsgReissueRDDLResult) (*MsgReissueRDDLResultResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReissueRDDLResult not implemented")
-}
-func (*UnimplementedMsgServer) PopDistributionResult(ctx context.Context, req *MsgPopDistributionResult) (*MsgPopDistributionResultResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PopDistributionResult not implemented")
 }
 func (*UnimplementedMsgServer) DistributionResult(ctx context.Context, req *MsgDistributionResult) (*MsgDistributionResultResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DistributionResult not implemented")
@@ -868,24 +736,6 @@ func _Msg_ReissueRDDLResult_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_PopDistributionResult_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgPopDistributionResult)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MsgServer).PopDistributionResult(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/planetmintgo.dao.Msg/PopDistributionResult",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).PopDistributionResult(ctx, req.(*MsgPopDistributionResult))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Msg_DistributionResult_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MsgDistributionResult)
 	if err := dec(in); err != nil {
@@ -937,10 +787,6 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ReissueRDDLResult",
 			Handler:    _Msg_ReissueRDDLResult_Handler,
-		},
-		{
-			MethodName: "PopDistributionResult",
-			Handler:    _Msg_PopDistributionResult_Handler,
 		},
 		{
 			MethodName: "DistributionResult",
@@ -1157,85 +1003,6 @@ func (m *MsgReissueRDDLResultResponse) MarshalTo(dAtA []byte) (int, error) {
 }
 
 func (m *MsgReissueRDDLResultResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgPopDistributionResult) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgPopDistributionResult) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgPopDistributionResult) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.PopTx) > 0 {
-		i -= len(m.PopTx)
-		copy(dAtA[i:], m.PopTx)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.PopTx)))
-		i--
-		dAtA[i] = 0x2a
-	}
-	if len(m.InvestorTx) > 0 {
-		i -= len(m.InvestorTx)
-		copy(dAtA[i:], m.InvestorTx)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.InvestorTx)))
-		i--
-		dAtA[i] = 0x22
-	}
-	if len(m.DaoTx) > 0 {
-		i -= len(m.DaoTx)
-		copy(dAtA[i:], m.DaoTx)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.DaoTx)))
-		i--
-		dAtA[i] = 0x1a
-	}
-	if m.LastPop != 0 {
-		i = encodeVarintTx(dAtA, i, uint64(m.LastPop))
-		i--
-		dAtA[i] = 0x10
-	}
-	if len(m.Creator) > 0 {
-		i -= len(m.Creator)
-		copy(dAtA[i:], m.Creator)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgPopDistributionResultResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgPopDistributionResultResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgPopDistributionResultResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1482,43 +1249,6 @@ func (m *MsgReissueRDDLResult) Size() (n int) {
 }
 
 func (m *MsgReissueRDDLResultResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	return n
-}
-
-func (m *MsgPopDistributionResult) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Creator)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	if m.LastPop != 0 {
-		n += 1 + sovTx(uint64(m.LastPop))
-	}
-	l = len(m.DaoTx)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	l = len(m.InvestorTx)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	l = len(m.PopTx)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	return n
-}
-
-func (m *MsgPopDistributionResultResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -2171,253 +1901,6 @@ func (m *MsgReissueRDDLResultResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgReissueRDDLResultResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgPopDistributionResult) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgPopDistributionResult: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgPopDistributionResult: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Creator = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field LastPop", wireType)
-			}
-			m.LastPop = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.LastPop |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DaoTx", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.DaoTx = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field InvestorTx", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.InvestorTx = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PopTx", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.PopTx = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgPopDistributionResultResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgPopDistributionResultResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgPopDistributionResultResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

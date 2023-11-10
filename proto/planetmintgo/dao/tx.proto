@@ -12,7 +12,6 @@ service Msg {
   rpc ReissueRDDLProposal   (MsgReissueRDDLProposal  ) returns (MsgReissueRDDLProposalResponse  );
   rpc MintToken             (MsgMintToken            ) returns (MsgMintTokenResponse            );
   rpc ReissueRDDLResult     (MsgReissueRDDLResult    ) returns (MsgReissueRDDLResultResponse    );
-  rpc PopDistributionResult (MsgPopDistributionResult) returns (MsgPopDistributionResultResponse);
   rpc DistributionResult    (MsgDistributionResult   ) returns (MsgDistributionResultResponse   );
   rpc DistributionRequest (MsgDistributionRequest) returns (MsgDistributionRequestResponse);
 }
@@ -40,17 +39,6 @@ message MsgReissueRDDLResult {
 }
 
 message MsgReissueRDDLResultResponse {}
-
-message MsgPopDistributionResult {
-  string creator    = 1;
-  int64 lastPop     = 2;
-  string daoTx      = 3;
-  string investorTx = 4;
-  string popTx      = 5;
-}
-
-message MsgPopDistributionResultResponse {}
-
 message MsgDistributionResult {
   string creator      = 1;
   int64 lastPop       = 2;
@@ -60,6 +48,7 @@ message MsgDistributionResult {
 }
 
 message MsgDistributionResultResponse {}
+
 message MsgDistributionRequest {
   string            creator      = 1;
   DistributionOrder distribution = 2;
