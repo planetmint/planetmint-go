@@ -1,8 +1,6 @@
 package util
 
 import (
-	"bytes"
-	"errors"
 	"os/exec"
 	"strconv"
 
@@ -12,18 +10,18 @@ import (
 )
 
 func execCommand(cmd *exec.Cmd) error {
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
+	// var stdout, stderr bytes.Buffer
+	// cmd.Stdout = &stdout
+	// cmd.Stderr = &stderr
 
 	// Start the command in a non-blocking way
 	err := cmd.Start()
-	errstr := stderr.String()
-	if err != nil || len(errstr) > 0 {
-		if err == nil {
-			err = errors.New(errstr)
-		}
-	}
+	// errstr := stderr.String()
+	// if err != nil || len(errstr) > 0 {
+	// if err == nil {
+	// err = errors.New(errstr)
+	// }
+	// }
 	return err
 }
 
