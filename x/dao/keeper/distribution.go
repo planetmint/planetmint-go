@@ -41,6 +41,7 @@ func (k Keeper) GetLastDistributionOrder(ctx sdk.Context) (val types.Distributio
 	return val, found
 }
 
+// TODO to be integrated at a later stage
 // func (k Keeper) getDistributionRequestPage(ctx sdk.Context, key []byte, offset uint64, page_size uint64, all bool, reverse bool) (distribution_orders []types.DistributionOrder) {
 // 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DistributionKey))
 
@@ -94,7 +95,7 @@ func getUint64FromTXString(ctx sdk.Context, tx string) (amount uint64, err error
 	return amount, err
 }
 
-func (k Keeper) GetDistributenForReissuedTokens(ctx sdk.Context, blockHeight int64) (distribution types.DistributionOrder, err error) {
+func (k Keeper) GetDistributionForReissuedTokens(ctx sdk.Context, blockHeight int64) (distribution types.DistributionOrder, err error) {
 	var lastPoP int64 = 0
 	lastDistributionOrder, found := k.GetLastDistributionOrder(ctx)
 	if found {
