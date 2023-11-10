@@ -51,7 +51,7 @@ func TestTokenDistribution(t *testing.T) {
 	var Amount1stBatch uint64 = 781
 	var Amount2ndBatch uint64 = 219
 	_ = createNReissuances(k, ctx, reissuances)
-	distribution, err := k.GetDistributenForReissuedTokens(ctx, 780)
+	distribution, err := k.GetDistributionForReissuedTokens(ctx, 780)
 	assert.Nil(t, err)
 	amount1, err1 := strconv.ParseUint(distribution.DaoAmount, 10, 64)
 	amount2, err2 := strconv.ParseUint(distribution.InvestorAmount, 10, 64)
@@ -66,7 +66,7 @@ func TestTokenDistribution(t *testing.T) {
 	var lastDistribution types.DistributionOrder
 	lastDistribution.LastPop = 780
 	k.StoreDistributionOrder(ctx, lastDistribution)
-	lastDistribution, err0 := k.GetDistributenForReissuedTokens(ctx, 999)
+	lastDistribution, err0 := k.GetDistributionForReissuedTokens(ctx, 999)
 	assert.Nil(t, err0)
 	amount1, err1 = strconv.ParseUint(lastDistribution.DaoAmount, 10, 64)
 	amount2, err2 = strconv.ParseUint(lastDistribution.InvestorAmount, 10, 64)

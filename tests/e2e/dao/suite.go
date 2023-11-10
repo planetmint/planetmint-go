@@ -210,7 +210,8 @@ func (s *E2ETestSuite) TestReissuance() {
 		err = s.network.WaitForNextBlock()
 		s.Require().NoError(err)
 	}
-	height, err := s.network.LatestHeight()
+	var height int64
+	height, _ = s.network.LatestHeight()
 	intValue := strconv.FormatInt(height, 10)
-	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetReissuance(), []string{intValue})
+	_, _ = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetReissuance(), []string{intValue})
 }

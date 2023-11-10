@@ -31,7 +31,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 		}
 		if isDistributionHeight(blockHeight) {
 			// initialize the distribution message
-			distribution, err := k.GetDistributenForReissuedTokens(ctx, blockHeight)
+			distribution, err := k.GetDistributionForReissuedTokens(ctx, blockHeight)
 			if err != nil {
 				logger.Error("error while computing the RDDL distribution ", err)
 			}
