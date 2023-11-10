@@ -3,24 +3,22 @@ package dao
 import (
 	"encoding/json"
 	"fmt"
-
-	"github.com/planetmint/planetmint-go/config"
-	"github.com/planetmint/planetmint-go/testutil/network"
-	"github.com/planetmint/planetmint-go/testutil/sample"
+	"strconv"
 
 	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
-
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	"github.com/planetmint/planetmint-go/config"
+	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
+	"github.com/planetmint/planetmint-go/testutil/network"
+	"github.com/planetmint/planetmint-go/testutil/sample"
+	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
-	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 )
 
 var (
@@ -28,7 +26,6 @@ var (
 	aliceAddr sdk.AccAddress
 )
 
-// E2ETestSuite struct definition of dao suite
 type E2ETestSuite struct {
 	suite.Suite
 
@@ -36,7 +33,7 @@ type E2ETestSuite struct {
 	network *network.Network
 }
 
-// NewE2ETestSuite returns configured dao E2ETestSuite
+// NewE2ETestSuite returns configured dao DAOE2ETestSuite
 func NewE2ETestSuite(cfg network.Config) *E2ETestSuite {
 	return &E2ETestSuite{cfg: cfg}
 }
@@ -88,6 +85,10 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.cfg.GenesisState[banktypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&bankGenState)
 
 	s.cfg.MinGasPrices = fmt.Sprintf("0.000006%s", conf.FeeDenom)
+
+	conf.ValidatorAddress = aliceAddr.String()
+	conf.SetPlanetmintConfig(conf)
+
 	s.network = network.New(s.T(), s.cfg)
 }
 
@@ -197,4 +198,18 @@ func (s *E2ETestSuite) TestMintToken() {
 	assert.Contains(s.T(), out.String(), "plmnt")
 	assert.Contains(s.T(), out.String(), "11000")
 	s.Require().NoError(err)
+}
+
+func (s *E2ETestSuite) TestReissuance() {
+	conf := config.GetConfig()
+	val := s.network.Validators[0]
+
+	var err error
+	for i := 0; i < conf.PoPEpochs+10; i++ {
+		err = s.network.WaitForNextBlock()
+		s.Require().NoError(err)
+	}
+	height, err := s.network.LatestHeight()
+	intValue := strconv.FormatInt(height, 10)
+	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetReissuance(), []string{intValue})
 }
