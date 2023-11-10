@@ -28,7 +28,7 @@ validator-address = "{{ .PlmntConfig.ValidatorAddress }}"
 distribution-address-inv = "{{ .PlmntConfig.DistributionAddrInv }}"
 distribution-address-dap = "{{ .PlmntConfig.DistributionAddrDAO }}"
 distribution-address-pop = "{{ .PlmntConfig.DistributionAddrPoP }}"
-distribution-epochs = {{ .PlmntConfig.DistributiValidatorAddressonEpochs }}
+distribution-epochs = {{ .PlmntConfig.DistributionEpochs }}
 
 `
 
