@@ -24,11 +24,12 @@ rpc-password = "{{ .PlmntConfig.RPCPassword }}"
 mint-address = "{{ .PlmntConfig.MintAddress }}"
 issuance-service-dir = "{{ .PlmntConfig.IssuanceServiceDir }}"
 reissuance-asset = "{{ .PlmntConfig.ReissuanceAsset }}"
-validator-address = "{{ .PlmntConfig.ReissuanceAsset }}"
+validator-address = "{{ .PlmntConfig.ValidatorAddress }}"
 distribution-address-inv = "{{ .PlmntConfig.DistributionAddrInv }}"
 distribution-address-dap = "{{ .PlmntConfig.DistributionAddrDAO }}"
 distribution-address-pop = "{{ .PlmntConfig.DistributionAddrPoP }}"
-distribution-epochs = {{ .PlmntConfig.DistributionEpochs }}
+distribution-epochs = {{ .PlmntConfig.DistributiValidatorAddressonEpochs }}
+
 `
 
 // Config defines Planetmint's top level configuration
