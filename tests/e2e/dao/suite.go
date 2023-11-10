@@ -26,6 +26,7 @@ var (
 	aliceAddr sdk.AccAddress
 )
 
+// E2ETestSuite struct definition of dao suite
 type E2ETestSuite struct {
 	suite.Suite
 
@@ -33,7 +34,7 @@ type E2ETestSuite struct {
 	network *network.Network
 }
 
-// NewE2ETestSuite returns configured dao DAOE2ETestSuite
+// NewE2ETestSuite returns configured dao E2ETestSuite
 func NewE2ETestSuite(cfg network.Config) *E2ETestSuite {
 	return &E2ETestSuite{cfg: cfg}
 }
