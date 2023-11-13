@@ -8,7 +8,7 @@ linters:
     - gosimple
     - govet
     - ineffassign
-    - nosnakecase
+    - revive
     - staticcheck
     - unused
 issues:
