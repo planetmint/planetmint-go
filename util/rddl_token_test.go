@@ -13,13 +13,13 @@ func Test2FloatConvertion(t *testing.T) {
 }
 
 func Test2UintConvertion(t *testing.T) {
-	var expectedValue float64 = 998.69
+	expectedValue := 998.69
 	value := RDDLToken2Float(99869000000)
 	assert.Equal(t, expectedValue, value)
 }
 
 func TestStringToFloat(t *testing.T) {
-	var expectedValue float64 = 998.69
+	expectedValue := 998.69
 	value, err := RDDLTokenStringToFloat("998.69")
 	assert.Equal(t, expectedValue, value)
 	assert.Equal(t, nil, err)

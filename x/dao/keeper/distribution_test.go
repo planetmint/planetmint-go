@@ -16,7 +16,7 @@ import (
 func createNDistributionOrder(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.DistributionOrder {
 	items := make([]types.DistributionOrder, n)
 	for i := range items {
-		var amount int = 10000
+		amount := 10000
 		items[i].FirstPop = int64(i)*1000 + 1
 		items[i].LastPop = int64(i+1) * 1000
 		items[i].DaoAddr = fmt.Sprintf("DAO%v", i)

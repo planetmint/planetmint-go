@@ -96,14 +96,14 @@ func getUint64FromTXString(ctx sdk.Context, tx string) (amount uint64, err error
 }
 
 func (k Keeper) GetDistributionForReissuedTokens(ctx sdk.Context, blockHeight int64) (distribution types.DistributionOrder, err error) {
-	var lastPoP int64 = 0
+	var lastPoP int64
 	lastDistributionOrder, found := k.GetLastDistributionOrder(ctx)
 	if found {
 		lastPoP = lastDistributionOrder.LastPop
 	}
 
 	reissuances := k.getReissuancesRange(ctx, lastPoP)
-	var overallAmount uint64 = 0
+	var overallAmount uint64
 	for index, obj := range reissuances {
 		if (index == 0 && lastPoP == 0 && obj.BlockHeight == 0) || //corner case (beginning of he chain)
 			(int64(lastPoP) < int64(obj.BlockHeight) && int64(obj.BlockHeight) <= blockHeight) {

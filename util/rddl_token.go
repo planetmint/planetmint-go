@@ -2,7 +2,7 @@ package util
 
 import "strconv"
 
-var factor float64 = 100000000.0
+var factor = 100000000.0
 
 func RDDLToken2Uint(amount float64) uint64 {
 	return uint64(amount * factor)
