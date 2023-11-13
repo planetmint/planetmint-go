@@ -11,7 +11,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, _ keeper.Keeper) {
+func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) {
 	logger := ctx.Logger()
 	proposerAddress := req.Header.GetProposerAddress()
 
@@ -48,11 +48,6 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, _ keeper.Keeper) 
 func isPoPHeight(height int64) bool {
 	cfg := config.GetConfig()
 	return height%int64(cfg.PoPEpochs) == 0
-}
-
-func isDistributionHeight(height int64) bool {
-	cfg := config.GetConfig()
-	return height%int64(cfg.DistributionEpochs) == 0
 }
 
 func isDistributionHeight(height int64) bool {
