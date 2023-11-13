@@ -43,9 +43,8 @@ func (k Keeper) GetTrustAnchor(ctx sdk.Context, pubKey string) (val types.TrustA
 	val.Pubkey = pubKey
 	if trustAnchorActivated[0] == 1 {
 		return val, true, true
-	} else {
-		return val, false, true
 	}
+	return val, false, true
 }
 
 func getTrustAnchorBytes(pubKey string) ([]byte, error) {

@@ -22,8 +22,7 @@ func (k Keeper) GetReissuances(goCtx context.Context, req *types.QueryGetReissua
 
 	if reissuances != nil {
 		return &types.QueryGetReissuancesResponse{Reissuance: &reissuances[0]}, nil
-	} else {
-		return &types.QueryGetReissuancesResponse{}, nil
 	}
+	return &types.QueryGetReissuancesResponse{}, nil
 
 }

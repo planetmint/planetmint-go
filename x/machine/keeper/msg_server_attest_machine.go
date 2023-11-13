@@ -30,8 +30,8 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 	// and removed from here due to inconsistency or checking the same thing over and over again.
 	ta, _, _ := k.GetTrustAnchor(ctx, msg.Machine.MachineId)
 
-	isValidMachineId, err := util.ValidateSignature(msg.Machine.MachineId, msg.Machine.MachineIdSignature, msg.Machine.MachineId)
-	if !isValidMachineId {
+	isValidMachineID, err := util.ValidateSignature(msg.Machine.MachineId, msg.Machine.MachineIdSignature, msg.Machine.MachineId)
+	if !isValidMachineID {
 		return nil, err
 	}
 

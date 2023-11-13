@@ -35,9 +35,8 @@ func ValidateSignatureByteMsg(message []byte, signature string, publicKey string
 	isValid := pubKey.VerifySignature(message, signatureBytes)
 	if !isValid {
 		return false, errors.New("invalid signature")
-	} else {
-		return isValid, nil
 	}
+	return isValid, nil
 }
 
 func GetHexPubKey(extPubKey string) (string, error) {
