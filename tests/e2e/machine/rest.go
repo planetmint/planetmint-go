@@ -59,8 +59,8 @@ func (s *E2ETestSuite) TestAttestMachineREST() {
 	s.Require().NoError(err)
 	s.Require().Equal(uint32(0), txRes.TxResponse.Code)
 
-	queryMachineUrl := fmt.Sprintf("%s/planetmint/machine/get_machine_by_public_key/%s", baseURL, pubKey)
-	queryMachineRes, err := testutil.GetRequest(queryMachineUrl)
+	queryMachineURL := fmt.Sprintf("%s/planetmint/machine/get_machine_by_public_key/%s", baseURL, pubKey)
+	queryMachineRes, err := testutil.GetRequest(queryMachineURL)
 	s.Require().NoError(err)
 
 	var qmRes machinetypes.QueryGetMachineByPublicKeyResponse

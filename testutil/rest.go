@@ -142,7 +142,7 @@ func PrepareTx(val *network.Validator, msg sdk.Msg, signer string) ([]byte, erro
 }
 
 func BroadcastTx(val *network.Validator, txBytes []byte) (*txtypes.BroadcastTxResponse, error) {
-	broadcastTxUrl := fmt.Sprintf("%s/cosmos/tx/v1beta1/txs", val.APIAddress)
+	broadcastTxURL := fmt.Sprintf("%s/cosmos/tx/v1beta1/txs", val.APIAddress)
 	req := txtypes.BroadcastTxRequest{
 		TxBytes: txBytes,
 		Mode:    txtypes.BroadcastMode_BROADCAST_MODE_SYNC,
@@ -152,7 +152,7 @@ func BroadcastTx(val *network.Validator, txBytes []byte) (*txtypes.BroadcastTxRe
 	if err != nil {
 		return nil, err
 	}
-	broadCastTxResponse, err := PostRequest(broadcastTxUrl, "application/json", broadCastTxBody)
+	broadCastTxResponse, err := PostRequest(broadcastTxURL, "application/json", broadCastTxBody)
 	if err != nil {
 		return nil, err
 	}

@@ -11,7 +11,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) {
+func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, _ keeper.Keeper) {
 	logger := ctx.Logger()
 	proposerAddress := req.Header.GetProposerAddress()
 
@@ -55,6 +55,11 @@ func isDistributionHeight(height int64) bool {
 	return height%int64(cfg.DistributionEpochs) == 0
 }
 
-func EndBlocker(ctx sdk.Context, req abci.RequestEndBlock, k keeper.Keeper) {
+func isDistributionHeight(height int64) bool {
+	cfg := config.GetConfig()
+	return height%int64(cfg.DistributionEpochs) == 0
+}
+
+func EndBlocker(ctx sdk.Context, _ abci.RequestEndBlock, k keeper.Keeper) {
 	k.DistributeCollectedFees(ctx)
 }

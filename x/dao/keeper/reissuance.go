@@ -8,11 +8,11 @@ import (
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
-func GetReissuanceCommand(assetID string, BlockHeight int64) string {
+func GetReissuanceCommand(assetID string, _ int64) string {
 	return "reissueasset " + assetID + " 998.69000000"
 }
 
-func IsValidReissuanceCommand(reissuanceStr string, assetID string, BlockHeight int64) bool {
+func IsValidReissuanceCommand(reissuanceStr string, assetID string, _ int64) bool {
 	expected := "reissueasset " + assetID + " 998.69000000"
 	return reissuanceStr == expected
 }
@@ -48,7 +48,22 @@ func (k Keeper) getReissuancesRange(ctx sdk.Context, from int64) (reissuances []
 	return reissuances
 }
 
-func (k Keeper) getReissuancesPage(ctx sdk.Context, key []byte, offset uint64, pageSize uint64, all bool, reverse bool) (reissuances []types.Reissuance) {
+func (k Keeper) getReissuancesRange(ctx sdk.Context, from int64) (reissuances []types.Reissuance) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReissuanceBlockHeightKey))
+
+	iterator := store.Iterator(getReissuanceBytes(from), nil)
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		reissuance := iterator.Value()
+		var reissuanceOrg types.Reissuance
+		k.cdc.MustUnmarshal(reissuance, &reissuanceOrg)
+		reissuances = append(reissuances, reissuanceOrg)
+	}
+	return reissuances
+}
+
+func (k Keeper) getReissuancesPage(ctx sdk.Context, _ []byte, _ uint64, _ uint64, _ bool, reverse bool) (reissuances []types.Reissuance) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReissuanceBlockHeightKey))
 
 	iterator := store.Iterator(nil, nil)
