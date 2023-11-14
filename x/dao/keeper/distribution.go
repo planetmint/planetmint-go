@@ -81,7 +81,7 @@ func ComputeDistribution(lastReissuance int64, BlockHeight int64, amount uint64)
 	return distribution
 }
 
-func getUint64FromTXString(ctx sdk.Context, tx string) (amount uint64, err error) {
+func getUint64FromTxString(ctx sdk.Context, tx string) (amount uint64, err error) {
 	subStrings := strings.Split(tx, " ")
 	if len(subStrings) < 3 {
 		ctx.Logger().Error("Reissue tx string is shorter than expected. " + tx)
@@ -107,7 +107,7 @@ func (k Keeper) GetDistributionForReissuedTokens(ctx sdk.Context, blockHeight in
 	for index, obj := range reissuances {
 		if (index == 0 && lastPoP == 0 && obj.BlockHeight == 0) || //corner case (beginning of he chain)
 			(int64(lastPoP) < int64(obj.BlockHeight) && int64(obj.BlockHeight) <= blockHeight) {
-			amount, err := getUint64FromTXString(ctx, obj.Rawtx)
+			amount, err := getUint64FromTxString(ctx, obj.Rawtx)
 			if err == nil {
 				overallAmount = overallAmount + amount
 			}
