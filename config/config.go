@@ -21,7 +21,6 @@ rpc-host = "{{ .PlmntConfig.RPCHost }}"
 rpc-port = {{ .PlmntConfig.RPCPort }}
 rpc-user = "{{ .PlmntConfig.RPCUser }}"
 rpc-password = "{{ .PlmntConfig.RPCPassword }}"
-mint-address = "{{ .PlmntConfig.MintAddress }}"
 issuance-service-dir = "{{ .PlmntConfig.IssuanceServiceDir }}"
 reissuance-asset = "{{ .PlmntConfig.ReissuanceAsset }}"
 validator-address = "{{ .PlmntConfig.ValidatorAddress }}"
@@ -40,7 +39,6 @@ type Config struct {
 	RPCUser               string `mapstructure:"rpc-user" json:"rpc-user"`
 	RPCPassword           string `mapstructure:"rpc-password" json:"rpc-password"`
 	IssuanceServiceDir    string `mapstructure:"issuance-service-dir" json:"issuance-service-dir"`
-	MintAddress           string `mapstructure:"mint-address" json:"mint-address"`
 	ReissuanceAsset       string `mapstructure:"reissuance-asset" json:"reissuance-asset"`
 	ValidatorAddress      string `mapstructure:"validator-address" json:"validator-address"`
 }
@@ -65,7 +63,6 @@ func DefaultConfig() *Config {
 		RPCUser:               "user",
 		RPCPassword:           "passwor",
 		IssuanceServiceDir:    "/opt/issuer_service",
-		MintAddress:           "default",
 		ReissuanceAsset:       "asset-id-or-name",
 		ValidatorAddress:      "plmnt1w5dww335zhh98pzv783hqre355ck3u4w4hjxcx",
 	}
