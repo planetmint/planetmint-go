@@ -46702,7 +46702,7 @@ paths:
                     type: string
                   rawtx:
                     type: string
-                  txId:
+                  txID:
                     type: string
                   blockHeight:
                     type: string
@@ -46750,7 +46750,7 @@ paths:
                     type: string
                   rawtx:
                     type: string
-                  txId:
+                  txID:
                     type: string
                   blockHeight:
                     type: string
@@ -75971,19 +75971,19 @@ definitions:
         type: string
       daoAmount:
         type: string
-      daoTxid:
+      daoTxID:
         type: string
       investorAddr:
         type: string
       investorAmount:
         type: string
-      investorTxid:
+      investorTxID:
         type: string
       popAddr:
         type: string
       popAmount:
         type: string
-      popTxid:
+      popTxID:
         type: string
       firstPop:
         type: string
@@ -76054,7 +76054,7 @@ definitions:
             type: string
           rawtx:
             type: string
-          txId:
+          txID:
             type: string
           blockHeight:
             type: string
@@ -76069,7 +76069,7 @@ definitions:
             type: string
           rawtx:
             type: string
-          txId:
+          txID:
             type: string
           blockHeight:
             type: string
@@ -76132,7 +76132,7 @@ definitions:
         type: string
       rawtx:
         type: string
-      txId:
+      txID:
         type: string
       blockHeight:
         type: string
