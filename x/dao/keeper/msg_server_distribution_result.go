@@ -14,9 +14,9 @@ func (k msgServer) DistributionResult(goCtx context.Context, msg *types.MsgDistr
 
 	distribution, found := k.LookupDistributionOrder(ctx, msg.GetLastPop())
 	if found {
-		distribution.DaoTxid = msg.DaoTxid
-		distribution.PopTxid = msg.PopTxid
-		distribution.InvestorTxid = msg.InvestorTxid
+		distribution.DaoTxID = msg.DaoTxID
+		distribution.PopTxID = msg.PopTxID
+		distribution.InvestorTxID = msg.InvestorTxID
 		k.StoreDistributionOrder(ctx, distribution)
 	} else {
 		return nil, errorsmod.Wrapf(types.ErrDistributionNotFound, " for provided block height %s", strconv.FormatInt(msg.GetLastPop(), 10))

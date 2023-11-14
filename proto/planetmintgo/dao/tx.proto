@@ -34,7 +34,7 @@ message MsgMintTokenResponse {}
 message MsgReissueRDDLResult {
   string creator     = 1;
   string proposer    = 2;
-  string txId        = 3;
+  string txID        = 3;
   int64  blockHeight = 4;
 }
 
@@ -42,9 +42,9 @@ message MsgReissueRDDLResultResponse {}
 message MsgDistributionResult {
   string creator      = 1;
   int64 lastPop       = 2;
-  string daoTxid      = 3;
-  string investorTxid = 4;
-  string popTxid      = 5;
+  string daoTxID      = 3;
+  string investorTxID = 4;
+  string popTxID      = 5;
 }
 
 message MsgDistributionResultResponse {}

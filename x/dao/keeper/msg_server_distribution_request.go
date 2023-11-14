@@ -28,9 +28,9 @@ func (k msgServer) DistributionRequest(goCtx context.Context, msg *types.MsgDist
 			ctx.Logger().Error("Distribution Request: could not distribute asset to DAO: ", err.Error())
 		}
 
-		msg.Distribution.InvestorTxid = investorTx
-		msg.Distribution.PopTxid = popTx
-		msg.Distribution.DaoTxid = daoTx
+		msg.Distribution.InvestorTxID = investorTx
+		msg.Distribution.PopTxID = popTx
+		msg.Distribution.DaoTxID = daoTx
 		lastPopString := strconv.FormatInt(msg.Distribution.LastPop, 10)
 		err = util.SendRDDLDistributionResult(ctx, lastPopString, daoTx, investorTx, popTx)
 		if err != nil {

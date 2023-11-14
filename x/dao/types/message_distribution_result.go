@@ -10,13 +10,13 @@ const TypeMsgDistributionResult = "distribution_result"
 
 var _ sdk.Msg = &MsgDistributionResult{}
 
-func NewMsgDistributionResult(creator string, lastPop int64, daoTxid string, investorTxid string, popTxid string) *MsgDistributionResult {
+func NewMsgDistributionResult(creator string, lastPop int64, daoTxID string, investorTxID string, popTxID string) *MsgDistributionResult {
 	return &MsgDistributionResult{
 		Creator:      creator,
 		LastPop:      lastPop,
-		DaoTxid:      daoTxid,
-		InvestorTxid: investorTxid,
-		PopTxid:      popTxid,
+		DaoTxID:      daoTxID,
+		InvestorTxID: investorTxID,
+		PopTxID:      popTxID,
 	}
 }
 

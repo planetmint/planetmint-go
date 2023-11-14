@@ -7,6 +7,6 @@ message Reissuance {
   
   string proposer = 1; 
   string rawtx = 2; 
-  string txId = 3; 
+  string txID = 3; 
   int64  blockHeight = 4; 
 }
