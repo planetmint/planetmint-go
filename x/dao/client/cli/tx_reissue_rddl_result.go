@@ -20,7 +20,7 @@ func CmdReissueRDDLResult() *cobra.Command {
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argProposer := args[0]
-			argTxId := args[1]
+			argTxID := args[1]
 			argBlockHeight, err := cast.ToInt64E(args[2])
 			if err != nil {
 				return err
@@ -34,7 +34,7 @@ func CmdReissueRDDLResult() *cobra.Command {
 			msg := types.NewMsgReissueRDDLResult(
 				clientCtx.GetFromAddress().String(),
 				argProposer,
-				argTxId,
+				argTxID,
 				argBlockHeight,
 			)
 			if err := msg.ValidateBasic(); err != nil {

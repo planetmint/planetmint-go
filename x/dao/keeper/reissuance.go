@@ -24,7 +24,7 @@ func (k Keeper) LookupReissuance(ctx sdk.Context, height int64) (val types.Reiss
 	return val, true
 }
 
-func (k Keeper) getReissuancesPage(ctx sdk.Context, key []byte, offset uint64, pageSize uint64, all bool, reverse bool) (reissuances []types.Reissuance) {
+func (k Keeper) getReissuancesPage(ctx sdk.Context, _ []byte, _ uint64, _ uint64, _ bool, reverse bool) (reissuances []types.Reissuance) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReissuanceBlockHeightKey))
 
 	iterator := store.Iterator(nil, nil)
