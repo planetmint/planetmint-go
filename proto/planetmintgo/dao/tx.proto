@@ -6,6 +6,8 @@ import "planetmintgo/dao/mint_request.proto";
 import "planetmintgo/dao/params.proto";
 import "amino/amino.proto";
 import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/msg/v1/msg.proto";
 
 option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
 
@@ -42,7 +44,10 @@ message MsgReissueRDDLResult {
 message MsgReissueRDDLResultResponse {}
 
 message MsgUpdateParams {
-  string creator = 1;
+  option (cosmos.msg.v1.signer) = "authority";
+
+  // authority is the address that controls the module (defaults to x/gov unless overwritten).
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   // params defines the x/dao parameters to update.
   //
   // NOTE: All parameters must be supplied.
