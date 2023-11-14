@@ -26,7 +26,7 @@ issuance-service-dir = "{{ .PlmntConfig.IssuanceServiceDir }}"
 reissuance-asset = "{{ .PlmntConfig.ReissuanceAsset }}"
 validator-address = "{{ .PlmntConfig.ValidatorAddress }}"
 distribution-address-inv = "{{ .PlmntConfig.DistributionAddrInv }}"
-distribution-address-dap = "{{ .PlmntConfig.DistributionAddrDAO }}"
+distribution-address-dao = "{{ .PlmntConfig.DistributionAddrDAO }}"
 distribution-address-pop = "{{ .PlmntConfig.DistributionAddrPoP }}"
 distribution-epochs = {{ .PlmntConfig.DistributionEpochs }}
 
