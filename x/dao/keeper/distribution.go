@@ -84,12 +84,12 @@ func ComputeDistribution(lastReissuance int64, BlockHeight int64, amount uint64)
 func getUint64FromTXString(ctx sdk.Context, tx string) (amount uint64, err error) {
 	subStrings := strings.Split(tx, " ")
 	if len(subStrings) < 3 {
-		ctx.Logger().Error("Reissue TX string is shorter than expected. " + tx)
+		ctx.Logger().Error("Reissue tx string is shorter than expected. " + tx)
 	} else {
 		value := subStrings[2]
 		amount, err = util.RDDLTokenStringToUint(value)
 		if err != nil {
-			ctx.Logger().Error("Reissue TX string value is invalid " + subStrings[2])
+			ctx.Logger().Error("Reissue tx string value is invalid " + subStrings[2])
 		}
 	}
 	return amount, err
