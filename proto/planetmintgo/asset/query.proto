@@ -14,19 +14,19 @@ service Query {
   
   // Parameters queries the parameters of the module.
   rpc Params (QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/github.com/planetmint/planetmint-go/asset/params";
+    option (google.api.http).get = "/planetmint/asset/params";
   
   }
   
   // Queries a list of GetCIDsByAddress items.
   rpc GetCIDsByAddress (QueryGetCIDsByAddressRequest) returns (QueryGetCIDsByAddressResponse) {
-    option (google.api.http).get = "/planetmint/planetmint-go/asset/get_cids_by_address/{address}/{lookupPeriodInMin}";
+    option (google.api.http).get = "/planetmint/asset/get_cids_by_address/{address}/{lookupPeriodInMin}";
   
   }
   
   // Queries a list of GetNotarizedAsset items.
   rpc GetNotarizedAsset (QueryGetNotarizedAssetRequest) returns (QueryGetNotarizedAssetResponse) {
-    option (google.api.http).get = "/planetmint/planetmint-go/asset/get_notarized_asset/{cid}";
+    option (google.api.http).get = "/planetmint/asset/get_notarized_asset/{cid}";
   
   }
 }

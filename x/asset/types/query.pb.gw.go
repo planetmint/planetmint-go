@@ -379,11 +379,11 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4}, []string{"github.com", "planetmint", "planetmint-go", "asset", "params"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"planetmint", "asset", "params"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_GetCIDsByAddress_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"planetmint", "planetmint-go", "asset", "get_cids_by_address", "address", "lookupPeriodInMin"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_GetCIDsByAddress_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"planetmint", "asset", "get_cids_by_address", "address", "lookupPeriodInMin"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_GetNotarizedAsset_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"planetmint", "planetmint-go", "asset", "get_notarized_asset", "cid"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_GetNotarizedAsset_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"planetmint", "asset", "get_notarized_asset", "cid"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (

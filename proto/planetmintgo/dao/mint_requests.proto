@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package planetmintgo.dao;
+
+import "planetmintgo/dao/mint_request.proto";
+
+option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
+
+message MintRequests {
+    repeated MintRequest Requests = 1;
+}

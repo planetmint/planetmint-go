@@ -3,11 +3,15 @@ syntax = "proto3";
 package planetmintgo.dao;
 
 import "planetmintgo/dao/challenge.proto";
+import "planetmintgo/dao/mint_request.proto";
 
 option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
 
 // Msg defines the Msg service.
 service Msg {
+  rpc ReissueRDDLProposal (MsgReissueRDDLProposal) returns (MsgReissueRDDLProposalResponse);
+  rpc MintToken           (MsgMintToken          ) returns (MsgMintTokenResponse          );
+  rpc ReissueRDDLResult   (MsgReissueRDDLResult  ) returns (MsgReissueRDDLResultResponse  );
   rpc ReportPopResult (MsgReportPopResult) returns (MsgReportPopResultResponse);
 }
 message MsgReportPopResult {
@@ -16,4 +20,29 @@ message MsgReportPopResult {
 }
 
 message MsgReportPopResultResponse {}
+
+message MsgReissueRDDLProposal {
+  string creator     = 1;
+  string proposer    = 2;
+  string tx          = 3;
+  int64  blockHeight = 4;
+}
+
+message MsgReissueRDDLProposalResponse {}
+
+message MsgMintToken {
+  string      creator     = 1;
+  MintRequest mintRequest = 2;
+}
+
+message MsgMintTokenResponse {}
+
+message MsgReissueRDDLResult {
+  string creator     = 1;
+  string proposer    = 2;
+  string txId        = 3;
+  int64  blockHeight = 4;
+}
+
+message MsgReissueRDDLResultResponse {}
 

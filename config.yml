@@ -1,5 +1,7 @@
 ---
 version: 1
+build:
+  main: cmd/planetmint-god
 accounts:
   - name: alice
     coins:

@@ -11,7 +11,7 @@ import (
 )
 
 // GetQueryCmd returns the cli query commands for this module
-func GetQueryCmd(queryRoute string) *cobra.Command {
+func GetQueryCmd(_ string) *cobra.Command {
 	// Group dao queries under a subcommand
 	cmd := &cobra.Command{
 		Use:                        types.ModuleName,
@@ -22,6 +22,14 @@ func GetQueryCmd(queryRoute string) *cobra.Command {
 	}
 
 	cmd.AddCommand(CmdQueryParams())
+	cmd.AddCommand(CmdGetMintRequestsByHash())
+
+	cmd.AddCommand(CmdMintRequestsByAddress())
+
+	cmd.AddCommand(CmdGetReissuance())
+
+	cmd.AddCommand(CmdGetReissuances())
+
 	// this line is used by starport scaffolding # 1
 
 	return cmd

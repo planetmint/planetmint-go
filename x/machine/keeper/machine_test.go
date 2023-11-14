@@ -35,9 +35,9 @@ func TestGetMachine(t *testing.T) {
 			IssuerLiquid:     item.IssuerLiquid,
 			Address:          item.Address,
 		}
-		machineById, found := keeper.GetMachine(ctx, index)
+		machineByID, found := keeper.GetMachine(ctx, index)
 		assert.True(t, found)
-		assert.Equal(t, item, machineById)
+		assert.Equal(t, item, machineByID)
 	}
 }
 

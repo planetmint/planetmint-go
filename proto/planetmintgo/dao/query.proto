@@ -1,26 +1,90 @@
 syntax = "proto3";
+
 package planetmintgo.dao;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "planetmintgo/dao/params.proto";
+import "planetmintgo/dao/mint_request.proto";
+import "planetmintgo/dao/mint_requests.proto";
+import "planetmintgo/dao/reissuance.proto";
 
 option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
 
 // Query defines the gRPC querier service.
 service Query {
+  
   // Parameters queries the parameters of the module.
-  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/github.com/planetmint/planetmint-go/dao/params";
+  rpc Params (QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/planetmint/dao/params";
+  
+  }
+  
+  // Queries a list of GetMintRequestsByHash items.
+  rpc GetMintRequestsByHash (QueryGetMintRequestsByHashRequest) returns (QueryGetMintRequestsByHashResponse) {
+    option (google.api.http).get = "/planetmint/dao/get_mint_requests_by_hash/{hash}";
+  
+  }
+  
+  // Queries a list of MintRequestsByAddress items.
+  rpc MintRequestsByAddress (QueryMintRequestsByAddressRequest) returns (QueryMintRequestsByAddressResponse) {
+    option (google.api.http).get = "/planetmint/dao/mint_requests_by_address/{address}";
+  
+  }
+  
+  // Queries a list of GetReissuance items.
+  rpc GetReissuance (QueryGetReissuanceRequest) returns (QueryGetReissuanceResponse) {
+    option (google.api.http).get = "/planetmint/dao/get_reissuance/{blockHeight}";
+  
+  }
+  
+  // Queries a list of GetReissuances items.
+  rpc GetReissuances (QueryGetReissuancesRequest) returns (QueryGetReissuancesResponse) {
+    option (google.api.http).get = "/planetmint/dao/get_reissuances";
+  
   }
 }
-
 // QueryParamsRequest is request type for the Query/Params RPC method.
 message QueryParamsRequest {}
 
 // QueryParamsResponse is response type for the Query/Params RPC method.
 message QueryParamsResponse {
+  
   // params holds all the parameters of this module.
   Params params = 1 [(gogoproto.nullable) = false];
 }
+
+message QueryGetMintRequestsByHashRequest {
+  string hash = 1;
+}
+
+message QueryGetMintRequestsByHashResponse {
+  MintRequest mintRequest = 1;
+}
+
+message QueryMintRequestsByAddressRequest {
+  string address = 1;
+}
+
+message QueryMintRequestsByAddressResponse {
+  MintRequests mintRequests = 1;
+}
+
+message QueryGetReissuanceRequest {
+  int64 blockHeight = 1;
+}
+
+message QueryGetReissuanceResponse {
+  Reissuance reissuance = 1;
+}
+
+message QueryGetReissuancesRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryGetReissuancesResponse {
+  Reissuance                             reissuance = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+

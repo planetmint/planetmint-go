@@ -13,6 +13,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
+	feegrant "github.com/cosmos/cosmos-sdk/x/feegrant/client/cli"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -125,6 +126,127 @@ func (s *E2ETestSuite) TestAttestMachine() {
 	s.Require().NoError(err)
 
 	assert.Contains(s.T(), rawLog, "planetmintgo.machine.MsgAttestMachine")
+
+	args = []string{
+		pubKey,
+	}
+
+	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdGetMachineByPublicKey(), args)
+	s.Require().NoError(err)
+}
+
+func (s *E2ETestSuite) TestInvalidAttestMachine() {
+	val := s.network.Validators[0]
+
+	// already used in REST test case
+	prvKey, pubKey := sample.KeyPair(1)
+
+	k, err := val.ClientCtx.Keyring.Key(sample.Name)
+	s.Require().NoError(err)
+	addr, _ := k.GetAddress()
+
+	machine := sample.Machine(sample.Name, pubKey, prvKey, addr.String())
+	machineJSON, err := json.Marshal(&machine)
+	s.Require().NoError(err)
+
+	args := []string{
+		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
+		"--yes",
+		string(machineJSON),
+	}
+
+	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
+	s.Require().NoError(err)
+
+	txResponse, err := clitestutil.GetTxResponseFromOut(out)
+	s.Require().NoError(err)
+	s.Require().Equal(int(txResponse.Code), int(4))
+
+	unregisteredPubKey, unregisteredPrivKey := sample.KeyPair(2)
+	machine = sample.Machine(sample.Name, unregisteredPubKey, unregisteredPrivKey, addr.String())
+	machineJSON, err = json.Marshal(&machine)
+	s.Require().NoError(err)
+
+	args = []string{
+		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
+		"--yes",
+		string(machineJSON),
+	}
+
+	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
+	s.Require().NoError(err)
+
+	txResponse, err = clitestutil.GetTxResponseFromOut(out)
+	s.Require().NoError(err)
+	s.Require().Equal(int(txResponse.Code), int(3))
+}
+
+func (s *E2ETestSuite) TestMachineAllowanceAttestation() {
+	// create address for machine
+	val := s.network.Validators[0]
+	kb := val.ClientCtx.Keyring
+
+	account, _, err := kb.NewMnemonic("AllowanceMachine", keyring.English, sample.DefaultDerivationPath, keyring.DefaultBIP39Passphrase, hd.Secp256k1)
+	s.Require().NoError(err)
+
+	addr, err := account.GetAddress()
+	s.Require().NoError(err)
+
+	// register TA
+	prvKey, pubKey := sample.KeyPair(3)
+
+	ta := sample.TrustAnchor(pubKey)
+	taJSON, err := json.Marshal(&ta)
+	s.Require().NoError(err)
+	args := []string{
+		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Moniker),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
+		"--yes",
+		string(taJSON),
+	}
+	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdRegisterTrustAnchor(), args)
+	s.Require().NoError(err)
+
+	s.Require().NoError(s.network.WaitForNextBlock())
+
+	// create allowance for machine
+	args = []string{
+		val.Moniker,   // granter
+		addr.String(), // grantee
+		fmt.Sprintf("--%s=%s", feegrant.FlagAllowedMsgs, "/planetmintgo.machine.MsgAttestMachine"),
+		fmt.Sprintf("--%s=%s", feegrant.FlagSpendLimit, "2stake"),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
+		"--yes",
+	}
+
+	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, feegrant.NewCmdFeeGrant(), args)
+	s.Require().NoError(err)
+
+	s.Require().NoError(s.network.WaitForNextBlock())
+
+	// attest machine with fee granter without funding the machine account first
+	machine := sample.Machine(sample.Name, pubKey, prvKey, addr.String())
+	machineJSON, err := json.Marshal(&machine)
+	s.Require().NoError(err)
+
+	args = []string{
+		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, addr.String()),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
+		fmt.Sprintf("--%s=%s", flags.FlagFeeGranter, val.Address.String()),
+		"--yes",
+		string(machineJSON),
+	}
+
+	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
+	s.Require().NoError(err)
+
+	s.Require().NoError(s.network.WaitForNextBlock())
 
 	args = []string{
 		pubKey,

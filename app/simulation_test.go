@@ -39,7 +39,7 @@ import (
 	"github.com/planetmint/planetmint-go/app"
 )
 
-const SIMULATION_SETUP_FAILED = "simulation setup failed"
+const SimulationSetupFailed = "simulation setup failed"
 
 type storeKeysPrefixes struct {
 	A        storetypes.StoreKey
@@ -78,7 +78,7 @@ func BenchmarkSimulation(b *testing.B) {
 		simcli.FlagVerboseValue,
 		simcli.FlagEnabledValue,
 	)
-	require.NoError(b, err, SIMULATION_SETUP_FAILED)
+	require.NoError(b, err, SimulationSetupFailed)
 
 	b.Cleanup(func() {
 		require.NoError(b, db.Close())
@@ -179,7 +179,7 @@ func TestAppStateDeterminism(t *testing.T) {
 				baseapp.SetChainID(chainID),
 			)
 
-			fmt.Printf(
+			logger.Info(
 				"running non-determinism simulation; seed %d: %d/%d, attempt: %d/%d\n",
 				config.Seed, i+1, numSeeds, j+1, numTimesToRunPerSeed,
 			)
@@ -232,7 +232,7 @@ func TestAppImportExport(t *testing.T) {
 	if skip {
 		t.Skip("skipping application import/export simulation")
 	}
-	require.NoError(t, err, SIMULATION_SETUP_FAILED)
+	require.NoError(t, err, SimulationSetupFailed)
 
 	defer func() {
 		require.NoError(t, db.Close())
@@ -283,12 +283,12 @@ func TestAppImportExport(t *testing.T) {
 		simtestutil.PrintStats(db)
 	}
 
-	fmt.Printf("exporting genesis...\n")
+	logger.Info("exporting genesis...\n")
 
 	exported, err := bApp.ExportAppStateAndValidators(false, []string{}, []string{})
 	require.NoError(t, err)
 
-	fmt.Printf("importing genesis...\n")
+	logger.Info("importing genesis...\n")
 
 	newDB, newDir, _, _, err := simtestutil.SetupSimulation(
 		config,
@@ -297,7 +297,7 @@ func TestAppImportExport(t *testing.T) {
 		simcli.FlagVerboseValue,
 		simcli.FlagEnabledValue,
 	)
-	require.NoError(t, err, SIMULATION_SETUP_FAILED)
+	require.NoError(t, err, SimulationSetupFailed)
 
 	defer func() {
 		require.NoError(t, newDB.Close())
@@ -338,7 +338,7 @@ func TestAppImportExport(t *testing.T) {
 	newApp.ModuleManager().InitGenesis(ctxB, bApp.AppCodec(), genesisState)
 	newApp.StoreConsensusParams(ctxB, exported.ConsensusParams)
 
-	fmt.Printf("comparing stores...\n")
+	logger.Info("comparing stores...\n")
 
 	storeKeysPrefixes := []storeKeysPrefixes{
 		{bApp.GetKey(authtypes.StoreKey), newApp.GetKey(authtypes.StoreKey), [][]byte{}},
@@ -367,7 +367,7 @@ func TestAppImportExport(t *testing.T) {
 		failedKVAs, failedKVBs := sdk.DiffKVStores(storeA, storeB, skp.Prefixes)
 		require.Equal(t, len(failedKVAs), len(failedKVBs), "unequal sets of key-values to compare")
 
-		fmt.Printf("compared %d different key/value pairs between %s and %s\n", len(failedKVAs), skp.A, skp.B)
+		logger.Info("compared %d different key/value pairs between %s and %s\n", len(failedKVAs), skp.A, skp.B)
 		require.Equal(t, 0, len(failedKVAs), simtestutil.GetSimulationLog(skp.A.Name(), bApp.SimulationManager().StoreDecoders, failedKVAs, failedKVBs))
 	}
 }
@@ -386,7 +386,7 @@ func TestAppSimulationAfterImport(t *testing.T) {
 	if skip {
 		t.Skip("skipping application simulation after import")
 	}
-	require.NoError(t, err, SIMULATION_SETUP_FAILED)
+	require.NoError(t, err, SimulationSetupFailed)
 
 	defer func() {
 		require.NoError(t, db.Close())
@@ -439,16 +439,16 @@ func TestAppSimulationAfterImport(t *testing.T) {
 	}
 
 	if stopEarly {
-		fmt.Println("can't export or import a zero-validator genesis, exiting test...")
+		logger.Info("can't export or import a zero-validator genesis, exiting test...")
 		return
 	}
 
-	fmt.Printf("exporting genesis...\n")
+	logger.Info("exporting genesis...\n")
 
 	exported, err := bApp.ExportAppStateAndValidators(true, []string{}, []string{})
 	require.NoError(t, err)
 
-	fmt.Printf("importing genesis...\n")
+	logger.Info("importing genesis...\n")
 
 	newDB, newDir, _, _, err := simtestutil.SetupSimulation(
 		config,
@@ -457,7 +457,7 @@ func TestAppSimulationAfterImport(t *testing.T) {
 		simcli.FlagVerboseValue,
 		simcli.FlagEnabledValue,
 	)
-	require.NoError(t, err, SIMULATION_SETUP_FAILED)
+	require.NoError(t, err, SimulationSetupFailed)
 
 	defer func() {
 		require.NoError(t, newDB.Close())
