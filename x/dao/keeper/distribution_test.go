@@ -22,7 +22,7 @@ func createNDistributionOrder(keeper *keeper.Keeper, ctx sdk.Context, n int) []t
 		items[i].DaoAddr = fmt.Sprintf("DAO%v", i)
 		items[i].DaoAmount = fmt.Sprintf("%v", float64(amount)*types.PercentageDao)
 		items[i].InvestorAddr = fmt.Sprintf("INVESTOR%v", i)
-		items[i].InvestorAmount = fmt.Sprintf("%v", int64(float64(amount)*types.PercentageInvestor))
+		items[i].InvestorAmount = strconv.FormatInt(int64(float64(amount)*types.PercentageInvestor), 10)
 		items[i].PopAddr = fmt.Sprintf("POP%v", i)
 		items[i].PopAmount = fmt.Sprintf("%v", float64(amount)*types.PercentagePop)
 		keeper.StoreDistributionOrder(ctx, items[i])
