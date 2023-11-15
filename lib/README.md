@@ -18,12 +18,16 @@ import (
 
         sdk "github.com/cosmos/cosmos-sdk/types"
         banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+        "github.com/planetmint/planetmint-go/app"
         "github.com/planetmint/planetmint-go/lib"
 )
 
 func main() {
+        encodingConfig := app.MakeEncodingConfig()
+
         libConfig := lib.GetConfig()
         libConfig.SetBech32PrefixForAccount("plmnt")
+        libConfig.SetEncodingConfig(encodingConfig)
         libConfig.SetRPCEndpoint("https://testnet-api.rddl.io")
 
         addr0 := sdk.MustAccAddressFromBech32("plmnt168z8fyyzap0nw75d4atv9ucr2ye60d57dzlzaf")

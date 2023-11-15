@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -20,7 +21,6 @@ import (
 	sdktx "github.com/cosmos/cosmos-sdk/types/tx"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
-	"github.com/planetmint/planetmint-go/app"
 )
 
 // KeyPair defines a public/private key pair to e.g. sign a transaction.
@@ -117,7 +117,11 @@ func getAccountNumberAndSequence(address sdk.AccAddress) (accountNumber, sequenc
 
 // BuildAndSignTx constructs the transaction from address' private key and messages.
 func BuildAndSignTx(address sdk.AccAddress, msgs ...sdk.Msg) (txBytes []byte, txJSON string, err error) {
-	encodingConfig := app.MakeEncodingConfig()
+	encodingConfig := GetConfig().EncodingConfig
+	if encodingConfig.TxConfig == nil {
+		err = errors.New("encoding config must not be nil")
+		return
+	}
 	txBuilder := encodingConfig.TxConfig.NewTxBuilder()
 
 	err = txBuilder.SetMsgs(msgs...)

@@ -124,8 +124,8 @@ import (
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	pmante "github.com/planetmint/planetmint-go/app/ante"
-	appparams "github.com/planetmint/planetmint-go/app/params"
 	"github.com/planetmint/planetmint-go/docs"
+	appparams "github.com/planetmint/planetmint-go/lib/params"
 )
 
 const (
