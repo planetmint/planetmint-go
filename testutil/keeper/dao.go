@@ -78,7 +78,10 @@ func DaoKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	)
 
 	// Initialize params
-	k.SetParams(ctx, types.DefaultParams())
+	err := k.SetParams(ctx, types.DefaultParams())
+	if err != nil {
+		panic(err)
+	}
 
 	return k, ctx
 }
