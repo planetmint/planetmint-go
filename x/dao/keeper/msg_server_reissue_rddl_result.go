@@ -22,10 +22,10 @@ func (k msgServer) ReissueRDDLResult(goCtx context.Context, msg *types.MsgReissu
 	if reissuance.GetProposer() != msg.GetProposer() {
 		return nil, errorsmod.Wrapf(types.ErrInvalidProposer, " for provided block height %s", strconv.FormatInt(msg.GetBlockHeight(), 10))
 	}
-	if reissuance.GetTxId() != "" {
+	if reissuance.GetTxID() != "" {
 		return nil, errorsmod.Wrapf(types.ErrTXAlreadySet, " for provided block height %s", strconv.FormatInt(msg.GetBlockHeight(), 10))
 	}
-	reissuance.TxId = msg.GetTxId()
+	reissuance.TxID = msg.GetTxID()
 	k.StoreReissuance(ctx, reissuance)
 
 	return &types.MsgReissueRDDLResultResponse{}, nil

@@ -5,26 +5,24 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-
-	"github.com/planetmint/planetmint-go/config"
-	"github.com/planetmint/planetmint-go/testutil/network"
-	"github.com/planetmint/planetmint-go/testutil/sample"
+	"strconv"
 
 	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
-
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	"github.com/planetmint/planetmint-go/config"
+	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
+	"github.com/planetmint/planetmint-go/testutil/network"
+	"github.com/planetmint/planetmint-go/testutil/sample"
+	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
-	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 )
 
@@ -92,8 +90,6 @@ func (s *E2ETestSuite) SetupSuite() {
 	bankGenState.Balances = append(bankGenState.Balances, accountBalances...)
 	s.cfg.GenesisState[banktypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&bankGenState)
 
-	s.cfg.MinGasPrices = fmt.Sprintf("0.000006%s", conf.FeeDenom)
-
 	// Setup MintAddress parameter in genesis state
 	// use sample.Mnemonic to make mint address deterministic for test
 	s.cfg.Mnemonics = []string{sample.Mnemonic}
@@ -107,6 +103,7 @@ func (s *E2ETestSuite) SetupSuite() {
 	daoGenState.Params.MintAddress = valAddr.String()
 	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
 
+	s.cfg.MinGasPrices = fmt.Sprintf("0.000006%s", conf.FeeDenom)
 	s.network = network.New(s.T(), s.cfg)
 }
 
@@ -258,4 +255,19 @@ func (s *E2ETestSuite) createValAccount(cfg network.Config) (address sdk.AccAddr
 	}
 
 	return addr, nil
+}
+
+func (s *E2ETestSuite) TestReissuance() {
+	conf := config.GetConfig()
+	val := s.network.Validators[0]
+
+	var err error
+	for i := 0; i < conf.PoPEpochs+10; i++ {
+		err = s.network.WaitForNextBlock()
+		s.Require().NoError(err)
+	}
+	var height int64
+	height, _ = s.network.LatestHeight()
+	intValue := strconv.FormatInt(height, 10)
+	_, _ = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetReissuance(), []string{intValue})
 }

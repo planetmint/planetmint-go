@@ -12,14 +12,14 @@ import (
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
-func createNReissuances(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Reissuance {
+func createNReissuances(k *keeper.Keeper, ctx sdk.Context, n int) []types.Reissuance {
 	items := make([]types.Reissuance, n)
 	for i := range items {
 		items[i].BlockHeight = int64(i)
 		items[i].Proposer = fmt.Sprintf("proposer_%v", i)
-		items[i].Rawtx = fmt.Sprintf("rawtransaction_%v", i)
-		items[i].TxId = ""
-		keeper.StoreReissuance(ctx, items[i])
+		items[i].Rawtx = keeper.GetReissuanceCommand("asset_id", int64(i))
+		items[i].TxID = ""
+		k.StoreReissuance(ctx, items[i])
 	}
 	return items
 }

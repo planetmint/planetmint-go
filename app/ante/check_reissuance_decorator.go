@@ -4,7 +4,7 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/planetmint/planetmint-go/config"
-	"github.com/planetmint/planetmint-go/x/dao"
+	"github.com/planetmint/planetmint-go/x/dao/keeper"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 )
 
@@ -22,7 +22,7 @@ func (cmad CheckReissuanceDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simu
 			if ok {
 				logger.Debug("REISSUE: receive Proposal")
 				conf := config.GetConfig()
-				isValid := dao.IsValidReissuanceCommand(MsgProposal.GetTx(), conf.ReissuanceAsset, MsgProposal.GetBlockHeight())
+				isValid := keeper.IsValidReissuanceCommand(MsgProposal.GetTx(), conf.ReissuanceAsset, MsgProposal.GetBlockHeight())
 				if !isValid {
 					logger.Debug("REISSUE: Invalid Proposal")
 					return ctx, errorsmod.Wrapf(daotypes.ErrReissuanceProposal, "error during CheckTx or ReCheckTx")

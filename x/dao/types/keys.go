@@ -21,6 +21,10 @@ const (
 
 	ReissuanceBlockHeightKey = "Dao/ReissuanceBlockHeight"
 
+	DistributionKey = "Dao/Distribution"
+
+	PoPDistributionKey = "Dao/PoPDistribution"
+
 	ParamsKey = "Dao/Params"
 )
 

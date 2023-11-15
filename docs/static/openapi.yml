@@ -46702,7 +46702,7 @@ paths:
                     type: string
                   rawtx:
                     type: string
-                  txId:
+                  txID:
                     type: string
                   blockHeight:
                     type: string
@@ -46750,7 +46750,7 @@ paths:
                     type: string
                   rawtx:
                     type: string
-                  txId:
+                  txID:
                     type: string
                   blockHeight:
                     type: string
@@ -75967,6 +75967,35 @@ definitions:
         description: params holds all the parameters of this module.
         type: object
     description: QueryParamsResponse is response type for the Query/Params RPC method.
+  planetmintgo.dao.DistributionOrder:
+    type: object
+    properties:
+      daoAddr:
+        type: string
+      daoAmount:
+        type: string
+      daoTxID:
+        type: string
+      investorAddr:
+        type: string
+      investorAmount:
+        type: string
+      investorTxID:
+        type: string
+      popAddr:
+        type: string
+      popAmount:
+        type: string
+      popTxID:
+        type: string
+      firstPop:
+        type: string
+        format: int64
+      lastPop:
+        type: string
+        format: int64
+      proposer:
+        type: string
   planetmintgo.dao.MintRequest:
     type: object
     properties:
@@ -75992,6 +76021,10 @@ definitions:
               format: uint64
             liquidTxHash:
               type: string
+  planetmintgo.dao.MsgDistributionRequestResponse:
+    type: object
+  planetmintgo.dao.MsgDistributionResultResponse:
+    type: object
   planetmintgo.dao.MsgMintTokenResponse:
     type: object
   planetmintgo.dao.MsgReissueRDDLProposalResponse:
@@ -76029,7 +76062,7 @@ definitions:
             type: string
           rawtx:
             type: string
-          txId:
+          txID:
             type: string
           blockHeight:
             type: string
@@ -76044,7 +76077,7 @@ definitions:
             type: string
           rawtx:
             type: string
-          txId:
+          txID:
             type: string
           blockHeight:
             type: string
@@ -76110,7 +76143,7 @@ definitions:
         type: string
       rawtx:
         type: string
-      txId:
+      txID:
         type: string
       blockHeight:
         type: string
