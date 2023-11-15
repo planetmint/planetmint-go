@@ -9,4 +9,5 @@ option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
 message Params {
   option (gogoproto.goproto_stringer) = false;
   
+  string mint_address = 1;
 }
