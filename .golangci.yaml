@@ -3,14 +3,69 @@ run:
   timeout: 5m
 linters:
   enable:
+    - asasalint
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - containedctx
+    - contextcheck
+    - decorder
+    - dogsled
+    - dupword
+    - durationcheck
     - errcheck
+    - errchkjson
+    - errname
+    - execinquery
+    - exportloopref
     - forbidigo
+    - ginkgolinter
+    - gocheckcompilerdirectives
+    - gochecksumtype
+    - gocognit
+    - goconst
+    - gocyclo
+    - gofmt
+    - goheader
+    - gomodguard
+    - goprintffuncname
     - gosimple
+    - gosmopolitan
     - govet
+    - grouper
+    - importas
     - ineffassign
+    - interfacebloat
+    - loggercheck
+    - makezero
+    - mirror
+    - misspell
+    - nakedret
+    - nilerr
+    - nilnil
+    - nolintlint
+    - nosprintfhostport
+    - perfsprint
+    - prealloc
+    - predeclared
+    - promlinter
+    - protogetter
+    - reassign
     - revive
+    - rowserrcheck
+    - sloglint
+    - sqlclosecheck
     - staticcheck
+    - stylecheck
+    - tenv
+    - testableexamples
+    - tparallel
+    - unconvert
+    - unparam
     - unused
+    - usestdlibvars
+    - wastedassign
+    - zerologlint
 issues:
   exclude-rules:
     - path: codec\.go
