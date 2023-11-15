@@ -40,8 +40,8 @@ import (
 	// this line is used by starport scaffolding # root/moduleImport
 
 	"github.com/planetmint/planetmint-go/app"
-	appparams "github.com/planetmint/planetmint-go/app/params"
 	planetmintconfig "github.com/planetmint/planetmint-go/config"
+	appparams "github.com/planetmint/planetmint-go/lib/params"
 )
 
 // NewRootCmd creates a new root command for a Cosmos SDK application
