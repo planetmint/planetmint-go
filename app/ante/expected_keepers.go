@@ -36,4 +36,5 @@ type BankKeeper interface {
 
 type DaoKeeper interface {
 	GetMintRequestByHash(ctx sdk.Context, hash string) (val daotypes.MintRequest, found bool)
+	GetMintAddress(ctx sdk.Context) (mintAddress string)
 }

@@ -23,9 +23,8 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 			_ = util.SendRDDLReissuanceResult(ctx, msg.GetProposer(), txID, msg.GetBlockHeight())
 			//TODO verify and  resolve error
 		} else {
-			logger.Debug("REISSUE: Asset reissuance failure")
+			logger.Error("REISSUE: Asset reissuance failure: " + err.Error())
 		}
-		//TODO: reissuance need to be initiated otherwise
 	}
 
 	var reissuance types.Reissuance
@@ -33,6 +32,5 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 	reissuance.Proposer = msg.GetProposer()
 	reissuance.Rawtx = msg.GetTx()
 	k.StoreReissuance(ctx, reissuance)
-
 	return &types.MsgReissueRDDLProposalResponse{}, nil
 }

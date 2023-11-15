@@ -13,7 +13,7 @@ func TestParamsQuery(t *testing.T) {
 	keeper, ctx := testkeeper.DaoKeeper(t)
 	wctx := sdk.WrapSDKContext(ctx)
 	params := types.DefaultParams()
-	keeper.SetParams(ctx, params)
+	_ = keeper.SetParams(ctx, params)
 
 	response, err := keeper.Params(wctx, &types.QueryParamsRequest{})
 	require.NoError(t, err)

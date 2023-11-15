@@ -18,6 +18,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/planetmint/planetmint-go/app"
+	"github.com/planetmint/planetmint-go/config"
 )
 
 type (
@@ -37,7 +38,16 @@ func New(t *testing.T, configs ...Config) *Network {
 	} else {
 		cfg = configs[0]
 	}
-	net, err := network.New(t, t.TempDir(), cfg)
+	validatorTmpDir := t.TempDir()
+
+	//set the proper root dir for the test environment so that the abci.go logic works
+	appConfig := config.GetConfig()
+	appConfig.SetRoot(validatorTmpDir + "/node0/simd")
+
+	net, err := network.New(t, validatorTmpDir, cfg)
+
+	appConfig.ValidatorAddress = net.Validators[0].Address.String()
+
 	require.NoError(t, err)
 	_, err = net.WaitForHeight(1)
 	require.NoError(t, err)

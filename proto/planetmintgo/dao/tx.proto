@@ -4,15 +4,24 @@ package planetmintgo.dao;
 
 import "planetmintgo/dao/challenge.proto";
 import "planetmintgo/dao/mint_request.proto";
+import "planetmintgo/dao/distribution_order.proto";
+import "planetmintgo/dao/params.proto";
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/msg/v1/msg.proto";
 
 option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
 
 // Msg defines the Msg service.
 service Msg {
-  rpc ReissueRDDLProposal (MsgReissueRDDLProposal) returns (MsgReissueRDDLProposalResponse);
-  rpc MintToken           (MsgMintToken          ) returns (MsgMintTokenResponse          );
-  rpc ReissueRDDLResult   (MsgReissueRDDLResult  ) returns (MsgReissueRDDLResultResponse  );
-  rpc ReportPopResult (MsgReportPopResult) returns (MsgReportPopResultResponse);
+  rpc ReissueRDDLProposal   (MsgReissueRDDLProposal  ) returns (MsgReissueRDDLProposalResponse  );
+  rpc MintToken             (MsgMintToken            ) returns (MsgMintTokenResponse            );
+  rpc ReissueRDDLResult     (MsgReissueRDDLResult    ) returns (MsgReissueRDDLResultResponse    );
+  rpc DistributionResult    (MsgDistributionResult   ) returns (MsgDistributionResultResponse   );
+  rpc DistributionRequest   (MsgDistributionRequest) returns (MsgDistributionRequestResponse);
+  rpc UpdateParams          (MsgUpdateParams       ) returns (MsgUpdateParamsResponse       );
+  rpc ReportPopResult       (MsgReportPopResult) returns (MsgReportPopResultResponse);
 }
 message MsgReportPopResult {
   string    creator   = 1;
@@ -40,9 +49,38 @@ message MsgMintTokenResponse {}
 message MsgReissueRDDLResult {
   string creator     = 1;
   string proposer    = 2;
-  string txId        = 3;
+  string txID        = 3;
   int64  blockHeight = 4;
 }
 
 message MsgReissueRDDLResultResponse {}
+message MsgDistributionResult {
+  string creator      = 1;
+  int64 lastPop       = 2;
+  string daoTxID      = 3;
+  string investorTxID = 4;
+  string popTxID      = 5;
+}
+
+message MsgDistributionResultResponse {}
+
+message MsgDistributionRequest {
+  string            creator      = 1;
+  DistributionOrder distribution = 2;
+}
+
+message MsgDistributionRequestResponse {}
+
+message MsgUpdateParams {
+  option (cosmos.msg.v1.signer) = "authority";
+
+  // authority is the address that controls the module (defaults to x/gov unless overwritten).
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  // params defines the x/dao parameters to update.
+  //
+  // NOTE: All parameters must be supplied.
+  Params params = 2 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+}
+
+message MsgUpdateParamsResponse {}
 

@@ -12,7 +12,7 @@ func TestGetParams(t *testing.T) {
 	k, ctx := testkeeper.DaoKeeper(t)
 	params := types.DefaultParams()
 
-	k.SetParams(ctx, params)
+	_ = k.SetParams(ctx, params)
 
 	require.EqualValues(t, params, k.GetParams(ctx))
 }

@@ -21,10 +21,14 @@ rpc-host = "{{ .PlmntConfig.RPCHost }}"
 rpc-port = {{ .PlmntConfig.RPCPort }}
 rpc-user = "{{ .PlmntConfig.RPCUser }}"
 rpc-password = "{{ .PlmntConfig.RPCPassword }}"
-mint-address = "{{ .PlmntConfig.MintAddress }}"
 issuance-service-dir = "{{ .PlmntConfig.IssuanceServiceDir }}"
 reissuance-asset = "{{ .PlmntConfig.ReissuanceAsset }}"
 validator-address = "{{ .PlmntConfig.ValidatorAddress }}"
+distribution-address-inv = "{{ .PlmntConfig.DistributionAddrInv }}"
+distribution-address-dao = "{{ .PlmntConfig.DistributionAddrDAO }}"
+distribution-address-pop = "{{ .PlmntConfig.DistributionAddrPoP }}"
+distribution-epochs = {{ .PlmntConfig.DistributionEpochs }}
+
 `
 
 // Config defines Planetmint's top level configuration
@@ -40,9 +44,12 @@ type Config struct {
 	RPCUser               string `mapstructure:"rpc-user" json:"rpc-user"`
 	RPCPassword           string `mapstructure:"rpc-password" json:"rpc-password"`
 	IssuanceServiceDir    string `mapstructure:"issuance-service-dir" json:"issuance-service-dir"`
-	MintAddress           string `mapstructure:"mint-address" json:"mint-address"`
 	ReissuanceAsset       string `mapstructure:"reissuance-asset" json:"reissuance-asset"`
 	ValidatorAddress      string `mapstructure:"validator-address" json:"validator-address"`
+	DistributionAddrInv   string `mapstructure:"distribution-address-inv" json:"distribution-address-inv"`
+	DistributionAddrDAO   string `mapstructure:"distribution-address-dao" json:"distribution-address-dao"`
+	DistributionAddrPoP   string `mapstructure:"distribution-address-pop" json:"distribution-address-pop"`
+	DistributionEpochs    int    `mapstructure:"distribution-epochs" json:"distribution-epochs"`
 }
 
 // cosmos-sdk wide global singleton
@@ -63,11 +70,14 @@ func DefaultConfig() *Config {
 		RPCHost:               "localhost",
 		RPCPort:               18884,
 		RPCUser:               "user",
-		RPCPassword:           "passwor",
+		RPCPassword:           "password",
 		IssuanceServiceDir:    "/opt/issuer_service",
-		MintAddress:           "default",
-		ReissuanceAsset:       "asset-id-or-name",
+		ReissuanceAsset:       "7add40beb27df701e02ee85089c5bc0021bc813823fedb5f1dcb5debda7f3da9",
 		ValidatorAddress:      "plmnt1w5dww335zhh98pzv783hqre355ck3u4w4hjxcx",
+		DistributionAddrInv:   "vjTyRN2G42Yq3T5TJBecHj1dF1xdhKF89hKV4HJN3uXxUbaVGVR76hAfVRQqQCovWaEpar7G5qBBprFG",
+		DistributionAddrDAO:   "vjU8eMzU3JbUWZEpVANt2ePJuPWSPixgjiSj2jDMvkVVQQi2DDnZuBRVX4Ygt5YGBf5zvTWCr1ntdqYH",
+		DistributionAddrPoP:   "vjTvXCFSReRsZ7grdsAreRR12KuKpDw8idueQJK9Yh1BYS7ggAqgvCxCgwh13KGK6M52y37HUmvr4GdD",
+		DistributionEpochs:    17280, // CometBFT epochs of 5s equate 1 day (12*60*24)
 	}
 }
 

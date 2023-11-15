@@ -124,8 +124,8 @@ import (
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	pmante "github.com/planetmint/planetmint-go/app/ante"
-	appparams "github.com/planetmint/planetmint-go/app/params"
 	"github.com/planetmint/planetmint-go/docs"
+	appparams "github.com/planetmint/planetmint-go/lib/params"
 )
 
 const (
@@ -572,6 +572,7 @@ func New(
 
 		app.BankKeeper,
 		app.AccountKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 	daoModule := daomodule.NewAppModule(appCodec, app.DaoKeeper, app.AccountKeeper, app.BankKeeper)
 

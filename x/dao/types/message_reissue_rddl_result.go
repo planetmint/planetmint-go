@@ -14,7 +14,7 @@ func NewMsgReissueRDDLResult(creator string, proposer string, txID string, block
 	return &MsgReissueRDDLResult{
 		Creator:     creator,
 		Proposer:    proposer,
-		TxId:        txID,
+		TxID:        txID,
 		BlockHeight: blockHeight,
 	}
 }

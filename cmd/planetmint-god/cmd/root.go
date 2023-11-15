@@ -40,13 +40,18 @@ import (
 	// this line is used by starport scaffolding # root/moduleImport
 
 	"github.com/planetmint/planetmint-go/app"
-	appparams "github.com/planetmint/planetmint-go/app/params"
 	planetmintconfig "github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/lib"
+	appparams "github.com/planetmint/planetmint-go/lib/params"
 )
 
 // NewRootCmd creates a new root command for a Cosmos SDK application
 func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 	encodingConfig := app.MakeEncodingConfig()
+	// Initialize library
+	libConfig := lib.GetConfig()
+	libConfig.SetEncodingConfig(encodingConfig)
+	libConfig.SetBech32PrefixForAccount("plmnt")
 	initClientCtx := client.Context{}.
 		WithCodec(encodingConfig.Marshaler).
 		WithInterfaceRegistry(encodingConfig.InterfaceRegistry).

@@ -1,26 +1,29 @@
 package dao
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
-
-	"github.com/planetmint/planetmint-go/config"
-	"github.com/planetmint/planetmint-go/testutil/network"
-	"github.com/planetmint/planetmint-go/testutil/sample"
+	"os"
+	"strconv"
 
 	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
-
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/cosmos/cosmos-sdk/crypto/hd"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	"github.com/planetmint/planetmint-go/config"
+	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
+	"github.com/planetmint/planetmint-go/testutil/network"
+	"github.com/planetmint/planetmint-go/testutil/sample"
+	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
-	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 )
 
 var (
@@ -87,6 +90,19 @@ func (s *E2ETestSuite) SetupSuite() {
 	bankGenState.Balances = append(bankGenState.Balances, accountBalances...)
 	s.cfg.GenesisState[banktypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&bankGenState)
 
+	// Setup MintAddress parameter in genesis state
+	// use sample.Mnemonic to make mint address deterministic for test
+	s.cfg.Mnemonics = []string{sample.Mnemonic}
+
+	// set MintAddress in GenesisState
+	var daoGenState daotypes.GenesisState
+	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[daotypes.ModuleName], &daoGenState)
+	valAddr, err := s.createValAccount(s.cfg)
+	s.Require().NoError(err)
+
+	daoGenState.Params.MintAddress = valAddr.String()
+	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
+
 	s.cfg.MinGasPrices = fmt.Sprintf("0.000006%s", conf.FeeDenom)
 	s.network = network.New(s.T(), s.cfg)
 }
@@ -144,13 +160,11 @@ func (s *E2ETestSuite) TestMintToken() {
 	conf := config.GetConfig()
 	val := s.network.Validators[0]
 
-	// val.Address.String()
-
 	mintRequest := sample.MintRequest(aliceAddr.String(), 1000, "hash")
 	mrJSON, err := json.Marshal(&mintRequest)
 	s.Require().NoError(err)
 
-	// send mint token request from non mint address
+	// send mint token request from mint address
 	args := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Moniker),
 		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
@@ -163,26 +177,7 @@ func (s *E2ETestSuite) TestMintToken() {
 
 	txResponse, err := clitestutil.GetTxResponseFromOut(out)
 	s.Require().NoError(err)
-	s.Require().Equal(int(txResponse.Code), int(2))
-
-	// set mint address to val.address
-	conf.MintAddress = val.Address.String()
-	conf.SetPlanetmintConfig(conf)
-
-	// send mint token request from mint address
-	args = []string{
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Moniker),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
-		"--yes",
-		string(mrJSON),
-	}
-
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdMintToken(), args)
-	s.Require().NoError(err)
-
-	txResponse, err = clitestutil.GetTxResponseFromOut(out)
-	s.Require().NoError(err)
-	s.Require().Equal(int(txResponse.Code), int(0))
+	s.Require().Equal(int(0), int(txResponse.Code))
 
 	s.Require().NoError(s.network.WaitForNextBlock())
 	rawLog, err := clitestutil.GetRawLogFromTxResponse(val, txResponse)
@@ -197,4 +192,82 @@ func (s *E2ETestSuite) TestMintToken() {
 	assert.Contains(s.T(), out.String(), "plmnt")
 	assert.Contains(s.T(), out.String(), "11000")
 	s.Require().NoError(err)
+
+	// send mint token request from non mint address
+	kb := val.ClientCtx.Keyring
+	account, err := kb.NewAccount(sample.Name, sample.Mnemonic, keyring.DefaultBIP39Passphrase, sample.DefaultDerivationPath, hd.Secp256k1)
+	s.Require().NoError(err)
+
+	addr, _ := account.GetAddress()
+
+	// sending funds to account to initialize on chain
+	args = []string{
+		val.Moniker,
+		addr.String(),
+		sample.Amount,
+		"--yes",
+		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
+	}
+	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
+	s.Require().NoError(err)
+
+	s.Require().NoError(s.network.WaitForNextBlock())
+
+	args = []string{
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, addr.String()),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
+		"--yes",
+		string(mrJSON),
+	}
+
+	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdMintToken(), args)
+	s.Require().NoError(err)
+
+	txResponse, err = clitestutil.GetTxResponseFromOut(out)
+	s.Require().NoError(err)
+	s.Require().Equal(int(2), int(txResponse.Code))
+}
+
+func (s *E2ETestSuite) createValAccount(cfg network.Config) (address sdk.AccAddress, err error) {
+	buf := bufio.NewReader(os.Stdin)
+
+	kb, err := keyring.New(sdk.KeyringServiceName(), keyring.BackendTest, s.T().TempDir(), buf, cfg.Codec, cfg.KeyringOptions...)
+	if err != nil {
+		return nil, err
+	}
+
+	keyringAlgos, _ := kb.SupportedAlgorithms()
+	algo, err := keyring.NewSigningAlgoFromString(cfg.SigningAlgo, keyringAlgos)
+	if err != nil {
+		return nil, err
+	}
+
+	mnemonic := cfg.Mnemonics[0]
+
+	record, err := kb.NewAccount("node0", mnemonic, keyring.DefaultBIP39Passphrase, sdk.GetConfig().GetFullBIP44Path(), algo)
+	if err != nil {
+		return nil, err
+	}
+
+	addr, err := record.GetAddress()
+	if err != nil {
+		return nil, err
+	}
+
+	return addr, nil
+}
+
+func (s *E2ETestSuite) TestReissuance() {
+	conf := config.GetConfig()
+	val := s.network.Validators[0]
+
+	var err error
+	for i := 0; i < conf.PoPEpochs+10; i++ {
+		err = s.network.WaitForNextBlock()
+		s.Require().NoError(err)
+	}
+	var height int64
+	height, _ = s.network.LatestHeight()
+	intValue := strconv.FormatInt(height, 10)
+	_, _ = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetReissuance(), []string{intValue})
 }
