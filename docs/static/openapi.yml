@@ -46923,6 +46923,9 @@ paths:
               params:
                 description: params holds all the parameters of this module.
                 type: object
+                properties:
+                  mint_address:
+                    type: string
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -76028,8 +76031,13 @@ definitions:
     type: object
   planetmintgo.dao.MsgReissueRDDLResultResponse:
     type: object
+  planetmintgo.dao.MsgUpdateParamsResponse:
+    type: object
   planetmintgo.dao.Params:
     type: object
+    properties:
+      mint_address:
+        type: string
     description: Params defines the parameters for the module.
   planetmintgo.dao.QueryGetMintRequestsByHashResponse:
     type: object
@@ -76124,6 +76132,9 @@ definitions:
       params:
         description: params holds all the parameters of this module.
         type: object
+        properties:
+          mint_address:
+            type: string
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   planetmintgo.dao.Reissuance:
     type: object

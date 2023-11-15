@@ -24,6 +24,8 @@ const (
 	DistributionKey = "Dao/Distribution"
 
 	PoPDistributionKey = "Dao/PoPDistribution"
+
+	ParamsKey = "Dao/Params"
 )
 
 func KeyPrefix(p string) []byte {
