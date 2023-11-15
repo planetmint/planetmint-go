@@ -106,7 +106,7 @@ func (k Keeper) GetDistributionForReissuedTokens(ctx sdk.Context, blockHeight in
 	var overallAmount uint64
 	for index, obj := range reissuances {
 		if (index == 0 && lastPoP == 0 && obj.BlockHeight == 0) || //corner case (beginning of he chain)
-			(int64(lastPoP) < int64(obj.BlockHeight) && int64(obj.BlockHeight) <= blockHeight) {
+			(lastPoP < obj.BlockHeight && obj.BlockHeight <= blockHeight) {
 			amount, err := getUint64FromTxString(ctx, obj.Rawtx)
 			if err == nil {
 				overallAmount = overallAmount + amount
