@@ -19,6 +19,7 @@ linters:
     - errname
     - errorlint
     - execinquery
+    - exhaustive
     - exportloopref
     - forbidigo
     - ginkgolinter
@@ -79,3 +80,6 @@ issues:
     - path: x/dao/client/cli/tx_reissue_rddl.*\.go
       linters:
         - dupl
+    - path: testutil/nullify/nullify\.go
+      linters:
+        - exhaustive
