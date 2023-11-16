@@ -47,6 +47,12 @@ func main() {
         }
         fmt.Println(txJSON)
 
+        // Optional
+        _, err = lib.SimulateTx(txBytes)
+        if err != nil {
+                log.Fatal(err)
+        }
+
         _, err = lib.BroadcastTx(txBytes)
         if err != nil {
                 log.Fatal(err)

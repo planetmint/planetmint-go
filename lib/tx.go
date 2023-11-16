@@ -201,3 +201,25 @@ func BroadcastTx(txBytes []byte) (txResponse *sdk.TxResponse, err error) {
 	txResponse = grpcRes.TxResponse
 	return
 }
+
+// SimulateTx simulates broadcasting a transaction via gRPC.
+func SimulateTx(txBytes []byte) (result *sdk.Result, err error) {
+	grpcConn, err := libConfig.GetGRPCConn()
+	if err != nil {
+		return
+	}
+	defer grpcConn.Close()
+
+	client := sdktx.NewServiceClient(grpcConn)
+	grpcRes, err := client.Simulate(
+		context.Background(),
+		&sdktx.SimulateRequest{
+			TxBytes: txBytes,
+		},
+	)
+	if err != nil {
+		return
+	}
+	result = grpcRes.Result
+	return
+}
