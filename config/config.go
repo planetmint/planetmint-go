@@ -37,7 +37,7 @@ type Config struct {
 	TokenDenom            string `mapstructure:"token-denom" json:"token-denom"`
 	StakeDenom            string `mapstructure:"stake-denom" json:"stake-denom"`
 	FeeDenom              string `mapstructure:"fee-denom" json:"fee-denom"`
-	ConfigRootDir         string
+	ConfigRootDir         string `mapstructure:"config-root-dir" json:"config-root-dir"`
 	PoPEpochs             int    `mapstructure:"pop-epochs" json:"pop-epochs"`
 	RPCHost               string `mapstructure:"rpc-host" json:"rpc-host"`
 	RPCPort               int    `mapstructure:"rpc-port" json:"rpc-port"`

@@ -45,6 +45,7 @@ linters:
     - makezero
     - mirror
     - misspell
+    - musttag
     - nakedret
     - nilerr
     - nilnil
