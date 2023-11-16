@@ -25,6 +25,7 @@ func GetTxCmd() *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
+	cmd.AddCommand(CmdReportPopResult())
 	cmd.AddCommand(CmdReissueRDDLProposal())
 	cmd.AddCommand(CmdMintToken())
 	cmd.AddCommand(CmdReissueRDDLResult())

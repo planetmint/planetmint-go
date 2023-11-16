@@ -17,8 +17,8 @@ func createNChallenge(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Cha
 	for i := range items {
 		items[i].Height = uint64(i)
 		items[i].Initiator = fmt.Sprintf("initiator%v", i)
-		items[i].Challenger = fmt.Sprintf("challanger%v", i)
-		items[i].Challangee = fmt.Sprintf("challangee%v", i)
+		items[i].Challenger = fmt.Sprintf("challenger%v", i)
+		items[i].Challengee = fmt.Sprintf("challengee%v", i)
 		items[i].Success = true
 		items[i].Description = fmt.Sprintf("expected %v got %v", i, i)
 		keeper.StoreChallenge(ctx, items[i])

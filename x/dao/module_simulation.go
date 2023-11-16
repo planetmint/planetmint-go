@@ -24,7 +24,10 @@ var (
 )
 
 const (
-	opWeightMsgReissueRDDLProposal = "op_weight_msg_reissue_rddl_proposal"
+	opWeightMsgReportPopResult = "op_weight_msg_report_pop_result"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgReportPopResult int = 100
+	opWeightMsgReissueRDDLProposal      = "op_weight_msg_reissue_rddl_proposal"
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgReissueRDDLProposal int = 100
 
@@ -60,6 +63,17 @@ func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedP
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
 	operations := make([]simtypes.WeightedOperation, 0)
 
+	var weightMsgReportPopResult int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgReportPopResult, &weightMsgReportPopResult, nil,
+		func(_ *rand.Rand) {
+			weightMsgReportPopResult = defaultWeightMsgReportPopResult
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgReportPopResult,
+		daosimulation.SimulateMsgReportPopResult(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
 	var weightMsgReissueRDDLProposal int
 	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgReissueRDDLProposal, &weightMsgReissueRDDLProposal, nil,
 		func(_ *rand.Rand) {
@@ -90,6 +104,14 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 // ProposalMsgs returns msgs used for governance proposals for simulations.
 func (am AppModule) ProposalMsgs(_ module.SimulationState) []simtypes.WeightedProposalMsg {
 	return []simtypes.WeightedProposalMsg{
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgReportPopResult,
+			defaultWeightMsgReportPopResult,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				daosimulation.SimulateMsgReportPopResult(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
 		simulation.NewWeightedProposalMsg(
 			opWeightMsgReissueRDDLProposal,
 			defaultWeightMsgReissueRDDLProposal,

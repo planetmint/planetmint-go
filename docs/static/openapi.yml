@@ -75967,6 +75967,22 @@ definitions:
         description: params holds all the parameters of this module.
         type: object
     description: QueryParamsResponse is response type for the Query/Params RPC method.
+  planetmintgo.dao.Challenge:
+    type: object
+    properties:
+      initiator:
+        type: string
+      challenger:
+        type: string
+      challengee:
+        type: string
+      height:
+        type: string
+        format: uint64
+      success:
+        type: boolean
+      description:
+        type: string
   planetmintgo.dao.DistributionOrder:
     type: object
     properties:
@@ -76030,6 +76046,8 @@ definitions:
   planetmintgo.dao.MsgReissueRDDLProposalResponse:
     type: object
   planetmintgo.dao.MsgReissueRDDLResultResponse:
+    type: object
+  planetmintgo.dao.MsgReportPopResultResponse:
     type: object
   planetmintgo.dao.MsgUpdateParamsResponse:
     type: object

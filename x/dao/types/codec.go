@@ -8,6 +8,7 @@ import (
 )
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
+	cdc.RegisterConcrete(&MsgReportPopResult{}, "dao/ReportPopResult", nil)
 	cdc.RegisterConcrete(&MsgReissueRDDLProposal{}, "dao/ReissueRDDLProposal", nil)
 	cdc.RegisterConcrete(&MsgMintToken{}, "dao/MintToken", nil)
 	cdc.RegisterConcrete(&MsgReissueRDDLResult{}, "dao/ReissueRDDLResult", nil)
@@ -19,6 +20,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgReportPopResult{},
 		&MsgReissueRDDLProposal{},
 		&MsgMintToken{},
 	)
