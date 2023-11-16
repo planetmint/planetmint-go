@@ -13,6 +13,7 @@ For debugging purposes we print the transaction that we send as JSON.
 package main
 
 import (
+        "context"
         "fmt"
         "log"
 
@@ -23,12 +24,13 @@ import (
 )
 
 func main() {
+        goCtx := context.Background()
         encodingConfig := app.MakeEncodingConfig()
 
         libConfig := lib.GetConfig()
-        libConfig.SetBech32PrefixForAccount("plmnt")
         libConfig.SetEncodingConfig(encodingConfig)
-        libConfig.SetRPCEndpoint("https://testnet-api.rddl.io")
+        libConfig.SetGRPCEndpoint("testnet-grpc.rddl.io:443")
+        libConfig.SetGRPCTLSCert("/etc/ssl/certs/ca-certificates.crt")
 
         addr0 := sdk.MustAccAddressFromBech32("plmnt168z8fyyzap0nw75d4atv9ucr2ye60d57dzlzaf")
         addr1 := sdk.MustAccAddressFromBech32("plmnt1vklujvmr9hsk9zwpquk4waecr2u5vcyjd8vgm8")
@@ -40,13 +42,19 @@ func main() {
         msg2 := banktypes.NewMsgSend(addr0, addr2, coin)
         msg3 := banktypes.NewMsgSend(addr0, addr3, coin)
 
-        txBytes, txJSON, err := lib.BuildAndSignTx(addr0, msg1, msg2, msg3)
+        txBytes, txJSON, err := lib.BuildAndSignTx(goCtx, addr0, msg1, msg2, msg3)
         if err != nil {
                 log.Fatal(err)
         }
         fmt.Println(txJSON)
 
-        _, err = lib.BroadcastTx(txBytes)
+        // Optional
+        _, err = lib.SimulateTx(goCtx, txBytes)
+        if err != nil {
+                log.Fatal(err)
+        }
+
+        _, err = lib.BroadcastTx(goCtx, txBytes)
         if err != nil {
                 log.Fatal(err)
         }

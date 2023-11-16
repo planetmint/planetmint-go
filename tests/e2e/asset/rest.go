@@ -40,7 +40,7 @@ func (s *E2ETestSuite) TestNotarizeAssetREST() {
 		{
 			"machine not found",
 			assettypes.MsgNotarizeAsset{
-				Creator: "cosmos12qydd0w5ff4sww54dxm0sreznxlex8wfrg86c5",
+				Creator: "plmnt1v5394e8vmfrp4qzdav7xkze0f567w3tsgxf09j",
 				Cid:     cid,
 			},
 			"machine not found",

@@ -1,16 +1,10 @@
 package lib
 
 import (
-	"bytes"
+	"context"
 	"encoding/hex"
-	"encoding/json"
 	"errors"
-	"fmt"
-	"io"
-	"log"
-	"net/http"
 	"path/filepath"
-	"strconv"
 
 	"github.com/99designs/keyring"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -21,6 +15,7 @@ import (
 	sdktx "github.com/cosmos/cosmos-sdk/types/tx"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
 // KeyPair defines a public/private key pair to e.g. sign a transaction.
@@ -85,38 +80,31 @@ func getKeyPairFromKeyring(address sdk.AccAddress) (keyPair KeyPair, err error) 
 	return
 }
 
-func getAccountNumberAndSequence(address sdk.AccAddress) (accountNumber, sequence uint64, err error) {
-	resp, err := http.Get(fmt.Sprintf("%s/cosmos/auth/v1beta1/account_info/%s", libConfig.RPCEndpoint, address.String()))
+func getAccountNumberAndSequence(goCtx context.Context, address sdk.AccAddress) (accountNumber, sequence uint64, err error) {
+	grpcConn, err := libConfig.GetGRPCConn()
 	if err != nil {
-		log.Fatalln(err)
+		return
 	}
-	defer resp.Body.Close()
+	defer grpcConn.Close()
 
-	bodyBytes, err := io.ReadAll(resp.Body)
+	client := authtypes.NewQueryClient(grpcConn)
+	grpcRes, err := client.AccountInfo(
+		goCtx,
+		&authtypes.QueryAccountInfoRequest{
+			Address: address.String(),
+		},
+	)
 	if err != nil {
 		return
 	}
 
-	var result Result
-	err = json.Unmarshal(bodyBytes, &result)
-	if err != nil {
-		return
-	}
-
-	accountNumber, err = strconv.ParseUint(result.Info["account_number"].(string), 10, 64)
-	if err != nil {
-		return
-	}
-	sequence, err = strconv.ParseUint(result.Info["sequence"].(string), 10, 64)
-	if err != nil {
-		return
-	}
-
+	accountNumber = grpcRes.Info.AccountNumber
+	sequence = grpcRes.Info.Sequence
 	return
 }
 
 // BuildAndSignTx constructs the transaction from address' private key and messages.
-func BuildAndSignTx(address sdk.AccAddress, msgs ...sdk.Msg) (txBytes []byte, txJSON string, err error) {
+func BuildAndSignTx(goCtx context.Context, address sdk.AccAddress, msgs ...sdk.Msg) (txBytes []byte, txJSON string, err error) {
 	encodingConfig := GetConfig().EncodingConfig
 	if encodingConfig.TxConfig == nil {
 		err = errors.New("encoding config must not be nil")
@@ -138,7 +126,7 @@ func BuildAndSignTx(address sdk.AccAddress, msgs ...sdk.Msg) (txBytes []byte, tx
 		return
 	}
 
-	accountNumber, sequence, err := getAccountNumberAndSequence(address)
+	accountNumber, sequence, err := getAccountNumberAndSequence(goCtx, address)
 	if err != nil {
 		return
 	}
@@ -191,28 +179,47 @@ func BuildAndSignTx(address sdk.AccAddress, msgs ...sdk.Msg) (txBytes []byte, tx
 	return
 }
 
-// BroadcastTx broadcasts a transaction via RPC.
-func BroadcastTx(txBytes []byte) (broadcastTxResponseJSON string, err error) {
-	broadcastTxRequest := sdktx.BroadcastTxRequest{
-		TxBytes: txBytes,
-		Mode:    sdktx.BroadcastMode_BROADCAST_MODE_SYNC,
-	}
-
-	broadcastTxRequestJSON, err := json.Marshal(broadcastTxRequest)
+// BroadcastTx broadcasts a transaction via gRPC.
+func BroadcastTx(goCtx context.Context, txBytes []byte) (txResponse *sdk.TxResponse, err error) {
+	grpcConn, err := libConfig.GetGRPCConn()
 	if err != nil {
 		return
 	}
+	defer grpcConn.Close()
 
-	resp, err := http.Post(fmt.Sprintf("%s/cosmos/tx/v1beta1/txs", libConfig.RPCEndpoint), "application/json", bytes.NewBuffer(broadcastTxRequestJSON))
+	client := sdktx.NewServiceClient(grpcConn)
+	grpcRes, err := client.BroadcastTx(
+		goCtx,
+		&sdktx.BroadcastTxRequest{
+			Mode:    sdktx.BroadcastMode_BROADCAST_MODE_SYNC,
+			TxBytes: txBytes,
+		},
+	)
 	if err != nil {
 		return
 	}
-	defer resp.Body.Close()
+	txResponse = grpcRes.TxResponse
+	return
+}
 
-	bodyBytes, err := io.ReadAll(resp.Body)
+// SimulateTx simulates broadcasting a transaction via gRPC.
+func SimulateTx(goCtx context.Context, txBytes []byte) (result *sdk.Result, err error) {
+	grpcConn, err := libConfig.GetGRPCConn()
 	if err != nil {
 		return
 	}
-	broadcastTxResponseJSON = string(bodyBytes)
+	defer grpcConn.Close()
+
+	client := sdktx.NewServiceClient(grpcConn)
+	grpcRes, err := client.Simulate(
+		goCtx,
+		&sdktx.SimulateRequest{
+			TxBytes: txBytes,
+		},
+	)
+	if err != nil {
+		return
+	}
+	result = grpcRes.Result
 	return
 }
