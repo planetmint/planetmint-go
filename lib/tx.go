@@ -50,7 +50,7 @@ func getKeyPairFromKeyring(address sdk.AccAddress) (keyPair KeyPair, err error) 
 		return
 	}
 
-	name := fmt.Sprintf("%x", []byte(address)) + ".address"
+	name := hex.EncodeToString([]byte(address)) + ".address"
 	i, err := ring.Get(name)
 	if err != nil {
 		return

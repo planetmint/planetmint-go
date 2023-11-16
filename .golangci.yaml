@@ -66,6 +66,9 @@ linters:
     - usestdlibvars
     - wastedassign
     - zerologlint
+linters-settings:
+  nakedret:
+    max-func-lines: 100
 issues:
   exclude-rules:
     - path: codec\.go

@@ -10,7 +10,7 @@ import (
 // Config defines library top level configuration.
 type Config struct {
 	ChainID        string                `mapstructure:"chain-id" json:"chain-id"`
-	EncodingConfig params.EncodingConfig `mapstructure:"encoding-config" json:"encoding-config""`
+	EncodingConfig params.EncodingConfig `mapstructure:"encoding-config" json:"encoding-config"`
 	RootDir        string                `mapstructure:"root-dir" json:"root-dir"`
 	RPCEndpoint    string                `mapstructure:"rpc-endpoint" json:"rpc-endpoint"`
 }
