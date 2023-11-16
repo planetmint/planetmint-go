@@ -46,6 +46,7 @@ func GetConfig() *Config {
 	initConfig.Do(func() {
 		libConfig = DefaultConfig()
 		sdkConfig = sdk.GetConfig()
+		libConfig.SetBech32PrefixForAccount("plmnt")
 	})
 	return libConfig
 }

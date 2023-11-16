@@ -36,7 +36,7 @@ const Fees = "1stake"
 const DefaultDerivationPath = "m/44'/8680'/0'/0/0"
 
 // ConstantBech32Addr for mocks
-const ConstBech32Addr = "cosmos1fkmmfvjf39hurp2ls3whtv73266jhh2n49202g"
+const ConstBech32Addr = "plmnt10mq5nj8jhh27z7ejnz2ql3nh0qhzjnfvy50877"
 
 // KeyPair returns a sample private / public keypair
 func KeyPair(optional ...int) (string, string) {

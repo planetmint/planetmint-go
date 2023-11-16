@@ -26,7 +26,6 @@ func main() {
         encodingConfig := app.MakeEncodingConfig()
 
         libConfig := lib.GetConfig()
-        libConfig.SetBech32PrefixForAccount("plmnt")
         libConfig.SetEncodingConfig(encodingConfig)
         libConfig.SetGRPCEndpoint("testnet-grpc.rddl.io:443")
         libConfig.SetGRPCTLSCert("/etc/ssl/certs/ca-certificates.crt")
