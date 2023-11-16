@@ -1,6 +1,7 @@
 package util
 
 import (
+	"context"
 	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -9,47 +10,52 @@ import (
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 )
 
-func buildSignBroadcastTx(ctx sdk.Context, sendingValidatorAddress string, msg sdk.Msg) (err error) {
+func buildSignBroadcastTx(goCtx context.Context, sendingValidatorAddress string, msg sdk.Msg) (err error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
 	logger := ctx.Logger()
 	addr := sdk.MustAccAddressFromBech32(sendingValidatorAddress)
-	txBytes, txJSON, err := lib.BuildAndSignTx(addr, msg)
+	txBytes, txJSON, err := lib.BuildAndSignTx(goCtx, addr, msg)
 	if err != nil {
 		return
 	}
 	logger.Debug("REISSUE: tx: " + txJSON)
-	_, err = lib.BroadcastTx(txBytes)
+	_, err = lib.BroadcastTx(goCtx, txBytes)
 	return
 }
 
-func InitRDDLReissuanceProcess(ctx sdk.Context, proposerAddress string, txUnsigned string, blockHeight int64) (err error) {
+func InitRDDLReissuanceProcess(goCtx context.Context, proposerAddress string, txUnsigned string, blockHeight int64) (err error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
 	//get_last_PoPBlockHeight() // TODO: to be read form the upcoming PoP-store
 	logger := ctx.Logger()
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
 	logger.Debug("REISSUE: create Reissuance Proposal")
 	msg := daotypes.NewMsgReissueRDDLProposal(sendingValidatorAddress, proposerAddress, txUnsigned, blockHeight)
-	err = buildSignBroadcastTx(ctx, sendingValidatorAddress, msg)
+	err = buildSignBroadcastTx(goCtx, sendingValidatorAddress, msg)
 	return
 }
 
-func SendRDDLReissuanceResult(ctx sdk.Context, proposerAddress string, txID string, blockHeight int64) (err error) {
+func SendRDDLReissuanceResult(goCtx context.Context, proposerAddress string, txID string, blockHeight int64) (err error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
 	logger := ctx.Logger()
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
 	logger.Debug("REISSUE: create Reissuance Result")
 	msg := daotypes.NewMsgReissueRDDLResult(sendingValidatorAddress, proposerAddress, txID, blockHeight)
-	err = buildSignBroadcastTx(ctx, sendingValidatorAddress, msg)
+	err = buildSignBroadcastTx(goCtx, sendingValidatorAddress, msg)
 	return
 }
 
-func SendRDDLDistributionRequest(ctx sdk.Context, distribution daotypes.DistributionOrder) (err error) {
+func SendRDDLDistributionRequest(goCtx context.Context, distribution daotypes.DistributionOrder) (err error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
 	logger := ctx.Logger()
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
 	logger.Debug("REISSUE: create Distribution Request")
 	msg := daotypes.NewMsgDistributionRequest(sendingValidatorAddress, &distribution)
-	err = buildSignBroadcastTx(ctx, sendingValidatorAddress, msg)
+	err = buildSignBroadcastTx(goCtx, sendingValidatorAddress, msg)
 	return
 }
 
-func SendRDDLDistributionResult(ctx sdk.Context, lastPoP string, daoTxID string, invTxID string, popTxID string) (err error) {
+func SendRDDLDistributionResult(goCtx context.Context, lastPoP string, daoTxID string, invTxID string, popTxID string) (err error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
 	logger := ctx.Logger()
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
 	logger.Debug("REISSUE: create Distribution Result")
@@ -58,6 +64,6 @@ func SendRDDLDistributionResult(ctx sdk.Context, lastPoP string, daoTxID string,
 		return
 	}
 	msg := daotypes.NewMsgDistributionResult(sendingValidatorAddress, iLastPoP, daoTxID, invTxID, popTxID)
-	err = buildSignBroadcastTx(ctx, sendingValidatorAddress, msg)
+	err = buildSignBroadcastTx(goCtx, sendingValidatorAddress, msg)
 	return
 }

@@ -13,6 +13,7 @@ For debugging purposes we print the transaction that we send as JSON.
 package main
 
 import (
+        "context"
         "fmt"
         "log"
 
@@ -23,6 +24,7 @@ import (
 )
 
 func main() {
+        goCtx := context.Background()
         encodingConfig := app.MakeEncodingConfig()
 
         libConfig := lib.GetConfig()
@@ -40,19 +42,19 @@ func main() {
         msg2 := banktypes.NewMsgSend(addr0, addr2, coin)
         msg3 := banktypes.NewMsgSend(addr0, addr3, coin)
 
-        txBytes, txJSON, err := lib.BuildAndSignTx(addr0, msg1, msg2, msg3)
+        txBytes, txJSON, err := lib.BuildAndSignTx(goCtx, addr0, msg1, msg2, msg3)
         if err != nil {
                 log.Fatal(err)
         }
         fmt.Println(txJSON)
 
         // Optional
-        _, err = lib.SimulateTx(txBytes)
+        _, err = lib.SimulateTx(goCtx, txBytes)
         if err != nil {
                 log.Fatal(err)
         }
 
-        _, err = lib.BroadcastTx(txBytes)
+        _, err = lib.BroadcastTx(goCtx, txBytes)
         if err != nil {
                 log.Fatal(err)
         }

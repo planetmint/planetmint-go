@@ -80,7 +80,7 @@ func getKeyPairFromKeyring(address sdk.AccAddress) (keyPair KeyPair, err error) 
 	return
 }
 
-func getAccountNumberAndSequence(address sdk.AccAddress) (accountNumber, sequence uint64, err error) {
+func getAccountNumberAndSequence(goCtx context.Context, address sdk.AccAddress) (accountNumber, sequence uint64, err error) {
 	grpcConn, err := libConfig.GetGRPCConn()
 	if err != nil {
 		return
@@ -89,7 +89,7 @@ func getAccountNumberAndSequence(address sdk.AccAddress) (accountNumber, sequenc
 
 	client := authtypes.NewQueryClient(grpcConn)
 	grpcRes, err := client.AccountInfo(
-		context.Background(),
+		goCtx,
 		&authtypes.QueryAccountInfoRequest{
 			Address: address.String(),
 		},
@@ -104,7 +104,7 @@ func getAccountNumberAndSequence(address sdk.AccAddress) (accountNumber, sequenc
 }
 
 // BuildAndSignTx constructs the transaction from address' private key and messages.
-func BuildAndSignTx(address sdk.AccAddress, msgs ...sdk.Msg) (txBytes []byte, txJSON string, err error) {
+func BuildAndSignTx(goCtx context.Context, address sdk.AccAddress, msgs ...sdk.Msg) (txBytes []byte, txJSON string, err error) {
 	encodingConfig := GetConfig().EncodingConfig
 	if encodingConfig.TxConfig == nil {
 		err = errors.New("encoding config must not be nil")
@@ -126,7 +126,7 @@ func BuildAndSignTx(address sdk.AccAddress, msgs ...sdk.Msg) (txBytes []byte, tx
 		return
 	}
 
-	accountNumber, sequence, err := getAccountNumberAndSequence(address)
+	accountNumber, sequence, err := getAccountNumberAndSequence(goCtx, address)
 	if err != nil {
 		return
 	}
@@ -180,7 +180,7 @@ func BuildAndSignTx(address sdk.AccAddress, msgs ...sdk.Msg) (txBytes []byte, tx
 }
 
 // BroadcastTx broadcasts a transaction via gRPC.
-func BroadcastTx(txBytes []byte) (txResponse *sdk.TxResponse, err error) {
+func BroadcastTx(goCtx context.Context, txBytes []byte) (txResponse *sdk.TxResponse, err error) {
 	grpcConn, err := libConfig.GetGRPCConn()
 	if err != nil {
 		return
@@ -189,7 +189,7 @@ func BroadcastTx(txBytes []byte) (txResponse *sdk.TxResponse, err error) {
 
 	client := sdktx.NewServiceClient(grpcConn)
 	grpcRes, err := client.BroadcastTx(
-		context.Background(),
+		goCtx,
 		&sdktx.BroadcastTxRequest{
 			Mode:    sdktx.BroadcastMode_BROADCAST_MODE_SYNC,
 			TxBytes: txBytes,
@@ -203,7 +203,7 @@ func BroadcastTx(txBytes []byte) (txResponse *sdk.TxResponse, err error) {
 }
 
 // SimulateTx simulates broadcasting a transaction via gRPC.
-func SimulateTx(txBytes []byte) (result *sdk.Result, err error) {
+func SimulateTx(goCtx context.Context, txBytes []byte) (result *sdk.Result, err error) {
 	grpcConn, err := libConfig.GetGRPCConn()
 	if err != nil {
 		return
@@ -212,7 +212,7 @@ func SimulateTx(txBytes []byte) (result *sdk.Result, err error) {
 
 	client := sdktx.NewServiceClient(grpcConn)
 	grpcRes, err := client.Simulate(
-		context.Background(),
+		goCtx,
 		&sdktx.SimulateRequest{
 			TxBytes: txBytes,
 		},

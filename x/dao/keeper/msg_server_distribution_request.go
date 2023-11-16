@@ -32,7 +32,7 @@ func (k msgServer) DistributionRequest(goCtx context.Context, msg *types.MsgDist
 		msg.Distribution.PopTxID = popTx
 		msg.Distribution.DaoTxID = daoTx
 		lastPopString := strconv.FormatInt(msg.Distribution.LastPop, 10)
-		err = util.SendRDDLDistributionResult(ctx, lastPopString, daoTx, investorTx, popTx)
+		err = util.SendRDDLDistributionResult(goCtx, lastPopString, daoTx, investorTx, popTx)
 		if err != nil {
 			ctx.Logger().Error("Distribution Request: could not send distribution result ", err.Error())
 		}
