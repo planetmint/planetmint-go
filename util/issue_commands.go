@@ -25,7 +25,7 @@ func buildSignBroadcastTx(goCtx context.Context, sendingValidatorAddress string,
 
 func InitRDDLReissuanceProcess(goCtx context.Context, proposerAddress string, txUnsigned string, blockHeight int64) (err error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	//get_last_PoPBlockHeight() // TODO: to be read form the upcoming PoP-store
+	// get_last_PoPBlockHeight() // TODO: to be read form the upcoming PoP-store
 	logger := ctx.Logger()
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
 	logger.Debug("REISSUE: create Reissuance Proposal")

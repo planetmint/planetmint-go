@@ -28,6 +28,7 @@ linters:
     - gochecksumtype
     - gocognit
     - goconst
+    - gocritic
     - gocyclo
     - gofmt
     - goheader

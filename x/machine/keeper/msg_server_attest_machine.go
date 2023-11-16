@@ -46,7 +46,7 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 
 	if k.isNFTCreationRequest(msg.Machine) && util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress) {
 		_ = k.issueMachineNFT(ctx, msg.Machine)
-		//TODO create NFTCreationMessage to be stored by all nodes
+		// TODO create NFTCreationMessage to be stored by all nodes
 		// if err != nil {
 		// 	return nil, types.ErrNFTIssuanceFailed
 		// }
@@ -113,9 +113,9 @@ func (k msgServer) issueMachineNFT(ctx sdk.Context, machine *types.Machine) erro
 	_, _, err := k.issueNFTAsset(ctx, machine.Name, machine.Address)
 	return err
 	// asset registration is not performed in case of NFT issuance for machines
-	//assetID, contract, err := k.issueNFTAsset(machine.Name, machine.Address)
+	// assetID, contract, err := k.issueNFTAsset(machine.Name, machine.Address)
 	// if err != nil {
 	// 	return err
 	// }
-	//return k.registerAsset(assetID, contract)
+	// return k.registerAsset(assetID, contract)
 }

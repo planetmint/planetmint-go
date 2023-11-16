@@ -65,10 +65,10 @@ func getLastPopBytes(height int64) []byte {
 	return big.NewInt(height + 1).Bytes()
 }
 
-func ComputeDistribution(lastReissuance int64, BlockHeight int64, amount uint64) (distribution types.DistributionOrder) {
+func ComputeDistribution(lastReissuance int64, blockHeight int64, amount uint64) (distribution types.DistributionOrder) {
 	conf := config.GetConfig()
 	distribution.FirstPop = lastReissuance
-	distribution.LastPop = BlockHeight
+	distribution.LastPop = blockHeight
 
 	distribution.DaoAddr = conf.DistributionAddrDAO
 	distribution.InvestorAddr = conf.DistributionAddrInv
@@ -105,11 +105,11 @@ func (k Keeper) GetDistributionForReissuedTokens(ctx sdk.Context, blockHeight in
 	reissuances := k.getReissuancesRange(ctx, lastPoP)
 	var overallAmount uint64
 	for index, obj := range reissuances {
-		if (index == 0 && lastPoP == 0 && obj.BlockHeight == 0) || //corner case (beginning of he chain)
+		if (index == 0 && lastPoP == 0 && obj.BlockHeight == 0) || // corner case (beginning of he chain)
 			(lastPoP < obj.BlockHeight && obj.BlockHeight <= blockHeight) {
 			amount, err := getUint64FromTxString(ctx, obj.Rawtx)
 			if err == nil {
-				overallAmount = overallAmount + amount
+				overallAmount += amount
 			}
 		} else {
 			ctx.Logger().Info("%u %u %u", lastPoP, obj.BlockHeight, blockHeight)
