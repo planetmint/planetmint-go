@@ -18,43 +18,62 @@ func NewCheckMachineDecorator(mk MachineKeeper) CheckMachineDecorator {
 	}
 }
 
-func (cm CheckMachineDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (sdk.Context, error) {
+func (cm CheckMachineDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (_ sdk.Context, err error) {
 	for _, msg := range tx.GetMsgs() {
 		switch sdk.MsgTypeURL(msg) {
 		case "/planetmintgo.asset.MsgNotarizeAsset":
 			notarizeMsg, ok := msg.(*assettypes.MsgNotarizeAsset)
 			if ok {
-				_, found := cm.mk.GetMachineIndexByAddress(ctx, notarizeMsg.GetCreator())
-				if !found {
-					return ctx, errorsmod.Wrapf(machinetypes.ErrMachineNotFound, "error during CheckTx or ReCheckTx")
-				}
+				ctx, err = cm.handleNotarizeAsset(ctx, notarizeMsg)
 			}
 		case "/planetmintgo.machine.MsgAttestMachine":
 			attestMsg, ok := msg.(*machinetypes.MsgAttestMachine)
 			if ok {
-				if attestMsg.GetCreator() != attestMsg.Machine.GetAddress() {
-					return ctx, errorsmod.Wrapf(machinetypes.ErrMachineIsNotCreator, "error during CheckTx or ReCheckTx")
-				}
-				_, activated, found := cm.mk.GetTrustAnchor(ctx, attestMsg.Machine.MachineId)
-				if !found {
-					return ctx, errorsmod.Wrapf(machinetypes.ErrTrustAnchorNotFound, "error during CheckTx or ReCheckTx")
-				}
-				if activated {
-					return ctx, errorsmod.Wrapf(machinetypes.ErrTrustAnchorAlreadyInUse, "error during CheckTx or ReCheckTx")
-				}
+				ctx, err = cm.handleAttestMachine(ctx, attestMsg)
 			}
 		case "planetmintgo.dao.MsgReportPoPResult":
 			popMsg, ok := msg.(*daotypes.MsgReportPopResult)
 			if ok {
-				_, found := cm.mk.GetMachineIndexByAddress(ctx, popMsg.GetCreator())
-				if !found {
-					return ctx, errorsmod.Wrapf(machinetypes.ErrMachineNotFound, "error during CheckTx or ReCheckTx")
-				}
+				ctx, err = cm.handlePopResult(ctx, popMsg)
 			}
 		default:
 			continue
 		}
 	}
 
+	if err != nil {
+		return ctx, err
+	}
+
 	return next(ctx, tx, simulate)
+}
+
+func (cm CheckMachineDecorator) handleNotarizeAsset(ctx sdk.Context, notarizeMsg *assettypes.MsgNotarizeAsset) (sdk.Context, error) {
+	_, found := cm.mk.GetMachineIndexByAddress(ctx, notarizeMsg.GetCreator())
+	if !found {
+		return ctx, errorsmod.Wrapf(machinetypes.ErrMachineNotFound, "error during CheckTx or ReCheckTx")
+	}
+	return ctx, nil
+}
+
+func (cm CheckMachineDecorator) handleAttestMachine(ctx sdk.Context, attestMsg *machinetypes.MsgAttestMachine) (sdk.Context, error) {
+	if attestMsg.GetCreator() != attestMsg.Machine.GetAddress() {
+		return ctx, errorsmod.Wrapf(machinetypes.ErrMachineIsNotCreator, "error during CheckTx or ReCheckTx")
+	}
+	_, activated, found := cm.mk.GetTrustAnchor(ctx, attestMsg.Machine.MachineId)
+	if !found {
+		return ctx, errorsmod.Wrapf(machinetypes.ErrTrustAnchorNotFound, "error during CheckTx or ReCheckTx")
+	}
+	if activated {
+		return ctx, errorsmod.Wrapf(machinetypes.ErrTrustAnchorAlreadyInUse, "error during CheckTx or ReCheckTx")
+	}
+	return ctx, nil
+}
+
+func (cm CheckMachineDecorator) handlePopResult(ctx sdk.Context, popMsg *daotypes.MsgReportPopResult) (sdk.Context, error) {
+	_, found := cm.mk.GetMachineIndexByAddress(ctx, popMsg.GetCreator())
+	if !found {
+		return ctx, errorsmod.Wrapf(machinetypes.ErrMachineNotFound, "error during CheckTx or ReCheckTx")
+	}
+	return ctx, nil
 }
