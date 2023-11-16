@@ -34,6 +34,12 @@ jobs:
           fi
           git tag ${{ github.event.inputs.tag }}
           git push origin ${{ github.event.inputs.tag }}
+          # Create library git tag a la `lib/v0.1.1` for `go get`
+          LIB_TAG=$(grep "github.com/planetmint/planetmint-go/lib v[0-9]*\.[0-9]*\.[0-9]*" go.mod|sed "s#.*github.com/planetmint/planetmint-go/##g"|sed "s# #/#g")
+          if [[ $(git tag|grep ${LIB_TAG}|wc -l) -eq 0 ]]; then
+            git tag ${LIB_TAG}
+            git push origin ${LIB_TAG}
+          fi
 
       - name: Setup Go
         uses: actions/setup-go@v4
