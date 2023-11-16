@@ -69,14 +69,3 @@ linters:
 linters-settings:
   nakedret:
     max-func-lines: 100
-issues:
-  exclude-rules:
-    - path: codec\.go
-      linters:
-        - nosnakecase
-    - path: app\/simulation_test\.go
-      linters:
-        - nosnakecase
-    - path: testutil\/rest\.go
-      linters:
-        - nosnakecase
