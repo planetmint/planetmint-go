@@ -28,7 +28,8 @@ func main() {
         libConfig := lib.GetConfig()
         libConfig.SetBech32PrefixForAccount("plmnt")
         libConfig.SetEncodingConfig(encodingConfig)
-        libConfig.SetRPCEndpoint("https://testnet-api.rddl.io")
+        libConfig.SetGRPCEndpoint("testnet-grpc.rddl.io:443")
+        libConfig.SetGRPCTLSCert("/etc/ssl/certs/ca-certificates.crt")
 
         addr0 := sdk.MustAccAddressFromBech32("plmnt168z8fyyzap0nw75d4atv9ucr2ye60d57dzlzaf")
         addr1 := sdk.MustAccAddressFromBech32("plmnt1vklujvmr9hsk9zwpquk4waecr2u5vcyjd8vgm8")
