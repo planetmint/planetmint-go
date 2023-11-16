@@ -11,19 +11,24 @@ linters:
     - contextcheck
     - decorder
     - dogsled
+    - dupl
     - dupword
     - durationcheck
     - errcheck
     - errchkjson
     - errname
+    - errorlint
     - execinquery
+    - exhaustive
     - exportloopref
     - forbidigo
+    - forcetypeassert
     - ginkgolinter
     - gocheckcompilerdirectives
     - gochecksumtype
     - gocognit
     - goconst
+    - gocritic
     - gocyclo
     - gofmt
     - goheader
@@ -71,12 +76,12 @@ linters-settings:
     max-func-lines: 100
 issues:
   exclude-rules:
-    - path: codec\.go
+    - path: x/.*/types/message.*\.go
       linters:
-        - nosnakecase
-    - path: app\/simulation_test\.go
+        - dupl
+    - path: x/dao/client/cli/tx_reissue_rddl.*\.go
       linters:
-        - nosnakecase
-    - path: testutil\/rest\.go
+        - dupl
+    - path: testutil/nullify/nullify\.go
       linters:
-        - nosnakecase
+        - exhaustive

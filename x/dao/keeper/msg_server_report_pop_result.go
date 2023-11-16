@@ -32,14 +32,14 @@ func (k msgServer) ReportPopResult(goCtx context.Context, msg *types.MsgReportPo
 
 // TODO: ensuer issuePoPrewards is only called once per PoP on all validators
 func (k msgServer) issuePoPRewards(_ types.Challenge) (err error) {
-	//cfg := config.GetConfig()
-	//client := osc.NewClient(cfg.WatchmenEndpoint, 1234)
+	// cfg := config.GetConfig()
+	// client := osc.NewClient(cfg.WatchmenEndpoint, 1234)
 
 	// TODO: finalize message and endpoint
-	//msg := osc.NewMessage("/rddl/token")
-	//msg.Append(challenge.Challenger)
-	//msg.Append(challenge.Challengee)
-	//err := client.Send(msg)
+	// msg := osc.NewMessage("/rddl/token")
+	// msg.Append(challenge.Challenger)
+	// msg.Append(challenge.Challengee)
+	// err := client.Send(msg)
 
 	return err
 }

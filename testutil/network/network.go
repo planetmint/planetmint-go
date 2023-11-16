@@ -40,7 +40,7 @@ func New(t *testing.T, configs ...Config) *Network {
 	}
 	validatorTmpDir := t.TempDir()
 
-	//set the proper root dir for the test environment so that the abci.go logic works
+	// set the proper root dir for the test environment so that the abci.go logic works
 	appConfig := config.GetConfig()
 	appConfig.SetRoot(validatorTmpDir + "/node0/simd")
 
