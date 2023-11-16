@@ -11,6 +11,7 @@ linters:
     - contextcheck
     - decorder
     - dogsled
+    - dupl
     - dupword
     - durationcheck
     - errcheck
@@ -69,3 +70,11 @@ linters:
 linters-settings:
   nakedret:
     max-func-lines: 100
+issues:
+  exclude-rules:
+    - path: x/.*/types/message.*\.go
+      linters:
+        - dupl
+    - path: x/dao/client/cli/tx_reissue_rddl.*\.go
+      linters:
+        - dupl
