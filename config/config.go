@@ -33,23 +33,23 @@ distribution-epochs = {{ .PlmntConfig.DistributionEpochs }}
 
 // Config defines Planetmint's top level configuration
 type Config struct {
-	AssetRegistryEndpoint string `json:"asset-registry-endpoint"  mapstructure:"asset-registry-endpoint"`
-	TokenDenom            string `json:"token-denom"              mapstructure:"token-denom"`
-	StakeDenom            string `json:"stake-denom"              mapstructure:"stake-denom"`
-	FeeDenom              string `json:"fee-denom"                mapstructure:"fee-denom"`
-	ConfigRootDir         string `json:"config-root-dir"          mapstructure:"config-root-dir"`
-	PoPEpochs             int    `json:"pop-epochs"               mapstructure:"pop-epochs"`
-	RPCHost               string `json:"rpc-host"                 mapstructure:"rpc-host"`
-	RPCPort               int    `json:"rpc-port"                 mapstructure:"rpc-port"`
-	RPCUser               string `json:"rpc-user"                 mapstructure:"rpc-user"`
-	RPCPassword           string `json:"rpc-password"             mapstructure:"rpc-password"`
-	IssuanceServiceDir    string `json:"issuance-service-dir"     mapstructure:"issuance-service-dir"`
-	ReissuanceAsset       string `json:"reissuance-asset"         mapstructure:"reissuance-asset"`
-	ValidatorAddress      string `json:"validator-address"        mapstructure:"validator-address"`
-	DistributionAddrInv   string `json:"distribution-address-inv" mapstructure:"distribution-address-inv"`
-	DistributionAddrDAO   string `json:"distribution-address-dao" mapstructure:"distribution-address-dao"`
-	DistributionAddrPoP   string `json:"distribution-address-pop" mapstructure:"distribution-address-pop"`
-	DistributionEpochs    int    `json:"distribution-epochs"      mapstructure:"distribution-epochs"`
+	AssetRegistryEndpoint string `json:"asset-registry-endpoint" mapstructure:"asset-registry-endpoint"`
+	TokenDenom            string `json:"token-denom"             mapstructure:"token-denom"`
+	StakeDenom            string `json:"stake-denom"             mapstructure:"stake-denom"`
+	FeeDenom              string `json:"fee-denom"               mapstructure:"fee-denom"`
+	ConfigRootDir         string `json:"config-root-dir"         mapstructure:"config-root-dir"`
+	PoPEpochs             int    `json:"pop-epochs"              mapstructure:"pop-epochs"` //nolint: tagliatelle // json(kebab): got 'pop-epochs' want 'po-p-epochs'
+	RPCHost               string `json:"rpc-host"                mapstructure:"rpc-host"`
+	RPCPort               int    `json:"rpc-port"                mapstructure:"rpc-port"`
+	RPCUser               string `json:"rpc-user"                mapstructure:"rpc-user"`
+	RPCPassword           string `json:"rpc-password"            mapstructure:"rpc-password"`
+	IssuanceServiceDir    string `json:"issuance-service-dir"    mapstructure:"issuance-service-dir"`
+	ReissuanceAsset       string `json:"reissuance-asset"        mapstructure:"reissuance-asset"`
+	ValidatorAddress      string `json:"validator-address"       mapstructure:"validator-address"`
+	DistributionAddrInv   string `json:"distribution-addr-inv"   mapstructure:"distribution-addr-inv"`
+	DistributionAddrDAO   string `json:"distribution-addr-dao"   mapstructure:"distribution-addr-dao"`
+	DistributionAddrPoP   string `json:"distribution-addr-pop"   mapstructure:"distribution-addr-pop"` //nolint: tagliatelle // json(kebab): got 'distribution-addr-pop' want 'distribution-addr-po-p'
+	DistributionEpochs    int    `json:"distribution-epochs"     mapstructure:"distribution-epochs"`
 }
 
 // cosmos-sdk wide global singleton

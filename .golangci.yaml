@@ -67,6 +67,7 @@ linters:
     - staticcheck
     - stylecheck
     - tagalign
+    - tagliatelle
     - tenv
     - testableexamples
     - tparallel
@@ -81,6 +82,11 @@ linters-settings:
     max-func-lines: 100
   tagalign:
     strict: true
+  tagliatelle:
+    case:
+      use-field-name: true
+      rules:
+        json: kebab
 issues:
   exclude-rules:
     - path: x/.*/types/message.*\.go

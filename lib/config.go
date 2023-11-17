@@ -19,7 +19,7 @@ type Config struct {
 	ChainID        string                `json:"chain-id"        mapstructure:"chain-id"`
 	EncodingConfig params.EncodingConfig `json:"encoding-config" mapstructure:"encoding-config"`
 	GRPCEndpoint   string                `json:"grpc-endpoint"   mapstructure:"grpc-endpoint"`
-	GRPCTLSCert    string                `json:"grpc-tls-cert"   mapstructure:"grpc-tls-cert"`
+	GRPCTLSCert    string                `json:"grpc-tls-cert"   mapstructure:"grpc-tls-cert"` //nolint: tagliatelle // json(kebab): got 'grpc-tls-cert' want 'grpctls-cert'
 	RootDir        string                `json:"root-dir"        mapstructure:"root-dir"`
 }
 
