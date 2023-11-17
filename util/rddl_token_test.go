@@ -7,18 +7,21 @@ import (
 )
 
 func Test2FloatConvertion(t *testing.T) {
+	t.Parallel()
 	var expectedValue uint64 = 99869000000
 	value := RDDLToken2Uint(998.69)
 	assert.Equal(t, expectedValue, value)
 }
 
 func Test2UintConvertion(t *testing.T) {
+	t.Parallel()
 	expectedValue := 998.69
 	value := RDDLToken2Float(99869000000)
 	assert.Equal(t, expectedValue, value)
 }
 
 func TestStringToFloat(t *testing.T) {
+	t.Parallel()
 	expectedValue := 998.69
 	value, err := RDDLTokenStringToFloat("998.69")
 	assert.Equal(t, expectedValue, value)
@@ -26,6 +29,7 @@ func TestStringToFloat(t *testing.T) {
 }
 
 func TestStringToUint(t *testing.T) {
+	t.Parallel()
 	var expectedValue uint64 = 99869000000
 	value, err := RDDLTokenStringToUint("998.69")
 	assert.Equal(t, expectedValue, value)

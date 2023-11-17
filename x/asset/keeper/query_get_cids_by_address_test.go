@@ -34,7 +34,6 @@ func TestGetNotarizedAssetByAddress(t *testing.T) {
 			err:     status.Error(codes.NotFound, "no CIDs found"),
 		},
 	} {
-		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
 			response, err := keeper.GetCIDsByAddress(wctx, tc.request)
 			if tc.err != nil {

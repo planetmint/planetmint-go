@@ -21,12 +21,14 @@ func setupMsgServer(t testing.TB) (types.MsgServer, context.Context) {
 }
 
 func TestMsgServer(t *testing.T) {
+	t.Parallel()
 	ms, ctx := setupMsgServer(t)
 	require.NotNil(t, ms)
 	require.NotNil(t, ctx)
 }
 
 func TestMsgServerAttestMachine(t *testing.T) {
+	t.Parallel()
 	sk, pk := sample.KeyPair()
 	ta := sample.TrustAnchor(pk)
 	taMsg := types.NewMsgRegisterTrustAnchor(pk, &ta)
@@ -42,6 +44,7 @@ func TestMsgServerAttestMachine(t *testing.T) {
 }
 
 func TestMsgServerAttestMachineInvalidLiquidKey(t *testing.T) {
+	t.Parallel()
 	sk, pk := sample.KeyPair()
 	ta := sample.TrustAnchor(pk)
 	taMsg := types.NewMsgRegisterTrustAnchor(pk, &ta)
@@ -56,6 +59,7 @@ func TestMsgServerAttestMachineInvalidLiquidKey(t *testing.T) {
 }
 
 func TestMsgServerRegisterTrustAnchor(t *testing.T) {
+	t.Parallel()
 	_, pk := sample.KeyPair()
 	ta := sample.TrustAnchor(pk)
 	msg := types.NewMsgRegisterTrustAnchor(pk, &ta)
@@ -67,6 +71,7 @@ func TestMsgServerRegisterTrustAnchor(t *testing.T) {
 }
 
 func TestMsgServerRegisterTrustAnchorTwice(t *testing.T) {
+	t.Parallel()
 	_, pk := sample.KeyPair()
 	ta := sample.TrustAnchor(pk)
 	msg := types.NewMsgRegisterTrustAnchor(pk, &ta)
@@ -80,6 +85,7 @@ func TestMsgServerRegisterTrustAnchorTwice(t *testing.T) {
 }
 
 func TestMsgServerRegisterTrustAnchorInvalidPubkey(t *testing.T) {
+	t.Parallel()
 	_, pk := sample.KeyPair()
 	ta := types.TrustAnchor{
 		Pubkey: "invalidpublickey",

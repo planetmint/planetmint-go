@@ -29,6 +29,7 @@ func createNAsset(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.MsgNota
 }
 
 func TestGetAsset(t *testing.T) {
+	t.Parallel()
 	keeper, ctx := keepertest.AssetKeeper(t)
 	items := createNAsset(keeper, ctx, 10)
 	for _, item := range items {
@@ -38,6 +39,7 @@ func TestGetAsset(t *testing.T) {
 	}
 }
 func TestGetCids(t *testing.T) {
+	t.Parallel()
 	keeper, ctx := keepertest.AssetKeeper(t)
 	items := createNAsset(keeper, ctx, 10)
 	for _, item := range items {
@@ -48,6 +50,7 @@ func TestGetCids(t *testing.T) {
 }
 
 func TestGetAssetByPubKeys(t *testing.T) {
+	t.Parallel()
 	keeper, ctx := keepertest.AssetKeeper(t)
 	_ = createNAsset(keeper, ctx, 10)
 	assets, found := keeper.GetCidsByAddress(ctx, "plmnt_address")

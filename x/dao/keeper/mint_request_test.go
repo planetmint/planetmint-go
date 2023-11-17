@@ -24,6 +24,7 @@ func createNMintRequests(keeper *keeper.Keeper, ctx sdk.Context, beneficiary str
 }
 
 func TestGetMintRequestByHash(t *testing.T) {
+	t.Parallel()
 	keeper, ctx := keepertest.DaoKeeper(t)
 	items := createNMintRequests(keeper, ctx, "beneficiary", 10)
 	for _, item := range items {
@@ -34,6 +35,7 @@ func TestGetMintRequestByHash(t *testing.T) {
 }
 
 func TestGetMintRequestByAddress(t *testing.T) {
+	t.Parallel()
 	keeper, ctx := keepertest.DaoKeeper(t)
 	items := createNMintRequests(keeper, ctx, "beneficiary", 10)
 	mintRequests, found := keeper.GetMintRequestsByAddress(ctx, "beneficiary")

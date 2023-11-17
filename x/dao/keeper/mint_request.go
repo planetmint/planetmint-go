@@ -16,7 +16,6 @@ func (k Keeper) StoreMintRequest(ctx sdk.Context, mintRequest types.MintRequest)
 	mintRequests.Requests = append(mintRequests.Requests, &mintRequest)
 	addressAppendValue := k.cdc.MustMarshal(&mintRequests)
 	addressStore.Set(getMintRequestKeyBytes(mintRequest.Beneficiary), addressAppendValue)
-
 }
 
 func (k Keeper) GetMintRequestsByAddress(ctx sdk.Context, address string) (val types.MintRequests, found bool) {

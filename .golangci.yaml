@@ -45,11 +45,15 @@ linters:
     - makezero
     - mirror
     - misspell
+    - musttag
     - nakedret
+    - nestif
     - nilerr
     - nilnil
+    - noctx
     - nolintlint
     - nosprintfhostport
+    - paralleltest
     - perfsprint
     - prealloc
     - predeclared
@@ -62,6 +66,8 @@ linters:
     - sqlclosecheck
     - staticcheck
     - stylecheck
+    - tagalign
+    - tagliatelle
     - tenv
     - testableexamples
     - tparallel
@@ -70,10 +76,18 @@ linters:
     - unused
     - usestdlibvars
     - wastedassign
+    - whitespace
     - zerologlint
 linters-settings:
   nakedret:
     max-func-lines: 100
+  tagalign:
+    strict: true
+  tagliatelle:
+    case:
+      use-field-name: true
+      rules:
+        json: kebab
 issues:
   exclude-rules:
     - path: x/.*/types/message.*\.go
@@ -85,3 +99,6 @@ issues:
     - path: testutil/nullify/nullify\.go
       linters:
         - exhaustive
+    - path: x/.*/keeper/query.*\.go
+      linters:
+        - paralleltest

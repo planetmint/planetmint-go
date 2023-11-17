@@ -20,8 +20,8 @@ type Key struct {
 
 type KeyFile struct {
 	Address string `json:"address"`
-	PubKey  Key    `json:"pub_key"`
-	PrivKey Key    `json:"priv_key"`
+	PubKey  Key    `json:"pub-key"`
+	PrivKey Key    `json:"priv-key"`
 }
 
 func GetValidatorCometBFTIdentity(ctx sdk.Context) (string, bool) {

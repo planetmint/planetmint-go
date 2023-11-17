@@ -26,7 +26,7 @@ type KeyPair struct {
 
 // Result defines a generic way to receive responses from the RPC endpoint.
 type Result struct {
-	Info map[string]interface{} `mapstructure:"info" json:"info"`
+	Info map[string]interface{} `json:"info" mapstructure:"info"`
 }
 
 func init() {

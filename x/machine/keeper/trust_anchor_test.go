@@ -37,6 +37,7 @@ func createNTrustAnchor(t *testing.T, keeper *keeper.Keeper, ctx sdk.Context, n 
 }
 
 func TestGetTrustAnchor(t *testing.T) {
+	t.Parallel()
 	keeper, ctx := keepertest.MachineKeeper(t)
 	items := createNTrustAnchor(t, keeper, ctx, 10)
 	for i, item := range items {
@@ -52,6 +53,7 @@ func TestGetTrustAnchor(t *testing.T) {
 }
 
 func TestUpdateTrustAnchor(t *testing.T) {
+	t.Parallel()
 	keeper, ctx := keepertest.MachineKeeper(t)
 	items := createNTrustAnchor(t, keeper, ctx, 10)
 	for _, item := range items {
@@ -69,6 +71,7 @@ func TestUpdateTrustAnchor(t *testing.T) {
 }
 
 func TestUpdateTrustAnchorInvalidPubKey(t *testing.T) {
+	t.Parallel()
 	keeper, ctx := keepertest.MachineKeeper(t)
 	items := createNTrustAnchor(t, keeper, ctx, 10)
 	for _, item := range items {

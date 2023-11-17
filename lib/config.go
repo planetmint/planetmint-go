@@ -16,11 +16,11 @@ import (
 
 // Config defines library top level configuration.
 type Config struct {
-	ChainID        string                `mapstructure:"chain-id" json:"chain-id"`
-	EncodingConfig params.EncodingConfig `mapstructure:"encoding-config" json:"encoding-config"`
-	GRPCEndpoint   string                `mapstructure:"grpc-endpoint" json:"grpc-endpoint"`
-	GRPCTLSCert    string                `mapstructure:"grpc-tls-cert" json:"grpc-tls-cert"`
-	RootDir        string                `mapstructure:"root-dir" json:"root-dir"`
+	ChainID        string                `json:"chain-id"        mapstructure:"chain-id"`
+	EncodingConfig params.EncodingConfig `json:"encoding-config" mapstructure:"encoding-config"`
+	GRPCEndpoint   string                `json:"grpc-endpoint"   mapstructure:"grpc-endpoint"`
+	GRPCTLSCert    string                `json:"grpc-tls-cert"   mapstructure:"grpc-tls-cert"` //nolint: tagliatelle // json(kebab): got 'grpc-tls-cert' want 'grpctls-cert'
+	RootDir        string                `json:"root-dir"        mapstructure:"root-dir"`
 }
 
 // lib wide global singleton

@@ -13,6 +13,7 @@ import (
 )
 
 func TestQueryGetMintRequestByHash(t *testing.T) {
+	t.Parallel()
 	keeper, ctx := keepertest.DaoKeeper(t)
 	wctx := sdk.WrapSDKContext(ctx)
 	items := createNMintRequests(keeper, ctx, sample.ConstBech32Addr, 1)
@@ -34,7 +35,9 @@ func TestQueryGetMintRequestByHash(t *testing.T) {
 			err:     status.Error(codes.NotFound, "mint request not found"),
 		},
 	} {
+		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
+			t.Parallel()
 			res, err := keeper.GetMintRequestsByHash(wctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)

@@ -33,7 +33,6 @@ func TestGetNotarizedAsset(t *testing.T) {
 			err:     status.Error(codes.NotFound, "cid not found"),
 		},
 	} {
-		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
 			response, err := keeper.GetNotarizedAsset(wctx, tc.request)
 			if tc.err != nil {
