@@ -17,7 +17,6 @@ func CmdGetReissuances() *cobra.Command {
 		Short: "Query get_reissuances",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
 				return err

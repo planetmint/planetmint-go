@@ -76,6 +76,7 @@ linters:
     - unused
     - usestdlibvars
     - wastedassign
+    - whitespace
     - zerologlint
 linters-settings:
   nakedret:

@@ -41,7 +41,6 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 		if err != nil {
 			logger.Error("sending the distribution request failed")
 		}
-
 	}
 }
 

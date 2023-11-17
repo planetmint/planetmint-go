@@ -80,5 +80,4 @@ func TestTokenDistribution(t *testing.T) {
 	expSum = reissuanceValue * Amount2ndBatch // add the [0] of the
 	assert.Equal(t, expSum, sum)
 	assert.Equal(t, uint64(reissuances), Amount1stBatch+Amount2ndBatch)
-
 }

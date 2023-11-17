@@ -24,5 +24,4 @@ func (k Keeper) GetReissuances(goCtx context.Context, req *types.QueryGetReissua
 		return &types.QueryGetReissuancesResponse{Reissuance: &reissuances[0]}, nil
 	}
 	return &types.QueryGetReissuancesResponse{}, nil
-
 }
