@@ -50,6 +50,7 @@ linters:
     - nestif
     - nilerr
     - nilnil
+    - noctx
     - nolintlint
     - nosprintfhostport
     - perfsprint
