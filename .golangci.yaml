@@ -99,3 +99,6 @@ issues:
     - path: testutil/nullify/nullify\.go
       linters:
         - exhaustive
+    - path: x/.*/keeper/query.*\.go
+      linters:
+        - paralleltest

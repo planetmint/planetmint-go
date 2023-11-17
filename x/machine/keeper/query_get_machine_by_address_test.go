@@ -13,7 +13,6 @@ import (
 )
 
 func TestGetMachineByAddress(t *testing.T) {
-	t.Parallel()
 	keeper, ctx := keepertest.MachineKeeper(t)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNMachine(keeper, ctx, 1)
@@ -33,9 +32,7 @@ func TestGetMachineByAddress(t *testing.T) {
 			err:     status.Error(codes.NotFound, "machine not found"),
 		},
 	} {
-		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
-			t.Parallel()
 			response, err := keeper.GetMachineByAddress(wctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
