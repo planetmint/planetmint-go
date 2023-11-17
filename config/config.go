@@ -33,23 +33,23 @@ distribution-epochs = {{ .PlmntConfig.DistributionEpochs }}
 
 // Config defines Planetmint's top level configuration
 type Config struct {
-	AssetRegistryEndpoint string `mapstructure:"asset-registry-endpoint " json:"asset-registry-endpoint "`
-	TokenDenom            string `mapstructure:"token-denom" json:"token-denom"`
-	StakeDenom            string `mapstructure:"stake-denom" json:"stake-denom"`
-	FeeDenom              string `mapstructure:"fee-denom" json:"fee-denom"`
-	ConfigRootDir         string `mapstructure:"config-root-dir" json:"config-root-dir"`
-	PoPEpochs             int    `mapstructure:"pop-epochs" json:"pop-epochs"`
-	RPCHost               string `mapstructure:"rpc-host" json:"rpc-host"`
-	RPCPort               int    `mapstructure:"rpc-port" json:"rpc-port"`
-	RPCUser               string `mapstructure:"rpc-user" json:"rpc-user"`
-	RPCPassword           string `mapstructure:"rpc-password" json:"rpc-password"`
-	IssuanceServiceDir    string `mapstructure:"issuance-service-dir" json:"issuance-service-dir"`
-	ReissuanceAsset       string `mapstructure:"reissuance-asset" json:"reissuance-asset"`
-	ValidatorAddress      string `mapstructure:"validator-address" json:"validator-address"`
-	DistributionAddrInv   string `mapstructure:"distribution-address-inv" json:"distribution-address-inv"`
-	DistributionAddrDAO   string `mapstructure:"distribution-address-dao" json:"distribution-address-dao"`
-	DistributionAddrPoP   string `mapstructure:"distribution-address-pop" json:"distribution-address-pop"`
-	DistributionEpochs    int    `mapstructure:"distribution-epochs" json:"distribution-epochs"`
+	AssetRegistryEndpoint string `json:"asset-registry-endpoint"  mapstructure:"asset-registry-endpoint"`
+	TokenDenom            string `json:"token-denom"              mapstructure:"token-denom"`
+	StakeDenom            string `json:"stake-denom"              mapstructure:"stake-denom"`
+	FeeDenom              string `json:"fee-denom"                mapstructure:"fee-denom"`
+	ConfigRootDir         string `json:"config-root-dir"          mapstructure:"config-root-dir"`
+	PoPEpochs             int    `json:"pop-epochs"               mapstructure:"pop-epochs"`
+	RPCHost               string `json:"rpc-host"                 mapstructure:"rpc-host"`
+	RPCPort               int    `json:"rpc-port"                 mapstructure:"rpc-port"`
+	RPCUser               string `json:"rpc-user"                 mapstructure:"rpc-user"`
+	RPCPassword           string `json:"rpc-password"             mapstructure:"rpc-password"`
+	IssuanceServiceDir    string `json:"issuance-service-dir"     mapstructure:"issuance-service-dir"`
+	ReissuanceAsset       string `json:"reissuance-asset"         mapstructure:"reissuance-asset"`
+	ValidatorAddress      string `json:"validator-address"        mapstructure:"validator-address"`
+	DistributionAddrInv   string `json:"distribution-address-inv" mapstructure:"distribution-address-inv"`
+	DistributionAddrDAO   string `json:"distribution-address-dao" mapstructure:"distribution-address-dao"`
+	DistributionAddrPoP   string `json:"distribution-address-pop" mapstructure:"distribution-address-pop"`
+	DistributionEpochs    int    `json:"distribution-epochs"      mapstructure:"distribution-epochs"`
 }
 
 // cosmos-sdk wide global singleton

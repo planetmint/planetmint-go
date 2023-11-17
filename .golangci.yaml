@@ -66,6 +66,7 @@ linters:
     - sqlclosecheck
     - staticcheck
     - stylecheck
+    - tagalign
     - tenv
     - testableexamples
     - tparallel
@@ -78,6 +79,8 @@ linters:
 linters-settings:
   nakedret:
     max-func-lines: 100
+  tagalign:
+    strict: true
 issues:
   exclude-rules:
     - path: x/.*/types/message.*\.go
