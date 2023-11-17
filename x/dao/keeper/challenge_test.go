@@ -27,6 +27,7 @@ func createNChallenge(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Cha
 }
 
 func TestGetChallenge(t *testing.T) {
+	t.Parallel()
 	keeper, ctx := keepertest.DaoKeeper(t)
 	items := createNChallenge(keeper, ctx, 10)
 	for _, item := range items {

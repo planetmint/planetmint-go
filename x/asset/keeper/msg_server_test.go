@@ -23,12 +23,14 @@ func setupMsgServer(t testing.TB) (types.MsgServer, context.Context) {
 }
 
 func TestMsgServer(t *testing.T) {
+	t.Parallel()
 	ms, ctx := setupMsgServer(t)
 	require.NotNil(t, ms)
 	require.NotNil(t, ctx)
 }
 
 func TestMsgServerNotarizeAsset(t *testing.T) {
+	t.Parallel()
 	extSk, _ := sample.ExtendedKeyPair(config.PlmntNetParams)
 	xskKey, _ := hdkeychain.NewKeyFromString(extSk)
 	privKey, _ := xskKey.ECPrivKey()

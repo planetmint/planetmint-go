@@ -26,6 +26,7 @@ func createNMachine(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Machi
 }
 
 func TestGetMachine(t *testing.T) {
+	t.Parallel()
 	keeper, ctx := keepertest.MachineKeeper(t)
 	items := createNMachine(keeper, ctx, 10)
 	for _, item := range items {
@@ -42,6 +43,7 @@ func TestGetMachine(t *testing.T) {
 }
 
 func TestGetMachineIndexByPubKey(t *testing.T) {
+	t.Parallel()
 	keeper, ctx := keepertest.MachineKeeper(t)
 	items := createNMachine(keeper, ctx, 10)
 	for _, item := range items {

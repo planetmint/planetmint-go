@@ -1,9 +1,10 @@
 package keeper_test
 
 import (
+	"testing"
+
 	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
 	"github.com/planetmint/planetmint-go/x/machine/types"
-	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
@@ -12,6 +13,7 @@ import (
 )
 
 func TestGetTrustAnchorQuery(t *testing.T) {
+	t.Parallel()
 	keeper, ctx := keepertest.MachineKeeper(t)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNTrustAnchor(t, keeper, ctx, 2)
@@ -39,6 +41,7 @@ func TestGetTrustAnchorQuery(t *testing.T) {
 	} {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
+			t.Parallel()
 			response, err := keeper.GetTrustAnchorStatus(wctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)

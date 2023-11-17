@@ -31,6 +31,7 @@ func createNDistributionOrder(keeper *keeper.Keeper, ctx sdk.Context, n int) []t
 }
 
 func TestDistributionOrder(t *testing.T) {
+	t.Parallel()
 	keeper, ctx := keepertest.DaoKeeper(t)
 	items := createNDistributionOrder(keeper, ctx, 10)
 	for _, item := range items {
@@ -45,6 +46,7 @@ func TestDistributionOrder(t *testing.T) {
 }
 
 func TestTokenDistribution(t *testing.T) {
+	t.Parallel()
 	k, ctx := keepertest.DaoKeeper(t)
 	var reissuanceValue uint64 = 99869000000
 	reissuances := 1000

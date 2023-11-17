@@ -8,6 +8,7 @@ import (
 )
 
 func TestMsgRegisterTrustAnchor_ValidateBasic(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name string
 		msg  MsgRegisterTrustAnchor
@@ -22,7 +23,9 @@ func TestMsgRegisterTrustAnchor_ValidateBasic(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			err := tt.msg.ValidateBasic()
 			if tt.err != nil {
 				require.ErrorIs(t, err, tt.err)

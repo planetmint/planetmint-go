@@ -20,12 +20,14 @@ func setupMsgServer(t testing.TB) (types.MsgServer, context.Context) {
 }
 
 func TestMsgServer(t *testing.T) {
+	t.Parallel()
 	ms, ctx := setupMsgServer(t)
 	require.NotNil(t, ms)
 	require.NotNil(t, ctx)
 }
 
 func TestMsgServerReportPoPResult(t *testing.T) {
+	t.Parallel()
 	initiator := sample.Secp256k1AccAddress()
 	challenger := sample.Secp256k1AccAddress()
 	challengee := sample.Secp256k1AccAddress()
@@ -94,6 +96,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 	}
 }
 func TestMsgServerMintToken(t *testing.T) {
+	t.Parallel()
 	minter := sample.AccAddress()
 	beneficiary := sample.ConstBech32Addr
 	mintRequest := sample.MintRequest(beneficiary, 1000, "hash")
@@ -113,6 +116,7 @@ func TestMsgServerMintToken(t *testing.T) {
 }
 
 func TestMsgServerMintTokenInvalidAddress(t *testing.T) {
+	t.Parallel()
 	minter := sample.AccAddress()
 	beneficiary := "invalid address"
 	mintRequest := sample.MintRequest(beneficiary, 1000, "hash")

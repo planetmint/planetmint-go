@@ -25,6 +25,7 @@ func createNReissuances(k *keeper.Keeper, ctx sdk.Context, n int) []types.Reissu
 }
 
 func TestGetReissuances(t *testing.T) {
+	t.Parallel()
 	keeper, ctx := keepertest.DaoKeeper(t)
 	items := createNReissuances(keeper, ctx, 10)
 	for _, item := range items {

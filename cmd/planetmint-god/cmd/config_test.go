@@ -8,6 +8,7 @@ import (
 
 // TestDerivationPath makes sure that purpose and cointype are set to PLMNT (see https://github.com/satoshilabs/slips/blob/master/slip-0044.md)
 func TestDerivationPath(t *testing.T) {
+	t.Parallel()
 	sdkConfig := initSDKConfig()
 
 	purpose := uint32(44)

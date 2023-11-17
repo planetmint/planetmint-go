@@ -131,6 +131,7 @@ func BenchmarkSimulation(b *testing.B) {
 }
 
 func TestAppStateDeterminism(t *testing.T) {
+	t.Parallel()
 	if !simcli.FlagEnabledValue {
 		t.Skip("skipping application simulation")
 	}
@@ -219,6 +220,7 @@ func TestAppStateDeterminism(t *testing.T) {
 }
 
 func TestAppImportExport(t *testing.T) {
+	t.Parallel()
 	config := simcli.NewConfigFromFlags()
 	config.ChainID = "mars-simapp-import"
 
@@ -373,6 +375,7 @@ func TestAppImportExport(t *testing.T) {
 }
 
 func TestAppSimulationAfterImport(t *testing.T) {
+	t.Parallel()
 	config := simcli.NewConfigFromFlags()
 	config.ChainID = "mars-simapp-after-import"
 

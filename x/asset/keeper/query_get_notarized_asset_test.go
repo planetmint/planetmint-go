@@ -13,6 +13,7 @@ import (
 )
 
 func TestGetNotarizedAsset(t *testing.T) {
+	t.Parallel()
 	keeper, ctx := keepertest.AssetKeeper(t)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNAsset(keeper, ctx, 1)
@@ -35,6 +36,7 @@ func TestGetNotarizedAsset(t *testing.T) {
 	} {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
+			t.Parallel()
 			response, err := keeper.GetNotarizedAsset(wctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)

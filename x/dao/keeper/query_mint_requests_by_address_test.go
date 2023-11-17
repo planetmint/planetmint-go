@@ -13,6 +13,7 @@ import (
 )
 
 func TestQueryMintRequestByAddress(t *testing.T) {
+	t.Parallel()
 	keeper, ctx := keepertest.DaoKeeper(t)
 	wctx := sdk.WrapSDKContext(ctx)
 	items := createNMintRequests(keeper, ctx, sample.ConstBech32Addr, 10)
@@ -39,7 +40,9 @@ func TestQueryMintRequestByAddress(t *testing.T) {
 			err:     status.Error(codes.NotFound, "mint requests not found"),
 		},
 	} {
+		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
+			t.Parallel()
 			res, err := keeper.MintRequestsByAddress(wctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
