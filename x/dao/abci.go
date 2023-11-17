@@ -17,32 +17,32 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 
 	// Check if node is block proposer
 	// take the following actions only once, that's why we filter for the Block Proposer
-	if util.IsValidatorBlockProposer(ctx, proposerAddress) {
-		blockHeight := req.Header.GetHeight()
-		if isPoPHeight(blockHeight) {
-			logger.Debug("TODO: implement PoP trigger")
-			hexProposerAddress := hex.EncodeToString(proposerAddress)
-			conf := config.GetConfig()
-			txUnsigned := keeper.GetReissuanceCommand(conf.ReissuanceAsset, blockHeight)
-			err := util.InitRDDLReissuanceProcess(ctx, hexProposerAddress, txUnsigned, blockHeight)
-			if err != nil {
-				logger.Error("error while initializing RDDL issuance", err)
-			}
-		}
-		if isDistributionHeight(blockHeight) {
-			// initialize the distribution message
-			distribution, err := k.GetDistributionForReissuedTokens(ctx, blockHeight)
-			if err != nil {
-				logger.Error("error while computing the RDDL distribution ", err)
-			}
-			err = util.SendRDDLDistributionRequest(ctx, distribution)
-			if err != nil {
-				logger.Error("sending the distribution request failed")
-			}
-
+	if !util.IsValidatorBlockProposer(ctx, proposerAddress) {
+		return
+	}
+	blockHeight := req.Header.GetHeight()
+	if isPoPHeight(blockHeight) {
+		logger.Debug("TODO: implement PoP trigger")
+		hexProposerAddress := hex.EncodeToString(proposerAddress)
+		conf := config.GetConfig()
+		txUnsigned := keeper.GetReissuanceCommand(conf.ReissuanceAsset, blockHeight)
+		err := util.InitRDDLReissuanceProcess(ctx, hexProposerAddress, txUnsigned, blockHeight)
+		if err != nil {
+			logger.Error("error while initializing RDDL issuance", err)
 		}
 	}
+	if isDistributionHeight(blockHeight) {
+		// initialize the distribution message
+		distribution, err := k.GetDistributionForReissuedTokens(ctx, blockHeight)
+		if err != nil {
+			logger.Error("error while computing the RDDL distribution ", err)
+		}
+		err = util.SendRDDLDistributionRequest(ctx, distribution)
+		if err != nil {
+			logger.Error("sending the distribution request failed")
+		}
 
+	}
 }
 
 func isPoPHeight(height int64) bool {

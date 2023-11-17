@@ -47,6 +47,7 @@ linters:
     - misspell
     - musttag
     - nakedret
+    - nestif
     - nilerr
     - nilnil
     - nolintlint

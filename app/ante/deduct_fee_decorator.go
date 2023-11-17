@@ -45,25 +45,27 @@ func checkTxFee(ctx sdk.Context, tx sdk.Tx) (sdk.Coins, error) {
 
 	feeCoins := feeTx.GetFee()
 
-	if ctx.IsCheckTx() {
-		minGasPrices := ctx.MinGasPrices()
-		if !minGasPrices.IsZero() {
-			feeDenoms := feeCoins.Denoms()
-			if len(feeDenoms) != 1 {
-				return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidCoins, "fee must be exactly one coin; got: %s", feeDenoms)
-			}
+	if !ctx.IsCheckTx() {
+		return feeCoins, nil
+	}
+	minGasPrices := ctx.MinGasPrices()
+	if minGasPrices.IsZero() {
+		return feeCoins, nil
+	}
+	feeDenoms := feeCoins.Denoms()
+	if len(feeDenoms) != 1 {
+		return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidCoins, "fee must be exactly one coin; got: %s", feeDenoms)
+	}
 
-			gasDenom := minGasPrices.GetDenomByIndex(0)
-			if !sdk.SliceContains[string](feeDenoms, gasDenom) {
-				return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidCoins, "received wrong fee denom; got: %s required: %s", feeDenoms[0], gasDenom)
-			}
+	gasDenom := minGasPrices.GetDenomByIndex(0)
+	if !sdk.SliceContains[string](feeDenoms, gasDenom) {
+		return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidCoins, "received wrong fee denom; got: %s required: %s", feeDenoms[0], gasDenom)
+	}
 
-			requiredFees := sdk.Coins{sdk.NewCoin(gasDenom, sdk.OneInt())}
+	requiredFees := sdk.Coins{sdk.NewCoin(gasDenom, sdk.OneInt())}
 
-			if !feeCoins.IsAnyGTE(requiredFees) {
-				return nil, errorsmod.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, requiredFees)
-			}
-		}
+	if !feeCoins.IsAnyGTE(requiredFees) {
+		return nil, errorsmod.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, requiredFees)
 	}
 
 	return feeCoins, nil
