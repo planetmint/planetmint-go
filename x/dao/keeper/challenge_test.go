@@ -36,3 +36,11 @@ func TestGetChallenge(t *testing.T) {
 		assert.Equal(t, item, challenge)
 	}
 }
+
+func TestGetChallengeRange(t *testing.T) {
+	t.Parallel()
+	keeper, ctx := keepertest.DaoKeeper(t)
+	createNChallenge(keeper, ctx, 10)
+	challenges := keeper.GetChallengeRange(ctx, 0)
+	assert.Equal(t, len(challenges), 10)
+}
