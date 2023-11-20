@@ -18,11 +18,9 @@ func (k msgServer) ReportPopResult(goCtx context.Context, msg *types.MsgReportPo
 		return nil, errorsmod.Wrapf(types.ErrInvalidChallenge, err.Error())
 	}
 
-	if isInitiator(*msg.Challenge) {
-		err = k.issuePoPRewards(*msg.Challenge)
-		if err != nil {
-			return nil, errorsmod.Wrapf(types.ErrFailedPoPRewardsIssuance, err.Error())
-		}
+	err = k.issuePoPRewards(ctx, *msg.Challenge)
+	if err != nil {
+		return nil, errorsmod.Wrapf(types.ErrFailedPoPRewardsIssuance, err.Error())
 	}
 
 	k.StoreChallenge(ctx, *msg.Challenge)
@@ -30,21 +28,29 @@ func (k msgServer) ReportPopResult(goCtx context.Context, msg *types.MsgReportPo
 	return &types.MsgReportPopResultResponse{}, nil
 }
 
-// TODO: ensuer issuePoPrewards is only called once per PoP on all validators
-func (k msgServer) issuePoPRewards(_ types.Challenge) (err error) {
-	// cfg := config.GetConfig()
-	// client := osc.NewClient(cfg.WatchmenEndpoint, 1234)
+func (k msgServer) issuePoPRewards(ctx sdk.Context, challenge types.Challenge) (err error) {
+	amt := GetReissuanceAmount()
+	amtUint, err := util.RDDLTokenStringToFloat(amt)
+	if err != nil {
+		return err
+	}
 
-	// TODO: finalize message and endpoint
-	// msg := osc.NewMessage("/rddl/token")
-	// msg.Append(challenge.Challenger)
-	// msg.Append(challenge.Challengee)
-	// err := client.Send(msg)
+	popAmt := uint64(float64(amtUint * types.PercentagePop))
+	stagedCRDDL := sdk.NewCoin("stagedCRDDL", sdk.NewIntFromUint64(popAmt))
+
+	err = k.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(stagedCRDDL))
+
+	challengerAmt := uint64(float64(amtUint * types.PercentageChallenger))
+	challengeeAmt := uint64(float64(amtUint * types.PercentageChallengee))
+
+	challengerCoin := sdk.NewCoin("stagedCRDDL", sdk.NewIntFromUint64(challengerAmt))
+	challengeeCoin := sdk.NewCoin("stagedCRDDL", sdk.NewIntFromUint64(challengeeAmt))
+	if challenge.Success {
+		err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, sdk.AccAddress(challenge.Challengee), sdk.NewCoins(challengeeCoin))
+		err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, sdk.AccAddress(challenge.Challenger), sdk.NewCoins(challengerCoin))
+	} else {
+		err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, sdk.AccAddress(challenge.Challenger), sdk.NewCoins(stagedCRDDL))
+	}
 
 	return err
-}
-
-// TODO: implement check if node is responsible for triggering issuance
-func isInitiator(_ types.Challenge) bool {
-	return false
 }

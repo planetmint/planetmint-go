@@ -8,8 +8,12 @@ import (
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
+func GetReissuanceAmount() string {
+	return "998.69000000"
+}
+
 func GetReissuanceCommand(assetID string, _ int64) string {
-	return "reissueasset " + assetID + " 998.69000000"
+	return "reissueasset " + assetID + " " + GetReissuanceAmount()
 }
 
 func IsValidReissuanceCommand(reissuanceStr string, assetID string, _ int64) bool {
