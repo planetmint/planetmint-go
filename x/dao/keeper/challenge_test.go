@@ -41,6 +41,7 @@ func TestGetChallengeRange(t *testing.T) {
 	t.Parallel()
 	keeper, ctx := keepertest.DaoKeeper(t)
 	createNChallenge(keeper, ctx, 10)
-	challenges := keeper.GetChallengeRange(ctx, 0)
+	challenges, err := keeper.GetChallengeRange(ctx, 0)
+	assert.NoError(t, err)
 	assert.Equal(t, len(challenges), 10)
 }

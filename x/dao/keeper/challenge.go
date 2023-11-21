@@ -24,7 +24,7 @@ func (k Keeper) GetChallenge(ctx sdk.Context, height uint64) (val types.Challeng
 	return val, true
 }
 
-func (k Keeper) GetChallengeRange(ctx sdk.Context, start uint64) (val []types.Challenge) {
+func (k Keeper) GetChallengeRange(ctx sdk.Context, start uint64) (val []types.Challenge, err error) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ChallengeKey))
 	iterator := store.Iterator(getChallengeBytes(start), nil)
 	defer iterator.Close()
@@ -32,12 +32,11 @@ func (k Keeper) GetChallengeRange(ctx sdk.Context, start uint64) (val []types.Ch
 	for ; iterator.Valid(); iterator.Next() {
 		var challenge types.Challenge
 		if err := challenge.Unmarshal(iterator.Value()); err != nil {
-			// TODO: handle better than panicing
-			panic(err)
+			return nil, err
 		}
 		val = append(val, challenge)
 	}
-	return val
+	return val, nil
 }
 
 func getChallengeBytes(height uint64) []byte {
