@@ -14,12 +14,12 @@ func buildSignBroadcastTx(goCtx context.Context, sendingValidatorAddress string,
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	logger := ctx.Logger()
 	addr := sdk.MustAccAddressFromBech32(sendingValidatorAddress)
-	txBytes, txJSON, err := lib.BuildAndSignTx(goCtx, addr, msg)
+	txBytes, txJSON, err := lib.BuildAndSignTx(addr, msg)
 	if err != nil {
 		return
 	}
 	logger.Debug("REISSUE: tx: " + txJSON)
-	_, err = lib.BroadcastTx(goCtx, txBytes)
+	_, err = lib.BroadcastTx(txBytes)
 	return
 }
 
