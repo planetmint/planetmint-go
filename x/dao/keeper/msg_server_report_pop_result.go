@@ -35,21 +35,33 @@ func (k msgServer) issuePoPRewards(ctx sdk.Context, challenge types.Challenge) (
 		return err
 	}
 
-	popAmt := uint64(float64(amtUint * types.PercentagePop))
+	popAmt := uint64(amtUint * types.PercentagePop)
 	stagedCRDDL := sdk.NewCoin("stagedCRDDL", sdk.NewIntFromUint64(popAmt))
 
 	err = k.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(stagedCRDDL))
+	if err != nil {
+		return err
+	}
 
-	challengerAmt := uint64(float64(amtUint * types.PercentageChallenger))
-	challengeeAmt := uint64(float64(amtUint * types.PercentageChallengee))
+	challengerAmt := uint64(amtUint * types.PercentageChallenger)
+	challengeeAmt := uint64(amtUint * types.PercentageChallengee)
 
 	challengerCoin := sdk.NewCoin("stagedCRDDL", sdk.NewIntFromUint64(challengerAmt))
 	challengeeCoin := sdk.NewCoin("stagedCRDDL", sdk.NewIntFromUint64(challengeeAmt))
 	if challenge.Success {
 		err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, sdk.AccAddress(challenge.Challengee), sdk.NewCoins(challengeeCoin))
+		if err != nil {
+			return err
+		}
 		err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, sdk.AccAddress(challenge.Challenger), sdk.NewCoins(challengerCoin))
+		if err != nil {
+			return err
+		}
 	} else {
 		err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, sdk.AccAddress(challenge.Challenger), sdk.NewCoins(stagedCRDDL))
+		if err != nil {
+			return err
+		}
 	}
 
 	return err
