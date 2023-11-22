@@ -47173,6 +47173,52 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
+  /planetmint/planetmint-go/machine/get_liquid_assets_by_machineid/{machineID}:
+    get:
+      summary: Queries a list of GetLiquidAssetsByMachineid items.
+      operationId: PlanetmintgoMachineGetLiquidAssetsByMachineid
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              liquidAssetEntry:
+                type: object
+                properties:
+                  machineID:
+                    type: string
+                  machineAddress:
+                    type: string
+                  assetID:
+                    type: string
+                  registered:
+                    type: boolean
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: machineID
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
 definitions:
   cosmos.auth.v1beta1.AddressBytesToStringResponse:
     type: object
@@ -76104,6 +76150,17 @@ definitions:
       blockHeight:
         type: string
         format: int64
+  planetmintgo.machine.LiquidAsset:
+    type: object
+    properties:
+      machineID:
+        type: string
+      machineAddress:
+        type: string
+      assetID:
+        type: string
+      registered:
+        type: boolean
   planetmintgo.machine.Machine:
     type: object
     properties:
@@ -76158,11 +76215,27 @@ definitions:
         type: string
   planetmintgo.machine.MsgAttestMachineResponse:
     type: object
+  planetmintgo.machine.MsgNotarizeLiquidAssetResponse:
+    type: object
   planetmintgo.machine.MsgRegisterTrustAnchorResponse:
     type: object
   planetmintgo.machine.Params:
     type: object
     description: Params defines the parameters for the module.
+  planetmintgo.machine.QueryGetLiquidAssetsByMachineidResponse:
+    type: object
+    properties:
+      liquidAssetEntry:
+        type: object
+        properties:
+          machineID:
+            type: string
+          machineAddress:
+            type: string
+          assetID:
+            type: string
+          registered:
+            type: boolean
   planetmintgo.machine.QueryGetMachineByAddressResponse:
     type: object
     properties:

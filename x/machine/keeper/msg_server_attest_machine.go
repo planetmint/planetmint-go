@@ -48,16 +48,15 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 		return nil, errorsmod.Wrap(types.ErrInvalidKey, "liquid")
 	}
 
-	if k.isNFTCreationRequest(msg.Machine) && util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress) {
-		_ = k.issueMachineNFT(ctx, msg.Machine)
-		//TODO create NFTCreationMessage to be stored by all nodes
-		// if err != nil {
-		// 	return nil, types.ErrNFTIssuanceFailed
-		// }
-	}
-
 	if msg.Machine.GetType() == 0 { // 0 == RDDL_MACHINE_UNDEFINED
 		return nil, types.ErrMachineTypeUndefined
+	}
+
+	if k.isNFTCreationRequest(msg.Machine) && util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress) {
+		err := k.issueMachineNFT(ctx, msg.Machine)
+		if err != nil {
+			return nil, types.ErrNFTIssuanceFailed
+		}
 	}
 
 	k.StoreMachine(ctx, *msg.Machine)
@@ -163,15 +162,21 @@ func (k msgServer) registerAsset(asset_id string, contract string) error {
 
 func (k msgServer) issueMachineNFT(ctx sdk.Context, machine *types.Machine) error {
 	// asset registration is in order to have the contact published
-	assetID, contract, err := k.issueNFTAsset(machine.Name, machine.Address)
+	var notarizedAsset types.LiquidAsset
+	notarizedAsset.Registered = true
+	assetID, contract, err := k.issueNFTAsset(ctx, machine.Name, machine.Address)
 	if err != nil {
 		return err
 	}
 	err = k.registerAsset(assetID, contract)
 	if err != nil {
-
+		notarizedAsset.Registered = false
 	}
 	// issue message with:
-	//machineID , machineAddress, assetID, registered
-	return
+	notarizedAsset.AssetID = assetID
+	notarizedAsset.MachineID = machine.GetMachineId()
+	notarizedAsset.MachineAddress = machine.Address
+
+	util.SendLiquidAssetRegistration(ctx, notarizedAsset)
+	return err
 }
