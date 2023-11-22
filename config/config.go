@@ -16,6 +16,8 @@ asset-registry-endpoint = "{{ .PlmntConfig.AssetRegistryEndpoint }}"
 token-denom = "{{ .PlmntConfig.TokenDenom }}"
 stake-denom = "{{ .PlmntConfig.StakeDenom }}"
 fee-denom = "{{ .PlmntConfig.FeeDenom }}"
+staged-denom = "{{ .PlmntConfig.StagedDenom }}"
+claim-denom = "{{ .PlmntConfig.ClaimDenom }}"
 pop-epochs = {{ .PlmntConfig.PoPEpochs }}
 rpc-host = "{{ .PlmntConfig.RPCHost }}"
 rpc-port = {{ .PlmntConfig.RPCPort }}
@@ -37,6 +39,8 @@ type Config struct {
 	TokenDenom            string `json:"token-denom"             mapstructure:"token-denom"`
 	StakeDenom            string `json:"stake-denom"             mapstructure:"stake-denom"`
 	FeeDenom              string `json:"fee-denom"               mapstructure:"fee-denom"`
+	StagedDenom           string `json:"staged-denom"            mapstructure:"staged-denom"`
+	ClaimDenom            string `json:"claim-denom"             mapstructure:"claim-denom"`
 	ConfigRootDir         string `json:"config-root-dir"         mapstructure:"config-root-dir"`
 	PoPEpochs             int    `json:"pop-epochs"              mapstructure:"pop-epochs"` //nolint: tagliatelle // json(kebab): got 'pop-epochs' want 'po-p-epochs'
 	RPCHost               string `json:"rpc-host"                mapstructure:"rpc-host"`
@@ -65,6 +69,8 @@ func DefaultConfig() *Config {
 		TokenDenom:            "plmnt",
 		StakeDenom:            "plmntstake",
 		FeeDenom:              "plmnt",
+		StagedDenom:           "stagedcrddl",
+		ClaimDenom:            "crddl",
 		ConfigRootDir:         "",
 		PoPEpochs:             24, // 24 CometBFT epochs of 5s equate 120s
 		RPCHost:               "localhost",

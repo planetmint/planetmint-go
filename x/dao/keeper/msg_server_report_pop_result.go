@@ -6,6 +6,7 @@ import (
 	errorsmod "cosmossdk.io/errors"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
@@ -29,6 +30,7 @@ func (k msgServer) ReportPopResult(goCtx context.Context, msg *types.MsgReportPo
 }
 
 func (k msgServer) issuePoPRewards(ctx sdk.Context, challenge types.Challenge) (err error) {
+	cfg := config.GetConfig()
 	amt := GetReissuanceAmount()
 	amtUint, err := util.RDDLTokenStringToFloat(amt)
 	if err != nil {
@@ -36,7 +38,7 @@ func (k msgServer) issuePoPRewards(ctx sdk.Context, challenge types.Challenge) (
 	}
 
 	popAmt := uint64(amtUint * types.PercentagePop)
-	stagedCRDDL := sdk.NewCoin("stagedCRDDL", sdk.NewIntFromUint64(popAmt))
+	stagedCRDDL := sdk.NewCoin(cfg.StagedDenom, sdk.NewIntFromUint64(popAmt))
 
 	err = k.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(stagedCRDDL))
 	if err != nil {
@@ -46,8 +48,8 @@ func (k msgServer) issuePoPRewards(ctx sdk.Context, challenge types.Challenge) (
 	challengerAmt := uint64(amtUint * types.PercentageChallenger)
 	challengeeAmt := uint64(amtUint * types.PercentageChallengee)
 
-	challengerCoin := sdk.NewCoin("stagedCRDDL", sdk.NewIntFromUint64(challengerAmt))
-	challengeeCoin := sdk.NewCoin("stagedCRDDL", sdk.NewIntFromUint64(challengeeAmt))
+	challengerCoin := sdk.NewCoin(cfg.StagedDenom, sdk.NewIntFromUint64(challengerAmt))
+	challengeeCoin := sdk.NewCoin(cfg.StagedDenom, sdk.NewIntFromUint64(challengeeAmt))
 	if challenge.Success {
 		err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, sdk.AccAddress(challenge.Challengee), sdk.NewCoins(challengeeCoin))
 		if err != nil {

@@ -7,6 +7,7 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
@@ -52,15 +53,16 @@ func (k msgServer) resolveStagedClaims(ctx sdk.Context, start uint64, end uint64
 }
 
 func (k msgServer) convertClaim(ctx sdk.Context, addr string) (err error) {
+	cfg := config.GetConfig()
 	accAddress, err := sdk.AccAddressFromBech32(addr)
 	if err != nil {
 		return err
 	}
 
-	stagedClaim := k.bankKeeper.GetBalance(ctx, accAddress, "stagedCRDDL")
+	stagedClaim := k.bankKeeper.GetBalance(ctx, accAddress, cfg.StagedDenom)
 
 	if stagedClaim.Amount.GT(math.ZeroInt()) {
-		claim := sdk.NewCoins(sdk.NewCoin("cRDDL", stagedClaim.Amount))
+		claim := sdk.NewCoins(sdk.NewCoin(cfg.ClaimDenom, stagedClaim.Amount))
 		err = k.bankKeeper.SendCoinsFromAccountToModule(ctx, accAddress, types.ModuleName, sdk.NewCoins(stagedClaim))
 		if err != nil {
 			return err
