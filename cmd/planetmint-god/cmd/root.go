@@ -51,6 +51,7 @@ func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 	// Initialize library
 	libConfig := lib.GetConfig()
 	libConfig.SetEncodingConfig(encodingConfig)
+	libConfig.SetBech32PrefixForAccount("plmnt")
 	initClientCtx := client.Context{}.
 		WithCodec(encodingConfig.Marshaler).
 		WithInterfaceRegistry(encodingConfig.InterfaceRegistry).

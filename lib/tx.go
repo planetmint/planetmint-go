@@ -1,28 +1,23 @@
 package lib
 
 import (
+	"bytes"
 	"context"
-	"encoding/hex"
+	"encoding/json"
 	"errors"
-	"path/filepath"
+	"fmt"
+	"io"
+	"log"
+	"net/http"
+	"os"
+	"strconv"
 
-	"github.com/99designs/keyring"
+	comethttp "github.com/cometbft/cometbft/rpc/client/http"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/cosmos/cosmos-sdk/crypto/hd"
-	cryptokeyring "github.com/cosmos/cosmos-sdk/crypto/keyring"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdktx "github.com/cosmos/cosmos-sdk/types/tx"
-	"github.com/cosmos/cosmos-sdk/types/tx/signing"
-	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
-
-// KeyPair defines a public/private key pair to e.g. sign a transaction.
-type KeyPair struct {
-	Pub  cryptotypes.PubKey
-	Priv cryptotypes.PrivKey
-}
 
 // Result defines a generic way to receive responses from the RPC endpoint.
 type Result struct {
@@ -33,97 +28,84 @@ func init() {
 	GetConfig()
 }
 
-func getKeyPairFromKeyring(address sdk.AccAddress) (keyPair KeyPair, err error) {
-	ring, err := keyring.Open(keyring.Config{
-		AllowedBackends: []keyring.BackendType{keyring.FileBackend},
-		FileDir:         filepath.Join(libConfig.RootDir, "keyring-test"),
-		FilePasswordFunc: func(_ string) (string, error) {
-			return "test", nil
-		},
-	})
-	if err != nil {
-		return
-	}
-
-	name := hex.EncodeToString([]byte(address)) + ".address"
-	i, err := ring.Get(name)
-	if err != nil {
-		return
-	}
-
-	name = string(i.Data)
-	i, err = ring.Get(name)
-	if err != nil {
-		return
-	}
-
-	s := hex.EncodeToString(i.Data)
-	privKey := s[len(s)-64:]
-
-	decodedPriv, err := hex.DecodeString(privKey)
-	if err != nil {
-		return
-	}
-
-	algo, err := cryptokeyring.NewSigningAlgoFromString("secp256k1", cryptokeyring.SigningAlgoList{hd.Secp256k1})
-	if err != nil {
-		return
-	}
-
-	priv := algo.Generate()(decodedPriv)
-	pub := priv.PubKey()
-
-	keyPair = KeyPair{
-		Pub:  pub,
-		Priv: priv,
-	}
-	return
-}
-
 func getAccountNumberAndSequence(goCtx context.Context, address sdk.AccAddress) (accountNumber, sequence uint64, err error) {
-	grpcConn, err := libConfig.GetGRPCConn()
+	url := fmt.Sprintf("%s/cosmos/auth/v1beta1/account_info/%s", libConfig.APIEndpoint, address.String())
+	req, err := http.NewRequestWithContext(goCtx, http.MethodGet, url, nil)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer resp.Body.Close()
+
+	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
-	defer grpcConn.Close()
 
-	client := authtypes.NewQueryClient(grpcConn)
-	grpcRes, err := client.AccountInfo(
-		goCtx,
-		&authtypes.QueryAccountInfoRequest{
-			Address: address.String(),
-		},
-	)
+	var result Result
+	err = json.Unmarshal(bodyBytes, &result)
 	if err != nil {
 		return
 	}
 
-	accountNumber = grpcRes.Info.AccountNumber
-	sequence = grpcRes.Info.Sequence
+	accountNumber, err = strconv.ParseUint(result.Info["account_number"].(string), 10, 64)
+	if err != nil {
+		return
+	}
+	sequence, err = strconv.ParseUint(result.Info["sequence"].(string), 10, 64)
+	if err != nil {
+		return
+	}
 	return
 }
 
-// BuildAndSignTx constructs the transaction from address' private key and messages.
-func BuildAndSignTx(goCtx context.Context, address sdk.AccAddress, msgs ...sdk.Msg) (txBytes []byte, txJSON string, err error) {
+func getClientContextAndTxFactory(goCtx context.Context, address sdk.AccAddress) (clientCtx client.Context, txf tx.Factory, err error) {
 	encodingConfig := GetConfig().EncodingConfig
-	if encodingConfig.TxConfig == nil {
-		err = errors.New("encoding config must not be nil")
-		return
-	}
-	txBuilder := encodingConfig.TxConfig.NewTxBuilder()
 
-	err = txBuilder.SetMsgs(msgs...)
+	rootDir := GetConfig().RootDir
+	input := os.Stdin
+	codec := encodingConfig.Marshaler
+	keyringOptions := []keyring.Option{}
+
+	keyring, err := keyring.New("lib", keyring.BackendTest, rootDir, input, codec, keyringOptions...)
 	if err != nil {
 		return
 	}
 
-	txBuilder.SetFeeAmount(sdk.Coins{sdk.NewInt64Coin("plmnt", 1)})
-	txBuilder.SetGasLimit(200000)
-	txBuilder.SetTimeoutHeight(0)
-
-	keyPair, err := getKeyPairFromKeyring(address)
+	record, err := keyring.KeyByAddress(address)
 	if err != nil {
 		return
+	}
+
+	remote := GetConfig().RPCEndpoint
+	wsClient, err := comethttp.New(remote, "/websocket")
+	if err != nil {
+		return
+	}
+
+	var output bytes.Buffer
+
+	clientCtx = client.Context{
+		BroadcastMode:  "sync",
+		ChainID:        "planetmint-testnet-1",
+		Client:         wsClient,
+		Codec:          codec,
+		From:           address.String(),
+		FromAddress:    address,
+		FromName:       record.Name,
+		HomeDir:        rootDir,
+		Input:          input,
+		Keyring:        keyring,
+		KeyringDir:     rootDir,
+		KeyringOptions: keyringOptions,
+		NodeURI:        remote,
+		Offline:        true,
+		Output:         &output,
+		SkipConfirm:    true,
+		TxConfig:       encodingConfig.TxConfig,
 	}
 
 	accountNumber, sequence, err := getAccountNumberAndSequence(goCtx, address)
@@ -131,47 +113,31 @@ func BuildAndSignTx(goCtx context.Context, address sdk.AccAddress, msgs ...sdk.M
 		return
 	}
 
-	// First round: we gather all the signer infos. We use the "set empty signature" hack to do that.
-	var sigsV2 []signing.SignatureV2
-	sigV2 := signing.SignatureV2{
-		PubKey: keyPair.Pub,
-		Data: &signing.SingleSignatureData{
-			SignMode:  encodingConfig.TxConfig.SignModeHandler().DefaultMode(),
-			Signature: nil,
-		},
-		Sequence: sequence,
-	}
-	sigsV2 = append(sigsV2, sigV2)
-	err = txBuilder.SetSignatures(sigsV2...)
-	if err != nil {
-		return
-	}
+	txf = tx.Factory{}.
+		WithAccountNumber(accountNumber).
+		WithChainID(clientCtx.ChainID).
+		WithGas(200000).
+		WithGasPrices("0.000005plmnt").
+		WithKeybase(clientCtx.Keyring).
+		WithSequence(sequence).
+		WithTxConfig(clientCtx.TxConfig)
 
-	// Second round: all signer infos are set, so each signer can sign.
-	sigsV2 = []signing.SignatureV2{}
-	signerData := xauthsigning.SignerData{
-		ChainID:       libConfig.ChainID,
-		AccountNumber: accountNumber,
-		Sequence:      sequence,
-	}
-	sigV2, err = tx.SignWithPrivKey(encodingConfig.TxConfig.SignModeHandler().DefaultMode(), signerData, txBuilder, keyPair.Priv, encodingConfig.TxConfig, sequence)
-	if err != nil {
-		return
-	}
-	sigsV2 = append(sigsV2, sigV2)
-	err = txBuilder.SetSignatures(sigsV2...)
-	if err != nil {
-		return
-	}
+	return
+}
 
-	// Generated Protobuf-encoded bytes.
-	txBytes, err = encodingConfig.TxConfig.TxEncoder()(txBuilder.GetTx())
+// BuildUnsignedTx builds a transaction to be signed given a set of messages.
+// Once created, the fee, memo, and messages are set.
+func BuildUnsignedTx(goCtx context.Context, address sdk.AccAddress, msgs ...sdk.Msg) (txJSON string, err error) {
+	clientCtx, txf, err := getClientContextAndTxFactory(goCtx, address)
 	if err != nil {
 		return
 	}
-
+	txBuilder, err := txf.BuildUnsignedTx(msgs...)
+	if err != nil {
+		return
+	}
 	// Generate a JSON string.
-	txJSONBytes, err := encodingConfig.TxConfig.TxJSONEncoder()(txBuilder.GetTx())
+	txJSONBytes, err := clientCtx.TxConfig.TxJSONEncoder()(txBuilder.GetTx())
 	if err != nil {
 		return
 	}
@@ -179,47 +145,18 @@ func BuildAndSignTx(goCtx context.Context, address sdk.AccAddress, msgs ...sdk.M
 	return
 }
 
-// BroadcastTx broadcasts a transaction via gRPC.
-func BroadcastTx(goCtx context.Context, txBytes []byte) (txResponse *sdk.TxResponse, err error) {
-	grpcConn, err := libConfig.GetGRPCConn()
+// BroadcastTx broadcasts a transaction via RPC.
+func BroadcastTx(goCtx context.Context, address sdk.AccAddress, msgs ...sdk.Msg) (broadcastTxResponseJSON string, err error) {
+	clientCtx, txf, err := getClientContextAndTxFactory(goCtx, address)
 	if err != nil {
 		return
 	}
-	defer grpcConn.Close()
-
-	client := sdktx.NewServiceClient(grpcConn)
-	grpcRes, err := client.BroadcastTx(
-		goCtx,
-		&sdktx.BroadcastTxRequest{
-			Mode:    sdktx.BroadcastMode_BROADCAST_MODE_SYNC,
-			TxBytes: txBytes,
-		},
-	)
-	if err != nil {
+	err = tx.GenerateOrBroadcastTxWithFactory(clientCtx, txf, msgs...)
+	output, ok := clientCtx.Output.(*bytes.Buffer)
+	if !ok {
+		err = errors.New("type assertion failed")
 		return
 	}
-	txResponse = grpcRes.TxResponse
-	return
-}
-
-// SimulateTx simulates broadcasting a transaction via gRPC.
-func SimulateTx(goCtx context.Context, txBytes []byte) (result *sdk.Result, err error) {
-	grpcConn, err := libConfig.GetGRPCConn()
-	if err != nil {
-		return
-	}
-	defer grpcConn.Close()
-
-	client := sdktx.NewServiceClient(grpcConn)
-	grpcRes, err := client.Simulate(
-		goCtx,
-		&sdktx.SimulateRequest{
-			TxBytes: txBytes,
-		},
-	)
-	if err != nil {
-		return
-	}
-	result = grpcRes.Result
+	broadcastTxResponseJSON = output.String()
 	return
 }
