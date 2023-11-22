@@ -24,9 +24,10 @@ func (k Keeper) GetChallenge(ctx sdk.Context, height uint64) (val types.Challeng
 	return val, true
 }
 
-func (k Keeper) GetChallengeRange(ctx sdk.Context, start uint64) (val []types.Challenge, err error) {
+func (k Keeper) GetChallengeRange(ctx sdk.Context, start uint64, end uint64) (val []types.Challenge, err error) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ChallengeKey))
-	iterator := store.Iterator(getChallengeBytes(start), nil)
+	// adding 1 to end because end is exclusive on store.Iterator
+	iterator := store.Iterator(getChallengeBytes(start), getChallengeBytes(end+1))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
