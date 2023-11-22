@@ -9,6 +9,7 @@ import (
 
 // Config defines library top level configuration.
 type Config struct {
+	APIEndpoint    string                `json:"api-endpoint"    mapstructure:"api-endpoint"`
 	ChainID        string                `json:"chain-id"        mapstructure:"chain-id"`
 	EncodingConfig params.EncodingConfig `json:"encoding-config" mapstructure:"encoding-config"`
 	RootDir        string                `json:"root-dir"        mapstructure:"root-dir"`
@@ -25,10 +26,11 @@ var (
 // DefaultConfig returns library default configuration.
 func DefaultConfig() *Config {
 	return &Config{
+		APIEndpoint:    "http://127.0.0.1:1317",
 		ChainID:        "planetmint-testnet-1",
 		EncodingConfig: params.EncodingConfig{},
 		RootDir:        "~/.planetmint-go/",
-		RPCEndpoint:    "http://127.0.0.1:1317",
+		RPCEndpoint:    "http://127.0.0.1:26657",
 	}
 }
 
@@ -40,6 +42,12 @@ func GetConfig() *Config {
 		libConfig.SetBech32PrefixForAccount("plmnt")
 	})
 	return libConfig
+}
+
+// SetAPIEndpoint sets the API endpoint to send requests to.
+func (config *Config) SetAPIEndpoint(apiEndpoint string) *Config {
+	config.APIEndpoint = apiEndpoint
+	return config
 }
 
 // SetBech32PrefixForAccount sets the bech32 account prefix.

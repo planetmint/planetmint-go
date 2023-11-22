@@ -20,6 +20,7 @@ import (
         banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
         "github.com/planetmint/planetmint-go/app"
         "github.com/planetmint/planetmint-go/lib"
+        "golang.org/x/net/context"
 )
 
 func main() {
@@ -27,7 +28,8 @@ func main() {
 
         libConfig := lib.GetConfig()
         libConfig.SetEncodingConfig(encodingConfig)
-        libConfig.SetRPCEndpoint("https://testnet-api.rddl.io")
+        libConfig.SetAPIEndpoint("https://testnet-api.rddl.io")
+        libConfig.SetRPCEndpoint("https://testnet-rpc.rddl.io:443")
 
         addr0 := sdk.MustAccAddressFromBech32("plmnt168z8fyyzap0nw75d4atv9ucr2ye60d57dzlzaf")
         addr1 := sdk.MustAccAddressFromBech32("plmnt1vklujvmr9hsk9zwpquk4waecr2u5vcyjd8vgm8")
@@ -39,13 +41,14 @@ func main() {
         msg2 := banktypes.NewMsgSend(addr0, addr2, coin)
         msg3 := banktypes.NewMsgSend(addr0, addr3, coin)
 
-        txBytes, txJSON, err := lib.BuildAndSignTx(addr0, msg1, msg2, msg3)
+        ctx := context.Background()
+        txJSON, err := lib.BuildUnsignedTx(ctx, addr0, msg1, msg2, msg3)
         if err != nil {
                 log.Fatal(err)
         }
         fmt.Println(txJSON)
 
-        _, err = lib.BroadcastTx(txBytes)
+        _, err = lib.BroadcastTx(ctx, addr0, msg1, msg2, msg3)
         if err != nil {
                 log.Fatal(err)
         }
@@ -98,20 +101,7 @@ $ go run main.go|jq
     "non_critical_extension_options": []
   },
   "auth_info": {
-    "signer_infos": [
-      {
-        "public_key": {
-          "@type": "/cosmos.crypto.secp256k1.PubKey",
-          "key": "AzthjTLaH+NCBBRH4NImcxSa9Ma59TJ0ntQE9S5TJ/wb"
-        },
-        "mode_info": {
-          "single": {
-            "mode": "SIGN_MODE_DIRECT"
-          }
-        },
-        "sequence": "6"
-      }
-    ],
+    "signer_infos": [],
     "fee": {
       "amount": [
         {
@@ -125,8 +115,6 @@ $ go run main.go|jq
     },
     "tip": null
   },
-  "signatures": [
-    "iolwpJtcFPKshQWMfgvYO+EMSavdq0auicWZCNI46AIBWH6aPEca7esfqdv2m6VE4hCHzxCNx58wnfVNnutEEQ=="
-  ]
+  "signatures": []
 }
 ```
