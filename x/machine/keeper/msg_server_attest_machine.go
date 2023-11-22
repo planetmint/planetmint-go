@@ -112,13 +112,13 @@ func (k msgServer) issueNFTAsset(ctx sdk.Context, name string, machineAddress st
 	return assetID, contract, err
 }
 
-func (k msgServer) registerAsset(asset_id string, contract string) error {
+func (k msgServer) registerAsset(assetID string, contract string) error {
 
 	conf := config.GetConfig()
 
 	// Create your request payload
 	data := map[string]interface{}{
-		"asset_id": asset_id,
+		"asset_id": assetID,
 		"contract": contract,
 	}
 
@@ -152,8 +152,8 @@ func (k msgServer) registerAsset(asset_id string, contract string) error {
 	if err != nil {
 		return errorsmod.Wrap(types.ErrAssetRegistryRepsonse, "Error reading response body:"+err.Error())
 	}
-	result_obj := string(body)
-	if strings.Contains(result_obj, asset_id) {
+	resultObj := string(body)
+	if strings.Contains(resultObj, assetID) {
 		return nil
 	} else {
 		return errorsmod.Wrap(types.ErrAssetRegistryRepsonse, "does not confirm asset registration")
@@ -177,6 +177,6 @@ func (k msgServer) issueMachineNFT(ctx sdk.Context, machine *types.Machine) erro
 	notarizedAsset.MachineID = machine.GetMachineId()
 	notarizedAsset.MachineAddress = machine.Address
 
-	util.SendLiquidAssetRegistration(ctx, notarizedAsset)
+	err = util.SendLiquidAssetRegistration(ctx, notarizedAsset)
 	return err
 }
