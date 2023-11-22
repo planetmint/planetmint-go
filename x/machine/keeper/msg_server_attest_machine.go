@@ -3,7 +3,11 @@ package keeper
 import (
 	"bytes"
 	"context"
+	"encoding/json"
+	"io"
+	"net/http"
 	"os/exec"
+	"strconv"
 	"strings"
 
 	config "github.com/planetmint/planetmint-go/config"
@@ -44,16 +48,15 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 		return nil, errorsmod.Wrap(types.ErrInvalidKey, "liquid")
 	}
 
-	if k.isNFTCreationRequest(msg.Machine) && util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress) {
-		_ = k.issueMachineNFT(ctx, msg.Machine)
-		//TODO create NFTCreationMessage to be stored by all nodes
-		// if err != nil {
-		// 	return nil, types.ErrNFTIssuanceFailed
-		// }
-	}
-
 	if msg.Machine.GetType() == 0 { // 0 == RDDL_MACHINE_UNDEFINED
 		return nil, types.ErrMachineTypeUndefined
+	}
+
+	if k.isNFTCreationRequest(msg.Machine) && util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress) {
+		err := k.issueMachineNFT(ctx, msg.Machine)
+		if err != nil {
+			return nil, types.ErrNFTIssuanceFailed
+		}
 	}
 
 	k.StoreMachine(ctx, *msg.Machine)
@@ -109,13 +112,71 @@ func (k msgServer) issueNFTAsset(ctx sdk.Context, name string, machineAddress st
 	return assetID, contract, err
 }
 
+func (k msgServer) registerAsset(assetID string, contract string) error {
+
+	conf := config.GetConfig()
+
+	// Create your request payload
+	data := map[string]interface{}{
+		"asset_id": assetID,
+		"contract": contract,
+	}
+
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return errorsmod.Wrap(types.ErrAssetRegistryReqFailure, "Marshall "+err.Error())
+	}
+
+	req, err := http.NewRequest("POST", conf.AssetRegistryEndpoint, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return errorsmod.Wrap(types.ErrAssetRegistryReqFailure, "Request creation: "+err.Error())
+	}
+
+	// Set headers
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("accept", "application/json")
+
+	// Send request
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return errorsmod.Wrap(types.ErrAssetRegistryReqSending, err.Error())
+	}
+	defer resp.Body.Close()
+
+	// Read response
+	if resp.StatusCode > 299 {
+		return errorsmod.Wrap(types.ErrAssetRegistryRepsonse, "Error reading response body:"+strconv.Itoa(resp.StatusCode))
+	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return errorsmod.Wrap(types.ErrAssetRegistryRepsonse, "Error reading response body:"+err.Error())
+	}
+	resultObj := string(body)
+	if strings.Contains(resultObj, assetID) {
+		return nil
+	} else {
+		return errorsmod.Wrap(types.ErrAssetRegistryRepsonse, "does not confirm asset registration")
+	}
+}
+
 func (k msgServer) issueMachineNFT(ctx sdk.Context, machine *types.Machine) error {
-	_, _, err := k.issueNFTAsset(ctx, machine.Name, machine.Address)
+	// asset registration is in order to have the contact published
+	var notarizedAsset types.LiquidAsset
+	notarizedAsset.Registered = true
+	assetID, contract, err := k.issueNFTAsset(ctx, machine.Name, machine.Address)
+	if err != nil {
+		return err
+	}
+	err = k.registerAsset(assetID, contract)
+	if err != nil {
+		notarizedAsset.Registered = false
+	}
+	// issue message with:
+	notarizedAsset.AssetID = assetID
+	notarizedAsset.MachineID = machine.GetMachineId()
+	notarizedAsset.MachineAddress = machine.Address
+
+	err = util.SendLiquidAssetRegistration(ctx, notarizedAsset)
 	return err
-	// asset registration is not performed in case of NFT issuance for machines
-	//assetID, contract, err := k.issueNFTAsset(machine.Name, machine.Address)
-	// if err != nil {
-	// 	return err
-	// }
-	//return k.registerAsset(assetID, contract)
 }
