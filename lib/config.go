@@ -1,26 +1,19 @@
 package lib
 
 import (
-	"crypto/tls"
-	"crypto/x509"
-	"os"
-	"strings"
 	"sync"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/planetmint/planetmint-go/lib/params"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 // Config defines library top level configuration.
 type Config struct {
+	APIEndpoint    string                `json:"api-endpoint"    mapstructure:"api-endpoint"`
 	ChainID        string                `json:"chain-id"        mapstructure:"chain-id"`
 	EncodingConfig params.EncodingConfig `json:"encoding-config" mapstructure:"encoding-config"`
-	GRPCEndpoint   string                `json:"grpc-endpoint"   mapstructure:"grpc-endpoint"`
-	GRPCTLSCert    string                `json:"grpc-tls-cert"   mapstructure:"grpc-tls-cert"` //nolint: tagliatelle // json(kebab): got 'grpc-tls-cert' want 'grpctls-cert'
 	RootDir        string                `json:"root-dir"        mapstructure:"root-dir"`
+	RPCEndpoint    string                `json:"rpc-endpoint"    mapstructure:"rpc-endpoint"`
 }
 
 // lib wide global singleton
@@ -33,11 +26,11 @@ var (
 // DefaultConfig returns library default configuration.
 func DefaultConfig() *Config {
 	return &Config{
+		APIEndpoint:    "http://127.0.0.1:1317",
 		ChainID:        "planetmint-testnet-1",
 		EncodingConfig: params.EncodingConfig{},
-		GRPCEndpoint:   "127.0.0.1:9090",
-		GRPCTLSCert:    "",
 		RootDir:        "~/.planetmint-go/",
+		RPCEndpoint:    "http://127.0.0.1:26657",
 	}
 }
 
@@ -51,29 +44,10 @@ func GetConfig() *Config {
 	return libConfig
 }
 
-func (config *Config) GetGRPCConn() (grpcConn *grpc.ClientConn, err error) {
-	creds := insecure.NewCredentials()
-	// Configure TLS for remote connection.
-	if !strings.Contains(config.GRPCEndpoint, "127.0.0.1") && !strings.Contains(config.GRPCEndpoint, "localhost") {
-		cert, err := os.ReadFile(config.GRPCTLSCert)
-		if err != nil {
-			return nil, err
-		}
-		certPool := x509.NewCertPool()
-		ok := certPool.AppendCertsFromPEM(cert)
-		if !ok {
-			return nil, err
-		}
-		tlsConfig := &tls.Config{
-			RootCAs: certPool,
-		}
-		creds = credentials.NewTLS(tlsConfig)
-	}
-	grpcConn, err = grpc.Dial(
-		config.GRPCEndpoint,
-		grpc.WithTransportCredentials(creds),
-	)
-	return
+// SetAPIEndpoint sets the API endpoint to send requests to.
+func (config *Config) SetAPIEndpoint(apiEndpoint string) *Config {
+	config.APIEndpoint = apiEndpoint
+	return config
 }
 
 // SetBech32PrefixForAccount sets the bech32 account prefix.
@@ -88,18 +62,6 @@ func (config *Config) SetEncodingConfig(encodingConfig params.EncodingConfig) *C
 	return config
 }
 
-// SetGRPCEndpoint sets the gRPC endpoint to send requests to.
-func (config *Config) SetGRPCEndpoint(grpcEndpoint string) *Config {
-	config.GRPCEndpoint = grpcEndpoint
-	return config
-}
-
-// SetGRPCTLSCert sets the gRPC TLS certificate to use for communication.
-func (config *Config) SetGRPCTLSCert(grpcTLSCert string) *Config {
-	config.GRPCTLSCert = grpcTLSCert
-	return config
-}
-
 // SetChainID sets the chain ID parameter.
 func (config *Config) SetChainID(chainID string) *Config {
 	config.ChainID = chainID
@@ -109,5 +71,11 @@ func (config *Config) SetChainID(chainID string) *Config {
 // SetRoot sets the root directory where to find the keyring.
 func (config *Config) SetRoot(root string) *Config {
 	config.RootDir = root
+	return config
+}
+
+// SetRPCEndpoint sets the RPC endpoint to send requests to.
+func (config *Config) SetRPCEndpoint(rpcEndpoint string) *Config {
+	config.RPCEndpoint = rpcEndpoint
 	return config
 }
