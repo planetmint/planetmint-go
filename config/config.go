@@ -30,7 +30,7 @@ validator-address = "{{ .PlmntConfig.ReissuanceAsset }}"
 
 // Config defines Planetmint's top level configuration
 type Config struct {
-	AssetRegistryEndpoint string `mapstructure:"asset-registry-endpoint " json:"asset-registry-endpoint "`
+	AssetRegistryEndpoint string `mapstructure:"asset-registry-endpoint" json:"asset-registry-endpoint"`
 	TokenDenom            string `mapstructure:"token-denom" json:"token-denom"`
 	StakeDenom            string `mapstructure:"stake-denom" json:"stake-denom"`
 	FeeDenom              string `mapstructure:"fee-denom" json:"fee-denom"`
