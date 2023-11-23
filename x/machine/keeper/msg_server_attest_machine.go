@@ -116,10 +116,15 @@ func (k msgServer) registerAsset(assetID string, contract string) error {
 
 	conf := config.GetConfig()
 
+	var contractMap map[string]interface{}
+	err := json.Unmarshal([]byte(contract), &contractMap)
+	if err != nil {
+		return errorsmod.Wrap(types.ErrAssetRegistryReqFailure, "Unmarshal "+err.Error())
+	}
 	// Create your request payload
 	data := map[string]interface{}{
 		"asset_id": assetID,
-		"contract": contract,
+		"contract": contractMap,
 	}
 
 	jsonData, err := json.Marshal(data)

@@ -65,7 +65,7 @@ func SendLiquidAssetRegistration(ctx sdk.Context, notarizedAsset machinetypes.Li
 	// Construct the command
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
 	logger.Debug("REISSUE: create Result")
-	obj := fmt.Sprintf("'{ \"MachineID\": \"%s\", \"MachineAddress\": \"%s\", \"AssetID\": \"%s\", \"Registered\": %t }'",
+	obj := fmt.Sprintf("{ \"MachineID\": \"%s\", \"MachineAddress\": \"%s\", \"AssetID\": \"%s\", \"Registered\": %t }",
 		notarizedAsset.MachineID, notarizedAsset.MachineAddress, notarizedAsset.AssetID, notarizedAsset.GetRegistered())
 	cmd := exec.Command("planetmint-god", "tx", "machine", "notarize-liquid-asset",
 		"--from", sendingValidatorAddress, "-y", obj)
