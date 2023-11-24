@@ -68,7 +68,7 @@ func SendLiquidAssetRegistration(ctx sdk.Context, notarizedAsset machinetypes.Li
 	obj := fmt.Sprintf("{ \"MachineID\": \"%s\", \"MachineAddress\": \"%s\", \"AssetID\": \"%s\", \"Registered\": %t }",
 		notarizedAsset.MachineID, notarizedAsset.MachineAddress, notarizedAsset.AssetID, notarizedAsset.GetRegistered())
 	cmd := exec.Command("planetmint-god", "tx", "machine", "notarize-liquid-asset",
-		"--from", sendingValidatorAddress, "-y", obj)
+		"--from", sendingValidatorAddress, "-y", "--fees", "1plmnt", obj)
 
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
