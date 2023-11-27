@@ -9,7 +9,7 @@ var globalApplicationLoggerTag string
 
 func init() {
 	// Initialize the package-level variable
-	globalApplicationLoggerTag = "[app]"
+	globalApplicationLoggerTag = "[app] "
 }
 
 func GetAppLogger() *AppLogger {
