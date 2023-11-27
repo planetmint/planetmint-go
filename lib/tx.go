@@ -63,6 +63,30 @@ func getAccountNumberAndSequence(goCtx context.Context, address sdk.AccAddress) 
 }
 
 func getClientContextAndTxFactory(goCtx context.Context, address sdk.AccAddress) (clientCtx client.Context, txf tx.Factory, err error) {
+	clientCtx, err = getClientContext(address)
+	if err != nil {
+		return
+	}
+	accountNumber, sequence, err := getAccountNumberAndSequence(goCtx, clientCtx.FromAddress)
+	if err != nil {
+		return
+	}
+	txf = getTxFactoryWithAccountNumberAndSequence(clientCtx, accountNumber, sequence)
+	return
+}
+
+func getTxFactoryWithAccountNumberAndSequence(clientCtx client.Context, accountNumber, sequence uint64) (txf tx.Factory) {
+	return tx.Factory{}.
+		WithAccountNumber(accountNumber).
+		WithChainID(clientCtx.ChainID).
+		WithGas(200000).
+		WithGasPrices("0.000005plmnt").
+		WithKeybase(clientCtx.Keyring).
+		WithSequence(sequence).
+		WithTxConfig(clientCtx.TxConfig)
+}
+
+func getClientContext(address sdk.AccAddress) (clientCtx client.Context, err error) {
 	encodingConfig := GetConfig().EncodingConfig
 
 	rootDir := GetConfig().RootDir
@@ -107,20 +131,6 @@ func getClientContextAndTxFactory(goCtx context.Context, address sdk.AccAddress)
 		SkipConfirm:    true,
 		TxConfig:       encodingConfig.TxConfig,
 	}
-
-	accountNumber, sequence, err := getAccountNumberAndSequence(goCtx, address)
-	if err != nil {
-		return
-	}
-
-	txf = tx.Factory{}.
-		WithAccountNumber(accountNumber).
-		WithChainID(clientCtx.ChainID).
-		WithGas(200000).
-		WithGasPrices("0.000005plmnt").
-		WithKeybase(clientCtx.Keyring).
-		WithSequence(sequence).
-		WithTxConfig(clientCtx.TxConfig)
 
 	return
 }
