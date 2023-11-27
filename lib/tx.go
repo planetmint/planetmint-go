@@ -25,6 +25,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+var ErrTypeAssertionFailed = errors.New("type assertion failed")
+
 // Result defines a generic way to receive responses from the RPC endpoint.
 type Result struct {
 	Info map[string]interface{} `json:"info" mapstructure:"info"`
@@ -193,7 +195,7 @@ func broadcastTx(clientCtx client.Context, txf tx.Factory, msgs ...sdk.Msg) (bro
 	err = tx.GenerateOrBroadcastTxWithFactory(clientCtx, txf, msgs...)
 	output, ok := clientCtx.Output.(*bytes.Buffer)
 	if !ok {
-		err = errors.New("type assertion failed")
+		err = ErrTypeAssertionFailed
 		return
 	}
 	broadcastTxResponseJSON = output.String()
