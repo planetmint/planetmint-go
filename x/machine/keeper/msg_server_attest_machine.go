@@ -108,7 +108,7 @@ func (k msgServer) issueNFTAsset(ctx sdk.Context, name string, machineAddress st
 	return assetID, contract, err
 }
 
-func (k msgServer) registerAsset(assetID string, contract string) error {
+func (k msgServer) registerAsset(goCtx context.Context, assetID string, contract string) error {
 	conf := config.GetConfig()
 
 	var contractMap map[string]interface{}
@@ -127,7 +127,7 @@ func (k msgServer) registerAsset(assetID string, contract string) error {
 		return errorsmod.Wrap(types.ErrAssetRegistryReqFailure, "Marshall "+err.Error())
 	}
 
-	req, err := http.NewRequest("POST", conf.AssetRegistryEndpoint, bytes.NewBuffer(jsonData))
+	req, err := http.NewRequestWithContext(goCtx, http.MethodPost, conf.AssetRegistryEndpoint, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return errorsmod.Wrap(types.ErrAssetRegistryReqFailure, "Request creation: "+err.Error())
 	}
@@ -169,7 +169,7 @@ func (k msgServer) issueMachineNFT(goCtx context.Context, machine *types.Machine
 		util.GetAppLogger().Error(ctx, err.Error())
 		return err
 	}
-	err = k.registerAsset(assetID, contract)
+	err = k.registerAsset(goCtx, assetID, contract)
 	if err != nil {
 		util.GetAppLogger().Error(ctx, err.Error())
 		notarizedAsset.Registered = false
