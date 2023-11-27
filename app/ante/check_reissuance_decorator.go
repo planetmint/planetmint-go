@@ -17,7 +17,6 @@ func NewCheckReissuanceDecorator() CheckReissuanceDecorator {
 }
 
 func (cmad CheckReissuanceDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (sdk.Context, error) {
-
 	for _, msg := range tx.GetMsgs() {
 		if sdk.MsgTypeURL(msg) == "/planetmintgo.dao.MsgReissueRDDLProposal" {
 			MsgProposal, ok := msg.(*daotypes.MsgReissueRDDLProposal)

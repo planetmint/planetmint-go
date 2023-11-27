@@ -17,15 +17,13 @@ func GetAppLogger() *AppLogger {
 }
 
 func (logger *AppLogger) Info(ctx sdk.Context, msg string, keyvals ...interface{}) {
-	ctx.Logger().Info(globalApplicationLoggerTag+msg, keyvals)
-
+	ctx.Logger().Info(globalApplicationLoggerTag+msg, keyvals...)
 }
 
 func (logger *AppLogger) Debug(ctx sdk.Context, msg string, keyvals ...interface{}) {
-	ctx.Logger().Debug(globalApplicationLoggerTag+msg, keyvals)
-
+	ctx.Logger().Debug(globalApplicationLoggerTag+msg, keyvals...)
 }
 
 func (logger *AppLogger) Error(ctx sdk.Context, msg string, keyvals ...interface{}) {
-	ctx.Logger().Error(globalApplicationLoggerTag+msg, keyvals)
+	ctx.Logger().Error(globalApplicationLoggerTag+msg, keyvals...)
 }

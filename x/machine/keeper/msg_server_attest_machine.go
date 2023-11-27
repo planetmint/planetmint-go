@@ -109,7 +109,6 @@ func (k msgServer) issueNFTAsset(ctx sdk.Context, name string, machineAddress st
 }
 
 func (k msgServer) registerAsset(assetID string, contract string) error {
-
 	conf := config.GetConfig()
 
 	var contractMap map[string]interface{}
@@ -154,11 +153,10 @@ func (k msgServer) registerAsset(assetID string, contract string) error {
 		return errorsmod.Wrap(types.ErrAssetRegistryRepsonse, "Error reading response body:"+err.Error())
 	}
 	resultObj := string(body)
-	if strings.Contains(resultObj, assetID) {
-		return nil
-	} else {
+	if !strings.Contains(resultObj, assetID) {
 		return errorsmod.Wrap(types.ErrAssetRegistryRepsonse, "does not confirm asset registration")
 	}
+	return nil
 }
 
 func (k msgServer) issueMachineNFT(goCtx context.Context, machine *types.Machine) error {
