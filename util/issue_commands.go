@@ -19,7 +19,7 @@ func buildSignBroadcastTx(goCtx context.Context, sendingValidatorAddress string,
 		return
 	}
 	logger.Debug("REISSUE: tx: " + txJSON)
-	_, err = lib.BroadcastTx(goCtx, addr, msg)
+	_, err = lib.BroadcastTxWithFileLock(goCtx, addr, msg)
 	return
 }
 
