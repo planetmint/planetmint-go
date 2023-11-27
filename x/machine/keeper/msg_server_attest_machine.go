@@ -53,10 +53,13 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 	}
 
 	if k.isNFTCreationRequest(msg.Machine) && util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress) {
+		util.GetAppLogger().Info(ctx, "Issuing Machine NFT")
 		err := k.issueMachineNFT(ctx, msg.Machine)
 		if err != nil {
 			return nil, types.ErrNFTIssuanceFailed
 		}
+	} else {
+		util.GetAppLogger().Info(ctx, "skipping Machine NFT issuance")
 	}
 
 	k.StoreMachine(ctx, *msg.Machine)
@@ -99,6 +102,7 @@ func (k msgServer) issueNFTAsset(ctx sdk.Context, name string, machineAddress st
 		util.GetAppLogger().Error(ctx, "Issue2Liquid.py failed with %s\n", err)
 		err = errorsmod.Wrap(types.ErrMachineNFTIssuance, stderr.String())
 	} else {
+		util.GetAppLogger().Info(ctx, "Liquid Token Issuance: "+stdout.String())
 		lines := strings.Split(stdout.String(), "\n")
 		if len(lines) == 3 {
 			assetID = lines[0]
