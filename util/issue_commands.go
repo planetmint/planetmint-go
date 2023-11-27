@@ -14,10 +14,9 @@ import (
 
 func InitRDDLReissuanceProcess(ctx sdk.Context, proposerAddress string, txUnsigned string, blockHeight int64) error {
 	//get_last_PoPBlockHeight() // TODO: to be read form the upcoming PoP-store
-	logger := ctx.Logger()
 	// Construct the command
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
-	logger.Debug("REISSUE: create Proposal")
+	GetAppLogger().Info(ctx, "REISSUE: create Proposal")
 	cmd := exec.Command("planetmint-god", "tx", "dao", "reissue-rddl-proposal",
 		"--from", sendingValidatorAddress, "-y",
 		proposerAddress, txUnsigned, strconv.FormatInt(blockHeight, 10))
@@ -38,10 +37,9 @@ func InitRDDLReissuanceProcess(ctx sdk.Context, proposerAddress string, txUnsign
 }
 
 func SendRDDLReissuanceResult(ctx sdk.Context, proposerAddress string, txID string, blockHeight int64) error {
-	logger := ctx.Logger()
 	// Construct the command
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
-	logger.Debug("REISSUE: create Result")
+	GetAppLogger().Info(ctx, "REISSUE: create Result")
 	cmd := exec.Command("planetmint-god", "tx", "dao", "reissue-rddl-result",
 		"--from", sendingValidatorAddress, "-y",
 		proposerAddress, txID, strconv.FormatInt(blockHeight, 10))
@@ -61,10 +59,9 @@ func SendRDDLReissuanceResult(ctx sdk.Context, proposerAddress string, txID stri
 }
 
 func SendLiquidAssetRegistration(ctx sdk.Context, notarizedAsset machinetypes.LiquidAsset) error {
-	logger := ctx.Logger()
 	// Construct the command
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
-	logger.Debug("REISSUE: create Result")
+	GetAppLogger().Info(ctx, "REISSUE: create Result")
 	obj := fmt.Sprintf("{ \"MachineID\": \"%s\", \"MachineAddress\": \"%s\", \"AssetID\": \"%s\", \"Registered\": %t }",
 		notarizedAsset.MachineID, notarizedAsset.MachineAddress, notarizedAsset.AssetID, notarizedAsset.GetRegistered())
 	cmd := exec.Command("planetmint-god", "tx", "machine", "notarize-liquid-asset",

@@ -12,7 +12,7 @@ import (
 )
 
 func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) {
-	logger := ctx.Logger()
+
 	proposerAddress := req.Header.GetProposerAddress()
 
 	// Check if node is block proposer
@@ -20,13 +20,13 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	if isPoPHeight(req.Header.GetHeight()) && util.IsValidatorBlockProposer(ctx, proposerAddress) {
 		blockHeight := req.Header.GetHeight()
 		// TODO: implement PoP trigger
-		logger.Info("TODO: implement PoP trigger")
+		util.GetAppLogger().Info(ctx, "TODO: implement PoP trigger")
 		hexProposerAddress := hex.EncodeToString(proposerAddress)
 		conf := config.GetConfig()
 		txUnsigned := GetReissuanceCommand(conf.ReissuanceAsset, blockHeight)
 		err := util.InitRDDLReissuanceProcess(ctx, hexProposerAddress, txUnsigned, blockHeight)
 		if err != nil {
-			logger.Error("error while initializing RDDL issuance", err)
+			util.GetAppLogger().Error(ctx, "error while initializing RDDL issuance", err)
 		}
 	}
 }
