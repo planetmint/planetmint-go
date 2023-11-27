@@ -10,20 +10,17 @@ import (
 
 func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReissueRDDLProposal) (*types.MsgReissueRDDLProposalResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	logger := ctx.Logger()
 
 	validatorIdentity, validResult := util.GetValidatorCometBFTIdentity(ctx)
 	if validResult && msg.Proposer == validatorIdentity {
-		// 1. sign tx
-		// 2. broadcast tx
-		logger.Debug("REISSUE: Asset")
+		util.GetAppLogger().Info(ctx, "REISSUE: Asset")
 		txID, err := util.ReissueAsset(msg.Tx)
 		if err == nil {
 			// 3. notarize result by notarizing the liquid tx-id
 			_ = util.SendRDDLReissuanceResult(goCtx, msg.GetProposer(), txID, msg.GetBlockHeight())
-			// TODO verify and  resolve error
+
 		} else {
-			logger.Error("REISSUE: Asset reissuance failure: " + err.Error())
+			util.GetAppLogger().Error(ctx, "REISSUE: Asset reissuance failure"+err.Error())
 		}
 	}
 

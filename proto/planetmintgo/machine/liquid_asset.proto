@@ -1,0 +1,12 @@
+syntax = "proto3";
+package planetmintgo.machine;
+
+option go_package = "github.com/planetmint/planetmint-go/x/machine/types";
+
+message LiquidAsset {
+  
+  string machineID = 1; 
+  string machineAddress = 2; 
+  string assetID = 3; 
+  bool registered = 4; 
+}

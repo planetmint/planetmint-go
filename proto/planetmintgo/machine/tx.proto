@@ -4,6 +4,7 @@ package planetmintgo.machine;
 
 import "planetmintgo/machine/machine.proto";
 import "planetmintgo/machine/trust_anchor.proto";
+import "planetmintgo/machine/liquid_asset.proto";
 
 option go_package = "github.com/planetmint/planetmint-go/x/machine/types";
 
@@ -11,6 +12,7 @@ option go_package = "github.com/planetmint/planetmint-go/x/machine/types";
 service Msg {
   rpc AttestMachine       (MsgAttestMachine      ) returns (MsgAttestMachineResponse      );
   rpc RegisterTrustAnchor (MsgRegisterTrustAnchor) returns (MsgRegisterTrustAnchorResponse);
+  rpc NotarizeLiquidAsset (MsgNotarizeLiquidAsset) returns (MsgNotarizeLiquidAssetResponse);
 }
 message MsgAttestMachine {
   string  creator = 1;
@@ -25,4 +27,11 @@ message MsgRegisterTrustAnchor {
 }
 
 message MsgRegisterTrustAnchorResponse {}
+
+message MsgNotarizeLiquidAsset {
+  string      creator      = 1;
+  LiquidAsset notarization = 2;
+}
+
+message MsgNotarizeLiquidAssetResponse {}
 
