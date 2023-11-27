@@ -193,11 +193,30 @@ func broadcastTxWithAccountNumberAndSequence(address sdk.AccAddress, accountNumb
 
 func broadcastTx(clientCtx client.Context, txf tx.Factory, msgs ...sdk.Msg) (broadcastTxResponseJSON string, err error) {
 	err = tx.GenerateOrBroadcastTxWithFactory(clientCtx, txf, msgs...)
+	if err != nil {
+		return
+	}
 	output, ok := clientCtx.Output.(*bytes.Buffer)
 	if !ok {
 		err = ErrTypeAssertionFailed
 		return
 	}
+
+	result := make(map[string]interface{})
+	err = json.Unmarshal(output.Bytes(), &result)
+	if err != nil {
+		return
+	}
+	code, ok := result["code"].(float64)
+	if !ok {
+		err = ErrTypeAssertionFailed
+		return
+	}
+	if code != 0 {
+		err = errors.New(output.String())
+		return
+	}
+
 	broadcastTxResponseJSON = output.String()
 	return
 }
