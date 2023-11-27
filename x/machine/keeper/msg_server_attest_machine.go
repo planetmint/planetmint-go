@@ -53,10 +53,13 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 	}
 
 	if k.isNFTCreationRequest(msg.Machine) && util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress) {
+		util.GetAppLogger().Info(ctx, "Issuing Machine NFT")
 		err := k.issueMachineNFT(ctx, msg.Machine)
 		if err != nil {
 			return nil, types.ErrNFTIssuanceFailed
 		}
+	} else {
+		util.GetAppLogger().Info(ctx, "skipping Machine NFT issuance")
 	}
 
 	k.StoreMachine(ctx, *msg.Machine)
@@ -79,8 +82,6 @@ func validateExtendedPublicKey(issuer string, cfg chaincfg.Params) bool {
 
 func (k msgServer) issueNFTAsset(ctx sdk.Context, name string, machineAddress string) (assetID string, contract string, err error) {
 	conf := config.GetConfig()
-	logger := ctx.Logger()
-
 	cmdName := "poetry"
 	cmdArgs := []string{"run", "python", "issuer_service/issue2liquid.py", name, machineAddress}
 
@@ -98,9 +99,10 @@ func (k msgServer) issueNFTAsset(ctx sdk.Context, name string, machineAddress st
 	// Execute the command
 	err = cmd.Run()
 	if err != nil {
-		logger.Error("cmd.Run() failed with %s\n", err)
+		util.GetAppLogger().Error(ctx, "Issue2Liquid.py failed with %s\n", err)
 		err = errorsmod.Wrap(types.ErrMachineNFTIssuance, stderr.String())
 	} else {
+		util.GetAppLogger().Info(ctx, "Liquid Token Issuance: "+stdout.String())
 		lines := strings.Split(stdout.String(), "\n")
 		if len(lines) == 3 {
 			assetID = lines[0]
@@ -171,10 +173,12 @@ func (k msgServer) issueMachineNFT(ctx sdk.Context, machine *types.Machine) erro
 	notarizedAsset.Registered = true
 	assetID, contract, err := k.issueNFTAsset(ctx, machine.Name, machine.Address)
 	if err != nil {
+		util.GetAppLogger().Error(ctx, err.Error())
 		return err
 	}
 	err = k.registerAsset(assetID, contract)
 	if err != nil {
+		util.GetAppLogger().Error(ctx, err.Error())
 		notarizedAsset.Registered = false
 	}
 	// issue message with:
