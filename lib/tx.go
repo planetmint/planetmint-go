@@ -3,14 +3,10 @@ package lib
 import (
 	"bufio"
 	"bytes"
-	"context"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
-	"log"
-	"net/http"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -23,68 +19,31 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
 var ErrTypeAssertionFailed = errors.New("type assertion failed")
-
-// Result defines a generic way to receive responses from the RPC endpoint.
-type Result struct {
-	Info map[string]interface{} `json:"info" mapstructure:"info"`
-}
 
 func init() {
 	GetConfig()
 }
 
-func getAccountNumberAndSequence(goCtx context.Context, address sdk.AccAddress) (accountNumber, sequence uint64, err error) {
-	url := fmt.Sprintf("%s/cosmos/auth/v1beta1/account_info/%s", libConfig.APIEndpoint, address.String())
-	req, err := http.NewRequestWithContext(goCtx, http.MethodGet, url, nil)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	defer resp.Body.Close()
-
-	bodyBytes, err := io.ReadAll(resp.Body)
+func getAccountNumberAndSequence(clientCtx client.Context) (accountNumber, sequence uint64, err error) {
+	account, err := clientCtx.AccountRetriever.GetAccount(clientCtx, clientCtx.FromAddress)
 	if err != nil {
 		return
 	}
-
-	var result Result
-	err = json.Unmarshal(bodyBytes, &result)
-	if err != nil {
-		return
-	}
-
-	accountNumber, err = strconv.ParseUint(result.Info["account_number"].(string), 10, 64)
-	if err != nil {
-		return
-	}
-	sequence, err = strconv.ParseUint(result.Info["sequence"].(string), 10, 64)
-	if err != nil {
-		return
-	}
+	accountNumber = account.GetAccountNumber()
+	sequence = account.GetSequence()
 	return
 }
 
-func getClientContextAndTxFactory(goCtx context.Context, address sdk.AccAddress) (clientCtx client.Context, txf tx.Factory, err error) {
+func getClientContextAndTxFactory(address sdk.AccAddress) (clientCtx client.Context, txf tx.Factory, err error) {
 	clientCtx, err = getClientContext(address)
 	if err != nil {
 		return
 	}
-	accountNumber, sequence, err := getAccountNumberAndSequence(goCtx, clientCtx.FromAddress)
-	if err != nil {
-		return
-	}
-	txf = getTxFactoryWithAccountNumberAndSequence(clientCtx, accountNumber, sequence)
-	return
-}
-
-func getClientContextAndTxFactoryWithAccountNumberAndSequence(address sdk.AccAddress, accountNumber, sequence uint64) (clientCtx client.Context, txf tx.Factory, err error) {
-	clientCtx, err = getClientContext(address)
+	accountNumber, sequence, err := getAccountNumberAndSequence(clientCtx)
 	if err != nil {
 		return
 	}
@@ -130,23 +89,25 @@ func getClientContext(address sdk.AccAddress) (clientCtx client.Context, err err
 	var output bytes.Buffer
 
 	clientCtx = client.Context{
-		BroadcastMode:  "sync",
-		ChainID:        "planetmint-testnet-1",
-		Client:         wsClient,
-		Codec:          codec,
-		From:           address.String(),
-		FromAddress:    address,
-		FromName:       record.Name,
-		HomeDir:        rootDir,
-		Input:          input,
-		Keyring:        keyring,
-		KeyringDir:     rootDir,
-		KeyringOptions: keyringOptions,
-		NodeURI:        remote,
-		Offline:        true,
-		Output:         &output,
-		SkipConfirm:    true,
-		TxConfig:       encodingConfig.TxConfig,
+		AccountRetriever:  authtypes.AccountRetriever{},
+		BroadcastMode:     "sync",
+		ChainID:           "planetmint-testnet-1",
+		Client:            wsClient,
+		Codec:             codec,
+		From:              address.String(),
+		FromAddress:       address,
+		FromName:          record.Name,
+		HomeDir:           rootDir,
+		Input:             input,
+		InterfaceRegistry: encodingConfig.InterfaceRegistry,
+		Keyring:           keyring,
+		KeyringDir:        rootDir,
+		KeyringOptions:    keyringOptions,
+		NodeURI:           remote,
+		Offline:           true,
+		Output:            &output,
+		SkipConfirm:       true,
+		TxConfig:          encodingConfig.TxConfig,
 	}
 
 	return
@@ -154,8 +115,8 @@ func getClientContext(address sdk.AccAddress) (clientCtx client.Context, err err
 
 // BuildUnsignedTx builds a transaction to be signed given a set of messages.
 // Once created, the fee, memo, and messages are set.
-func BuildUnsignedTx(goCtx context.Context, address sdk.AccAddress, msgs ...sdk.Msg) (txJSON string, err error) {
-	clientCtx, txf, err := getClientContextAndTxFactory(goCtx, address)
+func BuildUnsignedTx(address sdk.AccAddress, msgs ...sdk.Msg) (txJSON string, err error) {
+	clientCtx, txf, err := getClientContextAndTxFactory(address)
 	if err != nil {
 		return
 	}
@@ -173,17 +134,8 @@ func BuildUnsignedTx(goCtx context.Context, address sdk.AccAddress, msgs ...sdk.
 }
 
 // BroadcastTx broadcasts a transaction via RPC.
-func BroadcastTx(goCtx context.Context, address sdk.AccAddress, msgs ...sdk.Msg) (broadcastTxResponseJSON string, err error) {
-	clientCtx, txf, err := getClientContextAndTxFactory(goCtx, address)
-	if err != nil {
-		return
-	}
-	broadcastTxResponseJSON, err = broadcastTx(clientCtx, txf, msgs...)
-	return
-}
-
-func broadcastTxWithAccountNumberAndSequence(address sdk.AccAddress, accountNumber, sequence uint64, msgs ...sdk.Msg) (broadcastTxResponseJSON string, err error) {
-	clientCtx, txf, err := getClientContextAndTxFactoryWithAccountNumberAndSequence(address, accountNumber, sequence)
+func BroadcastTx(address sdk.AccAddress, msgs ...sdk.Msg) (broadcastTxResponseJSON string, err error) {
+	clientCtx, txf, err := getClientContextAndTxFactory(address)
 	if err != nil {
 		return
 	}
@@ -222,7 +174,7 @@ func broadcastTx(clientCtx client.Context, txf tx.Factory, msgs ...sdk.Msg) (bro
 }
 
 // BroadcastTxWithFileLock broadcasts a transaction via gRPC and synchronises requests via a file lock.
-func BroadcastTxWithFileLock(goCtx context.Context, address sdk.AccAddress, msgs ...sdk.Msg) (broadcastTxResponseJSON string, err error) {
+func BroadcastTxWithFileLock(address sdk.AccAddress, msgs ...sdk.Msg) (broadcastTxResponseJSON string, err error) {
 	usr, err := user.Current()
 	if err != nil {
 		return
@@ -269,10 +221,15 @@ func BroadcastTxWithFileLock(goCtx context.Context, address sdk.AccAddress, msgs
 	}
 
 	// Get sequence number from chain.
-	accountNumber, sequence, err := getAccountNumberAndSequence(goCtx, address)
+	clientCtx, txf, err := getClientContextAndTxFactory(address)
 	if err != nil {
 		return
 	}
+	account, err := clientCtx.AccountRetriever.GetAccount(clientCtx, clientCtx.FromAddress)
+	if err != nil {
+		return
+	}
+	sequence := account.GetSequence()
 
 	if lineCount == 0 {
 		// File does not exist yet.
@@ -293,7 +250,9 @@ func BroadcastTxWithFileLock(goCtx context.Context, address sdk.AccAddress, msgs
 		sequenceCount = sequence
 	}
 
-	broadcastTxResponseJSON, err = broadcastTxWithAccountNumberAndSequence(address, accountNumber, sequenceCount, msgs...)
+	// Set new sequence number
+	txf = txf.WithSequence(sequenceCount)
+	broadcastTxResponseJSON, err = broadcastTx(clientCtx, txf, msgs...)
 	if err != nil {
 		return
 	}

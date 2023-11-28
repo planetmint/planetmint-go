@@ -20,7 +20,6 @@ import (
         banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
         "github.com/planetmint/planetmint-go/app"
         "github.com/planetmint/planetmint-go/lib"
-        "golang.org/x/net/context"
 )
 
 func main() {
@@ -28,7 +27,6 @@ func main() {
 
         libConfig := lib.GetConfig()
         libConfig.SetEncodingConfig(encodingConfig)
-        libConfig.SetAPIEndpoint("https://testnet-api.rddl.io")
         libConfig.SetRPCEndpoint("https://testnet-rpc.rddl.io:443")
 
         addr0 := sdk.MustAccAddressFromBech32("plmnt168z8fyyzap0nw75d4atv9ucr2ye60d57dzlzaf")
@@ -41,14 +39,13 @@ func main() {
         msg2 := banktypes.NewMsgSend(addr0, addr2, coin)
         msg3 := banktypes.NewMsgSend(addr0, addr3, coin)
 
-        ctx := context.Background()
-        txJSON, err := lib.BuildUnsignedTx(ctx, addr0, msg1, msg2, msg3)
+        txJSON, err := lib.BuildUnsignedTx(addr0, msg1, msg2, msg3)
         if err != nil {
                 log.Fatal(err)
         }
         fmt.Println(txJSON)
 
-        _, err = lib.BroadcastTx(ctx, addr0, msg1, msg2, msg3)
+        _, err = lib.BroadcastTx(addr0, msg1, msg2, msg3)
         if err != nil {
                 log.Fatal(err)
         }

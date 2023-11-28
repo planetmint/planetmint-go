@@ -14,12 +14,12 @@ import (
 func buildSignBroadcastTx(goCtx context.Context, sendingValidatorAddress string, msg sdk.Msg) (err error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	addr := sdk.MustAccAddressFromBech32(sendingValidatorAddress)
-	txJSON, err := lib.BuildUnsignedTx(goCtx, addr, msg)
+	txJSON, err := lib.BuildUnsignedTx(addr, msg)
 	if err != nil {
 		return
 	}
 	GetAppLogger().Info(ctx, "broadcast tx: "+txJSON)
-	_, err = lib.BroadcastTxWithFileLock(goCtx, addr, msg)
+	_, err = lib.BroadcastTxWithFileLock(addr, msg)
 	return
 }
 
