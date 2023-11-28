@@ -59,4 +59,8 @@ jobs:
         run: (golangci-lint run && cd lib && golangci-lint run)
 
       - name: Run tests
-        run: go test -race -vet=off ./...
+        run: |
+          # Exclude generated .pb.go and .pb.gw.go files from test and coverage
+          go test -coverprofile cover.out -race -vet=off -v $(go list ./... | grep -v types)
+          # Print coverage by function
+          go tool cover -func=cover.out
