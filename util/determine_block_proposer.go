@@ -25,7 +25,6 @@ type KeyFile struct {
 }
 
 func GetValidatorCometBFTIdentity(ctx sdk.Context) (string, bool) {
-	logger := ctx.Logger()
 	conf := config.GetConfig()
 
 	cfg := cometcfg.DefaultConfig()
@@ -33,19 +32,19 @@ func GetValidatorCometBFTIdentity(ctx sdk.Context) (string, bool) {
 
 	jsonFile, err := os.Open(jsonFilePath)
 	if err != nil {
-		logger.Error("error while opening config", err)
+		GetAppLogger().Error(ctx, "error while opening config", err.Error())
 		return "", false
 	}
 	jsonBytes, err := io.ReadAll(jsonFile)
 	if err != nil {
-		logger.Error("error while reading file", err)
+		GetAppLogger().Error(ctx, "error while reading file", err.Error())
 		return "", false
 	}
 
 	var keyFile KeyFile
 	err = json.Unmarshal(jsonBytes, &keyFile)
 	if err != nil {
-		logger.Error("error while unmarshaling key file", err)
+		GetAppLogger().Error(ctx, "error while unmarshaling key file", err.Error())
 		return "", false
 	}
 	return strings.ToLower(keyFile.Address), true
