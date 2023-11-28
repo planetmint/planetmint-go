@@ -26,11 +26,13 @@ func buildSignBroadcastTx(goCtx context.Context, loggingContext string, sendingV
 			GetAppLogger().Error(ctx, loggingContext+" build unsigned tx failed: "+err.Error())
 			return
 		}
-		GetAppLogger().Info(ctx, loggingContext+" broadcast tx: "+txJSON)
+		GetAppLogger().Info(ctx, loggingContext+" unsigned tx: "+txJSON)
 		_, err = lib.BroadcastTxWithFileLock(addr, msg)
 		if err != nil {
 			GetAppLogger().Error(ctx, loggingContext+" broadcast tx failed: "+err.Error())
+			return
 		}
+		GetAppLogger().Info(ctx, loggingContext+" broadcast tx succeeded")
 	}()
 }
 

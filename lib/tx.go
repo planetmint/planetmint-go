@@ -91,7 +91,7 @@ func getClientContext(address sdk.AccAddress) (clientCtx client.Context, err err
 	clientCtx = client.Context{
 		AccountRetriever:  authtypes.AccountRetriever{},
 		BroadcastMode:     "sync",
-		ChainID:           "planetmint-testnet-1",
+		ChainID:           GetConfig().ChainID,
 		Client:            wsClient,
 		Codec:             codec,
 		From:              address.String(),
@@ -172,9 +172,46 @@ func broadcastTx(clientCtx client.Context, txf tx.Factory, msgs ...sdk.Msg) (bro
 	broadcastTxResponseJSON = output.String()
 	return
 }
+func getSequenceFromFile(seqFile *os.File, filename string) (sequence uint64, err error) {
+	var sequenceString string
+	lineCount := int64(0)
+	scanner := bufio.NewScanner(seqFile)
+	for scanner.Scan() {
+		sequenceString = scanner.Text()
+		lineCount++
+	}
+	err = scanner.Err()
+	if err != nil {
+		return
+	}
+	if lineCount == 0 {
+		err = errors.New("Sequence file empty " + filename + ": no lines")
+		return
+	} else if lineCount != 1 {
+		err = errors.New("Malformed " + filename + ": wrong number of lines")
+		return
+	}
+	sequence, err = strconv.ParseUint(sequenceString, 10, 64)
+	if err != nil {
+		return
+	}
+	return
+}
+
+func getSequenceFromChain(clientCtx client.Context) (sequence uint64, err error) {
+	// Get sequence number from chain.
+	account, err := clientCtx.AccountRetriever.GetAccount(clientCtx, clientCtx.FromAddress)
+	if err != nil {
+		return
+	}
+	sequence = account.GetSequence()
+	return
+}
 
 // BroadcastTxWithFileLock broadcasts a transaction via gRPC and synchronises requests via a file lock.
 func BroadcastTxWithFileLock(address sdk.AccAddress, msgs ...sdk.Msg) (broadcastTxResponseJSON string, err error) {
+
+	// open and lock file, if it exists
 	usr, err := user.Current()
 	if err != nil {
 		return
@@ -208,64 +245,46 @@ func BroadcastTxWithFileLock(address sdk.AccAddress, msgs ...sdk.Msg) (broadcast
 		}
 	}()
 
-	var sequenceString string
-	lineCount := int64(0)
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		sequenceString = scanner.Text()
-		lineCount++
-	}
-	err = scanner.Err()
-	if err != nil {
-		return
-	}
-
-	// Get sequence number from chain.
+	// get basic chain information
 	clientCtx, txf, err := getClientContextAndTxFactory(address)
 	if err != nil {
 		return
 	}
-	account, err := clientCtx.AccountRetriever.GetAccount(clientCtx, clientCtx.FromAddress)
-	if err != nil {
-		return
-	}
-	sequence := account.GetSequence()
 
-	if lineCount == 0 {
-		// File does not exist yet.
-		sequenceString = strconv.FormatUint(sequence, 10)
-	} else if lineCount != 1 {
-		err = errors.New("Malformed " + filename + ": wrong number of lines")
-		return
-	}
+	sequenceFromFile, errFile := getSequenceFromFile(file, filename)
+	sequenceFromChain, errChain := getSequenceFromChain(clientCtx)
 
-	sequenceCount, err := strconv.ParseUint(sequenceString, 10, 64)
-	if err != nil {
+	var sequence uint64
+	if errFile != nil && errChain != nil {
+		err = errors.New("Unable to determine sequence number")
 		return
-	}
-
-	// Sequence number on chain is bigger than in text file.
-	// Someone manually sent a transaction from our account?
-	if sequence > sequenceCount {
-		sequenceCount = sequence
+	} else if errFile == nil && errChain != nil {
+		sequence = sequenceFromFile
+	} else if errFile != nil && errChain == nil {
+		sequence = sequenceFromChain
+	} else {
+		sequence = sequenceFromChain
+		if sequenceFromFile > sequenceFromChain {
+			sequence = sequenceFromFile
+		}
 	}
 
 	// Set new sequence number
-	txf = txf.WithSequence(sequenceCount)
+	txf = txf.WithSequence(sequence)
 	broadcastTxResponseJSON, err = broadcastTx(clientCtx, txf, msgs...)
 	if err != nil {
 		return
 	}
 
 	// Increase counter for next round.
-	sequenceCount++
+	sequence++
 
 	_, err = file.Seek(0, io.SeekStart)
 	if err != nil {
 		return
 	}
 
-	_, err = file.WriteString(strconv.FormatUint(sequenceCount, 10) + "\n")
+	_, err = file.WriteString(strconv.FormatUint(sequence, 10) + "\n")
 
 	return
 }
