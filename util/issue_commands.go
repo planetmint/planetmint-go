@@ -3,7 +3,6 @@ package util
 import (
 	"context"
 	"strconv"
-	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/planetmint/planetmint-go/config"
@@ -19,8 +18,6 @@ func setConfig(goCtx context.Context) {
 }
 func buildSignBroadcastTx(goCtx context.Context, loggingContxt string, sendingValidatorAddress string, msg sdk.Msg) {
 	go func() {
-
-		time.Sleep(5 * time.Second)
 		setConfig(goCtx)
 		ctx := sdk.UnwrapSDKContext(goCtx)
 		addr := sdk.MustAccAddressFromBech32(sendingValidatorAddress)
