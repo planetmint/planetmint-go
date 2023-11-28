@@ -11,14 +11,14 @@ import (
 	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 )
 
-func setConfig(goCtx context.Context) {
+func setRPCConfig(goCtx context.Context) {
 	rpcConf := lib.GetConfig()
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	rpcConf.SetChainID(ctx.ChainID())
 }
 func buildSignBroadcastTx(goCtx context.Context, loggingContext string, sendingValidatorAddress string, msg sdk.Msg) {
 	go func() {
-		setConfig(goCtx)
+		setRPCConfig(goCtx)
 		ctx := sdk.UnwrapSDKContext(goCtx)
 		addr := sdk.MustAccAddressFromBech32(sendingValidatorAddress)
 		txJSON, err := lib.BuildUnsignedTx(addr, msg)
