@@ -21,8 +21,6 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	}
 	blockHeight := req.Header.GetHeight()
 	if isPoPHeight(req.Header.GetHeight()) && util.IsValidatorBlockProposer(ctx, proposerAddress) {
-		// TODO: implement PoP trigger
-		util.GetAppLogger().Info(ctx, "TODO: implement PoP trigger")
 		hexProposerAddress := hex.EncodeToString(proposerAddress)
 		conf := config.GetConfig()
 		txUnsigned := keeper.GetReissuanceCommand(conf.ReissuanceAsset, blockHeight)
