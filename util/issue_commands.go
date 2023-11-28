@@ -16,20 +16,20 @@ func setConfig(goCtx context.Context) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	rpcConf.SetChainID(ctx.ChainID())
 }
-func buildSignBroadcastTx(goCtx context.Context, loggingContxt string, sendingValidatorAddress string, msg sdk.Msg) {
+func buildSignBroadcastTx(goCtx context.Context, loggingContext string, sendingValidatorAddress string, msg sdk.Msg) {
 	go func() {
 		setConfig(goCtx)
 		ctx := sdk.UnwrapSDKContext(goCtx)
 		addr := sdk.MustAccAddressFromBech32(sendingValidatorAddress)
 		txJSON, err := lib.BuildUnsignedTx(addr, msg)
 		if err != nil {
-			GetAppLogger().Error(ctx, loggingContxt+" build unsigned tx failed: "+err.Error())
+			GetAppLogger().Error(ctx, loggingContext+" build unsigned tx failed: "+err.Error())
 			return
 		}
-		GetAppLogger().Info(ctx, loggingContxt+" broadcast tx: "+txJSON)
+		GetAppLogger().Info(ctx, loggingContext+" broadcast tx: "+txJSON)
 		_, err = lib.BroadcastTxWithFileLock(addr, msg)
 		if err != nil {
-			GetAppLogger().Error(ctx, loggingContxt+" broadcast tx failed: "+err.Error())
+			GetAppLogger().Error(ctx, loggingContext+" broadcast tx failed: "+err.Error())
 		}
 	}()
 }
