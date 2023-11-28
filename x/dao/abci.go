@@ -25,7 +25,6 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 		conf := config.GetConfig()
 		txUnsigned := keeper.GetReissuanceCommand(conf.ReissuanceAsset, blockHeight)
 		util.InitRDDLReissuanceProcess(ctx, hexProposerAddress, txUnsigned, blockHeight)
-
 	}
 	if isDistributionHeight(blockHeight) {
 		// initialize the distribution message

@@ -210,7 +210,6 @@ func getSequenceFromChain(clientCtx client.Context) (sequence uint64, err error)
 
 // BroadcastTxWithFileLock broadcasts a transaction via gRPC and synchronises requests via a file lock.
 func BroadcastTxWithFileLock(address sdk.AccAddress, msgs ...sdk.Msg) (broadcastTxResponseJSON string, err error) {
-
 	// open and lock file, if it exists
 	usr, err := user.Current()
 	if err != nil {
@@ -256,17 +255,12 @@ func BroadcastTxWithFileLock(address sdk.AccAddress, msgs ...sdk.Msg) (broadcast
 
 	var sequence uint64
 	if errFile != nil && errChain != nil {
-		err = errors.New("Unable to determine sequence number")
+		err = errors.New("unable to determine sequence number")
 		return
-	} else if errFile == nil && errChain != nil {
+	}
+	sequence = sequenceFromChain
+	if sequenceFromFile > sequenceFromChain {
 		sequence = sequenceFromFile
-	} else if errFile != nil && errChain == nil {
-		sequence = sequenceFromChain
-	} else {
-		sequence = sequenceFromChain
-		if sequenceFromFile > sequenceFromChain {
-			sequence = sequenceFromFile
-		}
 	}
 
 	// Set new sequence number
