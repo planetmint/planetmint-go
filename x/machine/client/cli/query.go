@@ -30,6 +30,8 @@ func GetQueryCmd(_ string) *cobra.Command {
 	cmd.AddCommand(CmdGetTrustAnchorStatus())
 	cmd.AddCommand(CmdGetMachineByAddress())
 
+	cmd.AddCommand(CmdGetLiquidAssetsByMachineid())
+
 	// this line is used by starport scaffolding # 1
 
 	return cmd
