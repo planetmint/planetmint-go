@@ -24,6 +24,8 @@ const (
 	TrustAnchorKey = "Machine/trustAnchor/"
 
 	AddressIndexKey = "Machine/address"
+
+	LiquidAssetKey = "Machine/LiquidAsset/"
 )
 
 func KeyPrefix(p string) []byte {

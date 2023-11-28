@@ -13,6 +13,7 @@ import (
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
@@ -93,7 +94,7 @@ func (k Keeper) DistributeCollectedFees(ctx sdk.Context) {
 	if found {
 		err := k.processBalances(ctx, balances, totalStake, coinToDistribute)
 		if err != nil {
-			ctx.Logger().Error("Error processing balances:", err)
+			util.GetAppLogger().Error(ctx, "Error processing balances:", err)
 		}
 	}
 }

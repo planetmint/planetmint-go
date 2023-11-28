@@ -7,6 +7,7 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "planetmintgo/machine/params.proto";
 import "planetmintgo/machine/machine.proto";
+import "planetmintgo/machine/liquid_asset.proto";
 
 option go_package = "github.com/planetmint/planetmint-go/x/machine/types";
 
@@ -34,6 +35,12 @@ service Query {
   // Queries a list of GetMachineByAddress items.
   rpc GetMachineByAddress (QueryGetMachineByAddressRequest) returns (QueryGetMachineByAddressResponse) {
     option (google.api.http).get = "/planetmint/machine/get_machine_by_address/{address}";
+  
+  }
+  
+  // Queries a list of GetLiquidAssetsByMachineid items.
+  rpc GetLiquidAssetsByMachineid (QueryGetLiquidAssetsByMachineidRequest) returns (QueryGetLiquidAssetsByMachineidResponse) {
+    option (google.api.http).get = "/planetmint/planetmint-go/machine/get_liquid_assets_by_machineid/{machineID}";
   
   }
 }
@@ -70,5 +77,13 @@ message QueryGetMachineByAddressRequest {
 
 message QueryGetMachineByAddressResponse {
   Machine machine = 1;
+}
+
+message QueryGetLiquidAssetsByMachineidRequest {
+  string machineID = 1;
+}
+
+message QueryGetLiquidAssetsByMachineidResponse {
+  LiquidAsset liquidAssetEntry = 1;
 }
 
