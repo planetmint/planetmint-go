@@ -1,19 +1,51 @@
 package keeper
 
 import (
+	"math"
 	"math/big"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
-func GetReissuanceCommand(assetID string, _ int64) string {
-	return "reissueasset " + assetID + " 998.69000000"
+func GetPopNumber(blockHeight int64) float64 {
+	return float64(blockHeight) / float64(config.GetConfig().PoPEpochs)
 }
 
-func IsValidReissuanceCommand(reissuanceStr string, assetID string, _ int64) bool {
-	expected := "reissueasset " + assetID + " 998.69000000"
+var PopsPerCycle float64
+
+func init() {
+	PopsPerCycle = 1051200.0
+}
+
+func GetReissuanceAsStringValue(blockHeight int64) string {
+	PopNumber := GetPopNumber(blockHeight)
+	exactCycleID := PopNumber / PopsPerCycle
+
+	switch cycleID := math.Floor(exactCycleID); cycleID {
+	case 0:
+		return "998.69000000"
+	case 1:
+		return "499.34000000"
+	case 2:
+		return "249.67000000"
+	case 3:
+		return "124.83000000"
+	case 4:
+		return "62.42000000"
+	default:
+		return "0.0"
+	}
+}
+
+func GetReissuanceCommand(assetID string, blockHeight int64) string {
+	return "reissueasset " + assetID + " " + GetReissuanceAsStringValue(blockHeight)
+}
+
+func IsValidReissuanceCommand(reissuanceStr string, assetID string, blockHeight int64) bool {
+	expected := "reissueasset " + assetID + " " + GetReissuanceAsStringValue(blockHeight)
 	return reissuanceStr == expected
 }
 
