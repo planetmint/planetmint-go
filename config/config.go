@@ -54,7 +54,7 @@ type Config struct {
 	DistributionAddrDAO   string `json:"distribution-addr-dao"   mapstructure:"distribution-addr-dao"`
 	DistributionAddrPop   string `json:"distribution-addr-pop"   mapstructure:"distribution-addr-pop"`
 	DistributionEpochs    int    `json:"distribution-epochs"     mapstructure:"distribution-epochs"`
-	ReIssuanceEpochs      int    `json:"re-issuance-epochs"     mapstructure:"re-issuance-epochs"`
+	ReIssuanceEpochs      int    `json:"re-issuance-epochs"      mapstructure:"re-issuance-epochs"`
 }
 
 // cosmos-sdk wide global singleton

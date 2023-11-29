@@ -21,8 +21,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	}
 	blockHeight := req.Header.GetHeight()
 	hexProposerAddress := hex.EncodeToString(proposerAddress)
-	if isPoPHeight(req.Header.GetHeight()) {
-
+	if isPopHeight(req.Header.GetHeight()) {
 		// select PoP participants
 		challenger := ""
 		challengee := ""
@@ -35,7 +34,6 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 		conf := config.GetConfig()
 		txUnsigned := keeper.GetReissuanceCommand(conf.ReissuanceAsset, blockHeight)
 		util.SendInitReissuance(ctx, hexProposerAddress, txUnsigned, blockHeight)
-
 	}
 	if isDistributionHeight(blockHeight) {
 		distribution, err := k.GetDistributionForReissuedTokens(ctx, blockHeight)
@@ -46,7 +44,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	}
 }
 
-func isPoPHeight(height int64) bool {
+func isPopHeight(height int64) bool {
 	cfg := config.GetConfig()
 	return height%int64(cfg.PopEpochs) == 0
 }
