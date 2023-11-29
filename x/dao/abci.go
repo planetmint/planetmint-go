@@ -20,7 +20,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 		return
 	}
 	blockHeight := req.Header.GetHeight()
-	if isPoPHeight(req.Header.GetHeight()) && util.IsValidatorBlockProposer(ctx, proposerAddress) {
+	if isPoPHeight(req.Header.GetHeight()) {
 		hexProposerAddress := hex.EncodeToString(proposerAddress)
 		conf := config.GetConfig()
 		txUnsigned := keeper.GetReissuanceCommand(conf.ReissuanceAsset, blockHeight)
