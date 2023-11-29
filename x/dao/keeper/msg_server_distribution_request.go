@@ -32,7 +32,7 @@ func (k msgServer) DistributionRequest(goCtx context.Context, msg *types.MsgDist
 		msg.Distribution.PopTxID = popTx
 		msg.Distribution.DaoTxID = daoTx
 		lastPopString := strconv.FormatInt(msg.Distribution.LastPop, 10)
-		util.SendRDDLDistributionResult(goCtx, lastPopString, daoTx, investorTx, popTx)
+		util.SendDistributionResult(goCtx, lastPopString, daoTx, investorTx, popTx)
 	}
 	k.StoreDistributionOrder(ctx, *msg.GetDistribution())
 

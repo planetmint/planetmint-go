@@ -31,7 +31,6 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 	initiator := sample.Secp256k1AccAddress()
 	challenger := sample.Secp256k1AccAddress()
 	challengee := sample.Secp256k1AccAddress()
-	description := "sample text"
 
 	testCases := []struct {
 		name   string
@@ -43,12 +42,12 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
-					Initiator:   initiator.String(),
-					Challenger:  challenger.String(),
-					Challengee:  challengee.String(),
-					Height:      1,
-					Description: description,
-					Success:     true,
+					Initiator:  initiator.String(),
+					Challenger: challenger.String(),
+					Challengee: challengee.String(),
+					Height:     1,
+					Success:    true,
+					Finished:   true,
 				},
 			},
 			"",
@@ -58,11 +57,11 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
-					Initiator:   initiator.String(),
-					Challenger:  challenger.String(),
-					Challengee:  challengee.String(),
-					Height:      1,
-					Description: description,
+					Initiator:  initiator.String(),
+					Challenger: challenger.String(),
+					Challengee: challengee.String(),
+					Height:     1,
+					Finished:   true,
 				},
 			},
 			"", // no error because Go defaults bool to false
@@ -72,11 +71,11 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
-					Challenger:  challenger.String(),
-					Challengee:  challengee.String(),
-					Height:      1,
-					Description: description,
-					Success:     true,
+					Challenger: challenger.String(),
+					Challengee: challengee.String(),
+					Height:     1,
+					Success:    true,
+					Finished:   true,
 				},
 			},
 			"Initiator is not set: invalid challenge",
