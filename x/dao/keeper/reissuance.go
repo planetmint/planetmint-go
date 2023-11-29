@@ -11,11 +11,14 @@ import (
 )
 
 func GetPoPNumber(blockHeight int64) float64 {
-
 	return float64(blockHeight) / float64(config.GetConfig().PoPEpochs)
 }
 
-var PoPsPerCycle float64 = 1051200.0
+var PoPsPerCycle float64
+
+func init() {
+	PoPsPerCycle = 1051200.0
+}
 
 func GetReissuanceAsStringValue(blockHeight int64) string {
 	PoPNumber := GetPoPNumber(blockHeight)

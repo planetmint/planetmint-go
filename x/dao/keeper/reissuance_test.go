@@ -9,17 +9,16 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/planetmint/planetmint-go/x/dao/keeper"
 	DaoKeeper "github.com/planetmint/planetmint-go/x/dao/keeper"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
-func createNReissuances(k *keeper.Keeper, ctx sdk.Context, n int) []types.Reissuance {
+func createNReissuances(k *DaoKeeper.Keeper, ctx sdk.Context, n int) []types.Reissuance {
 	items := make([]types.Reissuance, n)
 	for i := range items {
 		items[i].BlockHeight = int64(i)
 		items[i].Proposer = fmt.Sprintf("proposer_%v", i)
-		items[i].Rawtx = keeper.GetReissuanceCommand("asset_id", int64(i))
+		items[i].Rawtx = DaoKeeper.GetReissuanceCommand("asset_id", int64(i))
 		items[i].TxID = ""
 		k.StoreReissuance(ctx, items[i])
 	}
@@ -38,6 +37,7 @@ func TestGetReissuances(t *testing.T) {
 }
 
 func TestReissuanceValueComputation(t *testing.T) {
+	t.Parallel()
 	popsPerEpoch := float64(config.GetConfig().PoPEpochs)
 	assert.Equal(t, "998.69000000", DaoKeeper.GetReissuanceAsStringValue(1))
 	assert.Equal(t, "499.34000000", DaoKeeper.GetReissuanceAsStringValue(int64(DaoKeeper.PoPsPerCycle*popsPerEpoch*1+1)))
@@ -45,5 +45,4 @@ func TestReissuanceValueComputation(t *testing.T) {
 	assert.Equal(t, "124.83000000", DaoKeeper.GetReissuanceAsStringValue(int64(DaoKeeper.PoPsPerCycle*popsPerEpoch*3+1)))
 	assert.Equal(t, "62.42000000", DaoKeeper.GetReissuanceAsStringValue(int64(DaoKeeper.PoPsPerCycle*popsPerEpoch*4+1)))
 	assert.Equal(t, "0.0", DaoKeeper.GetReissuanceAsStringValue(int64(DaoKeeper.PoPsPerCycle*popsPerEpoch*5+1)))
-
 }
