@@ -28,8 +28,9 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, _ keeper.Keeper) 
 
 		// Issue PoP
 		util.SendInitPoP(ctx, hexProposerAddress, challenger, challengee, blockHeight)
-		// send MQTT message to challenger && challengee
+		// TODO send MQTT message to challenger && challengee
 	}
+	// TODO will be reintegrated with by merging branch 184-implement-staged-claim
 	// if isDistributionHeight(blockHeight) {
 	// // reissue 1st
 
@@ -52,6 +53,7 @@ func isPoPHeight(height int64) bool {
 	return height%int64(cfg.PoPEpochs) == 0
 }
 
+// TODO will be reintegrated with by merging branch 184-implement-staged-claim
 // func isDistributionHeight(height int64) bool {
 // 	cfg := config.GetConfig()
 // 	return height%int64(cfg.DistributionEpochs) == 0

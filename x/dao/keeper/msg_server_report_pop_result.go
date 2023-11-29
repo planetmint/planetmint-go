@@ -35,6 +35,7 @@ func (k msgServer) issuePoPRewards(_ types.Challenge) (err error) {
 	// cfg := config.GetConfig()
 	// client := osc.NewClient(cfg.WatchmenEndpoint, 1234)
 
+	// TODO will be reintegrated with by merging branch 184-implement-staged-claim
 	// TODO: finalize message and endpoint
 	// msg := osc.NewMessage("/rddl/token")
 	// msg.Append(challenge.Challenger)
