@@ -36,7 +36,7 @@ func buildSignBroadcastTx(goCtx context.Context, loggingContext string, sendingV
 	}()
 }
 
-func InitRDDLReissuanceProcess(goCtx context.Context, proposerAddress string, txUnsigned string, blockHeight int64) {
+func SendInitReissuance(goCtx context.Context, proposerAddress string, txUnsigned string, blockHeight int64) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	// get_last_PoPBlockHeight() // TODO: to be read form the upcoming PoP-store
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
@@ -45,7 +45,7 @@ func InitRDDLReissuanceProcess(goCtx context.Context, proposerAddress string, tx
 	buildSignBroadcastTx(goCtx, "initializing RDDL re-issuance", sendingValidatorAddress, msg)
 }
 
-func SendRDDLReissuanceResult(goCtx context.Context, proposerAddress string, txID string, blockHeight int64) {
+func SendReissuanceResult(goCtx context.Context, proposerAddress string, txID string, blockHeight int64) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
 	GetAppLogger().Info(ctx, "create re-issuance result")
@@ -53,7 +53,7 @@ func SendRDDLReissuanceResult(goCtx context.Context, proposerAddress string, txI
 	buildSignBroadcastTx(goCtx, "sending the re-issuance result", sendingValidatorAddress, msg)
 }
 
-func SendRDDLDistributionRequest(goCtx context.Context, distribution daotypes.DistributionOrder) {
+func SendDistributionRequest(goCtx context.Context, distribution daotypes.DistributionOrder) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
 	GetAppLogger().Info(ctx, "create Distribution Request")
@@ -61,7 +61,7 @@ func SendRDDLDistributionRequest(goCtx context.Context, distribution daotypes.Di
 	buildSignBroadcastTx(goCtx, "sending the distribution request", sendingValidatorAddress, msg)
 }
 
-func SendRDDLDistributionResult(goCtx context.Context, lastPoP string, daoTxID string, invTxID string, popTxID string) {
+func SendDistributionResult(goCtx context.Context, lastPoP string, daoTxID string, invTxID string, popTxID string) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
 	GetAppLogger().Info(ctx, "create Distribution Result")
@@ -80,4 +80,12 @@ func SendLiquidAssetRegistration(goCtx context.Context, notarizedAsset machinety
 	GetAppLogger().Info(ctx, "create Liquid Asset Registration")
 	msg := machinetypes.NewMsgNotarizeLiquidAsset(sendingValidatorAddress, &notarizedAsset)
 	buildSignBroadcastTx(goCtx, "Liquid Asset Registration:", sendingValidatorAddress, msg)
+}
+
+func SendInitPoP(goCtx context.Context, proposer string, challenger string, challengee string, blockHeight uint64) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	sendingValidatorAddress := config.GetConfig().ValidatorAddress
+	GetAppLogger().Info(ctx, "create Init PoP message")
+	msg := daotypes.NewMsgInitPop(sendingValidatorAddress, proposer, challenger, challengee, blockHeight)
+	buildSignBroadcastTx(goCtx, "Init PoP:", sendingValidatorAddress, msg)
 }

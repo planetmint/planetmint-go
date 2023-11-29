@@ -18,7 +18,7 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 			util.GetAppLogger().Error(ctx, "REISSUE: Asset reissuance failed: "+err.Error())
 		}
 		// 3. notarize result by notarizing the liquid tx-id
-		util.SendRDDLReissuanceResult(goCtx, msg.GetProposer(), txID, msg.GetBlockHeight())
+		util.SendReissuanceResult(goCtx, msg.GetProposer(), txID, msg.GetBlockHeight())
 	}
 
 	var reissuance types.Reissuance
