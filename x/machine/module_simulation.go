@@ -31,6 +31,10 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgRegisterTrustAnchor int = 100
 
+	opWeightMsgNotarizeLiquidAsset = "op_weight_msg_notarize_liquid_asset"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgNotarizeLiquidAsset int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -83,6 +87,17 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		machinesimulation.SimulateMsgRegisterTrustAnchor(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
+	var weightMsgNotarizeLiquidAsset int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgNotarizeLiquidAsset, &weightMsgNotarizeLiquidAsset, nil,
+		func(_ *rand.Rand) {
+			weightMsgNotarizeLiquidAsset = defaultWeightMsgNotarizeLiquidAsset
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgNotarizeLiquidAsset,
+		machinesimulation.SimulateMsgNotarizeLiquidAsset(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
 	// this line is used by starport scaffolding # simapp/module/operation
 
 	return operations
@@ -104,6 +119,14 @@ func (am AppModule) ProposalMsgs(_ module.SimulationState) []simtypes.WeightedPr
 			defaultWeightMsgRegisterTrustAnchor,
 			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
 				machinesimulation.SimulateMsgRegisterTrustAnchor(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgNotarizeLiquidAsset,
+			defaultWeightMsgNotarizeLiquidAsset,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				machinesimulation.SimulateMsgNotarizeLiquidAsset(am.accountKeeper, am.bankKeeper, am.keeper)
 				return nil
 			},
 		),

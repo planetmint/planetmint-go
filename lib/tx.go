@@ -1,177 +1,131 @@
 package lib
 
 import (
-	"context"
+	"bufio"
+	"bytes"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
+	"io"
+	"os"
+	"os/user"
 	"path/filepath"
+	"strconv"
+	"strings"
+	"syscall"
 
-	"github.com/99designs/keyring"
+	comethttp "github.com/cometbft/cometbft/rpc/client/http"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/cosmos/cosmos-sdk/crypto/hd"
-	cryptokeyring "github.com/cosmos/cosmos-sdk/crypto/keyring"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdktx "github.com/cosmos/cosmos-sdk/types/tx"
-	"github.com/cosmos/cosmos-sdk/types/tx/signing"
-	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
-// KeyPair defines a public/private key pair to e.g. sign a transaction.
-type KeyPair struct {
-	Pub  cryptotypes.PubKey
-	Priv cryptotypes.PrivKey
-}
-
-// Result defines a generic way to receive responses from the RPC endpoint.
-type Result struct {
-	Info map[string]interface{} `json:"info" mapstructure:"info"`
-}
+var ErrTypeAssertionFailed = errors.New("type assertion failed")
 
 func init() {
 	GetConfig()
 }
 
-func getKeyPairFromKeyring(address sdk.AccAddress) (keyPair KeyPair, err error) {
-	ring, err := keyring.Open(keyring.Config{
-		AllowedBackends: []keyring.BackendType{keyring.FileBackend},
-		FileDir:         filepath.Join(libConfig.RootDir, "keyring-test"),
-		FilePasswordFunc: func(_ string) (string, error) {
-			return "test", nil
-		},
-	})
+func getAccountNumberAndSequence(clientCtx client.Context) (accountNumber, sequence uint64, err error) {
+	account, err := clientCtx.AccountRetriever.GetAccount(clientCtx, clientCtx.FromAddress)
 	if err != nil {
 		return
 	}
-
-	name := hex.EncodeToString([]byte(address)) + ".address"
-	i, err := ring.Get(name)
-	if err != nil {
-		return
-	}
-
-	name = string(i.Data)
-	i, err = ring.Get(name)
-	if err != nil {
-		return
-	}
-
-	s := hex.EncodeToString(i.Data)
-	privKey := s[len(s)-64:]
-
-	decodedPriv, err := hex.DecodeString(privKey)
-	if err != nil {
-		return
-	}
-
-	algo, err := cryptokeyring.NewSigningAlgoFromString("secp256k1", cryptokeyring.SigningAlgoList{hd.Secp256k1})
-	if err != nil {
-		return
-	}
-
-	priv := algo.Generate()(decodedPriv)
-	pub := priv.PubKey()
-
-	keyPair = KeyPair{
-		Pub:  pub,
-		Priv: priv,
-	}
+	accountNumber = account.GetAccountNumber()
+	sequence = account.GetSequence()
 	return
 }
 
-func getAccountNumberAndSequence(goCtx context.Context, address sdk.AccAddress) (accountNumber, sequence uint64, err error) {
-	grpcConn, err := libConfig.GetGRPCConn()
+func getClientContextAndTxFactory(address sdk.AccAddress) (clientCtx client.Context, txf tx.Factory, err error) {
+	clientCtx, err = getClientContext(address)
 	if err != nil {
 		return
 	}
-	defer grpcConn.Close()
-
-	client := authtypes.NewQueryClient(grpcConn)
-	grpcRes, err := client.AccountInfo(
-		goCtx,
-		&authtypes.QueryAccountInfoRequest{
-			Address: address.String(),
-		},
-	)
+	accountNumber, sequence, err := getAccountNumberAndSequence(clientCtx)
 	if err != nil {
 		return
 	}
-
-	accountNumber = grpcRes.Info.AccountNumber
-	sequence = grpcRes.Info.Sequence
+	txf = getTxFactoryWithAccountNumberAndSequence(clientCtx, accountNumber, sequence)
 	return
 }
 
-// BuildAndSignTx constructs the transaction from address' private key and messages.
-func BuildAndSignTx(goCtx context.Context, address sdk.AccAddress, msgs ...sdk.Msg) (txBytes []byte, txJSON string, err error) {
+func getTxFactoryWithAccountNumberAndSequence(clientCtx client.Context, accountNumber, sequence uint64) (txf tx.Factory) {
+	return tx.Factory{}.
+		WithAccountNumber(accountNumber).
+		WithChainID(clientCtx.ChainID).
+		WithGas(200000).
+		WithGasPrices("0.000005plmnt").
+		WithKeybase(clientCtx.Keyring).
+		WithSequence(sequence).
+		WithTxConfig(clientCtx.TxConfig)
+}
+
+func getClientContext(address sdk.AccAddress) (clientCtx client.Context, err error) {
 	encodingConfig := GetConfig().EncodingConfig
-	if encodingConfig.TxConfig == nil {
-		err = errors.New("encoding config must not be nil")
-		return
-	}
-	txBuilder := encodingConfig.TxConfig.NewTxBuilder()
 
-	err = txBuilder.SetMsgs(msgs...)
+	rootDir := GetConfig().RootDir
+	input := os.Stdin
+	codec := encodingConfig.Marshaler
+	keyringOptions := []keyring.Option{}
+
+	keyring, err := keyring.New("lib", keyring.BackendTest, rootDir, input, codec, keyringOptions...)
 	if err != nil {
 		return
 	}
 
-	txBuilder.SetFeeAmount(sdk.Coins{sdk.NewInt64Coin("plmnt", 1)})
-	txBuilder.SetGasLimit(200000)
-	txBuilder.SetTimeoutHeight(0)
-
-	keyPair, err := getKeyPairFromKeyring(address)
+	record, err := keyring.KeyByAddress(address)
 	if err != nil {
 		return
 	}
 
-	accountNumber, sequence, err := getAccountNumberAndSequence(goCtx, address)
+	remote := GetConfig().RPCEndpoint
+	wsClient, err := comethttp.New(remote, "/websocket")
 	if err != nil {
 		return
 	}
 
-	// First round: we gather all the signer infos. We use the "set empty signature" hack to do that.
-	var sigsV2 []signing.SignatureV2
-	sigV2 := signing.SignatureV2{
-		PubKey: keyPair.Pub,
-		Data: &signing.SingleSignatureData{
-			SignMode:  encodingConfig.TxConfig.SignModeHandler().DefaultMode(),
-			Signature: nil,
-		},
-		Sequence: sequence,
-	}
-	sigsV2 = append(sigsV2, sigV2)
-	err = txBuilder.SetSignatures(sigsV2...)
-	if err != nil {
-		return
+	var output bytes.Buffer
+
+	clientCtx = client.Context{
+		AccountRetriever:  authtypes.AccountRetriever{},
+		BroadcastMode:     "sync",
+		ChainID:           GetConfig().ChainID,
+		Client:            wsClient,
+		Codec:             codec,
+		From:              address.String(),
+		FromAddress:       address,
+		FromName:          record.Name,
+		HomeDir:           rootDir,
+		Input:             input,
+		InterfaceRegistry: encodingConfig.InterfaceRegistry,
+		Keyring:           keyring,
+		KeyringDir:        rootDir,
+		KeyringOptions:    keyringOptions,
+		NodeURI:           remote,
+		Offline:           true,
+		Output:            &output,
+		SkipConfirm:       true,
+		TxConfig:          encodingConfig.TxConfig,
 	}
 
-	// Second round: all signer infos are set, so each signer can sign.
-	sigsV2 = []signing.SignatureV2{}
-	signerData := xauthsigning.SignerData{
-		ChainID:       libConfig.ChainID,
-		AccountNumber: accountNumber,
-		Sequence:      sequence,
-	}
-	sigV2, err = tx.SignWithPrivKey(encodingConfig.TxConfig.SignModeHandler().DefaultMode(), signerData, txBuilder, keyPair.Priv, encodingConfig.TxConfig, sequence)
-	if err != nil {
-		return
-	}
-	sigsV2 = append(sigsV2, sigV2)
-	err = txBuilder.SetSignatures(sigsV2...)
-	if err != nil {
-		return
-	}
+	return
+}
 
-	// Generated Protobuf-encoded bytes.
-	txBytes, err = encodingConfig.TxConfig.TxEncoder()(txBuilder.GetTx())
+// BuildUnsignedTx builds a transaction to be signed given a set of messages.
+// Once created, the fee, memo, and messages are set.
+func BuildUnsignedTx(address sdk.AccAddress, msgs ...sdk.Msg) (txJSON string, err error) {
+	clientCtx, txf, err := getClientContextAndTxFactory(address)
 	if err != nil {
 		return
 	}
-
+	txBuilder, err := txf.BuildUnsignedTx(msgs...)
+	if err != nil {
+		return
+	}
 	// Generate a JSON string.
-	txJSONBytes, err := encodingConfig.TxConfig.TxJSONEncoder()(txBuilder.GetTx())
+	txJSONBytes, err := clientCtx.TxConfig.TxJSONEncoder()(txBuilder.GetTx())
 	if err != nil {
 		return
 	}
@@ -179,47 +133,152 @@ func BuildAndSignTx(goCtx context.Context, address sdk.AccAddress, msgs ...sdk.M
 	return
 }
 
-// BroadcastTx broadcasts a transaction via gRPC.
-func BroadcastTx(goCtx context.Context, txBytes []byte) (txResponse *sdk.TxResponse, err error) {
-	grpcConn, err := libConfig.GetGRPCConn()
+// BroadcastTx broadcasts a transaction via RPC.
+func BroadcastTx(address sdk.AccAddress, msgs ...sdk.Msg) (broadcastTxResponseJSON string, err error) {
+	clientCtx, txf, err := getClientContextAndTxFactory(address)
 	if err != nil {
 		return
 	}
-	defer grpcConn.Close()
-
-	client := sdktx.NewServiceClient(grpcConn)
-	grpcRes, err := client.BroadcastTx(
-		goCtx,
-		&sdktx.BroadcastTxRequest{
-			Mode:    sdktx.BroadcastMode_BROADCAST_MODE_SYNC,
-			TxBytes: txBytes,
-		},
-	)
-	if err != nil {
-		return
-	}
-	txResponse = grpcRes.TxResponse
+	broadcastTxResponseJSON, err = broadcastTx(clientCtx, txf, msgs...)
 	return
 }
 
-// SimulateTx simulates broadcasting a transaction via gRPC.
-func SimulateTx(goCtx context.Context, txBytes []byte) (result *sdk.Result, err error) {
-	grpcConn, err := libConfig.GetGRPCConn()
+func broadcastTx(clientCtx client.Context, txf tx.Factory, msgs ...sdk.Msg) (broadcastTxResponseJSON string, err error) {
+	err = tx.GenerateOrBroadcastTxWithFactory(clientCtx, txf, msgs...)
 	if err != nil {
 		return
 	}
-	defer grpcConn.Close()
+	output, ok := clientCtx.Output.(*bytes.Buffer)
+	if !ok {
+		err = ErrTypeAssertionFailed
+		return
+	}
 
-	client := sdktx.NewServiceClient(grpcConn)
-	grpcRes, err := client.Simulate(
-		goCtx,
-		&sdktx.SimulateRequest{
-			TxBytes: txBytes,
-		},
-	)
+	result := make(map[string]interface{})
+	err = json.Unmarshal(output.Bytes(), &result)
 	if err != nil {
 		return
 	}
-	result = grpcRes.Result
+	code, ok := result["code"].(float64)
+	if !ok {
+		err = ErrTypeAssertionFailed
+		return
+	}
+	if code != 0 {
+		err = errors.New(output.String())
+		return
+	}
+
+	broadcastTxResponseJSON = output.String()
+	return
+}
+func getSequenceFromFile(seqFile *os.File, filename string) (sequence uint64, err error) {
+	var sequenceString string
+	lineCount := int64(0)
+	scanner := bufio.NewScanner(seqFile)
+	for scanner.Scan() {
+		sequenceString = scanner.Text()
+		lineCount++
+	}
+	err = scanner.Err()
+	if err != nil {
+		return
+	}
+	if lineCount == 0 {
+		err = errors.New("Sequence file empty " + filename + ": no lines")
+		return
+	} else if lineCount != 1 {
+		err = errors.New("Malformed " + filename + ": wrong number of lines")
+		return
+	}
+	sequence, err = strconv.ParseUint(sequenceString, 10, 64)
+	if err != nil {
+		return
+	}
+	return
+}
+
+func getSequenceFromChain(clientCtx client.Context) (sequence uint64, err error) {
+	// Get sequence number from chain.
+	account, err := clientCtx.AccountRetriever.GetAccount(clientCtx, clientCtx.FromAddress)
+	if err != nil {
+		return
+	}
+	sequence = account.GetSequence()
+	return
+}
+
+// BroadcastTxWithFileLock broadcasts a transaction via gRPC and synchronises requests via a file lock.
+func BroadcastTxWithFileLock(address sdk.AccAddress, msgs ...sdk.Msg) (broadcastTxResponseJSON string, err error) {
+	// open and lock file, if it exists
+	usr, err := user.Current()
+	if err != nil {
+		return
+	}
+	homeDir := usr.HomeDir
+
+	addrHex := hex.EncodeToString(address)
+	filename := filepath.Join(GetConfig().RootDir, addrHex+".sequence")
+
+	// Expand tilde to user's home directory.
+	if filename == "~" {
+		filename = homeDir
+	} else if strings.HasPrefix(filename, "~/") {
+		filename = filepath.Join(homeDir, filename[2:])
+	}
+
+	file, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE, 0644)
+	if err != nil {
+		return
+	}
+	defer file.Close()
+
+	// Get file lock.
+	err = syscall.Flock(int(file.Fd()), syscall.LOCK_EX)
+	if err != nil {
+		return
+	}
+	defer func() {
+		if err := syscall.Flock(int(file.Fd()), syscall.LOCK_UN); err != nil {
+			return
+		}
+	}()
+
+	// get basic chain information
+	clientCtx, txf, err := getClientContextAndTxFactory(address)
+	if err != nil {
+		return
+	}
+
+	sequenceFromFile, errFile := getSequenceFromFile(file, filename)
+	sequenceFromChain, errChain := getSequenceFromChain(clientCtx)
+
+	var sequence uint64
+	if errFile != nil && errChain != nil {
+		err = errors.New("unable to determine sequence number")
+		return
+	}
+	sequence = sequenceFromChain
+	if sequenceFromFile > sequenceFromChain {
+		sequence = sequenceFromFile
+	}
+
+	// Set new sequence number
+	txf = txf.WithSequence(sequence)
+	broadcastTxResponseJSON, err = broadcastTx(clientCtx, txf, msgs...)
+	if err != nil {
+		return
+	}
+
+	// Increase counter for next round.
+	sequence++
+
+	_, err = file.Seek(0, io.SeekStart)
+	if err != nil {
+		return
+	}
+
+	_, err = file.WriteString(strconv.FormatUint(sequence, 10) + "\n")
+
 	return
 }

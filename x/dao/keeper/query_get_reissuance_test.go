@@ -12,7 +12,6 @@ import (
 )
 
 func TestQueryGetReissuance(t *testing.T) {
-	t.Parallel()
 	keeper, ctx := keepertest.DaoKeeper(t)
 	wctx := sdk.WrapSDKContext(ctx)
 	items := createNReissuances(keeper, ctx, 1)
@@ -34,9 +33,7 @@ func TestQueryGetReissuance(t *testing.T) {
 			err:     status.Error(codes.NotFound, "reissuance not found"),
 		},
 	} {
-		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
-			t.Parallel()
 			res, err := keeper.GetReissuance(wctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)

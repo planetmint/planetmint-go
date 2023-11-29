@@ -15,6 +15,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgDistributionResult{}, "dao/DistributionResult", nil)
 	cdc.RegisterConcrete(&MsgDistributionRequest{}, "dao/DistributionRequest", nil)
 	cdc.RegisterConcrete(&MsgUpdateParams{}, "dao/UpdateParams", nil)
+	cdc.RegisterConcrete(&MsgInitPop{}, "dao/InitPop", nil)
 	// this line is used by starport scaffolding # 2
 }
 
@@ -31,6 +32,9 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgDistributionResult{},
 		&MsgDistributionRequest{},
 		&MsgUpdateParams{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgInitPop{},
 	)
 	// this line is used by starport scaffolding # 3
 

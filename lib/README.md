@@ -13,7 +13,6 @@ For debugging purposes we print the transaction that we send as JSON.
 package main
 
 import (
-        "context"
         "fmt"
         "log"
 
@@ -24,13 +23,11 @@ import (
 )
 
 func main() {
-        goCtx := context.Background()
         encodingConfig := app.MakeEncodingConfig()
 
         libConfig := lib.GetConfig()
         libConfig.SetEncodingConfig(encodingConfig)
-        libConfig.SetGRPCEndpoint("testnet-grpc.rddl.io:443")
-        libConfig.SetGRPCTLSCert("/etc/ssl/certs/ca-certificates.crt")
+        libConfig.SetRPCEndpoint("https://testnet-rpc.rddl.io:443")
 
         addr0 := sdk.MustAccAddressFromBech32("plmnt168z8fyyzap0nw75d4atv9ucr2ye60d57dzlzaf")
         addr1 := sdk.MustAccAddressFromBech32("plmnt1vklujvmr9hsk9zwpquk4waecr2u5vcyjd8vgm8")
@@ -42,19 +39,13 @@ func main() {
         msg2 := banktypes.NewMsgSend(addr0, addr2, coin)
         msg3 := banktypes.NewMsgSend(addr0, addr3, coin)
 
-        txBytes, txJSON, err := lib.BuildAndSignTx(goCtx, addr0, msg1, msg2, msg3)
+        txJSON, err := lib.BuildUnsignedTx(addr0, msg1, msg2, msg3)
         if err != nil {
                 log.Fatal(err)
         }
         fmt.Println(txJSON)
 
-        // Optional
-        _, err = lib.SimulateTx(goCtx, txBytes)
-        if err != nil {
-                log.Fatal(err)
-        }
-
-        _, err = lib.BroadcastTx(goCtx, txBytes)
+        _, err = lib.BroadcastTx(addr0, msg1, msg2, msg3)
         if err != nil {
                 log.Fatal(err)
         }
@@ -107,20 +98,7 @@ $ go run main.go|jq
     "non_critical_extension_options": []
   },
   "auth_info": {
-    "signer_infos": [
-      {
-        "public_key": {
-          "@type": "/cosmos.crypto.secp256k1.PubKey",
-          "key": "AzthjTLaH+NCBBRH4NImcxSa9Ma59TJ0ntQE9S5TJ/wb"
-        },
-        "mode_info": {
-          "single": {
-            "mode": "SIGN_MODE_DIRECT"
-          }
-        },
-        "sequence": "6"
-      }
-    ],
+    "signer_infos": [],
     "fee": {
       "amount": [
         {
@@ -134,8 +112,6 @@ $ go run main.go|jq
     },
     "tip": null
   },
-  "signatures": [
-    "iolwpJtcFPKshQWMfgvYO+EMSavdq0auicWZCNI46AIBWH6aPEca7esfqdv2m6VE4hCHzxCNx58wnfVNnutEEQ=="
-  ]
+  "signatures": []
 }
 ```
