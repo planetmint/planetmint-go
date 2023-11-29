@@ -72,7 +72,7 @@ func ComputeDistribution(lastReissuance int64, blockHeight int64, amount uint64)
 
 	distribution.DaoAddr = conf.DistributionAddrDAO
 	distribution.InvestorAddr = conf.DistributionAddrInv
-	distribution.PopAddr = conf.DistributionAddrPoP
+	distribution.PopAddr = conf.DistributionAddrPop
 
 	distribution.DaoAmount = strconv.FormatUint(uint64(float64(amount)*types.PercentageDao), 10)
 	distribution.InvestorAmount = strconv.FormatUint(uint64(float64(amount)*types.PercentageInvestor), 10)

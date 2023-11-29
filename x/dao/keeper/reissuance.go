@@ -11,7 +11,7 @@ import (
 )
 
 func GetPopNumber(blockHeight int64) float64 {
-	return float64(blockHeight) / float64(config.GetConfig().PoPEpochs)
+	return float64(blockHeight) / float64(config.GetConfig().PopEpochs)
 }
 
 var PopsPerCycle float64

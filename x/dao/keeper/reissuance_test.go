@@ -38,7 +38,7 @@ func TestGetReissuances(t *testing.T) {
 
 func TestReissuanceValueComputation(t *testing.T) {
 	t.Parallel()
-	popsPerEpoch := float64(config.GetConfig().PoPEpochs)
+	popsPerEpoch := float64(config.GetConfig().PopEpochs)
 	assert.Equal(t, "998.69000000", daokeeper.GetReissuanceAsStringValue(1))
 	assert.Equal(t, "499.34000000", daokeeper.GetReissuanceAsStringValue(int64(daokeeper.PopsPerCycle*popsPerEpoch*1+1)))
 	assert.Equal(t, "249.67000000", daokeeper.GetReissuanceAsStringValue(int64(daokeeper.PopsPerCycle*popsPerEpoch*2+1)))

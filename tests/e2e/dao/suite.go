@@ -262,7 +262,7 @@ func (s *E2ETestSuite) TestReissuance() {
 	val := s.network.Validators[0]
 
 	var err error
-	for i := 0; i < conf.PoPEpochs+10; i++ {
+	for i := 0; i < conf.PopEpochs+10; i++ {
 		err = s.network.WaitForNextBlock()
 		s.Require().NoError(err)
 	}

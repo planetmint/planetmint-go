@@ -18,7 +18,7 @@ stake-denom = "{{ .PlmntConfig.StakeDenom }}"
 fee-denom = "{{ .PlmntConfig.FeeDenom }}"
 staged-denom = "{{ .PlmntConfig.StagedDenom }}"
 claim-denom = "{{ .PlmntConfig.ClaimDenom }}"
-pop-epochs = {{ .PlmntConfig.PoPEpochs }}
+pop-epochs = {{ .PlmntConfig.PopEpochs }}
 rpc-host = "{{ .PlmntConfig.RPCHost }}"
 rpc-port = {{ .PlmntConfig.RPCPort }}
 rpc-user = "{{ .PlmntConfig.RPCUser }}"
@@ -28,9 +28,9 @@ reissuance-asset = "{{ .PlmntConfig.ReissuanceAsset }}"
 validator-address = "{{ .PlmntConfig.ValidatorAddress }}"
 distribution-address-inv = "{{ .PlmntConfig.DistributionAddrInv }}"
 distribution-address-dao = "{{ .PlmntConfig.DistributionAddrDAO }}"
-distribution-address-pop = "{{ .PlmntConfig.DistributionAddrPoP }}"
+distribution-address-pop = "{{ .PlmntConfig.DistributionAddrPop }}"
 distribution-epochs = {{ .PlmntConfig.DistributionEpochs }}
-
+re-issuance-epochs = {{ .PlmntConfig.ReIssuanceEpochs }}
 `
 
 // Config defines Planetmint's top level configuration
@@ -42,7 +42,7 @@ type Config struct {
 	StagedDenom           string `json:"staged-denom"            mapstructure:"staged-denom"`
 	ClaimDenom            string `json:"claim-denom"             mapstructure:"claim-denom"`
 	ConfigRootDir         string `json:"config-root-dir"         mapstructure:"config-root-dir"`
-	PoPEpochs             int    `json:"pop-epochs"              mapstructure:"pop-epochs"` //nolint: tagliatelle // json(kebab): got 'pop-epochs' want 'po-p-epochs'
+	PopEpochs             int    `json:"pop-epochs"              mapstructure:"pop-epochs"`
 	RPCHost               string `json:"rpc-host"                mapstructure:"rpc-host"`
 	RPCPort               int    `json:"rpc-port"                mapstructure:"rpc-port"`
 	RPCUser               string `json:"rpc-user"                mapstructure:"rpc-user"`
@@ -52,8 +52,9 @@ type Config struct {
 	ValidatorAddress      string `json:"validator-address"       mapstructure:"validator-address"`
 	DistributionAddrInv   string `json:"distribution-addr-inv"   mapstructure:"distribution-addr-inv"`
 	DistributionAddrDAO   string `json:"distribution-addr-dao"   mapstructure:"distribution-addr-dao"`
-	DistributionAddrPoP   string `json:"distribution-addr-pop"   mapstructure:"distribution-addr-pop"` //nolint: tagliatelle // json(kebab): got 'distribution-addr-pop' want 'distribution-addr-po-p'
+	DistributionAddrPop   string `json:"distribution-addr-pop"   mapstructure:"distribution-addr-pop"`
 	DistributionEpochs    int    `json:"distribution-epochs"     mapstructure:"distribution-epochs"`
+	ReIssuanceEpochs      int    `json:"re-issuance-epochs"     mapstructure:"re-issuance-epochs"`
 }
 
 // cosmos-sdk wide global singleton
@@ -72,7 +73,7 @@ func DefaultConfig() *Config {
 		StagedDenom:           "stagedcrddl",
 		ClaimDenom:            "crddl",
 		ConfigRootDir:         "",
-		PoPEpochs:             24, // 24 CometBFT epochs of 5s equate 120s
+		PopEpochs:             24, // 24 CometBFT epochs of 5s equate 120s
 		RPCHost:               "localhost",
 		RPCPort:               18884,
 		RPCUser:               "user",
@@ -82,8 +83,9 @@ func DefaultConfig() *Config {
 		ValidatorAddress:      "plmnt1w5dww335zhh98pzv783hqre355ck3u4w4hjxcx",
 		DistributionAddrInv:   "vjTyRN2G42Yq3T5TJBecHj1dF1xdhKF89hKV4HJN3uXxUbaVGVR76hAfVRQqQCovWaEpar7G5qBBprFG",
 		DistributionAddrDAO:   "vjU8eMzU3JbUWZEpVANt2ePJuPWSPixgjiSj2jDMvkVVQQi2DDnZuBRVX4Ygt5YGBf5zvTWCr1ntdqYH",
-		DistributionAddrPoP:   "vjTvXCFSReRsZ7grdsAreRR12KuKpDw8idueQJK9Yh1BYS7ggAqgvCxCgwh13KGK6M52y37HUmvr4GdD",
-		DistributionEpochs:    17280, // CometBFT epochs of 5s equate 1 day (12*60*24)
+		DistributionAddrPop:   "vjTvXCFSReRsZ7grdsAreRR12KuKpDw8idueQJK9Yh1BYS7ggAqgvCxCgwh13KGK6M52y37HUmvr4GdD",
+		DistributionEpochs:    17640, // CometBFT epochs of 5s equate 1 day (12*60*24) + 15 min (15*24) to wait for confirmations on the re-issuance
+		ReIssuanceEpochs:      17280, // CometBFT epochs of 5s equate 1 day (12*60*24)
 	}
 }
 
