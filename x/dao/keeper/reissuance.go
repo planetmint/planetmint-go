@@ -3,6 +3,7 @@ package keeper
 import (
 	"math"
 	"math/big"
+	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -49,6 +50,10 @@ func IsValidReissuanceCommand(reissuanceStr string, assetID string, blockHeight 
 	return reissuanceStr == expected
 }
 
+func GetReissuanceCommandForValue(assetID string, value uint64) string {
+	return "reissueasset " + assetID + " " + strconv.FormatUint(value, 10)
+}
+
 func (k Keeper) StoreReissuance(ctx sdk.Context, reissuance types.Reissuance) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReissuanceBlockHeightKey))
 	appendValue := k.cdc.MustMarshal(&reissuance)
@@ -78,6 +83,10 @@ func (k Keeper) getReissuancesRange(ctx sdk.Context, from int64) (reissuances []
 		reissuances = append(reissuances, reissuanceOrg)
 	}
 	return reissuances
+}
+
+func (k Keeper) ComputeReIssuanceValue(blockHeight int64) (reIssuanceValue uint64) {
+	return
 }
 
 func (k Keeper) getReissuancesPage(ctx sdk.Context, _ []byte, _ uint64, _ uint64, _ bool, reverse bool) (reissuances []types.Reissuance) {

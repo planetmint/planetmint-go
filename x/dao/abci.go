@@ -32,7 +32,9 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	}
 	if isReissuanceHeight(blockHeight) {
 		conf := config.GetConfig()
-		txUnsigned := keeper.GetReissuanceCommand(conf.ReissuanceAsset, blockHeight)
+
+		reIssuanceValue := k.ComputeReIssuanceValue(blockHeight)
+		txUnsigned := keeper.GetReissuanceCommandForValue(conf.ReissuanceAsset, reIssuanceValue)
 		util.SendInitReissuance(ctx, hexProposerAddress, txUnsigned, blockHeight)
 	}
 	if isDistributionHeight(blockHeight) {
