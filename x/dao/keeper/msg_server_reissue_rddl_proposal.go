@@ -14,12 +14,11 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 	if validResult && msg.Proposer == validatorIdentity {
 		util.GetAppLogger().Info(ctx, "REISSUE: Asset")
 		txID, err := util.ReissueAsset(msg.Tx)
-		if err == nil {
-			// 3. notarize result by notarizing the liquid tx-id
-			_ = util.SendRDDLReissuanceResult(goCtx, msg.GetProposer(), txID, msg.GetBlockHeight())
-		} else {
-			util.GetAppLogger().Error(ctx, "REISSUE: Asset reissuance failure: "+err.Error())
+		if err != nil {
+			util.GetAppLogger().Error(ctx, "REISSUE: Asset reissuance failed: "+err.Error())
 		}
+		// 3. notarize result by notarizing the liquid tx-id
+		util.SendRDDLReissuanceResult(goCtx, msg.GetProposer(), txID, msg.GetBlockHeight())
 	}
 
 	var reissuance types.Reissuance
