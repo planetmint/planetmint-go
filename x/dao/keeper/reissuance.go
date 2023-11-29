@@ -10,19 +10,19 @@ import (
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
-func GetPoPNumber(blockHeight int64) float64 {
+func GetPopNumber(blockHeight int64) float64 {
 	return float64(blockHeight) / float64(config.GetConfig().PoPEpochs)
 }
 
-var PoPsPerCycle float64
+var PopsPerCycle float64
 
 func init() {
-	PoPsPerCycle = 1051200.0
+	PopsPerCycle = 1051200.0
 }
 
 func GetReissuanceAsStringValue(blockHeight int64) string {
-	PoPNumber := GetPoPNumber(blockHeight)
-	exactCycleID := PoPNumber / PoPsPerCycle
+	PopNumber := GetPopNumber(blockHeight)
+	exactCycleID := PopNumber / PopsPerCycle
 
 	switch cycleID := math.Floor(exactCycleID); cycleID {
 	case 0:
