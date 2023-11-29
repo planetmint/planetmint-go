@@ -16,9 +16,11 @@ func GetPopNumber(blockHeight int64) float64 {
 }
 
 var PopsPerCycle float64
+var ReIssueCommand string
 
 func init() {
 	PopsPerCycle = 1051200.0
+	ReIssueCommand = "reissueasset"
 }
 
 func GetReissuanceAsStringValue(blockHeight int64) string {
@@ -42,16 +44,16 @@ func GetReissuanceAsStringValue(blockHeight int64) string {
 }
 
 func GetReissuanceCommand(assetID string, blockHeight int64) string {
-	return "reissueasset " + assetID + " " + GetReissuanceAsStringValue(blockHeight)
+	return ReIssueCommand + " " + assetID + " " + GetReissuanceAsStringValue(blockHeight)
 }
 
 func IsValidReissuanceCommand(reissuanceStr string, assetID string, blockHeight int64) bool {
-	expected := "reissueasset " + assetID + " " + GetReissuanceAsStringValue(blockHeight)
+	expected := ReIssueCommand + " " + assetID + " " + GetReissuanceAsStringValue(blockHeight)
 	return reissuanceStr == expected
 }
 
 func GetReissuanceCommandForValue(assetID string, value uint64) string {
-	return "reissueasset " + assetID + " " + strconv.FormatUint(value, 10)
+	return ReIssueCommand + " " + assetID + " " + strconv.FormatUint(value, 10)
 }
 
 func (k Keeper) StoreReissuance(ctx sdk.Context, reissuance types.Reissuance) {
@@ -86,6 +88,7 @@ func (k Keeper) getReissuancesRange(ctx sdk.Context, from int64) (reissuances []
 }
 
 func (k Keeper) ComputeReIssuanceValue(blockHeight int64) (reIssuanceValue uint64) {
+	reIssuanceValue = uint64(blockHeight)
 	return
 }
 

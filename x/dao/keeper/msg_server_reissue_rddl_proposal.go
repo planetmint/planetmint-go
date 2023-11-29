@@ -24,7 +24,7 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 	var reissuance types.Reissuance
 	reissuance.BlockHeight = msg.GetBlockHeight()
 	reissuance.Proposer = msg.GetProposer()
-	reissuance.Rawtx = msg.GetTx()
+	reissuance.RawTx = msg.GetTx()
 	k.StoreReissuance(ctx, reissuance)
 	return &types.MsgReissueRDDLProposalResponse{}, nil
 }
