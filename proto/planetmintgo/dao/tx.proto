@@ -92,7 +92,7 @@ message MsgInitPop {
   string initiator  = 2;
   string challenger = 3;
   string challengee = 4;
-  uint64 height     = 5;
+  int64  height     = 5;
 }
 
 message MsgInitPopResponse {}

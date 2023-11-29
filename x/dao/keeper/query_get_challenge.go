@@ -17,7 +17,7 @@ func (k Keeper) GetChallenge(goCtx context.Context, req *types.QueryGetChallenge
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	challenge, found := k.LookupChallenge(ctx, req.GetHeight())
-	if found == false {
+	if !found {
 		return nil, status.Error(codes.NotFound, "challenge not found")
 	}
 

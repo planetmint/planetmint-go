@@ -10,7 +10,7 @@ const TypeMsgInitPop = "init_pop"
 
 var _ sdk.Msg = &MsgInitPop{}
 
-func NewMsgInitPop(creator string, initiator string, challenger string, challengee string, height uint64) *MsgInitPop {
+func NewMsgInitPop(creator string, initiator string, challenger string, challengee string, height int64) *MsgInitPop {
 	return &MsgInitPop{
 		Creator:    creator,
 		Initiator:  initiator,

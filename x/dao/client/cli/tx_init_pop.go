@@ -22,7 +22,7 @@ func CmdInitPop() *cobra.Command {
 			argInitiator := args[0]
 			argChallenger := args[1]
 			argChallengee := args[2]
-			argHeight, err := cast.ToUint64E(args[3])
+			argHeight, err := cast.ToInt64E(args[3])
 			if err != nil {
 				return err
 			}

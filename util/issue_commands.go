@@ -82,7 +82,7 @@ func SendLiquidAssetRegistration(goCtx context.Context, notarizedAsset machinety
 	buildSignBroadcastTx(goCtx, "Liquid Asset Registration:", sendingValidatorAddress, msg)
 }
 
-func SendInitPoP(goCtx context.Context, proposer string, challenger string, challengee string, blockHeight uint64) {
+func SendInitPoP(goCtx context.Context, proposer string, challenger string, challengee string, blockHeight int64) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
 	GetAppLogger().Info(ctx, "create Init PoP message")

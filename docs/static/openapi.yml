@@ -46970,7 +46970,7 @@ paths:
                     type: string
                   height:
                     type: string
-                    format: uint64
+                    format: int64
                   success:
                     type: boolean
                   finished:
@@ -46998,7 +46998,7 @@ paths:
           in: path
           required: true
           type: string
-          format: uint64
+          format: int64
       tags:
         - Query
   /planetmint/machine/get_machine_by_address/{address}:
@@ -76076,7 +76076,7 @@ definitions:
         type: string
       height:
         type: string
-        format: uint64
+        format: int64
       success:
         type: boolean
       finished:
@@ -76171,7 +76171,7 @@ definitions:
             type: string
           height:
             type: string
-            format: uint64
+            format: int64
           success:
             type: boolean
           finished:

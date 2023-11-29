@@ -18,7 +18,7 @@ func CmdGetChallenge() *cobra.Command {
 		Short: "Query get_challenge",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			reqHeight, err := cast.ToUint64E(args[0])
+			reqHeight, err := cast.ToInt64E(args[0])
 			if err != nil {
 				return err
 			}

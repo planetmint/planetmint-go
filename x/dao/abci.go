@@ -27,7 +27,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, _ keeper.Keeper) 
 		challengee := ""
 
 		// Issue PoP
-		util.SendInitPoP(ctx, hexProposerAddress, challenger, challengee, uint64(blockHeight))
+		util.SendInitPoP(ctx, hexProposerAddress, challenger, challengee, blockHeight)
 		// send MQTT message to challenger && challengee
 	}
 	// if isDistributionHeight(blockHeight) {

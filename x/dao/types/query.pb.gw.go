@@ -265,7 +265,7 @@ func request_Query_GetChallenge_0(ctx context.Context, marshaler runtime.Marshal
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "height")
 	}
 
-	protoReq.Height, err = runtime.Uint64(val)
+	protoReq.Height, err = runtime.Int64(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "height", err)
@@ -292,7 +292,7 @@ func local_request_Query_GetChallenge_0(ctx context.Context, marshaler runtime.M
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "height")
 	}
 
-	protoReq.Height, err = runtime.Uint64(val)
+	protoReq.Height, err = runtime.Int64(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "height", err)

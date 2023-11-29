@@ -96,7 +96,7 @@ message QueryGetReissuancesResponse {
 }
 
 message QueryGetChallengeRequest {
-  uint64 height = 1;
+  int64 height = 1;
 }
 
 message QueryGetChallengeResponse {
