@@ -14,7 +14,7 @@ func (k Keeper) StoreChallenge(ctx sdk.Context, challenge types.Challenge) {
 	store.Set(getChallengeBytes(challenge.Height), appendValue)
 }
 
-func (k Keeper) GetChallenge(ctx sdk.Context, height uint64) (val types.Challenge, found bool) {
+func (k Keeper) LookupChallenge(ctx sdk.Context, height int64) (val types.Challenge, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ChallengeKey))
 	challenge := store.Get(getChallengeBytes(height))
 	if challenge == nil {
@@ -24,7 +24,7 @@ func (k Keeper) GetChallenge(ctx sdk.Context, height uint64) (val types.Challeng
 	return val, true
 }
 
-func (k Keeper) GetChallengeRange(ctx sdk.Context, start uint64, end uint64) (val []types.Challenge, err error) {
+func (k Keeper) GetChallengeRange(ctx sdk.Context, start int64, end int64) (val []types.Challenge, err error) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ChallengeKey))
 	// adding 1 to end because end is exclusive on store.Iterator
 	iterator := store.Iterator(getChallengeBytes(start), getChallengeBytes(end+1))
@@ -40,7 +40,7 @@ func (k Keeper) GetChallengeRange(ctx sdk.Context, start uint64, end uint64) (va
 	return val, nil
 }
 
-func getChallengeBytes(height uint64) []byte {
+func getChallengeBytes(height int64) []byte {
 	// Adding 1 because 0 will be interpreted as nil, which is an invalid key
-	return big.NewInt(int64(height + 1)).Bytes()
+	return big.NewInt(height + 1).Bytes()
 }

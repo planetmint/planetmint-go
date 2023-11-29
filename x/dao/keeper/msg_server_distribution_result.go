@@ -19,7 +19,7 @@ func (k msgServer) DistributionResult(goCtx context.Context, msg *types.MsgDistr
 		distribution.DaoTxID = msg.DaoTxID
 		distribution.PopTxID = msg.PopTxID
 		distribution.InvestorTxID = msg.InvestorTxID
-		err := k.resolveStagedClaims(ctx, uint64(distribution.FirstPop), uint64(distribution.LastPop))
+		err := k.resolveStagedClaims(ctx, distribution.FirstPop, distribution.LastPop)
 		if err != nil {
 			return nil, errorsmod.Wrapf(types.ErrResolvingStagedClaims, " for provieded PoP heights: %d %d", distribution.FirstPop, distribution.LastPop)
 		}
@@ -31,7 +31,7 @@ func (k msgServer) DistributionResult(goCtx context.Context, msg *types.MsgDistr
 	return &types.MsgDistributionResultResponse{}, nil
 }
 
-func (k msgServer) resolveStagedClaims(ctx sdk.Context, start uint64, end uint64) (err error) {
+func (k msgServer) resolveStagedClaims(ctx sdk.Context, start int64, end int64) (err error) {
 	// lookup all challenges since the last distribution
 	challenges, err := k.GetChallengeRange(ctx, start, end)
 	if err != nil {
