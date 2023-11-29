@@ -14,7 +14,7 @@ func (k Keeper) StoreChallenge(ctx sdk.Context, challenge types.Challenge) {
 	store.Set(getChallengeBytes(challenge.Height), appendValue)
 }
 
-func (k Keeper) GetChallenge(ctx sdk.Context, height uint64) (val types.Challenge, found bool) {
+func (k Keeper) LookupChallenge(ctx sdk.Context, height uint64) (val types.Challenge, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ChallengeKey))
 	challenge := store.Get(getChallengeBytes(height))
 	if challenge == nil {
