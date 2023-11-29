@@ -33,7 +33,7 @@ func (k msgServer) ReportPopResult(goCtx context.Context, msg *types.MsgReportPo
 
 func (k msgServer) issuePoPRewards(ctx sdk.Context, challenge types.Challenge) (err error) {
 	cfg := config.GetConfig()
-	amt := GetReissuanceAmount()
+	amt := GetReissuanceAsStringValue(challenge.GetHeight())
 	amtUint, err := util.RDDLTokenStringToFloat(amt)
 	if err != nil {
 		return err
