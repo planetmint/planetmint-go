@@ -10,5 +10,5 @@ message Challenge {
   string challengee = 3; 
   uint64 height = 4;
   bool success = 5; 
-  string description = 6; 
+  bool finished = 6; 
 }

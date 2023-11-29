@@ -20,7 +20,7 @@ func createNChallenge(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Cha
 		items[i].Challenger = fmt.Sprintf("challenger%v", i)
 		items[i].Challengee = fmt.Sprintf("challengee%v", i)
 		items[i].Success = true
-		items[i].Description = fmt.Sprintf("expected %v got %v", i, i)
+		items[i].Finished = true
 		keeper.StoreChallenge(ctx, items[i])
 	}
 	return items

@@ -76027,8 +76027,8 @@ definitions:
         format: uint64
       success:
         type: boolean
-      description:
-        type: string
+      finished:
+        type: boolean
   planetmintgo.dao.DistributionOrder:
     type: object
     properties:
@@ -76086,6 +76086,8 @@ definitions:
   planetmintgo.dao.MsgDistributionRequestResponse:
     type: object
   planetmintgo.dao.MsgDistributionResultResponse:
+    type: object
+  planetmintgo.dao.MsgInitPopResponse:
     type: object
   planetmintgo.dao.MsgMintTokenResponse:
     type: object

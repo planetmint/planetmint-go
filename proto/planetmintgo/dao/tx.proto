@@ -15,13 +15,14 @@ option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
 
 // Msg defines the Msg service.
 service Msg {
-  rpc ReissueRDDLProposal   (MsgReissueRDDLProposal  ) returns (MsgReissueRDDLProposalResponse  );
-  rpc MintToken             (MsgMintToken            ) returns (MsgMintTokenResponse            );
-  rpc ReissueRDDLResult     (MsgReissueRDDLResult    ) returns (MsgReissueRDDLResultResponse    );
-  rpc DistributionResult    (MsgDistributionResult   ) returns (MsgDistributionResultResponse   );
-  rpc DistributionRequest   (MsgDistributionRequest) returns (MsgDistributionRequestResponse);
-  rpc UpdateParams          (MsgUpdateParams       ) returns (MsgUpdateParamsResponse       );
-  rpc ReportPopResult       (MsgReportPopResult) returns (MsgReportPopResultResponse);
+  rpc ReissueRDDLProposal (MsgReissueRDDLProposal) returns (MsgReissueRDDLProposalResponse);
+  rpc MintToken           (MsgMintToken          ) returns (MsgMintTokenResponse          );
+  rpc ReissueRDDLResult   (MsgReissueRDDLResult  ) returns (MsgReissueRDDLResultResponse  );
+  rpc DistributionResult  (MsgDistributionResult ) returns (MsgDistributionResultResponse );
+  rpc DistributionRequest (MsgDistributionRequest) returns (MsgDistributionRequestResponse);
+  rpc UpdateParams        (MsgUpdateParams       ) returns (MsgUpdateParamsResponse       );
+  rpc ReportPopResult     (MsgReportPopResult    ) returns (MsgReportPopResultResponse    );
+  rpc InitPop             (MsgInitPop            ) returns (MsgInitPopResponse            );
 }
 message MsgReportPopResult {
   string    creator   = 1;
@@ -54,9 +55,10 @@ message MsgReissueRDDLResult {
 }
 
 message MsgReissueRDDLResultResponse {}
+
 message MsgDistributionResult {
   string creator      = 1;
-  int64 lastPop       = 2;
+  int64  lastPop      = 2;
   string daoTxID      = 3;
   string investorTxID = 4;
   string popTxID      = 5;
@@ -73,14 +75,25 @@ message MsgDistributionRequestResponse {}
 
 message MsgUpdateParams {
   option (cosmos.msg.v1.signer) = "authority";
-
+  
   // authority is the address that controls the module (defaults to x/gov unless overwritten).
   string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
   // params defines the x/dao parameters to update.
-  //
+  
   // NOTE: All parameters must be supplied.
   Params params = 2 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
 }
 
 message MsgUpdateParamsResponse {}
+
+message MsgInitPop {
+  string creator    = 1;
+  string initiator  = 2;
+  string challenger = 3;
+  string challengee = 4;
+  uint64 height     = 5;
+}
+
+message MsgInitPopResponse {}
 
