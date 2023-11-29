@@ -21,15 +21,10 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	}
 	blockHeight := req.Header.GetHeight()
 	if isPoPHeight(req.Header.GetHeight()) && util.IsValidatorBlockProposer(ctx, proposerAddress) {
-		// TODO: implement PoP trigger
-		util.GetAppLogger().Info(ctx, "TODO: implement PoP trigger")
 		hexProposerAddress := hex.EncodeToString(proposerAddress)
 		conf := config.GetConfig()
 		txUnsigned := keeper.GetReissuanceCommand(conf.ReissuanceAsset, blockHeight)
-		err := util.InitRDDLReissuanceProcess(ctx, hexProposerAddress, txUnsigned, blockHeight)
-		if err != nil {
-			util.GetAppLogger().Error(ctx, "error while initializing RDDL issuance", err)
-		}
+		util.InitRDDLReissuanceProcess(ctx, hexProposerAddress, txUnsigned, blockHeight)
 	}
 	if isDistributionHeight(blockHeight) {
 		// initialize the distribution message
@@ -37,10 +32,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 		if err != nil {
 			util.GetAppLogger().Error(ctx, "error while computing the RDDL distribution ", err)
 		}
-		err = util.SendRDDLDistributionRequest(ctx, distribution)
-		if err != nil {
-			util.GetAppLogger().Error(ctx, "sending the distribution request failed")
-		}
+		util.SendRDDLDistributionRequest(ctx, distribution)
 	}
 }
 

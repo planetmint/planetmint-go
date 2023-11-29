@@ -135,7 +135,7 @@ func (k msgServer) issueMachineNFT(goCtx context.Context, machine *types.Machine
 	notarizedAsset.MachineID = machine.GetMachineId()
 	notarizedAsset.MachineAddress = machine.Address
 
-	err = util.SendLiquidAssetRegistration(goCtx, notarizedAsset)
+	util.SendLiquidAssetRegistration(goCtx, notarizedAsset)
 	return err
 }
 

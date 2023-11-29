@@ -11,64 +11,73 @@ import (
 	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 )
 
-func buildSignBroadcastTx(goCtx context.Context, sendingValidatorAddress string, msg sdk.Msg) (err error) {
+func setRPCConfig(goCtx context.Context) {
+	rpcConf := lib.GetConfig()
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	addr := sdk.MustAccAddressFromBech32(sendingValidatorAddress)
-	txJSON, err := lib.BuildUnsignedTx(addr, msg)
-	if err != nil {
-		return
-	}
-	GetAppLogger().Info(ctx, "broadcast tx: "+txJSON)
-	_, err = lib.BroadcastTxWithFileLock(addr, msg)
-	return
+	rpcConf.SetChainID(ctx.ChainID())
+}
+func buildSignBroadcastTx(goCtx context.Context, loggingContext string, sendingValidatorAddress string, msg sdk.Msg) {
+	go func() {
+		setRPCConfig(goCtx)
+		ctx := sdk.UnwrapSDKContext(goCtx)
+		addr := sdk.MustAccAddressFromBech32(sendingValidatorAddress)
+		txJSON, err := lib.BuildUnsignedTx(addr, msg)
+		if err != nil {
+			GetAppLogger().Error(ctx, loggingContext+" build unsigned tx failed: "+err.Error())
+			return
+		}
+		GetAppLogger().Info(ctx, loggingContext+" unsigned tx: "+txJSON)
+		_, err = lib.BroadcastTxWithFileLock(addr, msg)
+		if err != nil {
+			GetAppLogger().Error(ctx, loggingContext+" broadcast tx failed: "+err.Error())
+			return
+		}
+		GetAppLogger().Info(ctx, loggingContext+" broadcast tx succeeded")
+	}()
 }
 
-func InitRDDLReissuanceProcess(goCtx context.Context, proposerAddress string, txUnsigned string, blockHeight int64) (err error) {
+func InitRDDLReissuanceProcess(goCtx context.Context, proposerAddress string, txUnsigned string, blockHeight int64) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	// get_last_PoPBlockHeight() // TODO: to be read form the upcoming PoP-store
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
-	GetAppLogger().Info(ctx, "create Reissuance Proposal")
+	GetAppLogger().Info(ctx, "create re-issuance proposal")
 	msg := daotypes.NewMsgReissueRDDLProposal(sendingValidatorAddress, proposerAddress, txUnsigned, blockHeight)
-	err = buildSignBroadcastTx(goCtx, sendingValidatorAddress, msg)
-	return
+	buildSignBroadcastTx(goCtx, "initializing RDDL re-issuance", sendingValidatorAddress, msg)
 }
 
-func SendRDDLReissuanceResult(goCtx context.Context, proposerAddress string, txID string, blockHeight int64) (err error) {
+func SendRDDLReissuanceResult(goCtx context.Context, proposerAddress string, txID string, blockHeight int64) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
-	GetAppLogger().Info(ctx, "create Reissuance Result")
+	GetAppLogger().Info(ctx, "create re-issuance result")
 	msg := daotypes.NewMsgReissueRDDLResult(sendingValidatorAddress, proposerAddress, txID, blockHeight)
-	err = buildSignBroadcastTx(goCtx, sendingValidatorAddress, msg)
-	return
+	buildSignBroadcastTx(goCtx, "sending the re-issuance result", sendingValidatorAddress, msg)
 }
 
-func SendRDDLDistributionRequest(goCtx context.Context, distribution daotypes.DistributionOrder) (err error) {
+func SendRDDLDistributionRequest(goCtx context.Context, distribution daotypes.DistributionOrder) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
 	GetAppLogger().Info(ctx, "create Distribution Request")
 	msg := daotypes.NewMsgDistributionRequest(sendingValidatorAddress, &distribution)
-	err = buildSignBroadcastTx(goCtx, sendingValidatorAddress, msg)
-	return
+	buildSignBroadcastTx(goCtx, "sending the distribution request", sendingValidatorAddress, msg)
 }
 
-func SendRDDLDistributionResult(goCtx context.Context, lastPoP string, daoTxID string, invTxID string, popTxID string) (err error) {
+func SendRDDLDistributionResult(goCtx context.Context, lastPoP string, daoTxID string, invTxID string, popTxID string) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
 	GetAppLogger().Info(ctx, "create Distribution Result")
 	iLastPoP, err := strconv.ParseInt(lastPoP, 10, 64)
 	if err != nil {
+		ctx.Logger().Error("Distribution Result: preparation failed ", err.Error())
 		return
 	}
 	msg := daotypes.NewMsgDistributionResult(sendingValidatorAddress, iLastPoP, daoTxID, invTxID, popTxID)
-	err = buildSignBroadcastTx(goCtx, sendingValidatorAddress, msg)
-	return
+	buildSignBroadcastTx(goCtx, "send distribution result", sendingValidatorAddress, msg)
 }
 
-func SendLiquidAssetRegistration(goCtx context.Context, notarizedAsset machinetypes.LiquidAsset) (err error) {
+func SendLiquidAssetRegistration(goCtx context.Context, notarizedAsset machinetypes.LiquidAsset) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
 	GetAppLogger().Info(ctx, "create Liquid Asset Registration")
 	msg := machinetypes.NewMsgNotarizeLiquidAsset(sendingValidatorAddress, &notarizedAsset)
-	err = buildSignBroadcastTx(goCtx, sendingValidatorAddress, msg)
-	return
+	buildSignBroadcastTx(goCtx, "Liquid Asset Registration:", sendingValidatorAddress, msg)
 }
