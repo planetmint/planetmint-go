@@ -19,7 +19,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	if !util.IsValidatorBlockProposer(ctx, proposerAddress) {
 		return
 	}
-	blockHeight := req.Header.GetHeight()
+	currentBlockHeight := req.Header.GetHeight()
 	hexProposerAddress := hex.EncodeToString(proposerAddress)
 	if isPopHeight(req.Header.GetHeight()) {
 		// select PoP participants
@@ -27,18 +27,28 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 		challengee := ""
 
 		// Issue PoP
-		util.SendInitPoP(ctx, hexProposerAddress, challenger, challengee, blockHeight)
+		util.SendInitPoP(ctx, hexProposerAddress, challenger, challengee, currentBlockHeight)
 		// TODO send MQTT message to challenger && challengee
 	}
-	if isReissuanceHeight(blockHeight) {
+	if isReIssuanceHeight(currentBlockHeight) {
 		conf := config.GetConfig()
+		var firstIncludedPop int64 = 0
+		lastReIssuance, found := k.GetLastReIssuance(ctx)
+		if found {
+			firstIncludedPop = lastReIssuance.LastPop
+		}
 
-		reIssuanceValue := k.ComputeReIssuanceValue(blockHeight)
-		txUnsigned := keeper.GetReissuanceCommandForValue(conf.ReissuanceAsset, reIssuanceValue)
-		util.SendInitReissuance(ctx, hexProposerAddress, txUnsigned, blockHeight)
+		reIssuanceValue, firstIncludedPop, lastIncludedPop, err := k.ComputeReIssuanceValue(ctx, firstIncludedPop, currentBlockHeight)
+		if err == nil {
+			txUnsigned := keeper.GetReissuanceCommandForValue(conf.ReissuanceAsset, reIssuanceValue)
+			// TODO extend SendInitReissuance to suite the needs of the new reissuance object (lastPop, firstPop)
+			util.SendInitReissuance(ctx, hexProposerAddress, txUnsigned, currentBlockHeight)
+		} else {
+			util.GetAppLogger().Error(ctx, "error while computing the RDDL re-issuance ", err)
+		}
 	}
-	if isDistributionHeight(blockHeight) {
-		distribution, err := k.GetDistributionForReissuedTokens(ctx, blockHeight)
+	if isDistributionHeight(currentBlockHeight) {
+		distribution, err := k.GetDistributionForReissuedTokens(ctx, currentBlockHeight)
 		if err != nil {
 			util.GetAppLogger().Error(ctx, "error while computing the RDDL distribution ", err)
 		}
@@ -51,7 +61,7 @@ func isPopHeight(height int64) bool {
 	return height%int64(cfg.PopEpochs) == 0
 }
 
-func isReissuanceHeight(height int64) bool {
+func isReIssuanceHeight(height int64) bool {
 	cfg := config.GetConfig()
 	return height%int64(cfg.ReIssuanceEpochs) == 0
 }

@@ -2,12 +2,12 @@ package keeper
 
 import (
 	"math"
-	"math/big"
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
@@ -59,12 +59,12 @@ func GetReissuanceCommandForValue(assetID string, value uint64) string {
 func (k Keeper) StoreReissuance(ctx sdk.Context, reissuance types.Reissuance) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReissuanceBlockHeightKey))
 	appendValue := k.cdc.MustMarshal(&reissuance)
-	store.Set(getReissuanceBytes(reissuance.BlockHeight), appendValue)
+	store.Set(util.SerializeInt64(reissuance.BlockHeight), appendValue)
 }
 
 func (k Keeper) LookupReissuance(ctx sdk.Context, height int64) (val types.Reissuance, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReissuanceBlockHeightKey))
-	reissuance := store.Get(getReissuanceBytes(height))
+	reissuance := store.Get(util.SerializeInt64(height))
 	if reissuance == nil {
 		return val, false
 	}
@@ -75,7 +75,7 @@ func (k Keeper) LookupReissuance(ctx sdk.Context, height int64) (val types.Reiss
 func (k Keeper) getReissuancesRange(ctx sdk.Context, from int64) (reissuances []types.Reissuance) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReissuanceBlockHeightKey))
 
-	iterator := store.Iterator(getReissuanceBytes(from), nil)
+	iterator := store.Iterator(util.SerializeInt64(from), nil)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
@@ -84,11 +84,54 @@ func (k Keeper) getReissuancesRange(ctx sdk.Context, from int64) (reissuances []
 		k.cdc.MustUnmarshal(reissuance, &reissuanceOrg)
 		reissuances = append(reissuances, reissuanceOrg)
 	}
-	return reissuances
+	return
 }
 
-func (k Keeper) ComputeReIssuanceValue(blockHeight int64) (reIssuanceValue uint64) {
-	reIssuanceValue = uint64(blockHeight)
+func (k Keeper) GetLastReIssuance(ctx sdk.Context) (val types.Reissuance, found bool) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReissuanceBlockHeightKey))
+
+	iterator := store.ReverseIterator(nil, nil)
+	defer iterator.Close()
+	found = iterator.Valid()
+	if found {
+		reIssuance := iterator.Value()
+		k.cdc.MustUnmarshal(reIssuance, &val)
+	}
+	return val, found
+}
+
+func (k Keeper) ComputeReIssuanceValue(ctx sdk.Context, startHeight int64, endHeight int64) (reIssuanceValue uint64, firstIncludedPop int64, lastIncludedPop int64, err error) {
+	challenges, err := k.GetChallengeRange(ctx, startHeight, endHeight)
+	if err != nil {
+		util.GetAppLogger().Error(ctx, "unable to compute get challenges")
+		return
+	}
+	var overallAmount uint64
+	popEpochs := int64(config.GetConfig().PopEpochs)
+	for _, obj := range challenges {
+		// if (index == 0 && startHeight == 0 && obj.BlockHeight == 0) || // corner case (beginning of the chain)
+		if startHeight < obj.GetHeight() && obj.GetHeight()+2*popEpochs <= endHeight {
+			popReIssuanceString := GetReissuanceAsStringValue(obj.GetHeight())
+			amount, err := util.RDDLTokenStringToUint(popReIssuanceString)
+			if err != nil {
+				util.GetAppLogger().Error(ctx, "unable to compute PoP re-issuance value (firstPop %u, Pops height %u, current height %u)",
+					startHeight, obj.GetHeight(), endHeight)
+				continue
+			}
+			if firstIncludedPop == 0 {
+				firstIncludedPop = obj.GetHeight()
+			}
+			lastIncludedPop = obj.GetHeight()
+			overallAmount += amount
+		} else {
+			util.GetAppLogger().Error(ctx, "the PoP is not part of the reissuance (firstPop %u, Pops height %u, current height %u)",
+				startHeight, obj.GetHeight(), endHeight)
+			if obj.GetHeight()+2*popEpochs > endHeight {
+				break
+			}
+		}
+	}
+	reIssuanceValue = overallAmount
 	return
 }
 
@@ -109,9 +152,4 @@ func (k Keeper) getReissuancesPage(ctx sdk.Context, _ []byte, _ uint64, _ uint64
 		reissuances = append(reissuances, reissuanceOrg)
 	}
 	return reissuances
-}
-
-func getReissuanceBytes(height int64) []byte {
-	// Adding 1 because 0 will be interpreted as nil, which is an invalid key
-	return big.NewInt(height + 1).Bytes()
 }

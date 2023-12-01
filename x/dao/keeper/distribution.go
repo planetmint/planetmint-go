@@ -1,7 +1,6 @@
 package keeper
 
 import (
-	"math/big"
 	"strconv"
 	"strings"
 
@@ -15,12 +14,12 @@ import (
 func (k Keeper) StoreDistributionOrder(ctx sdk.Context, distributionOrder types.DistributionOrder) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DistributionKey))
 	appendValue := k.cdc.MustMarshal(&distributionOrder)
-	store.Set(getLastPopBytes(distributionOrder.LastPop), appendValue)
+	store.Set(util.SerializeInt64(distributionOrder.LastPop), appendValue)
 }
 
 func (k Keeper) LookupDistributionOrder(ctx sdk.Context, lastPopHeight int64) (val types.DistributionOrder, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DistributionKey))
-	distributionOrder := store.Get(getLastPopBytes(lastPopHeight))
+	distributionOrder := store.Get(util.SerializeInt64(lastPopHeight))
 	if distributionOrder == nil {
 		return val, false
 	}
@@ -59,11 +58,6 @@ func (k Keeper) GetLastDistributionOrder(ctx sdk.Context) (val types.Distributio
 // 	}
 // 	return distribution_orders
 // }
-
-func getLastPopBytes(height int64) []byte {
-	// Adding 1 because 0 will be interpreted as nil, which is an invalid key
-	return big.NewInt(height + 1).Bytes()
-}
 
 func ComputeDistribution(lastReissuance int64, blockHeight int64, amount uint64) (distribution types.DistributionOrder) {
 	conf := config.GetConfig()
