@@ -35,3 +35,30 @@ func TestStringToUint(t *testing.T) {
 	assert.Equal(t, expectedValue, value)
 	assert.Equal(t, nil, err)
 }
+
+func TestAddPrecisionLongerThan8(t *testing.T) {
+	t.Parallel()
+
+	var input uint64 = 99869000000
+	expectedValue := "998.69000000"
+	rddlTokenString := UintValueToRDDLTokenString(input)
+	assert.Equal(t, expectedValue, rddlTokenString)
+}
+
+func TestAddPrecisionEqual8(t *testing.T) {
+	t.Parallel()
+
+	var input uint64 = 69000000
+	expectedValue := "0.69000000"
+	rddlTokenString := UintValueToRDDLTokenString(input)
+	assert.Equal(t, expectedValue, rddlTokenString)
+}
+
+func TestAddPrecisionShorterThan8(t *testing.T) {
+	t.Parallel()
+
+	var input uint64 = 9000000
+	expectedValue := "0.09000000"
+	rddlTokenString := UintValueToRDDLTokenString(input)
+	assert.Equal(t, expectedValue, rddlTokenString)
+}

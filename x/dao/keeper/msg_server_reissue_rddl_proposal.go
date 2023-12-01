@@ -12,7 +12,7 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	validatorIdentity, validResult := util.GetValidatorCometBFTIdentity(ctx)
 	if validResult && msg.Proposer == validatorIdentity {
-		util.GetAppLogger().Info(ctx, "reissue: Asset")
+		util.GetAppLogger().Info(ctx, "reissue: Asset: "+msg.GetTx())
 		txID, err := util.ReissueAsset(msg.Tx)
 		if err != nil {
 			util.GetAppLogger().Error(ctx, "reissue: Asset reissuance failed: "+err.Error())

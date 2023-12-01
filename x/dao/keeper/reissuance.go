@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"math"
-	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -53,7 +52,40 @@ func IsValidReissuanceCommand(reissuanceStr string, assetID string, blockHeight 
 }
 
 func GetReissuanceCommandForValue(assetID string, value uint64) string {
-	return ReIssueCommand + " " + assetID + " " + strconv.FormatUint(value, 10)
+	return ReIssueCommand + " " + assetID + " " + util.UintValueToRDDLTokenString(value)
+}
+
+func (k Keeper) CreateNextReIssuanceObject(ctx sdk.Context, currentBlockHeight int64) (reIssuance types.Reissuance, err error) {
+	var lastReissuedPop int64
+	lastReIssuance, found := k.GetLastReIssuance(ctx)
+	if found {
+		lastReissuedPop = lastReIssuance.LastIncludedPop
+	}
+	reIssuanceValue, firstIncludedPop, lastIncludedPop, err := k.ComputeReIssuanceValue(ctx, lastReissuedPop, currentBlockHeight)
+	if err != nil {
+		return
+	}
+
+	reIssuance.RawTx = GetReissuanceCommandForValue(config.GetConfig().ReissuanceAsset, reIssuanceValue)
+	reIssuance.BlockHeight = currentBlockHeight
+	reIssuance.FirstIncludedPop = firstIncludedPop
+	reIssuance.LastIncludedPop = lastIncludedPop
+	return
+}
+
+func (k Keeper) IsValidReIssuanceProposal(ctx sdk.Context, msg *types.MsgReissueRDDLProposal) (isValid bool) {
+	reIssuance, err := k.CreateNextReIssuanceObject(ctx, msg.GetBlockHeight())
+	if err != nil {
+		return
+	}
+	if reIssuance.GetBlockHeight() == msg.GetBlockHeight() &&
+		reIssuance.GetFirstIncludedPop() == msg.GetFirstIncludedPop() &&
+		reIssuance.GetLastIncludedPop() == msg.GetLastIncludedPop() &&
+		reIssuance.GetRawTx() == msg.GetTx() &&
+		msg.GetProposer() != "" {
+		isValid = true
+	}
+	return
 }
 
 func (k Keeper) StoreReissuance(ctx sdk.Context, reissuance types.Reissuance) {
@@ -124,7 +156,7 @@ func (k Keeper) ComputeReIssuanceValue(ctx sdk.Context, startHeight int64, endHe
 			lastIncludedPop = obj.GetHeight()
 			overallAmount += amount
 		} else {
-			util.GetAppLogger().Error(ctx, "the PoP is not part of the reissuance (firstPop %u, Pops height %u, current height %u)",
+			util.GetAppLogger().Debug(ctx, "the PoP is not part of the reissuance (firstPop %u, Pops height %u, current height %u)",
 				startHeight, obj.GetHeight(), endHeight)
 			if obj.GetHeight()+2*popEpochs > endHeight {
 				break

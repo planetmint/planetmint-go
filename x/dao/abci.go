@@ -20,6 +20,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 		return
 	}
 	currentBlockHeight := req.Header.GetHeight()
+
 	hexProposerAddress := hex.EncodeToString(proposerAddress)
 	if isPopHeight(req.Header.GetHeight()) {
 		// select PoP participants
@@ -30,23 +31,17 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 		util.SendInitPoP(ctx, hexProposerAddress, challenger, challengee, currentBlockHeight)
 		// TODO send MQTT message to challenger && challengee
 	}
-	if isReIssuanceHeight(currentBlockHeight) {
-		conf := config.GetConfig()
-		var lastReissuedPop int64
-		lastReIssuance, found := k.GetLastReIssuance(ctx)
-		if found {
-			lastReissuedPop = lastReIssuance.LastIncludedPop
-		}
 
-		reIssuanceValue, firstIncludedPop, lastIncludedPop, err := k.ComputeReIssuanceValue(ctx, lastReissuedPop, currentBlockHeight)
+	if isReIssuanceHeight(currentBlockHeight) {
+		reIssuance, err := k.CreateNextReIssuanceObject(ctx, currentBlockHeight)
 		if err == nil {
-			txUnsigned := keeper.GetReissuanceCommandForValue(conf.ReissuanceAsset, reIssuanceValue)
-			// TODO extend SendInitReissuance to suite the needs of the new reissuance object (lastPop, firstPop)
-			util.SendInitReissuance(ctx, hexProposerAddress, txUnsigned, currentBlockHeight, firstIncludedPop, lastIncludedPop)
+			util.SendInitReissuance(ctx, hexProposerAddress, reIssuance.GetRawTx(), currentBlockHeight,
+				reIssuance.GetFirstIncludedPop(), reIssuance.GetLastIncludedPop())
 		} else {
 			util.GetAppLogger().Error(ctx, "error while computing the RDDL re-issuance ", err)
 		}
 	}
+
 	if isDistributionHeight(currentBlockHeight) {
 		distribution, err := k.GetDistributionForReissuedTokens(ctx, currentBlockHeight)
 		if err != nil {
