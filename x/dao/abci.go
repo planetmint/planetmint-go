@@ -32,17 +32,17 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	}
 	if isReIssuanceHeight(currentBlockHeight) {
 		conf := config.GetConfig()
-		var firstIncludedPop int64 = 0
+		var lastReissuedPop int64
 		lastReIssuance, found := k.GetLastReIssuance(ctx)
 		if found {
-			firstIncludedPop = lastReIssuance.LastPop
+			lastReissuedPop = lastReIssuance.LastIncludedPop
 		}
 
-		reIssuanceValue, firstIncludedPop, lastIncludedPop, err := k.ComputeReIssuanceValue(ctx, firstIncludedPop, currentBlockHeight)
+		reIssuanceValue, firstIncludedPop, lastIncludedPop, err := k.ComputeReIssuanceValue(ctx, lastReissuedPop, currentBlockHeight)
 		if err == nil {
 			txUnsigned := keeper.GetReissuanceCommandForValue(conf.ReissuanceAsset, reIssuanceValue)
 			// TODO extend SendInitReissuance to suite the needs of the new reissuance object (lastPop, firstPop)
-			util.SendInitReissuance(ctx, hexProposerAddress, txUnsigned, currentBlockHeight)
+			util.SendInitReissuance(ctx, hexProposerAddress, txUnsigned, currentBlockHeight, firstIncludedPop, lastIncludedPop)
 		} else {
 			util.GetAppLogger().Error(ctx, "error while computing the RDDL re-issuance ", err)
 		}

@@ -36,12 +36,14 @@ func buildSignBroadcastTx(goCtx context.Context, loggingContext string, sendingV
 	}()
 }
 
-func SendInitReissuance(goCtx context.Context, proposerAddress string, txUnsigned string, blockHeight int64) {
+func SendInitReissuance(goCtx context.Context, proposerAddress string, txUnsigned string, blockHeight int64,
+	firstIncludedPop int64, lastIncludedPop int64) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	// get_last_PoPBlockHeight() // TODO: to be read form the upcoming PoP-store
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
 	GetAppLogger().Info(ctx, "create re-issuance proposal")
-	msg := daotypes.NewMsgReissueRDDLProposal(sendingValidatorAddress, proposerAddress, txUnsigned, blockHeight)
+	msg := daotypes.NewMsgReissueRDDLProposal(sendingValidatorAddress, proposerAddress, txUnsigned, blockHeight,
+		firstIncludedPop, lastIncludedPop)
 	buildSignBroadcastTx(goCtx, "initializing RDDL re-issuance", sendingValidatorAddress, msg)
 }
 

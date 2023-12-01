@@ -25,6 +25,8 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 	reissuance.BlockHeight = msg.GetBlockHeight()
 	reissuance.Proposer = msg.GetProposer()
 	reissuance.RawTx = msg.GetTx()
+	reissuance.FirstIncludedPop = msg.GetFirstIncludedPop()
+	reissuance.LastIncludedPop = msg.GetLastIncludedPop()
 	k.StoreReissuance(ctx, reissuance)
 	return &types.MsgReissueRDDLProposalResponse{}, nil
 }

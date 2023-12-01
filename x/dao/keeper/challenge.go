@@ -54,16 +54,18 @@ func (k Keeper) getChallengeRangeFromStore(ctx sdk.Context, iterator db.Iterator
 	return val, nil
 }
 
-func (k Keeper) GetChallenges(ctx sdk.Context) []types.Challenge {
+func (k Keeper) GetChallenges(ctx sdk.Context) (challenges []types.Challenge, err error) {
 	store := ctx.KVStore(k.storeKey)
-	var events []types.Challenge
 	iterator := sdk.KVStorePrefixIterator(store, nil)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
 		var event types.Challenge
-		event.Unmarshal(iterator.Value())
-		events = append(events, event)
+		if err = event.Unmarshal(iterator.Value()); err != nil {
+			util.GetAppLogger().Error(ctx, "unable to unmarshal challenge "+err.Error())
+			return nil, err // or continue TODO make decision
+		}
+		challenges = append(challenges, event)
 	}
-	return events
+	return
 }

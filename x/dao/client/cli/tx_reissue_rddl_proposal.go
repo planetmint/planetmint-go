@@ -15,13 +15,21 @@ var _ = strconv.Itoa(0)
 
 func CmdReissueRDDLProposal() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "reissue-rddl-proposal [proposer] [tx] [blockheight]",
+		Use:   "reissue-rddl-proposal [proposer] [tx] [blockheight] [firstincludedpop] [lastincludedpop]",
 		Short: "Broadcast message reissueRDDLProposal",
-		Args:  cobra.ExactArgs(3),
+		Args:  cobra.ExactArgs(5),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argProposer := args[0]
 			argTx := args[1]
 			argBlockHeight, err := cast.ToInt64E(args[2])
+			if err != nil {
+				return err
+			}
+			firstIncludedPop, err := cast.ToInt64E(args[3])
+			if err != nil {
+				return err
+			}
+			lastIncludedPop, err := cast.ToInt64E(args[4])
 			if err != nil {
 				return err
 			}
@@ -36,6 +44,8 @@ func CmdReissueRDDLProposal() *cobra.Command {
 				argProposer,
 				argTx,
 				argBlockHeight,
+				firstIncludedPop,
+				lastIncludedPop,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
