@@ -46707,10 +46707,10 @@ paths:
                   blockHeight:
                     type: string
                     format: int64
-                  firstPop:
+                  firstIncludedPop:
                     type: string
                     format: int64
-                  lastPop:
+                  lastIncludedPop:
                     type: string
                     format: int64
         default:
@@ -46761,10 +46761,10 @@ paths:
                   blockHeight:
                     type: string
                     format: int64
-                  firstPop:
+                  firstIncludedPop:
                     type: string
                     format: int64
-                  lastPop:
+                  lastIncludedPop:
                     type: string
                     format: int64
               pagination:
@@ -76216,10 +76216,10 @@ definitions:
           blockHeight:
             type: string
             format: int64
-          firstPop:
+          firstIncludedPop:
             type: string
             format: int64
-          lastPop:
+          lastIncludedPop:
             type: string
             format: int64
   planetmintgo.dao.QueryGetReissuancesResponse:
@@ -76237,10 +76237,10 @@ definitions:
           blockHeight:
             type: string
             format: int64
-          firstPop:
+          firstIncludedPop:
             type: string
             format: int64
-          lastPop:
+          lastIncludedPop:
             type: string
             format: int64
       pagination:
@@ -76309,10 +76309,10 @@ definitions:
       blockHeight:
         type: string
         format: int64
-      firstPop:
+      firstIncludedPop:
         type: string
         format: int64
-      lastPop:
+      lastIncludedPop:
         type: string
         format: int64
   planetmintgo.machine.LiquidAsset:
