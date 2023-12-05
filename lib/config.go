@@ -38,6 +38,9 @@ func GetConfig() *Config {
 		libConfig = DefaultConfig()
 		sdkConfig = sdk.GetConfig()
 		libConfig.SetBech32PrefixForAccount("plmnt")
+
+		encodingConfig := MakeEncodingConfig()
+		libConfig.SetEncodingConfig(encodingConfig)
 	})
 	return libConfig
 }
