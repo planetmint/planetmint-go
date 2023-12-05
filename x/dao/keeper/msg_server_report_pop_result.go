@@ -53,11 +53,19 @@ func (k msgServer) issuePoPRewards(ctx sdk.Context, challenge types.Challenge) (
 	challengerCoin := sdk.NewCoin(cfg.StagedDenom, sdk.NewIntFromUint64(challengerAmt))
 	challengeeCoin := sdk.NewCoin(cfg.StagedDenom, sdk.NewIntFromUint64(challengeeAmt))
 	if challenge.Success {
-		err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, sdk.AccAddress(challenge.Challengee), sdk.NewCoins(challengeeCoin))
+		challengee, err := sdk.AccAddressFromBech32(challenge.Challengee)
 		if err != nil {
 			return err
 		}
-		err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, sdk.AccAddress(challenge.Challenger), sdk.NewCoins(challengerCoin))
+		err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, challengee, sdk.NewCoins(challengeeCoin))
+		if err != nil {
+			return err
+		}
+		challenger, err := sdk.AccAddressFromBech32(challenge.Challenger)
+		if err != nil {
+			return err
+		}
+		err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, challenger, sdk.NewCoins(challengerCoin))
 		if err != nil {
 			return err
 		}

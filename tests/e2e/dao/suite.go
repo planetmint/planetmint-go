@@ -271,3 +271,124 @@ func (s *E2ETestSuite) TestReissuance() {
 	intValue := strconv.FormatInt(height, 10)
 	_, _ = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetReissuance(), []string{intValue})
 }
+
+func (s *E2ETestSuite) TestPoPResult() {
+	conf := config.GetConfig()
+	val := s.network.Validators[0]
+
+	// send PoP results
+	challenges := make([]daotypes.Challenge, 5)
+	for i := range challenges {
+		blockHeight := (i + 1)
+		challenges[i].Height = int64(blockHeight)
+		challenges[i].Initiator = val.Address.String()
+		challenges[i].Challenger = aliceAddr.String()
+		challenges[i].Challengee = bobAddr.String()
+		challenges[i].Success = true
+		challenges[i].Finished = true
+
+		chJSON, err := json.Marshal(&challenges[i])
+		s.Require().NoError(err)
+
+		args := []string{
+			fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Moniker),
+			fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
+			"--yes",
+			string(chJSON),
+		}
+
+		_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdReportPopResult(), args)
+		s.Require().NoError(err)
+		s.Require().NoError(s.network.WaitForNextBlock())
+	}
+
+	// check balance for stagedcrddl
+	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetCmdQueryTotalSupply(), []string{
+		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.StagedDenom),
+	})
+	s.Require().NoError(err)
+	assert.Contains(s.T(), out.String(), conf.StagedDenom)
+	assert.Contains(s.T(), out.String(), "395") // Total supply 5 * 79
+
+	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
+		aliceAddr.String(),
+		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.StagedDenom),
+	})
+	s.Require().NoError(err)
+	assert.Contains(s.T(), out.String(), conf.StagedDenom)
+	assert.Contains(s.T(), out.String(), "95") // 5 * 19
+
+	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
+		bobAddr.String(),
+		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.StagedDenom),
+	})
+	s.Require().NoError(err)
+	assert.Contains(s.T(), out.String(), conf.StagedDenom)
+	assert.Contains(s.T(), out.String(), "295") // 5 * 59
+
+	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
+		authtypes.NewModuleAddress(daotypes.ModuleName).String(),
+		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.StagedDenom),
+	})
+	s.Require().NoError(err)
+	assert.Contains(s.T(), out.String(), conf.StagedDenom)
+	assert.Contains(s.T(), out.String(), "5") // 5 * 1 remainder
+
+	// send DistributionRequest
+	distributionOrder := daotypes.DistributionOrder{
+		Proposer:     aliceAddr.String(),
+		FirstPop:     challenges[0].Height,
+		LastPop:      challenges[4].Height,
+		DaoTxID:      "DaoTxID",
+		PopTxID:      "PoPTxID",
+		InvestorTxID: "InvestorTxID",
+	}
+	doJSON, err := json.Marshal(&distributionOrder)
+	s.Require().NoError(err)
+
+	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdDistributionRequest(), []string{
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Moniker),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
+		"--yes",
+		string(doJSON),
+	})
+	s.Require().NoError(err)
+	s.Require().NoError(s.network.WaitForNextBlock())
+
+	// send DistributionResult
+	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdDistributionResult(), []string{
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Moniker),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
+		"--yes",
+		fmt.Sprint(challenges[4].Height),
+		"DaoTxID",
+		"InvestorTxID",
+		"PoPTxID",
+	})
+	s.Require().NoError(err)
+	s.Require().NoError(s.network.WaitForNextBlock())
+
+	// check balance for crddl
+	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetCmdQueryTotalSupply(), []string{
+		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.ClaimDenom),
+	})
+	s.Require().NoError(err)
+	assert.Contains(s.T(), out.String(), conf.ClaimDenom)
+	assert.Contains(s.T(), out.String(), "390") // Total supply 5 * 59 + 5 * 19
+
+	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
+		aliceAddr.String(),
+		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.ClaimDenom),
+	})
+	s.Require().NoError(err)
+	assert.Contains(s.T(), out.String(), conf.ClaimDenom)
+	assert.Contains(s.T(), out.String(), "95") // 5 * 19
+
+	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
+		bobAddr.String(),
+		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.ClaimDenom),
+	})
+	s.Require().NoError(err)
+	assert.Contains(s.T(), out.String(), conf.ClaimDenom)
+	assert.Contains(s.T(), out.String(), "295") // 5 * 59
+}
