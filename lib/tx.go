@@ -106,6 +106,7 @@ func getClientContext(address sdk.AccAddress) (clientCtx client.Context, err err
 		NodeURI:           remote,
 		Offline:           true,
 		Output:            &output,
+		OutputFormat:      "json",
 		SkipConfirm:       true,
 		TxConfig:          encodingConfig.TxConfig,
 	}

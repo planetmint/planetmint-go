@@ -41,7 +41,7 @@ func NewE2ETestSuite(cfg network.Config) *E2ETestSuite {
 func (s *E2ETestSuite) SetupSuite() {
 	s.T().Log("setting up e2e test suite")
 
-	s.network = network.New(s.T())
+	s.network = network.New(s.T(), s.T().TempDir())
 	val := s.network.Validators[0]
 
 	kb := val.ClientCtx.Keyring

@@ -18,7 +18,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/planetmint/planetmint-go/app"
-	"github.com/planetmint/planetmint-go/config"
 )
 
 type (
@@ -28,7 +27,7 @@ type (
 
 // New creates instance with fully configured cosmos network.
 // Accepts optional config, that will be used in place of the DefaultConfig() if provided.
-func New(t *testing.T, configs ...Config) *Network {
+func New(t *testing.T, baseDir string, configs ...Config) *Network {
 	if len(configs) > 1 {
 		panic("at most one config should be provided")
 	}
@@ -38,15 +37,10 @@ func New(t *testing.T, configs ...Config) *Network {
 	} else {
 		cfg = configs[0]
 	}
-	validatorTmpDir := t.TempDir()
-
-	// set the proper root dir for the test environment so that the abci.go logic works
-	appConfig := config.GetConfig()
-	appConfig.SetRoot(validatorTmpDir + "/node0/simd")
-
-	net, err := network.New(t, validatorTmpDir, cfg)
-
-	appConfig.ValidatorAddress = net.Validators[0].Address.String()
+	// keyringAddress := CreateTestingKeyring(baseDir,
+	// 	"helmet hedgehog lab actor weekend elbow pelican valid obtain hungry rocket decade tower gallery fit practice cart cherry giggle hair snack glance bulb farm")
+	// fmt.Println("address : " + keyringAddress)
+	net, err := network.New(t, baseDir, cfg)
 
 	require.NoError(t, err)
 	_, err = net.WaitForHeight(1)
@@ -62,6 +56,7 @@ func DefaultConfig() network.Config {
 		encoding = app.MakeEncodingConfig()
 		chainID  = "chain-foobarbaz"
 	)
+
 	return network.Config{
 		Codec:             encoding.Marshaler,
 		TxConfig:          encoding.TxConfig,

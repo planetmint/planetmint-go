@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 
 	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -16,6 +17,7 @@ import (
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
+	"github.com/planetmint/planetmint-go/util"
 	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -53,6 +55,19 @@ func (s *E2ETestSuite) SetupSuite() {
 
 	s.T().Log("setting up e2e test suite")
 
+	s.cfg.Mnemonics = []string{sample.Mnemonic}
+
+	validatorTmpDir := s.T().TempDir()
+	conf.SetWalletDir(validatorTmpDir + "/node0/simcli")
+	conf.SetRoot(validatorTmpDir + "/node0/simd")
+
+	//keyringAddress := network.CreateTestingKeyring(conf.ConfigRootDir, conf.WalletDir, sample.Mnemonic)
+	// set the proper root dir for the test environment so that the abci.go logic works
+
+	//conf.ValidatorAddress = keyringAddress
+	//basicKey, err := sdk.AccAddressFromBech32(keyringAddress)
+	//_ = authtypes.NewBaseAccount(basicKey, nil, 0, 0)
+
 	// set accounts for alice and bob in genesis state
 	var authGenState authtypes.GenesisState
 	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[authtypes.ModuleName], &authGenState)
@@ -83,6 +98,11 @@ func (s *E2ETestSuite) SetupSuite() {
 		sdk.NewCoin(conf.StakeDenom, math.NewInt(5000)),
 	)
 
+	// vbalances := sdk.NewCoins(
+	// sdk.NewCoin(conf.TokenDenom, math.NewInt(10000)),
+	// sdk.NewCoin(conf.StakeDenom, math.NewInt(5000)),
+	// )
+
 	accountBalances := []banktypes.Balance{
 		{Address: bobAddr.String(), Coins: bbalances.Sort()},
 		{Address: aliceAddr.String(), Coins: abalances.Sort()},
@@ -104,7 +124,13 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
 
 	s.cfg.MinGasPrices = fmt.Sprintf("0.000006%s", conf.FeeDenom)
-	s.network = network.New(s.T(), s.cfg)
+
+	s.network = network.New(s.T(), validatorTmpDir, s.cfg)
+
+	validatorAddress := util.GetValidatorAddress(conf.ConfigRootDir, conf.WalletDir)
+	localhostString := strings.Replace(s.network.Validators[0].RPCAddress, "0.0.0.0", "localhost", -1)
+	conf.SetOwnRPCAddress(localhostString)
+	conf.ValidatorAddress = validatorAddress
 }
 
 // TearDownSuite clean up after testing
@@ -262,14 +288,21 @@ func (s *E2ETestSuite) TestReissuance() {
 	val := s.network.Validators[0]
 
 	var err error
-	for i := 0; i < conf.PopEpochs+10; i++ {
+	for i := 0; i < conf.PopEpochs+40; i++ {
 		err = s.network.WaitForNextBlock()
 		s.Require().NoError(err)
 	}
 	var height int64
 	height, _ = s.network.LatestHeight()
-	intValue := strconv.FormatInt(height, 10)
-	_, _ = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetReissuance(), []string{intValue})
+	for j := 0; int64(j) <= height; j++ {
+		reissuanceHeight := j
+		intValueString := strconv.FormatInt(int64(reissuanceHeight), 10)
+		buffer, err := clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetReissuance(), []string{intValueString})
+		if err != nil {
+			fmt.Println("error : " + err.Error())
+		}
+		fmt.Println(buffer)
+	}
 }
 
 func (s *E2ETestSuite) TestPoPResult() {

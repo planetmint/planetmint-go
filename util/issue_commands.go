@@ -12,9 +12,12 @@ import (
 )
 
 func setRPCConfig(goCtx context.Context) {
+	appConfig := config.GetConfig()
 	rpcConf := lib.GetConfig()
+	rpcConf.RootDir = appConfig.WalletDir
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	rpcConf.SetChainID(ctx.ChainID())
+	rpcConf.SetRPCEndpoint(appConfig.SelfRpcAddress)
 }
 func buildSignBroadcastTx(goCtx context.Context, loggingContext string, sendingValidatorAddress string, msg sdk.Msg) {
 	go func() {

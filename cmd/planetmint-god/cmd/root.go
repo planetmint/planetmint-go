@@ -380,6 +380,7 @@ func initAppConfig(clientCtx client.Context) (string, interface{}) {
 
 	plmntCfg := planetmintconfig.GetConfig()
 	plmntCfg.SetRoot(clientCtx.HomeDir)
+	plmntCfg.SetWalletDir(clientCtx.HomeDir)
 
 	customAppConfig := CustomAppConfig{
 		Config:      *srvCfg,
