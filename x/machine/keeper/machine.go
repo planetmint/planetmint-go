@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/machine/types"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
@@ -10,12 +11,12 @@ import (
 func (k Keeper) StoreMachine(ctx sdk.Context, machine types.Machine) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MachineKey))
 	appendValue := k.cdc.MustMarshal(&machine)
-	store.Set(GetMachineBytes(machine.IssuerPlanetmint), appendValue)
+	store.Set(util.SerializeString(machine.IssuerPlanetmint), appendValue)
 }
 
 func (k Keeper) GetMachine(ctx sdk.Context, index types.MachineIndex) (val types.Machine, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MachineKey))
-	machine := store.Get(GetMachineBytes(index.IssuerPlanetmint))
+	machine := store.Get(util.SerializeString(index.IssuerPlanetmint))
 
 	if machine == nil {
 		return val, false
@@ -39,10 +40,10 @@ func (k Keeper) StoreMachineIndex(ctx sdk.Context, machine types.Machine) {
 		Address:          machine.Address,
 	}
 
-	machineIDIndexKey := GetMachineBytes(machine.MachineId)
-	issuerPlanetmintIndexKey := GetMachineBytes(machine.IssuerPlanetmint)
-	issuerLiquidIndexKey := GetMachineBytes(machine.IssuerLiquid)
-	addressIndexKey := GetMachineBytes(machine.Address)
+	machineIDIndexKey := util.SerializeString(machine.MachineId)
+	issuerPlanetmintIndexKey := util.SerializeString(machine.IssuerPlanetmint)
+	issuerLiquidIndexKey := util.SerializeString(machine.IssuerLiquid)
+	addressIndexKey := util.SerializeString(machine.Address)
 
 	indexAppendValue := k.cdc.MustMarshal(&index)
 	taIndexStore.Set(machineIDIndexKey, indexAppendValue)
@@ -56,7 +57,7 @@ func (k Keeper) GetMachineIndexByPubKey(ctx sdk.Context, pubKey string) (val typ
 	issuerPlanetmintIndexStore := prefix.NewStore(ctx.KVStore(k.issuerPlanetmintIndexStoreKey), types.KeyPrefix(types.IssuerPlanetmintIndexKey))
 	issuerLiquidIndexStore := prefix.NewStore(ctx.KVStore(k.issuerLiquidIndexStoreKey), types.KeyPrefix(types.IssuerLiquidIndexKey))
 
-	keyBytes := GetMachineBytes(pubKey)
+	keyBytes := util.SerializeString(pubKey)
 
 	taIndex := taIndexStore.Get(keyBytes)
 	if taIndex != nil {
@@ -88,7 +89,7 @@ func (k Keeper) GetMachineIndexByPubKey(ctx sdk.Context, pubKey string) (val typ
 func (k Keeper) GetMachineIndexByAddress(ctx sdk.Context, address string) (val types.MachineIndex, found bool) {
 	addressIndexStore := prefix.NewStore(ctx.KVStore(k.addressIndexStoreKey), types.KeyPrefix(types.AddressIndexKey))
 
-	keyBytes := GetMachineBytes(address)
+	keyBytes := util.SerializeString(address)
 
 	adIndex := addressIndexStore.Get(keyBytes)
 	if adIndex != nil {
@@ -99,8 +100,4 @@ func (k Keeper) GetMachineIndexByAddress(ctx sdk.Context, address string) (val t
 	}
 
 	return val, false
-}
-
-func GetMachineBytes(pubKey string) []byte {
-	return []byte(pubKey)
 }

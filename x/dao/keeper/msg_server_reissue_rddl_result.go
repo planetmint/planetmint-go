@@ -26,6 +26,7 @@ func (k msgServer) ReissueRDDLResult(goCtx context.Context, msg *types.MsgReissu
 		return nil, errorsmod.Wrapf(types.ErrTXAlreadySet, " for provided block height %s", strconv.FormatInt(msg.GetBlockHeight(), 10))
 	}
 	reissuance.TxID = msg.GetTxID()
+
 	k.StoreReissuance(ctx, reissuance)
 
 	return &types.MsgReissueRDDLResultResponse{}, nil

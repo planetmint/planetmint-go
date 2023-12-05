@@ -22,4 +22,5 @@ var (
 	ErrDistributionNotFound     = errorsmod.Register(ModuleName, 13, "distribution not found")
 	ErrInvalidChallenge         = errorsmod.Register(ModuleName, 14, "invalid challenge")
 	ErrFailedPoPRewardsIssuance = errorsmod.Register(ModuleName, 15, "PoP rewards issuance failed")
+	ErrResolvingStagedClaims    = errorsmod.Register(ModuleName, 16, "resolving staged claims failed")
 )

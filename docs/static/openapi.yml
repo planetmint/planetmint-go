@@ -46700,11 +46700,17 @@ paths:
                 properties:
                   proposer:
                     type: string
-                  rawtx:
+                  rawTx:
                     type: string
                   txID:
                     type: string
                   blockHeight:
+                    type: string
+                    format: int64
+                  firstIncludedPop:
+                    type: string
+                    format: int64
+                  lastIncludedPop:
                     type: string
                     format: int64
         default:
@@ -46748,11 +46754,17 @@ paths:
                 properties:
                   proposer:
                     type: string
-                  rawtx:
+                  rawTx:
                     type: string
                   txID:
                     type: string
                   blockHeight:
+                    type: string
+                    format: int64
+                  firstIncludedPop:
+                    type: string
+                    format: int64
+                  lastIncludedPop:
                     type: string
                     format: int64
               pagination:
@@ -76197,11 +76209,17 @@ definitions:
         properties:
           proposer:
             type: string
-          rawtx:
+          rawTx:
             type: string
           txID:
             type: string
           blockHeight:
+            type: string
+            format: int64
+          firstIncludedPop:
+            type: string
+            format: int64
+          lastIncludedPop:
             type: string
             format: int64
   planetmintgo.dao.QueryGetReissuancesResponse:
@@ -76212,11 +76230,17 @@ definitions:
         properties:
           proposer:
             type: string
-          rawtx:
+          rawTx:
             type: string
           txID:
             type: string
           blockHeight:
+            type: string
+            format: int64
+          firstIncludedPop:
+            type: string
+            format: int64
+          lastIncludedPop:
             type: string
             format: int64
       pagination:
@@ -76278,11 +76302,17 @@ definitions:
     properties:
       proposer:
         type: string
-      rawtx:
+      rawTx:
         type: string
       txID:
         type: string
       blockHeight:
+        type: string
+        format: int64
+      firstIncludedPop:
+        type: string
+        format: int64
+      lastIncludedPop:
         type: string
         format: int64
   planetmintgo.machine.LiquidAsset:

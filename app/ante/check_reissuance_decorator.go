@@ -3,16 +3,18 @@ package ante
 import (
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/util"
-	"github.com/planetmint/planetmint-go/x/dao/keeper"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 )
 
-type CheckReissuanceDecorator struct{}
+type CheckReissuanceDecorator struct {
+	dk DaoKeeper
+}
 
-func NewCheckReissuanceDecorator() CheckReissuanceDecorator {
-	return CheckReissuanceDecorator{}
+func NewCheckReissuanceDecorator(dk DaoKeeper) CheckReissuanceDecorator {
+	return CheckReissuanceDecorator{
+		dk: dk,
+	}
 }
 
 func (cmad CheckReissuanceDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (sdk.Context, error) {
@@ -20,13 +22,13 @@ func (cmad CheckReissuanceDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simu
 		if sdk.MsgTypeURL(msg) == "/planetmintgo.dao.MsgReissueRDDLProposal" {
 			MsgProposal, ok := msg.(*daotypes.MsgReissueRDDLProposal)
 			if ok {
-				util.GetAppLogger().Debug(ctx, "REISSUE: receive Proposal")
-				conf := config.GetConfig()
-				isValid := keeper.IsValidReissuanceCommand(MsgProposal.GetTx(), conf.ReissuanceAsset, MsgProposal.GetBlockHeight())
+				util.GetAppLogger().Debug(ctx, "ante handler - received re-issuance roposal")
+				isValid := cmad.dk.IsValidReIssuanceProposal(ctx, MsgProposal)
 				if !isValid {
-					util.GetAppLogger().Info(ctx, "REISSUE: error during CheckTx or ReCheckTx")
+					util.GetAppLogger().Info(ctx, "ante handler: rejected re-issuance proposal")
 					return ctx, errorsmod.Wrapf(daotypes.ErrReissuanceProposal, "error during CheckTx or ReCheckTx")
 				}
+				util.GetAppLogger().Debug(ctx, "ante handler - accepted re-issuance proposal")
 			}
 		}
 	}

@@ -24,3 +24,22 @@ func RDDLTokenStringToUint(amount string) (amountUint uint64, err error) {
 	}
 	return amountUint, err
 }
+
+func addPrecision(valueString string) string {
+	length := len(valueString)
+	if length > 8 {
+		return valueString[:length-8] + "." + valueString[length-8:]
+	}
+
+	resultString := "0."
+	for i := 0; i < 8-length; i++ {
+		resultString += "0"
+	}
+	return resultString + valueString
+}
+
+func UintValueToRDDLTokenString(value uint64) (rddlString string) {
+	uint64String := strconv.FormatUint(value, 10)
+	rddlString = addPrecision(uint64String)
+	return
+}

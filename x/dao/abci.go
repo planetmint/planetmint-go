@@ -11,7 +11,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, _ keeper.Keeper) {
+func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) {
 	proposerAddress := req.Header.GetProposerAddress()
 
 	// Check if node is block proposer
@@ -19,45 +19,52 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, _ keeper.Keeper) 
 	if !util.IsValidatorBlockProposer(ctx, proposerAddress) {
 		return
 	}
-	blockHeight := req.Header.GetHeight()
-	if isPoPHeight(req.Header.GetHeight()) && util.IsValidatorBlockProposer(ctx, proposerAddress) {
-		hexProposerAddress := hex.EncodeToString(proposerAddress)
+	currentBlockHeight := req.Header.GetHeight()
+
+	hexProposerAddress := hex.EncodeToString(proposerAddress)
+	if isPopHeight(req.Header.GetHeight()) {
 		// select PoP participants
 		challenger := ""
 		challengee := ""
 
 		// Issue PoP
-		util.SendInitPoP(ctx, hexProposerAddress, challenger, challengee, blockHeight)
+		util.SendInitPoP(ctx, hexProposerAddress, challenger, challengee, currentBlockHeight)
 		// TODO send MQTT message to challenger && challengee
 	}
-	// TODO will be reintegrated with by merging branch 184-implement-staged-claim
-	// if isDistributionHeight(blockHeight) {
-	// // reissue 1st
 
-	// conf := config.GetConfig()
-	// txUnsigned := keeper.GetReissuanceCommand(conf.ReissuanceAsset, blockHeight)
-	// util.SendInitReissuance(ctx, hexProposerAddress, txUnsigned, blockHeight)
+	if isReIssuanceHeight(currentBlockHeight) {
+		reIssuance, err := k.CreateNextReIssuanceObject(ctx, currentBlockHeight)
+		if err == nil {
+			util.SendInitReissuance(ctx, hexProposerAddress, reIssuance.GetRawTx(), currentBlockHeight,
+				reIssuance.GetFirstIncludedPop(), reIssuance.GetLastIncludedPop())
+		} else {
+			util.GetAppLogger().Error(ctx, "error while computing the RDDL re-issuance ", err)
+		}
+	}
 
-	// // distribute thereafter
-	//// initialize the distribution message
-	// distribution, err := k.GetDistributionForReissuedTokens(ctx, blockHeight)
-	// if err != nil {
-	// util.GetAppLogger().Error(ctx, "error while computing the RDDL distribution ", err)
-	// }
-	// util.SendDistributionRequest(ctx, distribution)
-	// }
+	if isDistributionHeight(currentBlockHeight) {
+		distribution, err := k.GetDistributionForReissuedTokens(ctx, currentBlockHeight)
+		if err != nil {
+			util.GetAppLogger().Error(ctx, "error while computing the RDDL distribution ", err)
+		}
+		util.SendDistributionRequest(ctx, distribution)
+	}
 }
 
-func isPoPHeight(height int64) bool {
+func isPopHeight(height int64) bool {
 	cfg := config.GetConfig()
-	return height%int64(cfg.PoPEpochs) == 0
+	return height%int64(cfg.PopEpochs) == 0
 }
 
-// TODO will be reintegrated with by merging branch 184-implement-staged-claim
-// func isDistributionHeight(height int64) bool {
-// 	cfg := config.GetConfig()
-// 	return height%int64(cfg.DistributionEpochs) == 0
-// }
+func isReIssuanceHeight(height int64) bool {
+	cfg := config.GetConfig()
+	return height%int64(cfg.ReIssuanceEpochs) == 0
+}
+
+func isDistributionHeight(height int64) bool {
+	cfg := config.GetConfig()
+	return height%int64(cfg.DistributionEpochs) == 0
+}
 
 func EndBlocker(ctx sdk.Context, _ abci.RequestEndBlock, k keeper.Keeper) {
 	k.DistributeCollectedFees(ctx)

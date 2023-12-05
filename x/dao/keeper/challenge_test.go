@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/planetmint/planetmint-go/config"
 	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
 	"github.com/stretchr/testify/assert"
 
@@ -12,15 +13,18 @@ import (
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
+// this method returns a range of challenges, each with a blockheight * PopEpochs.
+// be aware: the first element start with 1 instead of 0
 func createNChallenge(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Challenge {
 	items := make([]types.Challenge, n)
 	for i := range items {
-		items[i].Height = int64(i)
-		items[i].Initiator = fmt.Sprintf("initiator%v", i)
-		items[i].Challenger = fmt.Sprintf("challenger%v", i)
-		items[i].Challengee = fmt.Sprintf("challengee%v", i)
-		items[i].Success = true
-		items[i].Finished = true
+		blockHeight := (i + 1) * config.GetConfig().PopEpochs
+		items[i].Height = int64(blockHeight)
+		items[i].Initiator = fmt.Sprintf("initiator%v", blockHeight)
+		items[i].Challenger = fmt.Sprintf("challenger%v", blockHeight)
+		items[i].Challengee = fmt.Sprintf("challengee%v", blockHeight)
+		items[i].Success = false
+		items[i].Finished = false
 		keeper.StoreChallenge(ctx, items[i])
 	}
 	return items
@@ -35,4 +39,13 @@ func TestGetChallenge(t *testing.T) {
 		assert.True(t, found)
 		assert.Equal(t, item, challenge)
 	}
+}
+
+func TestGetChallengeRange(t *testing.T) {
+	t.Parallel()
+	keeper, ctx := keepertest.DaoKeeper(t)
+	createNChallenge(keeper, ctx, 10)
+	challenges, err := keeper.GetChallengeRange(ctx, int64((0+1)*config.GetConfig().PopEpochs), int64((9+1)*config.GetConfig().PopEpochs))
+	assert.NoError(t, err)
+	assert.Equal(t, 10, len(challenges))
 }
