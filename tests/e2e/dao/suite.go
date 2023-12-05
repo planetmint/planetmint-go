@@ -360,7 +360,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Moniker),
 		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
 		"--yes",
-		fmt.Sprint(challenges[4].Height),
+		strconv.FormatInt(challenges[4].Height, 10),
 		"DaoTxID",
 		"InvestorTxID",
 		"PoPTxID",
