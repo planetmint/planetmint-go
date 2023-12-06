@@ -28,7 +28,7 @@ jobs:
 
       - name: Check generated files
         run: |
-          curl https://get.ignite.com/cli | bash
+          curl https://get.ignite.com/cli@v0.27.1 | bash
           ./ignite chain init --clear-cache --yes
           rm ignite
           if [ "$(git diff --stat | wc -l)" -gt 0 ]; then exit 1; fi
