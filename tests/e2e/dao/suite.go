@@ -274,12 +274,13 @@ func (s *E2ETestSuite) TestReissuance() {
 
 func (s *E2ETestSuite) TestPoPResult() {
 	conf := config.GetConfig()
+	conf.PopEpochs = 1
 	val := s.network.Validators[0]
 
 	// send PoP results
 	challenges := make([]daotypes.Challenge, 5)
 	for i := range challenges {
-		blockHeight := (i + 1)
+		blockHeight := (i + 1) * config.GetConfig().PopEpochs
 		challenges[i].Height = int64(blockHeight)
 		challenges[i].Initiator = val.Address.String()
 		challenges[i].Challenger = aliceAddr.String()
@@ -334,11 +335,37 @@ func (s *E2ETestSuite) TestPoPResult() {
 	assert.Contains(s.T(), out.String(), conf.StagedDenom)
 	assert.Contains(s.T(), out.String(), "5") // 5 * 1 remainder
 
+	// send ReissuanceProposal
+	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdReissueRDDLProposal(), []string{
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Moniker),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
+		"--yes",
+		aliceAddr.String(),
+		"reissueasset 7add40beb27df701e02ee85089c5bc0021bc813823fedb5f1dcb5debda7f3da9 2996.07000000",
+		strconv.FormatInt(challenges[4].Height, 10),
+		strconv.FormatInt(challenges[0].Height, 10),
+		strconv.FormatInt(challenges[2].Height, 10),
+	})
+	s.Require().NoError(err)
+	s.Require().NoError(s.network.WaitForNextBlock())
+
+	// send ReissuanceResult
+	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdReissueRDDLResult(), []string{
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Moniker),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
+		"--yes",
+		aliceAddr.String(),
+		"TxID",
+		strconv.FormatInt(challenges[4].Height, 10),
+	})
+	s.Require().NoError(err)
+	s.Require().NoError(s.network.WaitForNextBlock())
+
 	// send DistributionRequest
 	distributionOrder := daotypes.DistributionOrder{
 		Proposer:     aliceAddr.String(),
 		FirstPop:     challenges[0].Height,
-		LastPop:      challenges[4].Height,
+		LastPop:      challenges[2].Height,
 		DaoTxID:      "DaoTxID",
 		PopTxID:      "PoPTxID",
 		InvestorTxID: "InvestorTxID",
@@ -360,7 +387,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Moniker),
 		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
 		"--yes",
-		strconv.FormatInt(challenges[4].Height, 10),
+		strconv.FormatInt(challenges[2].Height, 10),
 		"DaoTxID",
 		"InvestorTxID",
 		"PoPTxID",

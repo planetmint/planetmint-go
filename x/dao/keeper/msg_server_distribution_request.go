@@ -4,6 +4,7 @@ import (
 	"context"
 	"strconv"
 
+	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
@@ -11,6 +12,15 @@ import (
 
 func (k msgServer) DistributionRequest(goCtx context.Context, msg *types.MsgDistributionRequest) (*types.MsgDistributionRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	lastReissuance, found := k.GetLastReIssuance(ctx)
+	if !found {
+		return nil, errorsmod.Wrap(types.ErrReissuanceNotFound, "for last reissuance height")
+	}
+
+	if lastReissuance.TxID == "" {
+		return nil, errorsmod.Wrap(types.ErrReissuanceTxIDMissing, "for last reissuance height")
+	}
 
 	validatorIdentity, validResult := util.GetValidatorCometBFTIdentity(ctx)
 	if validResult && msg.Distribution.GetProposer() == validatorIdentity {
@@ -31,7 +41,7 @@ func (k msgServer) DistributionRequest(goCtx context.Context, msg *types.MsgDist
 		msg.Distribution.InvestorTxID = investorTx
 		msg.Distribution.PopTxID = popTx
 		msg.Distribution.DaoTxID = daoTx
-		lastPopString := strconv.FormatInt(msg.Distribution.LastPop, 10)
+		lastPopString := strconv.FormatInt(lastReissuance.LastIncludedPop, 10)
 		util.SendDistributionResult(goCtx, lastPopString, daoTx, investorTx, popTx)
 	}
 	k.StoreDistributionOrder(ctx, *msg.GetDistribution())
