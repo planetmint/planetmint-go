@@ -56,7 +56,7 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 		util.GetAppLogger().Info(ctx, "Issuing Machine NFT")
 		err := k.issueMachineNFT(goCtx, msg.Machine)
 		if err != nil {
-			util.GetAppLogger().Info(ctx, "Machine NFT issuance failed : "+err.Error())
+			util.GetAppLogger().Error(ctx, "Machine NFT issuance failed : "+err.Error())
 		} else {
 			util.GetAppLogger().Info(ctx, "Machine NFT issuance successful")
 		}
