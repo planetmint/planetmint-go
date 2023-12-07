@@ -33,22 +33,16 @@ func (k msgServer) ReportPopResult(goCtx context.Context, msg *types.MsgReportPo
 
 func (k msgServer) issuePoPRewards(ctx sdk.Context, challenge types.Challenge) (err error) {
 	cfg := config.GetConfig()
-	amt := GetReissuanceAsStringValue(challenge.GetHeight())
-	amtFloat, err := util.RDDLTokenStringToFloat(amt)
-	if err != nil {
-		return err
-	}
+	total, _, _ := util.GetPopReward(challenge.Height)
 
-	popAmt := uint64(amtFloat * types.PercentagePop)
-	stagedCRDDL := sdk.NewCoin(cfg.StagedDenom, sdk.NewIntFromUint64(popAmt))
-
+	stagedCRDDL := sdk.NewCoin(cfg.StagedDenom, sdk.NewIntFromUint64(total))
 	err = k.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(stagedCRDDL))
 	if err != nil {
 		return err
 	}
 
 	if challenge.Success {
-		err = k.handlePoPSuccess(ctx, challenge, amtFloat)
+		err = k.handlePoPSuccess(ctx, challenge)
 		if err != nil {
 			return err
 		}
@@ -62,10 +56,9 @@ func (k msgServer) issuePoPRewards(ctx sdk.Context, challenge types.Challenge) (
 	return err
 }
 
-func (k msgServer) handlePoPSuccess(ctx sdk.Context, challenge types.Challenge, amount float64) (err error) {
+func (k msgServer) handlePoPSuccess(ctx sdk.Context, challenge types.Challenge) (err error) {
 	cfg := config.GetConfig()
-	challengerAmt := uint64(amount * types.PercentageChallenger)
-	challengeeAmt := uint64(amount * types.PercentageChallengee)
+	_, challengerAmt, challengeeAmt := util.GetPopReward(challenge.Height)
 
 	challengerCoin := sdk.NewCoin(cfg.StagedDenom, sdk.NewIntFromUint64(challengerAmt))
 	challengeeCoin := sdk.NewCoin(cfg.StagedDenom, sdk.NewIntFromUint64(challengeeAmt))

@@ -5,9 +5,9 @@ import (
 	"strconv"
 
 	errorsmod "cosmossdk.io/errors"
-	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
@@ -38,12 +38,21 @@ func (k msgServer) resolveStagedClaims(ctx sdk.Context, start int64, end int64) 
 		return err
 	}
 
+	popParticipants := make(map[string]uint64)
+
 	for _, challenge := range challenges {
-		err = k.convertClaim(ctx, challenge.Challengee)
-		if err != nil {
-			return err
-		}
-		err = k.convertClaim(ctx, challenge.Challenger)
+		challengerAmt, challengeeAmt := getAmountsForChallenge(challenge)
+		popParticipants[challenge.Challenger] += challengerAmt
+		popParticipants[challenge.Challengee] += challengeeAmt
+	}
+
+	// second data structure because map iteration order is not guaranteed in GO
+	keys := make([]string, 0)
+	for p := range popParticipants {
+		keys = append(keys, p)
+	}
+	for _, p := range keys {
+		err = k.convertClaim(ctx, p, popParticipants[p])
 		if err != nil {
 			return err
 		}
@@ -52,34 +61,46 @@ func (k msgServer) resolveStagedClaims(ctx sdk.Context, start int64, end int64) 
 	return
 }
 
-func (k msgServer) convertClaim(ctx sdk.Context, addr string) (err error) {
+// convert per account
+func (k msgServer) convertClaim(ctx sdk.Context, participant string, amount uint64) (err error) {
 	cfg := config.GetConfig()
-	accAddress, err := sdk.AccAddressFromBech32(addr)
+	accAddr, err := sdk.AccAddressFromBech32(participant)
 	if err != nil {
 		return err
 	}
 
-	stagedClaim := k.bankKeeper.GetBalance(ctx, accAddress, cfg.StagedDenom)
+	accStagedClaim := k.bankKeeper.GetBalance(ctx, accAddr, cfg.StagedDenom)
 
-	if stagedClaim.Amount.GT(math.ZeroInt()) {
-		claim := sdk.NewCoins(sdk.NewCoin(cfg.ClaimDenom, stagedClaim.Amount))
-		err = k.bankKeeper.SendCoinsFromAccountToModule(ctx, accAddress, types.ModuleName, sdk.NewCoins(stagedClaim))
+	if accStagedClaim.Amount.GTE(sdk.NewIntFromUint64(amount)) {
+		burnCoins := sdk.NewCoins(sdk.NewCoin(cfg.StagedDenom, sdk.NewIntFromUint64(amount)))
+		mintCoins := sdk.NewCoins(sdk.NewCoin(cfg.ClaimDenom, sdk.NewIntFromUint64(amount)))
+
+		err = k.bankKeeper.SendCoinsFromAccountToModule(ctx, accAddr, types.ModuleName, burnCoins)
 		if err != nil {
 			return err
 		}
-		err = k.bankKeeper.BurnCoins(ctx, types.ModuleName, sdk.NewCoins(stagedClaim))
+		err = k.bankKeeper.BurnCoins(ctx, types.ModuleName, burnCoins)
 		if err != nil {
 			return err
 		}
-		err = k.bankKeeper.MintCoins(ctx, types.ModuleName, claim)
+		err = k.bankKeeper.MintCoins(ctx, types.ModuleName, mintCoins)
 		if err != nil {
 			return err
 		}
-		err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, accAddress, claim)
+		err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, accAddr, mintCoins)
 		if err != nil {
 			return err
 		}
 	}
 
 	return
+}
+
+// gather amounts for accounts
+func getAmountsForChallenge(challenge types.Challenge) (challenger uint64, challengee uint64) {
+	totalAmt, challengerAmt, challengeeAmt := util.GetPopReward(challenge.Height)
+	if challenge.Success {
+		return challengerAmt, challengeeAmt
+	}
+	return totalAmt, 0
 }
