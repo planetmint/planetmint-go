@@ -6,9 +6,11 @@ import (
 	"github.com/planetmint/planetmint-go/config"
 )
 
-const (
+var PopsPerCycle float64
+
+func init() {
 	PopsPerCycle = 1051200.0
-)
+}
 
 func GetPopNumber(blockHeight int64) float64 {
 	return float64(blockHeight) / float64(config.GetConfig().PopEpochs)
