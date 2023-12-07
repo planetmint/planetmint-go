@@ -20,6 +20,7 @@ import (
 
 	"github.com/planetmint/planetmint-go/app"
 	"github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/lib"
 )
 
 type (
@@ -56,6 +57,11 @@ func New(t *testing.T, configs ...Config) *Network {
 	net.Validators[0].ClientCtx.NodeURI = net.Validators[0].RPCAddress
 	net.Validators[0].ClientCtx.Output = &output
 	net.Validators[0].ClientCtx.SkipConfirm = true
+
+	libConfig := lib.GetConfig()
+	libConfig.SetClientCtx(net.Validators[0].ClientCtx)
+	libConfig.SetFeeDenom(appConfig.FeeDenom)
+	libConfig.SetRoot(validatorTmpDir + "/node0/simd")
 
 	require.NoError(t, err)
 	_, err = net.WaitForHeight(1)
