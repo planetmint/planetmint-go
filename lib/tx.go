@@ -39,9 +39,14 @@ func getAccountNumberAndSequence(clientCtx client.Context) (accountNumber, seque
 }
 
 func getClientContextAndTxFactory(address sdk.AccAddress) (clientCtx client.Context, txf tx.Factory, err error) {
-	clientCtx, err = getClientContext(address)
-	if err != nil {
-		return
+	clientCtx = GetConfig().ClientCtx
+	// at least we need an account retriever
+	// it would be better to check for an empty client context, but that does not work at the moment
+	if clientCtx.AccountRetriever == nil {
+		clientCtx, err = getClientContext(address)
+		if err != nil {
+			return
+		}
 	}
 	accountNumber, sequence, err := getAccountNumberAndSequence(clientCtx)
 	if err != nil {
@@ -54,9 +59,10 @@ func getClientContextAndTxFactory(address sdk.AccAddress) (clientCtx client.Cont
 func getTxFactoryWithAccountNumberAndSequence(clientCtx client.Context, accountNumber, sequence uint64) (txf tx.Factory) {
 	return tx.Factory{}.
 		WithAccountNumber(accountNumber).
+		WithAccountRetriever(clientCtx.AccountRetriever).
 		WithChainID(clientCtx.ChainID).
 		WithGas(200000).
-		WithGasPrices("0.000005plmnt").
+		WithGasPrices("0.000005" + GetConfig().FeeDenom).
 		WithKeybase(clientCtx.Keyring).
 		WithSequence(sequence).
 		WithTxConfig(clientCtx.TxConfig)
@@ -153,6 +159,7 @@ func broadcastTx(clientCtx client.Context, txf tx.Factory, msgs ...sdk.Msg) (bro
 		err = ErrTypeAssertionFailed
 		return
 	}
+	defer output.Reset()
 
 	result := make(map[string]interface{})
 	err = json.Unmarshal(output.Bytes(), &result)

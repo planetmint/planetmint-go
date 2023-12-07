@@ -3,6 +3,7 @@ package lib
 import (
 	"sync"
 
+	"github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/planetmint/planetmint-go/lib/params"
 )
@@ -10,7 +11,9 @@ import (
 // Config defines library top level configuration.
 type Config struct {
 	ChainID        string                `json:"chain-id"        mapstructure:"chain-id"`
+	ClientCtx      client.Context        `json:"client-ctx"      mapstructure:"client-ctx"`
 	EncodingConfig params.EncodingConfig `json:"encoding-config" mapstructure:"encoding-config"`
+	FeeDenom       string                `json:"fee-denom"       mapstructure:"fee-denom"`
 	RootDir        string                `json:"root-dir"        mapstructure:"root-dir"`
 	RPCEndpoint    string                `json:"rpc-endpoint"    mapstructure:"rpc-endpoint"`
 }
@@ -26,7 +29,9 @@ var (
 func DefaultConfig() *Config {
 	return &Config{
 		ChainID:        "planetmint-testnet-1",
+		ClientCtx:      client.Context{},
 		EncodingConfig: params.EncodingConfig{},
+		FeeDenom:       "plmnt",
 		RootDir:        "~/.planetmint-go/",
 		RPCEndpoint:    "http://127.0.0.1:26657",
 	}
@@ -60,6 +65,18 @@ func (config *Config) SetEncodingConfig(encodingConfig params.EncodingConfig) *C
 // SetChainID sets the chain ID parameter.
 func (config *Config) SetChainID(chainID string) *Config {
 	config.ChainID = chainID
+	return config
+}
+
+// SetClientCtx sets the client context parameter.
+func (config *Config) SetClientCtx(clientCtx client.Context) *Config {
+	config.ClientCtx = clientCtx
+	return config
+}
+
+// SetFeeDenom sets the fee denominator parameter.
+func (config *Config) SetFeeDenom(feeDenom string) *Config {
+	config.FeeDenom = feeDenom
 	return config
 }
 

@@ -49,6 +49,8 @@ func (s *E2ETestSuite) SetupSuite() {
 	// set FeeDenom to node0token because the sending account is initialized with no plmnt tokens
 	conf := config.GetConfig()
 	conf.FeeDenom = "node0token"
+	// set epochs: make sure to start after initial height of 7
+	conf.ReIssuanceEpochs = 25
 	conf.SetPlanetmintConfig(conf)
 
 	s.T().Log("setting up e2e test suite")
@@ -262,14 +264,27 @@ func (s *E2ETestSuite) TestReissuance() {
 	val := s.network.Validators[0]
 
 	var err error
-	for i := 0; i < conf.PopEpochs+10; i++ {
-		err = s.network.WaitForNextBlock()
+	latestHeight, err := s.network.LatestHeight()
+	s.Require().NoError(err)
+
+	var wait int
+	for {
+		latestHeight, err = s.network.WaitForHeight(latestHeight + 1)
 		s.Require().NoError(err)
+
+		// wait + for sending the re-issuance result, i.e.:
+		//   block 25: initializing RDDL re-issuance broadcast tx succeeded
+		//   block 26: sending the re-issuance result broadcast tx succeeded
+		wait = 2
+		if latestHeight%int64(conf.ReIssuanceEpochs+wait) == 0 {
+			break
+		}
 	}
-	var height int64
-	height, _ = s.network.LatestHeight()
-	intValue := strconv.FormatInt(height, 10)
-	_, _ = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetReissuance(), []string{intValue})
+
+	// - because we waited on the re-issuance result, see above
+	intValue := strconv.FormatInt(latestHeight-int64(wait), 10)
+	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetReissuance(), []string{intValue})
+	s.Require().NoError(err)
 }
 
 func (s *E2ETestSuite) TestPoPResult() {

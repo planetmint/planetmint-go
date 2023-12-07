@@ -1,6 +1,7 @@
 package network
 
 import (
+	"bytes"
 	"fmt"
 	"testing"
 	"time"
@@ -19,6 +20,7 @@ import (
 
 	"github.com/planetmint/planetmint-go/app"
 	"github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/lib"
 )
 
 type (
@@ -47,6 +49,19 @@ func New(t *testing.T, configs ...Config) *Network {
 	net, err := network.New(t, validatorTmpDir, cfg)
 
 	appConfig.ValidatorAddress = net.Validators[0].Address.String()
+	// set missing validator client context values for sending txs
+	var output bytes.Buffer
+	net.Validators[0].ClientCtx.BroadcastMode = "sync"
+	net.Validators[0].ClientCtx.FromAddress = net.Validators[0].Address
+	net.Validators[0].ClientCtx.FromName = net.Validators[0].Moniker
+	net.Validators[0].ClientCtx.NodeURI = net.Validators[0].RPCAddress
+	net.Validators[0].ClientCtx.Output = &output
+	net.Validators[0].ClientCtx.SkipConfirm = true
+
+	libConfig := lib.GetConfig()
+	libConfig.SetClientCtx(net.Validators[0].ClientCtx)
+	libConfig.SetFeeDenom(appConfig.FeeDenom)
+	libConfig.SetRoot(validatorTmpDir + "/node0/simd")
 
 	require.NoError(t, err)
 	_, err = net.WaitForHeight(1)
