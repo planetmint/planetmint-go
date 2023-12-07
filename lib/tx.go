@@ -159,6 +159,7 @@ func broadcastTx(clientCtx client.Context, txf tx.Factory, msgs ...sdk.Msg) (bro
 		err = ErrTypeAssertionFailed
 		return
 	}
+	defer output.Reset()
 
 	result := make(map[string]interface{})
 	err = json.Unmarshal(output.Bytes(), &result)
