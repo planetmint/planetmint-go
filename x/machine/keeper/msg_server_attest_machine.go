@@ -160,7 +160,8 @@ func (k msgServer) registerAsset(goCtx context.Context, assetID string, contract
 		return errorsmod.Wrap(types.ErrAssetRegistryReqFailure, "Marshall "+err.Error())
 	}
 
-	req, err := http.NewRequestWithContext(goCtx, http.MethodPost, conf.AssetRegistryEndpoint, bytes.NewBuffer(jsonData))
+	assetRegistryEndpoint := fmt.Sprintf("%s://%s/%s", conf.AssetRegistryScheme, conf.AssetRegistryDomain, conf.AssetRegistryPath)
+	req, err := http.NewRequestWithContext(goCtx, http.MethodPost, assetRegistryEndpoint, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return errorsmod.Wrap(types.ErrAssetRegistryReqFailure, "Request creation: "+err.Error())
 	}
