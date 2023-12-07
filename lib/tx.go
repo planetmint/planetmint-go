@@ -56,7 +56,7 @@ func getTxFactoryWithAccountNumberAndSequence(clientCtx client.Context, accountN
 		WithAccountNumber(accountNumber).
 		WithChainID(clientCtx.ChainID).
 		WithGas(200000).
-		WithGasPrices("0.000005plmnt").
+		WithGasPrices("0.000005" + GetConfig().FeeDenom).
 		WithKeybase(clientCtx.Keyring).
 		WithSequence(sequence).
 		WithTxConfig(clientCtx.TxConfig)
