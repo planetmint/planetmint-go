@@ -3,16 +3,19 @@ package keeper
 import (
 	"bytes"
 	"context"
+	"crypto/sha256"
 	"encoding/json"
+	"fmt"
 	"io"
+	"log"
 	"net/http"
-	"os/exec"
 	"strconv"
 	"strings"
 
 	config "github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/machine/types"
+	elements "github.com/rddl-network/elements-rpc"
 
 	"github.com/btcsuite/btcd/btcutil/hdkeychain"
 	"github.com/btcsuite/btcd/chaincfg"
@@ -85,35 +88,93 @@ func validateExtendedPublicKey(issuer string, cfg chaincfg.Params) bool {
 func (k msgServer) issueNFTAsset(goCtx context.Context, name string, machineAddress string) (assetID string, contract string, err error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	conf := config.GetConfig()
-	cmdName := "poetry"
-	cmdArgs := []string{"run", "python", "issuer_service/issue2liquid.py", name, machineAddress}
 
-	// Create a new command
-	cmd := exec.Command(cmdName, cmdArgs...)
-
-	// If you want to set the working directory
-	cmd.Dir = conf.IssuanceServiceDir
-
-	// Capture the output
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-
-	// Execute the command
-	err = cmd.Run()
+	url := fmt.Sprintf("%s://%s:%s@%s:%d/wallet/%s", conf.RPCScheme, conf.RPCUser, conf.RPCPassword, conf.RPCHost, conf.RPCPort, conf.RPCWallet)
+	address, err := elements.GetNewAddress(url, []string{``})
 	if err != nil {
-		util.GetAppLogger().Error(ctx, "Issue2Liquid.py failed with %s\n", err)
-		err = errorsmod.Wrap(types.ErrMachineNFTIssuance, stderr.String())
-	} else {
-		util.GetAppLogger().Info(ctx, "Liquid Token Issuance: "+stdout.String())
-		lines := strings.Split(stdout.String(), "\n")
-		if len(lines) == 3 {
-			assetID = lines[0]
-			contract = lines[1]
-		} else {
-			err = errorsmod.Wrap(types.ErrMachineNFTIssuanceNoOutput, stderr.String())
-		}
+		return
 	}
+
+	addressInfo, err := elements.GetAddressInfo(url, []string{address})
+	if err != nil {
+		return
+	}
+
+	hex, err := elements.CreateRawTransaction(url, []string{`[]`, `[{"data":"00"}]`})
+	if err != nil {
+		return
+	}
+
+	fundRawTransactionResult, err := elements.FundRawTransaction(url, []string{hex, `{"feeRate":0.00001000}`})
+	if err != nil {
+		return
+	}
+
+	c := types.Contract{
+		Entity: types.Entity{
+			Domain: conf.AssetRegistryDomain,
+		},
+		IssuerPubkey: addressInfo.Pubkey,
+		MachineAddr:  machineAddress,
+		Name:         name,
+		Precision:    0,
+		Version:      0,
+	}
+	contractBytes, err := json.Marshal(c)
+	if err != nil {
+		return
+	}
+	// e.g. {"entity":{"domain":"testnet-assets.rddl.io"}, "issuer_pubkey":"02...}
+	contract = string(contractBytes)
+
+	h := sha256.New()
+	_, err = h.Write(contractBytes)
+	if err != nil {
+		return
+	}
+	// e.g. 7ca8bb403ee5dccddef7b89b163048cf39439553f0402351217a4a03d2224df8
+	hash := h.Sum(nil)
+
+	// Reverse hash, e.g. f84d22d2034a7a21512340f053954339cf4830169bb8f7decddce53e40bba87c
+	for i, j := 0, len(hash)-1; i < j; i, j = i+1, j-1 {
+		hash[i], hash[j] = hash[j], hash[i]
+	}
+
+	rawIssueAssetResults, err := elements.RawIssueAsset(url, []string{fundRawTransactionResult.Hex,
+		`[{"asset_amount":0.00000001, "asset_address":"` + address + `", "blind":false, "contract_hash":"` + fmt.Sprintf("%+x", hash) + `"}]`,
+	})
+	if err != nil {
+		return
+	}
+
+	rawIssueAssetResult := rawIssueAssetResults[len(rawIssueAssetResults)-1]
+	hex, err = elements.BlindRawTransaction(url, []string{rawIssueAssetResult.Hex, `true`, `[]`, `false`})
+	if err != nil {
+		return
+	}
+	assetID = rawIssueAssetResult.Asset
+
+	signRawTransactionWithWalletResult, err := elements.SignRawTransactionWithWallet(url, []string{hex})
+	if err != nil {
+		return
+	}
+
+	testMempoolAcceptResults, err := elements.TestMempoolAccept(url, []string{`["` + signRawTransactionWithWalletResult.Hex + `"]`})
+	if err != nil {
+		return
+	}
+
+	testMempoolAcceptResult := testMempoolAcceptResults[len(testMempoolAcceptResults)-1]
+	if !testMempoolAcceptResult.Allowed {
+		log.Fatalln("not accepted by mempool")
+	}
+
+	hex, err = elements.SendRawTransaction(url, []string{signRawTransactionWithWalletResult.Hex})
+	if err != nil {
+		return
+	}
+
+	util.GetAppLogger().Info(ctx, "Liquid Token Issuance assetID: "+assetID+" contract: "+contract+" tx: "+hex)
 	return assetID, contract, err
 }
 

@@ -25,7 +25,8 @@ rpc-host = "{{ .PlmntConfig.RPCHost }}"
 rpc-port = {{ .PlmntConfig.RPCPort }}
 rpc-user = "{{ .PlmntConfig.RPCUser }}"
 rpc-password = "{{ .PlmntConfig.RPCPassword }}"
-issuance-service-dir = "{{ .PlmntConfig.IssuanceServiceDir }}"
+rpc-scheme = "{{ .PlmntConfig.RPCScheme }}"
+rpc-wallet = "{{ .PlmntConfig.RPCWallet }}"
 reissuance-asset = "{{ .PlmntConfig.ReissuanceAsset }}"
 validator-address = "{{ .PlmntConfig.ValidatorAddress }}"
 distribution-address-inv = "{{ .PlmntConfig.DistributionAddrInv }}"
@@ -51,7 +52,8 @@ type Config struct {
 	RPCPort             int    `json:"rpc-port"              mapstructure:"rpc-port"`
 	RPCUser             string `json:"rpc-user"              mapstructure:"rpc-user"`
 	RPCPassword         string `json:"rpc-password"          mapstructure:"rpc-password"`
-	IssuanceServiceDir  string `json:"issuance-service-dir"  mapstructure:"issuance-service-dir"`
+	RPCScheme           string `json:"rpc-scheme"            mapstructure:"rpc-scheme"`
+	RPCWallet           string `json:"rpc-wallet"            mapstructure:"rpc-wallet"`
 	ReissuanceAsset     string `json:"reissuance-asset"      mapstructure:"reissuance-asset"`
 	ValidatorAddress    string `json:"validator-address"     mapstructure:"validator-address"`
 	DistributionAddrInv string `json:"distribution-addr-inv" mapstructure:"distribution-addr-inv"`
@@ -84,7 +86,8 @@ func DefaultConfig() *Config {
 		RPCPort:             18884,
 		RPCUser:             "user",
 		RPCPassword:         "password",
-		IssuanceServiceDir:  "/opt/issuer_service",
+		RPCScheme:           "http",
+		RPCWallet:           "rpcwallet",
 		ReissuanceAsset:     "7add40beb27df701e02ee85089c5bc0021bc813823fedb5f1dcb5debda7f3da9",
 		ValidatorAddress:    "plmnt1w5dww335zhh98pzv783hqre355ck3u4w4hjxcx",
 		DistributionAddrInv: "vjTyRN2G42Yq3T5TJBecHj1dF1xdhKF89hKV4HJN3uXxUbaVGVR76hAfVRQqQCovWaEpar7G5qBBprFG",
