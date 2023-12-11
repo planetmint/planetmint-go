@@ -382,13 +382,13 @@ func initAppConfig(clientCtx client.Context) (string, interface{}) {
 	plmntCfg := planetmintconfig.GetConfig()
 	plmntCfg.SetRoot(clientCtx.HomeDir)
 
-	rpcConf := lib.GetConfig()
-	rpcConf.SetChainID(clientCtx.ChainID)
+	rpcCfg := lib.GetConfig()
+	rpcCfg.SetChainID(clientCtx.ChainID)
 
 	customAppConfig := CustomAppConfig{
 		Config:      *srvCfg,
 		PlmntConfig: *plmntCfg,
-		RPCConfig:   *rpcConf,
+		RPCConfig:   *rpcCfg,
 	}
 	customAppTemplate := serverconfig.DefaultConfigTemplate + planetmintconfig.DefaultConfigTemplate
 
