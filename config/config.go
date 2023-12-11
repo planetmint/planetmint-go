@@ -102,7 +102,7 @@ func (config *Config) SetRoot(root string) *Config {
 	return config
 }
 
-// SetWatchmenConfig sets Planetmint's configuration
+// SetPlanetmintConfig sets Planetmint's configuration
 func (config *Config) SetPlanetmintConfig(planetmintconfig interface{}) {
 	jsonConfig, err := json.Marshal(planetmintconfig)
 	if err != nil {

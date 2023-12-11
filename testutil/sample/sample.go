@@ -35,7 +35,7 @@ const Fees = "1stake"
 // DefaultDerivationPath is the BIP44Prefix for PLMNT (see https://github.com/satoshilabs/slips/blob/master/slip-0044.md)
 const DefaultDerivationPath = "m/44'/8680'/0'/0/0"
 
-// ConstantBech32Addr for mocks
+// ConstBech32Addr constant bech32 address for mocks
 const ConstBech32Addr = "plmnt10mq5nj8jhh27z7ejnz2ql3nh0qhzjnfvy50877"
 
 // KeyPair returns a sample private / public keypair
@@ -63,6 +63,7 @@ func Secp256k1AccAddress() sdk.AccAddress {
 	return sdk.AccAddress(addr)
 }
 
+// Machine creates a new machine object
 // TODO: make address deterministic for test cases
 func Machine(name, pubKey string, prvKey string, address string) machinetypes.Machine {
 	metadata := Metadata()
