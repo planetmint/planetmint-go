@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"sync"
 )
 
@@ -104,6 +105,12 @@ func GetConfig() *Config {
 		plmntConfig = DefaultConfig()
 	})
 	return plmntConfig
+}
+
+// GetRPCURL returns the elements RPC URL
+func (config *Config) GetRPCURL() (url string) {
+	url = fmt.Sprintf("%s://%s:%s@%s:%d/wallet/%s", config.RPCScheme, config.RPCUser, config.RPCPassword, config.RPCHost, config.RPCPort, config.RPCWallet)
+	return
 }
 
 func (config *Config) SetRoot(root string) *Config {

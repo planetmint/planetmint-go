@@ -89,7 +89,7 @@ func (k msgServer) issueNFTAsset(goCtx context.Context, name string, machineAddr
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	conf := config.GetConfig()
 
-	url := fmt.Sprintf("%s://%s:%s@%s:%d/wallet/%s", conf.RPCScheme, conf.RPCUser, conf.RPCPassword, conf.RPCHost, conf.RPCPort, conf.RPCWallet)
+	url := conf.GetRPCURL()
 	address, err := elements.GetNewAddress(url, []string{``})
 	if err != nil {
 		return
