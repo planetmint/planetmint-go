@@ -1,7 +1,6 @@
 package util
 
 import (
-	"errors"
 	"strings"
 
 	"github.com/planetmint/planetmint-go/config"
@@ -15,8 +14,6 @@ func ReissueAsset(reissueTx string) (txID string, err error) {
 
 	result, err := elements.ReissueAsset(url, []string{cmdArgs[1], cmdArgs[2]})
 	if err != nil {
-		errstr := err.Error()
-		err = errors.New("reissuance of RDDL failed: " + errstr)
 		return
 	}
 	txID = result.TxID
@@ -39,10 +36,5 @@ func DistributeAsset(address string, amount string) (txID string, err error) {
 		"false",
 		`"` + conf.ReissuanceAsset + `"`,
 	})
-	if err != nil {
-		errormessage := "distribution of RDDL failed for " + address + ": " + err.Error()
-		err = errors.New(errormessage)
-		return
-	}
 	return
 }
