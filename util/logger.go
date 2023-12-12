@@ -40,6 +40,10 @@ func (logger *AppLogger) testingLog(msg string, keyvals ...interface{}) {
 	if logger.testingLogger == nil {
 		return
 	}
+	if len(keyvals) == 0 {
+		logger.testingLogger.Log(msg)
+		return
+	}
 	logger.testingLogger.Log(msg, keyvals)
 }
 
