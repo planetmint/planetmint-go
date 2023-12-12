@@ -21,6 +21,7 @@ import (
 	"github.com/planetmint/planetmint-go/app"
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/lib"
+	"github.com/planetmint/planetmint-go/util"
 )
 
 type (
@@ -41,6 +42,10 @@ func New(t *testing.T, configs ...Config) *Network {
 		cfg = configs[0]
 	}
 	validatorTmpDir := t.TempDir()
+
+	// enable application logger in tests
+	appLogger := util.GetAppLogger()
+	appLogger.SetTestingLogger(t)
 
 	// set the proper root dir for the test environment so that the abci.go logic works
 	appConfig := config.GetConfig()
