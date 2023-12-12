@@ -5,7 +5,11 @@ import sdk "github.com/cosmos/cosmos-sdk/types"
 type AppLogger struct {
 }
 
-var globalApplicationLoggerTag string
+var (
+	globalApplicationLoggerTag string
+	appLogger                  *AppLogger
+	initAppLogger              sync.Once
+)
 
 func init() {
 	// Initialize the package-level variable
@@ -13,7 +17,11 @@ func init() {
 }
 
 func GetAppLogger() *AppLogger {
-	return &AppLogger{}
+	initAppLogger.Do(func() {
+		appLogger = &AppLogger{
+		}
+	})
+	return appLogger
 }
 
 func (logger *AppLogger) Info(ctx sdk.Context, msg string, keyvals ...interface{}) {
