@@ -1,7 +1,6 @@
 package keeper
 
 import (
-	"strconv"
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
@@ -68,9 +67,9 @@ func ComputeDistribution(lastReissuance int64, blockHeight int64, amount uint64)
 	distribution.InvestorAddr = conf.DistributionAddrInv
 	distribution.PopAddr = conf.DistributionAddrPop
 
-	distribution.DaoAmount = strconv.FormatUint(uint64(float64(amount)*types.PercentageDao), 10)
-	distribution.InvestorAmount = strconv.FormatUint(uint64(float64(amount)*types.PercentageInvestor), 10)
-	distribution.PopAmount = strconv.FormatUint(uint64(float64(amount)*types.PercentagePop), 10)
+	distribution.DaoAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentageDao))
+	distribution.InvestorAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentageInvestor))
+	distribution.PopAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentagePop))
 
 	return distribution
 }
