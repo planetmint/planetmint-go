@@ -1,70 +1,48 @@
 package util
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
-	"os/exec"
-	"strconv"
 	"strings"
 
 	"github.com/planetmint/planetmint-go/config"
+	elements "github.com/rddl-network/elements-rpc"
 )
 
-type ReissueResult struct {
-	Txid string `json:"txid"`
-	Vin  int    `json:"vin"`
-}
-
-func ReissueAsset(reissueTx string) (txid string, err error) {
+func ReissueAsset(reissueTx string) (txID string, err error) {
 	conf := config.GetConfig()
+	url := conf.GetRPCURL()
 	cmdArgs := strings.Split(reissueTx, " ")
-	cmd := exec.Command("/usr/local/bin/elements-cli", "-rpcpassword="+conf.RPCPassword,
-		"-rpcuser="+conf.RPCUser, "-rpcport="+strconv.Itoa(conf.RPCPort), "-rpcconnect="+conf.RPCHost,
-		cmdArgs[0], cmdArgs[1], cmdArgs[2])
 
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-
-	err = cmd.Run()
-	errstr := stderr.String()
-
-	if err != nil || len(errstr) > 0 {
+	result, err := elements.ReissueAsset(url, []string{cmdArgs[1], cmdArgs[2]})
+	if err != nil {
+		errstr := err.Error()
 		err = errors.New("reissuance of RDDL failed: " + errstr)
-	} else {
-		var txobj ReissueResult
-		err = json.Unmarshal(stdout.Bytes(), &txobj)
-		if err == nil {
-			txid = txobj.Txid
-		}
+		return
 	}
-	return txid, err
+	txID = result.TxID
+	return
 }
 
-func DistributeAsset(address string, amount string) (txid string, err error) {
+func DistributeAsset(address string, amount string) (txID string, err error) {
 	conf := config.GetConfig()
-	cmd := exec.Command("/usr/local/bin/elements-cli", "-rpcpassword="+conf.RPCPassword,
-		"-rpcuser="+conf.RPCUser, "-rpcport="+strconv.Itoa(conf.RPCPort), "-rpcconnect="+conf.RPCHost,
-		"sendtoaddress", address, amount, "", "", "false", "true", "null", "\"unset\"", "false",
-		"\""+conf.ReissuanceAsset+"\"")
+	url := conf.GetRPCURL()
 
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-
-	err = cmd.Run()
-	errstr := stderr.String()
-
-	if err != nil || len(errstr) > 0 {
-		errormessage := "distribution of RDDL failed for " + address
+	txID, err = elements.SendToAddress(url, []string{
+		address,
+		`"` + amount + `"`,
+		`""`,
+		`""`,
+		"false",
+		"true",
+		"null",
+		`"unset"`,
+		"false",
+		`"` + conf.ReissuanceAsset + `"`,
+	})
+	if err != nil {
+		errormessage := "distribution of RDDL failed for " + address + ": " + err.Error()
 		err = errors.New(errormessage)
-	} else {
-		var txobj ReissueResult
-		err = json.Unmarshal(stdout.Bytes(), &txobj)
-		if err == nil {
-			txid = txobj.Txid
-		}
+		return
 	}
-	return txid, err
+	return
 }
