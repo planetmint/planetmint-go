@@ -10,6 +10,7 @@ import "planetmintgo/dao/mint_request.proto";
 import "planetmintgo/dao/mint_requests.proto";
 import "planetmintgo/dao/reissuance.proto";
 import "planetmintgo/dao/challenge.proto";
+import "amino/amino.proto";
 
 option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
 
@@ -49,6 +50,12 @@ service Query {
   // Queries a list of GetChallenge items.
   rpc GetChallenge (QueryGetChallengeRequest) returns (QueryGetChallengeResponse) {
     option (google.api.http).get = "/planetmint/planetmint-go/dao/get_challenge/{height}";
+  
+  }
+  
+  // Queries a list of Challenges items.
+  rpc Challenges (QueryChallengesRequest) returns (QueryChallengesResponse) {
+    option (google.api.http).get = "/planetmint/planetmint-go/dao/challenges";
   
   }
 }
@@ -101,5 +108,17 @@ message QueryGetChallengeRequest {
 
 message QueryGetChallengeResponse {
   Challenge challenge = 1;
+}
+
+message QueryChallengesRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryChallengesResponse {
+  repeated Challenge                     challenges  = 1 [
+    (gogoproto.nullable)     = false,
+    (amino.dont_omitempty)   = true
+  ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
