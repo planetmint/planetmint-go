@@ -16,6 +16,8 @@ import (
 	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	elements "github.com/rddl-network/elements-rpc"
+	"github.com/rddl-network/elements-rpc/utils/mocks"
 	"github.com/stretchr/testify/require"
 
 	"github.com/planetmint/planetmint-go/app"
@@ -42,6 +44,9 @@ func New(t *testing.T, configs ...Config) *Network {
 		cfg = configs[0]
 	}
 	validatorTmpDir := t.TempDir()
+
+	// use mock client for testing
+	elements.Client = &mocks.MockClient{}
 
 	// enable application logger in tests
 	appLogger := util.GetAppLogger()
