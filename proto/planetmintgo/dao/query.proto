@@ -11,6 +11,7 @@ import "planetmintgo/dao/mint_requests.proto";
 import "planetmintgo/dao/reissuance.proto";
 import "planetmintgo/dao/challenge.proto";
 import "amino/amino.proto";
+import "planetmintgo/dao/distribution_order.proto";
 
 option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
 
@@ -56,6 +57,11 @@ service Query {
   // Queries a list of Challenges items.
   rpc Challenges (QueryChallengesRequest) returns (QueryChallengesResponse) {
     option (google.api.http).get = "/planetmint/planetmint-go/dao/challenges";
+  }
+  
+  // Queries a list of GetDistribution items.
+  rpc GetDistribution (QueryGetDistributionRequest) returns (QueryGetDistributionResponse) {
+    option (google.api.http).get = "/planetmint/planetmint-go/dao/get_distribution/{lastPopHeight}";
   
   }
 }
@@ -123,5 +129,13 @@ message QueryChallengesResponse {
     (amino.dont_omitempty)   = true
   ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetDistributionRequest {
+  int64 lastPopHeight = 1;
+}
+
+message QueryGetDistributionResponse {
+  DistributionOrder distribution = 1;
 }
 

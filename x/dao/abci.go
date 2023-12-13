@@ -47,6 +47,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 		if err != nil {
 			util.GetAppLogger().Error(ctx, "error while computing the RDDL distribution ", err)
 		}
+		distribution.Proposer = hexProposerAddress
 		util.SendDistributionRequest(ctx, distribution)
 	}
 }
