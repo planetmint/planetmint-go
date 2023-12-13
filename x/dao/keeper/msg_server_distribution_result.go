@@ -21,7 +21,7 @@ func (k msgServer) DistributionResult(goCtx context.Context, msg *types.MsgDistr
 		distribution.InvestorTxID = msg.InvestorTxID
 		err := k.resolveStagedClaims(ctx, distribution.FirstPop, distribution.LastPop)
 		if err != nil {
-			return nil, errorsmod.Wrapf(types.ErrResolvingStagedClaims, " for provieded PoP heights: %d %d", distribution.FirstPop, distribution.LastPop)
+			return nil, errorsmod.Wrapf(types.ErrResolvingStagedClaims, " for provided PoP heights: %d %d", distribution.FirstPop, distribution.LastPop)
 		}
 		k.StoreDistributionOrder(ctx, distribution)
 	} else {

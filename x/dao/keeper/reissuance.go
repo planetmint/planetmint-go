@@ -160,22 +160,3 @@ func (k Keeper) ComputeReIssuanceValue(ctx sdk.Context, startHeight int64, endHe
 	reIssuanceValue = overallAmount
 	return
 }
-
-func (k Keeper) getReissuancesPage(ctx sdk.Context, _ []byte, _ uint64, _ uint64, _ bool, reverse bool) (reissuances []types.Reissuance) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReissuanceBlockHeightKey))
-
-	iterator := store.Iterator(nil, nil)
-	defer iterator.Close()
-	if reverse {
-		iterator = store.ReverseIterator(nil, nil)
-		defer iterator.Close()
-	}
-
-	for ; iterator.Valid(); iterator.Next() {
-		reissuance := iterator.Value()
-		var reissuanceOrg types.Reissuance
-		k.cdc.MustUnmarshal(reissuance, &reissuanceOrg)
-		reissuances = append(reissuances, reissuanceOrg)
-	}
-	return reissuances
-}

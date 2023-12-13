@@ -2,7 +2,6 @@ package util
 
 import (
 	"context"
-	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/planetmint/planetmint-go/config"
@@ -57,16 +56,11 @@ func SendDistributionRequest(goCtx context.Context, distribution daotypes.Distri
 	buildSignBroadcastTx(goCtx, "sending the distribution request", sendingValidatorAddress, msg)
 }
 
-func SendDistributionResult(goCtx context.Context, lastPoP string, daoTxID string, invTxID string, popTxID string) {
+func SendDistributionResult(goCtx context.Context, lastPoP int64, daoTxID string, invTxID string, popTxID string) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
 	GetAppLogger().Info(ctx, "create Distribution Result")
-	iLastPoP, err := strconv.ParseInt(lastPoP, 10, 64)
-	if err != nil {
-		ctx.Logger().Error("Distribution Result: preparation failed ", err.Error())
-		return
-	}
-	msg := daotypes.NewMsgDistributionResult(sendingValidatorAddress, iLastPoP, daoTxID, invTxID, popTxID)
+	msg := daotypes.NewMsgDistributionResult(sendingValidatorAddress, lastPoP, daoTxID, invTxID, popTxID)
 	buildSignBroadcastTx(goCtx, "send distribution result", sendingValidatorAddress, msg)
 }
 

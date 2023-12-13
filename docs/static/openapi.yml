@@ -46739,34 +46739,125 @@ paths:
           format: int64
       tags:
         - Query
-  /planetmint/dao/get_reissuances:
+  /planetmint/dao/mint_requests_by_address/{address}:
     get:
-      summary: Queries a list of GetReissuances items.
-      operationId: PlanetmintgoDaoGetReissuances
+      summary: Queries a list of MintRequestsByAddress items.
+      operationId: PlanetmintgoDaoMintRequestsByAddress
       responses:
         '200':
           description: A successful response.
           schema:
             type: object
             properties:
-              reissuance:
+              mintRequests:
                 type: object
                 properties:
-                  proposer:
+                  Requests:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        beneficiary:
+                          type: string
+                        amount:
+                          type: string
+                          format: uint64
+                        liquidTxHash:
+                          type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /planetmint/dao/params:
+    get:
+      summary: Parameters queries the parameters of the module.
+      operationId: PlanetmintgoDaoParams
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params holds all the parameters of this module.
+                type: object
+                properties:
+                  mint_address:
                     type: string
-                  rawTx:
-                    type: string
-                  txID:
-                    type: string
-                  blockHeight:
-                    type: string
-                    format: int64
-                  firstIncludedPop:
-                    type: string
-                    format: int64
-                  lastIncludedPop:
-                    type: string
-                    format: int64
+            description: >-
+              QueryParamsResponse is response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /planetmint/dao/reissuances:
+    get:
+      summary: Queries a list of Reissuances items.
+      operationId: PlanetmintgoDaoReissuances
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              reissuances:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    proposer:
+                      type: string
+                    rawTx:
+                      type: string
+                    txID:
+                      type: string
+                    blockHeight:
+                      type: string
+                      format: int64
+                    firstIncludedPop:
+                      type: string
+                      format: int64
+                    lastIncludedPop:
+                      type: string
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -46872,31 +46963,62 @@ paths:
           type: boolean
       tags:
         - Query
-  /planetmint/dao/mint_requests_by_address/{address}:
+  /planetmint/planetmint-go/dao/challenges:
     get:
-      summary: Queries a list of MintRequestsByAddress items.
-      operationId: PlanetmintgoDaoMintRequestsByAddress
+      summary: Queries a list of Challenges items.
+      operationId: PlanetmintgoDaoChallenges
       responses:
         '200':
           description: A successful response.
           schema:
             type: object
             properties:
-              mintRequests:
+              challenges:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    initiator:
+                      type: string
+                    challenger:
+                      type: string
+                    challengee:
+                      type: string
+                    height:
+                      type: string
+                      format: int64
+                    success:
+                      type: boolean
+                    finished:
+                      type: boolean
+              pagination:
                 type: object
                 properties:
-                  Requests:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        beneficiary:
-                          type: string
-                        amount:
-                          type: string
-                          format: uint64
-                        liquidTxHash:
-                          type: string
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
         default:
           description: An unexpected error response.
           schema:
@@ -46916,49 +47038,62 @@ paths:
                       type: string
                   additionalProperties: {}
       parameters:
-        - name: address
-          in: path
-          required: true
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
           type: string
-      tags:
-        - Query
-  /planetmint/dao/params:
-    get:
-      summary: Parameters queries the parameters of the module.
-      operationId: PlanetmintgoDaoParams
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              params:
-                description: params holds all the parameters of this module.
-                type: object
-                properties:
-                  mint_address:
-                    type: string
-            description: >-
-              QueryParamsResponse is response type for the Query/Params RPC
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
       tags:
         - Query
   /planetmint/planetmint-go/dao/get_challenge/{height}:
@@ -47007,6 +47142,71 @@ paths:
                   additionalProperties: {}
       parameters:
         - name: height
+          in: path
+          required: true
+          type: string
+          format: int64
+      tags:
+        - Query
+  /planetmint/planetmint-go/dao/get_distribution/{lastPopHeight}:
+    get:
+      summary: Queries a list of GetDistribution items.
+      operationId: PlanetmintgoDaoGetDistribution
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              distribution:
+                type: object
+                properties:
+                  daoAddr:
+                    type: string
+                  daoAmount:
+                    type: string
+                  daoTxID:
+                    type: string
+                  investorAddr:
+                    type: string
+                  investorAmount:
+                    type: string
+                  investorTxID:
+                    type: string
+                  popAddr:
+                    type: string
+                  popAmount:
+                    type: string
+                  popTxID:
+                    type: string
+                  firstPop:
+                    type: string
+                    format: int64
+                  lastPop:
+                    type: string
+                    format: int64
+                  proposer:
+                    type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: lastPopHeight
           in: path
           required: true
           type: string
@@ -76169,6 +76369,53 @@ definitions:
       mint_address:
         type: string
     description: Params defines the parameters for the module.
+  planetmintgo.dao.QueryChallengesResponse:
+    type: object
+    properties:
+      challenges:
+        type: array
+        items:
+          type: object
+          properties:
+            initiator:
+              type: string
+            challenger:
+              type: string
+            challengee:
+              type: string
+            height:
+              type: string
+              format: int64
+            success:
+              type: boolean
+            finished:
+              type: boolean
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
   planetmintgo.dao.QueryGetChallengeResponse:
     type: object
     properties:
@@ -76188,6 +76435,38 @@ definitions:
             type: boolean
           finished:
             type: boolean
+  planetmintgo.dao.QueryGetDistributionResponse:
+    type: object
+    properties:
+      distribution:
+        type: object
+        properties:
+          daoAddr:
+            type: string
+          daoAmount:
+            type: string
+          daoTxID:
+            type: string
+          investorAddr:
+            type: string
+          investorAmount:
+            type: string
+          investorTxID:
+            type: string
+          popAddr:
+            type: string
+          popAmount:
+            type: string
+          popTxID:
+            type: string
+          firstPop:
+            type: string
+            format: int64
+          lastPop:
+            type: string
+            format: int64
+          proposer:
+            type: string
   planetmintgo.dao.QueryGetMintRequestsByHashResponse:
     type: object
     properties:
@@ -76222,53 +76501,6 @@ definitions:
           lastIncludedPop:
             type: string
             format: int64
-  planetmintgo.dao.QueryGetReissuancesResponse:
-    type: object
-    properties:
-      reissuance:
-        type: object
-        properties:
-          proposer:
-            type: string
-          rawTx:
-            type: string
-          txID:
-            type: string
-          blockHeight:
-            type: string
-            format: int64
-          firstIncludedPop:
-            type: string
-            format: int64
-          lastIncludedPop:
-            type: string
-            format: int64
-      pagination:
-        type: object
-        properties:
-          next_key:
-            type: string
-            format: byte
-            description: |-
-              next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently. It will be empty if
-              there are no more results.
-          total:
-            type: string
-            format: uint64
-            title: >-
-              total is total number of results available if
-              PageRequest.count_total
-
-              was set, its value is undefined otherwise
-        description: |-
-          PageResponse is to be embedded in gRPC response messages where the
-          corresponding request message has used PageRequest.
-
-           message SomeResponse {
-                   repeated Bar results = 1;
-                   PageResponse page = 2;
-           }
   planetmintgo.dao.QueryMintRequestsByAddressResponse:
     type: object
     properties:
@@ -76297,6 +76529,55 @@ definitions:
           mint_address:
             type: string
     description: QueryParamsResponse is response type for the Query/Params RPC method.
+  planetmintgo.dao.QueryReissuancesResponse:
+    type: object
+    properties:
+      reissuances:
+        type: array
+        items:
+          type: object
+          properties:
+            proposer:
+              type: string
+            rawTx:
+              type: string
+            txID:
+              type: string
+            blockHeight:
+              type: string
+              format: int64
+            firstIncludedPop:
+              type: string
+              format: int64
+            lastIncludedPop:
+              type: string
+              format: int64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
   planetmintgo.dao.Reissuance:
     type: object
     properties:

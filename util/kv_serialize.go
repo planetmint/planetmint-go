@@ -13,6 +13,12 @@ func SerializeInt64(value int64) []byte {
 	return buf
 }
 
+func DeserializeInt64(value []byte) int64 {
+	integer := binary.BigEndian.Uint64(value)
+	// Subtract 1 because addition in serialization
+	return int64(integer - 1)
+}
+
 func SerializeString(value string) []byte {
 	byteArray := []byte(value)
 	return byteArray
