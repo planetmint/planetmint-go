@@ -10,6 +10,7 @@ import "planetmintgo/dao/mint_request.proto";
 import "planetmintgo/dao/mint_requests.proto";
 import "planetmintgo/dao/reissuance.proto";
 import "planetmintgo/dao/challenge.proto";
+import "amino/amino.proto";
 import "planetmintgo/dao/distribution_order.proto";
 
 option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
@@ -41,9 +42,9 @@ service Query {
   
   }
   
-  // Queries a list of GetReissuances items.
-  rpc GetReissuances (QueryGetReissuancesRequest) returns (QueryGetReissuancesResponse) {
-    option (google.api.http).get = "/planetmint/dao/get_reissuances";
+  // Queries a list of Reissuances items.
+  rpc Reissuances (QueryReissuancesRequest) returns (QueryReissuancesResponse) {
+    option (google.api.http).get = "/planetmint/dao/reissuances";
   
   }
   
@@ -51,6 +52,11 @@ service Query {
   rpc GetChallenge (QueryGetChallengeRequest) returns (QueryGetChallengeResponse) {
     option (google.api.http).get = "/planetmint/planetmint-go/dao/get_challenge/{height}";
   
+  }
+  
+  // Queries a list of Challenges items.
+  rpc Challenges (QueryChallengesRequest) returns (QueryChallengesResponse) {
+    option (google.api.http).get = "/planetmint/planetmint-go/dao/challenges";
   }
   
   // Queries a list of GetDistribution items.
@@ -93,12 +99,15 @@ message QueryGetReissuanceResponse {
   Reissuance reissuance = 1;
 }
 
-message QueryGetReissuancesRequest {
+message QueryReissuancesRequest {
   cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
 
-message QueryGetReissuancesResponse {
-  Reissuance                             reissuance = 1;
+message QueryReissuancesResponse {
+  repeated Reissuance                    reissuances = 1 [
+    (gogoproto.nullable)     = false,
+    (amino.dont_omitempty)   = true
+  ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -108,6 +117,18 @@ message QueryGetChallengeRequest {
 
 message QueryGetChallengeResponse {
   Challenge challenge = 1;
+}
+
+message QueryChallengesRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryChallengesResponse {
+  repeated Challenge                     challenges  = 1 [
+    (gogoproto.nullable)     = false,
+    (amino.dont_omitempty)   = true
+  ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 message QueryGetDistributionRequest {
