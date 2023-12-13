@@ -101,4 +101,5 @@ issues:
         - exhaustive
     - path: x/.*/keeper/query.*\.go
       linters:
+        - dupl
         - paralleltest
