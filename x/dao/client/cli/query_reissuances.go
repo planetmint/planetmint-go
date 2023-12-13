@@ -13,8 +13,8 @@ var _ = strconv.Itoa(0)
 
 func CmdGetReissuances() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get-reissuances",
-		Short: "Query get_reissuances",
+		Use:   "reissuances",
+		Short: "Query reissuances",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -24,7 +24,7 @@ func CmdGetReissuances() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryGetReissuancesRequest{}
+			params := &types.QueryReissuancesRequest{}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
@@ -32,7 +32,7 @@ func CmdGetReissuances() *cobra.Command {
 			}
 			params.Pagination = pageReq
 
-			res, err := queryClient.GetReissuances(cmd.Context(), params)
+			res, err := queryClient.Reissuances(cmd.Context(), params)
 			if err != nil {
 				return err
 			}

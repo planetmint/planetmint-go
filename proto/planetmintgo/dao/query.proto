@@ -41,9 +41,9 @@ service Query {
   
   }
   
-  // Queries a list of GetReissuances items.
-  rpc GetReissuances (QueryGetReissuancesRequest) returns (QueryGetReissuancesResponse) {
-    option (google.api.http).get = "/planetmint/dao/get_reissuances";
+  // Queries a list of Reissuances items.
+  rpc Reissuances (QueryReissuancesRequest) returns (QueryReissuancesResponse) {
+    option (google.api.http).get = "/planetmint/dao/reissuances";
   
   }
   
@@ -93,12 +93,15 @@ message QueryGetReissuanceResponse {
   Reissuance reissuance = 1;
 }
 
-message QueryGetReissuancesRequest {
+message QueryReissuancesRequest {
   cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
 
-message QueryGetReissuancesResponse {
-  Reissuance                             reissuance = 1;
+message QueryReissuancesResponse {
+  repeated Reissuance                    reissuances = 1 [
+    (gogoproto.nullable)     = false,
+    (amino.dont_omitempty)   = true
+  ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
