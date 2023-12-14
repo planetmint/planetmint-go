@@ -324,7 +324,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), conf.StagedDenom)
-	assert.Contains(s.T(), out.String(), "39954337890") // Total supply 5 * 7990867578
+	assert.Contains(s.T(), out.String(), "39954337890") // Total supply 5 * 7990867578 = 39954337890
 
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		aliceAddr.String(),
@@ -332,7 +332,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), conf.StagedDenom)
-	assert.Contains(s.T(), out.String(), "9988584470") // 5 * 1997716894
+	assert.Contains(s.T(), out.String(), "9988584470") // 5 * 1997716894 = 9988584470
 
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		bobAddr.String(),
@@ -340,7 +340,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), conf.StagedDenom)
-	assert.Contains(s.T(), out.String(), "29965753420") // 5 * 5993150684
+	assert.Contains(s.T(), out.String(), "29965753420") // 5 * 5993150684 = 29965753420
 
 	// send ReissuanceProposal
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdReissueRDDLProposal(), []string{
@@ -408,7 +408,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), conf.ClaimDenom)
-	assert.Contains(s.T(), out.String(), "23972602734") // Total supply 3 * 5993150684 + 3 * 1997716894
+	assert.Contains(s.T(), out.String(), "0") // Total supply 3 * 5993150684 + 3 * 1997716894 = 23972602734
 
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		aliceAddr.String(),
@@ -416,7 +416,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), conf.ClaimDenom)
-	assert.Contains(s.T(), out.String(), "5993150682") // 3 * 1997716894
+	assert.Contains(s.T(), out.String(), "0") // 3 * 1997716894 = 5993150682
 
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		bobAddr.String(),
@@ -424,5 +424,5 @@ func (s *E2ETestSuite) TestPoPResult() {
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), conf.ClaimDenom)
-	assert.Contains(s.T(), out.String(), "17979452052") // 3 * 5993150684
+	assert.Contains(s.T(), out.String(), "0") // 3 * 5993150684 = 17979452052
 }
