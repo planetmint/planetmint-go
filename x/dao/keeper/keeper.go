@@ -6,6 +6,7 @@ import (
 	"cosmossdk.io/math"
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/store/prefix"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -13,6 +14,7 @@ import (
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/lib"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
@@ -142,4 +144,36 @@ func (k Keeper) processBalances(ctx sdk.Context, balances map[string]math.Int, t
 		}
 	}
 	return nil
+}
+
+func (k Keeper) SelectPopParticipants(ctx sdk.Context) (challenger string, challengee string) {
+	cfg := config.GetConfig()
+	libConfig := lib.GetConfig()
+	// get last pop
+	// get account & account number
+	// iterate accounts starting with last pop account number
+	// check if account is machine until 2 machines selected
+	lastPopHeight := ctx.BlockHeight() - int64(cfg.PopEpochs)
+	lastPop, found := k.LookupChallenge(ctx, lastPopHeight)
+	if !found {
+		return
+	}
+
+	lastAccountAddr := sdk.MustAccAddressFromBech32(lastPop.Challengee)
+	lastAccount := k.accountKeeper.GetAccount(ctx, lastAccountAddr)
+
+	store := ctx.KVStore(sdk.NewKVStoreKey(authtypes.StoreKey))
+	accountsStore := prefix.NewStore(store, authtypes.AccountNumberStoreKeyPrefix)
+	iterator := accountsStore.Iterator(authtypes.AccountNumberStoreKey(lastAccount.GetAccountNumber()), nil)
+	defer iterator.Close()
+
+	var participants []authtypes.AccountI
+	for ; iterator.Valid(); iterator.Next() {
+		var account authtypes.AccountI
+		libConfig.EncodingConfig.Marshaler.UnmarshalInterface(iterator.Value(), &account)
+		// TODO: check if account is machine
+		participants = append(participants, account)
+	}
+
+	return
 }
