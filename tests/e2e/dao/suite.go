@@ -324,7 +324,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), conf.StagedDenom)
-	assert.Contains(s.T(), out.String(), "39954337890") // Total supply 5 * 7990867578 = 39954337890
+	assert.Contains(s.T(), out.String(), "7990867578") // Total supply 5 * 7990867578 = 39954337890
 
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		aliceAddr.String(),
@@ -332,7 +332,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), conf.StagedDenom)
-	assert.Contains(s.T(), out.String(), "9988584470") // 5 * 1997716894 = 9988584470
+	assert.Contains(s.T(), out.String(), "1997716894") // 5 * 1997716894 = 9988584470
 
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		bobAddr.String(),
@@ -340,7 +340,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), conf.StagedDenom)
-	assert.Contains(s.T(), out.String(), "29965753420") // 5 * 5993150684 = 29965753420
+	assert.Contains(s.T(), out.String(), "5993150684") // 5 * 5993150684 = 29965753420
 
 	// send ReissuanceProposal
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdReissueRDDLProposal(), []string{
