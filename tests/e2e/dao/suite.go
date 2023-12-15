@@ -182,7 +182,7 @@ func (s *E2ETestSuite) TestMintToken() {
 	s.Require().Equal(int(0), int(txResponse.Code))
 
 	s.Require().NoError(s.network.WaitForNextBlock())
-	rawLog, err := clitestutil.GetRawLogFromTxResponse(val, txResponse)
+	rawLog, err := clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().NoError(err)
 
 	assert.Contains(s.T(), rawLog, "planetmintgo.dao.MsgMintToken")
@@ -222,9 +222,7 @@ func (s *E2ETestSuite) TestMintToken() {
 		string(mrJSON),
 	}
 
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdMintToken(), args)
-	s.Require().NoError(err)
-
+	out, _ = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdMintToken(), args)
 	txResponse, err = clitestutil.GetTxResponseFromOut(out)
 	s.Require().NoError(err)
 	s.Require().Equal(int(2), int(txResponse.Code))
