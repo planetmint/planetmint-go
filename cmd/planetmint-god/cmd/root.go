@@ -359,6 +359,7 @@ func initAppConfig(clientCtx client.Context) (string, interface{}) {
 	type CustomAppConfig struct {
 		serverconfig.Config
 		PlmntConfig planetmintconfig.Config
+		RPCConfig   lib.Config
 	}
 
 	// Optionally allow the chain developer to overwrite the SDK's default
@@ -381,9 +382,13 @@ func initAppConfig(clientCtx client.Context) (string, interface{}) {
 	plmntCfg := planetmintconfig.GetConfig()
 	plmntCfg.SetRoot(clientCtx.HomeDir)
 
+	rpcCfg := lib.GetConfig()
+	rpcCfg.SetChainID(clientCtx.ChainID)
+
 	customAppConfig := CustomAppConfig{
 		Config:      *srvCfg,
 		PlmntConfig: *plmntCfg,
+		RPCConfig:   *rpcCfg,
 	}
 	customAppTemplate := serverconfig.DefaultConfigTemplate + planetmintconfig.DefaultConfigTemplate
 

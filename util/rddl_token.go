@@ -1,8 +1,12 @@
 package util
 
-import "strconv"
+import (
+	"strconv"
+)
 
-var factor = 100000000.0
+const (
+	factor = 100000000.0
+)
 
 func RDDLToken2Uint(amount float64) uint64 {
 	return uint64(amount * factor)

@@ -6,6 +6,7 @@ import (
 
 	"github.com/planetmint/planetmint-go/config"
 	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
+	"github.com/planetmint/planetmint-go/util"
 	"github.com/stretchr/testify/assert"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -79,9 +80,9 @@ func TestReissuanceValueComputation(t *testing.T) {
 	t.Parallel()
 	popsPerEpoch := float64(config.GetConfig().PopEpochs)
 	assert.Equal(t, "998.69000000", daokeeper.GetReissuanceAsStringValue(1))
-	assert.Equal(t, "499.34000000", daokeeper.GetReissuanceAsStringValue(int64(daokeeper.PopsPerCycle*popsPerEpoch*1+1)))
-	assert.Equal(t, "249.67000000", daokeeper.GetReissuanceAsStringValue(int64(daokeeper.PopsPerCycle*popsPerEpoch*2+1)))
-	assert.Equal(t, "124.83000000", daokeeper.GetReissuanceAsStringValue(int64(daokeeper.PopsPerCycle*popsPerEpoch*3+1)))
-	assert.Equal(t, "62.42000000", daokeeper.GetReissuanceAsStringValue(int64(daokeeper.PopsPerCycle*popsPerEpoch*4+1)))
-	assert.Equal(t, "0.0", daokeeper.GetReissuanceAsStringValue(int64(daokeeper.PopsPerCycle*popsPerEpoch*5+1)))
+	assert.Equal(t, "499.34000000", daokeeper.GetReissuanceAsStringValue(int64(util.PopsPerCycle*popsPerEpoch*1+1)))
+	assert.Equal(t, "249.67000000", daokeeper.GetReissuanceAsStringValue(int64(util.PopsPerCycle*popsPerEpoch*2+1)))
+	assert.Equal(t, "124.83000000", daokeeper.GetReissuanceAsStringValue(int64(util.PopsPerCycle*popsPerEpoch*3+1)))
+	assert.Equal(t, "62.42000000", daokeeper.GetReissuanceAsStringValue(int64(util.PopsPerCycle*popsPerEpoch*4+1)))
+	assert.Equal(t, "0.0", daokeeper.GetReissuanceAsStringValue(int64(util.PopsPerCycle*popsPerEpoch*5+1)))
 }
