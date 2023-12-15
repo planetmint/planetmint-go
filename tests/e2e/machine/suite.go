@@ -55,11 +55,8 @@ func (s *E2ETestSuite) SetupSuite() {
 	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
 	s.Require().NoError(err)
 
-	txResponse, err := clitestutil.GetTxResponseFromOut(out)
-	s.Require().NoError(err)
-
 	s.Require().NoError(s.network.WaitForNextBlock())
-	rawLog, err := clitestutil.GetRawLogFromTxResponse(val, txResponse)
+	rawLog, err := clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().NoError(err)
 
 	assert.Contains(s.T(), rawLog, "cosmos.bank.v1beta1.MsgSend")
@@ -90,11 +87,8 @@ func (s *E2ETestSuite) TestAttestMachine() {
 	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdRegisterTrustAnchor(), args)
 	s.Require().NoError(err)
 
-	txResponse, err := clitestutil.GetTxResponseFromOut(out)
-	s.Require().NoError(err)
-
 	s.Require().NoError(s.network.WaitForNextBlock())
-	rawLog, err := clitestutil.GetRawLogFromTxResponse(val, txResponse)
+	rawLog, err := clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().NoError(err)
 
 	assert.Contains(s.T(), rawLog, "planetmintgo.machine.MsgRegisterTrustAnchor")
@@ -118,11 +112,8 @@ func (s *E2ETestSuite) TestAttestMachine() {
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
 	s.Require().NoError(err)
 
-	txResponse, err = clitestutil.GetTxResponseFromOut(out)
-	s.Require().NoError(err)
-
 	s.Require().NoError(s.network.WaitForNextBlock())
-	rawLog, err = clitestutil.GetRawLogFromTxResponse(val, txResponse)
+	rawLog, err = clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().NoError(err)
 
 	assert.Contains(s.T(), rawLog, "planetmintgo.machine.MsgAttestMachine")
@@ -157,9 +148,7 @@ func (s *E2ETestSuite) TestInvalidAttestMachine() {
 		string(machineJSON),
 	}
 
-	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
-	s.Require().NoError(err)
-
+	out, _ := clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
 	txResponse, err := clitestutil.GetTxResponseFromOut(out)
 	s.Require().NoError(err)
 	s.Require().Equal(int(txResponse.Code), int(4))
@@ -177,9 +166,7 @@ func (s *E2ETestSuite) TestInvalidAttestMachine() {
 		string(machineJSON),
 	}
 
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
-	s.Require().NoError(err)
-
+	out, _ = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
 	txResponse, err = clitestutil.GetTxResponseFromOut(out)
 	s.Require().NoError(err)
 	s.Require().Equal(int(txResponse.Code), int(3))

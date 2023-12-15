@@ -3,8 +3,10 @@ package cli
 import (
 	"context"
 	"encoding/json"
-	"github.com/planetmint/planetmint-go/testutil"
+	"errors"
 	"regexp"
+
+	"github.com/planetmint/planetmint-go/testutil"
 
 	"github.com/cosmos/cosmos-sdk/testutil/network"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -26,6 +28,16 @@ func ExecTestCLICmd(clientCtx client.Context, cmd *cobra.Command, extraArgs []st
 	ctx = context.WithValue(ctx, client.ClientContextKey, &clientCtx)
 
 	if err := cmd.ExecuteContext(ctx); err != nil {
+		return out, err
+	}
+
+	txResponse, err := GetTxResponseFromOut(out)
+	if err != nil {
+		return out, err
+	}
+
+	if txResponse.Code != 0 {
+		err = errors.New(txResponse.RawLog)
 		return out, err
 	}
 
@@ -54,13 +66,17 @@ func GetTxResponseFromOut(out testutil.BufferWriter) (sdk.TxResponse, error) {
 	return txResponse, nil
 }
 
-// GetRawLogFromTxResponse queries the TxHash of txResponse from the chain and returns the RawLog from the answer.
-func GetRawLogFromTxResponse(val *network.Validator, txResponse sdk.TxResponse) (string, error) {
+// GetRawLogFromTxOut queries the TxHash of out from the chain and returns the RawLog from the answer.
+func GetRawLogFromTxOut(val *network.Validator, out testutil.BufferWriter) (string, error) {
+	txResponse, err := GetTxResponseFromOut(out)
+	if err != nil {
+		return "", err
+	}
 	args := []string{
 		txResponse.TxHash,
 	}
 
-	out, err := ExecTestCLICmd(val.ClientCtx, authcmd.QueryTxCmd(), args)
+	out, err = ExecTestCLICmd(val.ClientCtx, authcmd.QueryTxCmd(), args)
 	if err != nil {
 		return "", err
 	}
