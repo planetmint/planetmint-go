@@ -14,7 +14,6 @@ import (
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/planetmint/planetmint-go/config"
-	"github.com/planetmint/planetmint-go/lib"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
@@ -27,10 +26,12 @@ type (
 		challengeKey          storetypes.StoreKey
 		mintRequestHashKey    storetypes.StoreKey
 		mintRequestAddressKey storetypes.StoreKey
+		accountKeeperKey      storetypes.StoreKey
 		paramstore            paramtypes.Subspace
 
 		bankKeeper    types.BankKeeper
 		accountKeeper types.AccountKeeper
+		machineKeeper types.MachineKeeper
 		authority     string
 	}
 )
@@ -42,10 +43,12 @@ func NewKeeper(
 	challengeKey storetypes.StoreKey,
 	mintRequestHashKey storetypes.StoreKey,
 	mintRequestAddressKey storetypes.StoreKey,
+	accountKeeperKey storetypes.StoreKey,
 	ps paramtypes.Subspace,
 
 	bankKeeper types.BankKeeper,
 	accountKeeper types.AccountKeeper,
+	machineKeeper types.MachineKeeper,
 	authority string,
 ) *Keeper {
 	// set KeyTable if it has not already been set
@@ -60,10 +63,12 @@ func NewKeeper(
 		challengeKey:          challengeKey,
 		mintRequestHashKey:    mintRequestHashKey,
 		mintRequestAddressKey: mintRequestAddressKey,
+		accountKeeperKey:      accountKeeperKey,
 		paramstore:            ps,
 
 		bankKeeper:    bankKeeper,
 		accountKeeper: accountKeeper,
+		machineKeeper: machineKeeper,
 		authority:     authority,
 	}
 }
@@ -148,32 +153,59 @@ func (k Keeper) processBalances(ctx sdk.Context, balances map[string]math.Int, t
 
 func (k Keeper) SelectPopParticipants(ctx sdk.Context) (challenger string, challengee string) {
 	cfg := config.GetConfig()
-	libConfig := lib.GetConfig()
-	// get last pop
-	// get account & account number
-	// iterate accounts starting with last pop account number
-	// check if account is machine until 2 machines selected
+
+	var startAccountNumber uint64 = 0
+
 	lastPopHeight := ctx.BlockHeight() - int64(cfg.PopEpochs)
 	lastPop, found := k.LookupChallenge(ctx, lastPopHeight)
-	if !found {
+	if found {
+		lastAccountAddr := sdk.MustAccAddressFromBech32(lastPop.Challengee)
+		lastAccount := k.accountKeeper.GetAccount(ctx, lastAccountAddr)
+		startAccountNumber = lastAccount.GetAccountNumber() + 1
+	}
+
+	store := ctx.KVStore(k.accountKeeperKey)
+	accountsStore := prefix.NewStore(store, authtypes.AccountNumberStoreKeyPrefix)
+	iterator := accountsStore.Iterator(sdk.Uint64ToBigEndian(startAccountNumber), nil)
+	defer iterator.Close()
+
+	var participants []sdk.AccAddress
+	for ; iterator.Valid(); iterator.Next() {
+		participant := sdk.AccAddress(iterator.Value())
+		_, found := k.machineKeeper.GetMachineIndexByPubKey(ctx, participant.String())
+		if found {
+			participants = append(participants, participant)
+		}
+
+		if len(participants) == 2 {
+			break
+		}
+	}
+
+	if len(participants) != 2 {
+		iterator := accountsStore.Iterator(nil, sdk.Uint64ToBigEndian(startAccountNumber))
+		defer iterator.Close()
+
+		for ; iterator.Valid(); iterator.Next() {
+			participant := sdk.AccAddress(iterator.Value())
+			_, found := k.machineKeeper.GetMachineIndexByPubKey(ctx, participant.String())
+			if found {
+				participants = append(participants, participant)
+			}
+
+			if len(participants) == 2 {
+				break
+			}
+		}
+	}
+
+	// Not enough participants
+	if len(participants) != 2 {
 		return
 	}
 
-	lastAccountAddr := sdk.MustAccAddressFromBech32(lastPop.Challengee)
-	lastAccount := k.accountKeeper.GetAccount(ctx, lastAccountAddr)
-
-	store := ctx.KVStore(sdk.NewKVStoreKey(authtypes.StoreKey))
-	accountsStore := prefix.NewStore(store, authtypes.AccountNumberStoreKeyPrefix)
-	iterator := accountsStore.Iterator(authtypes.AccountNumberStoreKey(lastAccount.GetAccountNumber()), nil)
-	defer iterator.Close()
-
-	var participants []authtypes.AccountI
-	for ; iterator.Valid(); iterator.Next() {
-		var account authtypes.AccountI
-		libConfig.EncodingConfig.Marshaler.UnmarshalInterface(iterator.Value(), &account)
-		// TODO: check if account is machine
-		participants = append(participants, account)
-	}
+	challenger = participants[0].String()
+	challengee = participants[1].String()
 
 	return
 }

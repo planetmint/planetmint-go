@@ -24,8 +24,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	hexProposerAddress := hex.EncodeToString(proposerAddress)
 	if isPopHeight(req.Header.GetHeight()) {
 		// select PoP participants
-		challenger := ""
-		challengee := ""
+		challenger, challengee := k.SelectPopParticipants(ctx)
 
 		// Issue PoP
 		util.SendInitPoP(ctx, hexProposerAddress, challenger, challengee, currentBlockHeight)

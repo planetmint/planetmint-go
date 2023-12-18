@@ -568,10 +568,12 @@ func New(
 		keys[daomoduletypes.ChallengeKey],
 		keys[daomoduletypes.MintRequestHashKey],
 		keys[daomoduletypes.MintRequestAddressKey],
+		keys[authtypes.StoreKey],
 		app.GetSubspace(daomoduletypes.ModuleName),
 
 		app.BankKeeper,
 		app.AccountKeeper,
+		app.MachineKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 	daoModule := daomodule.NewAppModule(appCodec, app.DaoKeeper, app.AccountKeeper, app.BankKeeper)
