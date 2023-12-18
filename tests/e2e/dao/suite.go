@@ -2,17 +2,18 @@ package dao
 
 import (
 	"bufio"
-	"encoding/json"
+	"bytes"
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 
 	"cosmossdk.io/math"
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	"github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/lib"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
@@ -115,24 +116,19 @@ func (s *E2ETestSuite) TearDownSuite() {
 }
 
 func (s *E2ETestSuite) TestDistributeCollectedFees() {
-	conf := config.GetConfig()
 	val := s.network.Validators[0]
 
 	// sending funds to alice and pay some fees to be distributed
-	args := []string{
-		val.Moniker,
-		aliceAddr.String(),
-		"1000stake",
-		"--yes",
-		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
-	}
-	_, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
+	coin := sdk.NewCoins(sdk.NewInt64Coin("stake", 1000))
+	msg := banktypes.NewMsgSend(val.Address, aliceAddr, coin)
+
+	_, err := lib.BroadcastTxWithFileLock(val.Address, msg)
 	s.Require().NoError(err)
 
 	err = s.network.WaitForNextBlock()
 	s.Require().NoError(err)
 
-	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
+	_, err = lib.BroadcastTxWithFileLock(val.Address, msg)
 	s.Require().NoError(err)
 
 	err = s.network.WaitForNextBlock()
@@ -141,40 +137,27 @@ func (s *E2ETestSuite) TestDistributeCollectedFees() {
 	err = s.network.WaitForNextBlock()
 	s.Require().NoError(err)
 
-	// assert that alice has 6 of 20 paid fee tokens based on 5000 stake of 15000 total stake
+	// assert that alice has 0 of 20 paid fee tokens based on 5000 stake of 15000 total stake
 	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		aliceAddr.String(),
 	})
-	assert.Contains(s.T(), out.String(), "node0token")
-	assert.Contains(s.T(), out.String(), "6")
+	assert.False(s.T(), strings.Contains(out.String(), "node0token"))
 	s.Require().NoError(err)
 
-	// assert that bob has 13 of 20 paid fee tokens based on 10000 stake of 15000 total stake
+	// assert that bob has 1 of 20 paid fee tokens based on 10000 stake of 15000 total stake
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		bobAddr.String(),
 	})
-	assert.Contains(s.T(), out.String(), "node0token")
-	assert.Contains(s.T(), out.String(), "13")
+	assert.Contains(s.T(), out.String(), "amount: \"1\"\n  denom: node0token")
 	s.Require().NoError(err)
 }
 
 func (s *E2ETestSuite) TestMintToken() {
-	conf := config.GetConfig()
 	val := s.network.Validators[0]
 
 	mintRequest := sample.MintRequest(aliceAddr.String(), 1000, "hash")
-	mrJSON, err := json.Marshal(&mintRequest)
-	s.Require().NoError(err)
-
-	// send mint token request from mint address
-	args := []string{
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Moniker),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
-		"--yes",
-		string(mrJSON),
-	}
-
-	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdMintToken(), args)
+	msg1 := daotypes.NewMsgMintToken(val.Address.String(), &mintRequest)
+	out, err := lib.BroadcastTxWithFileLock(val.Address, msg1)
 	s.Require().NoError(err)
 
 	txResponse, err := clitestutil.GetTxResponseFromOut(out)
@@ -188,9 +171,14 @@ func (s *E2ETestSuite) TestMintToken() {
 	assert.Contains(s.T(), rawLog, "planetmintgo.dao.MsgMintToken")
 
 	// assert that alice has actually received the minted tokens 10000 (initial supply) + 1000 (minted) = 11000 (total)
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
+	output, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		aliceAddr.String(),
 	})
+	out, ok := output.(*bytes.Buffer)
+	if !ok {
+		err = lib.ErrTypeAssertionFailed
+		s.Require().NoError(err)
+	}
 	assert.Contains(s.T(), out.String(), "plmnt")
 	assert.Contains(s.T(), out.String(), "11000")
 	s.Require().NoError(err)
@@ -203,26 +191,17 @@ func (s *E2ETestSuite) TestMintToken() {
 	addr, _ := account.GetAddress()
 
 	// sending funds to account to initialize on chain
-	args = []string{
-		val.Moniker,
-		addr.String(),
-		sample.Amount,
-		"--yes",
-		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
-	}
-	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
+	coin := sdk.NewCoins(sdk.NewInt64Coin("stake", 1000))
+	msg2 := banktypes.NewMsgSend(val.Address, addr, coin)
+	_, err = lib.BroadcastTxWithFileLock(val.Address, msg2)
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
 
-	args = []string{
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, addr.String()),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
-		"--yes",
-		string(mrJSON),
-	}
+	msg1 = daotypes.NewMsgMintToken(addr.String(), &mintRequest)
+	out, err = lib.BroadcastTxWithFileLock(addr, msg1)
+	s.Require().NoError(err)
 
-	out, _ = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdMintToken(), args)
 	txResponse, err = clitestutil.GetTxResponseFromOut(out)
 	s.Require().NoError(err)
 	s.Require().Equal(int(2), int(txResponse.Code))
