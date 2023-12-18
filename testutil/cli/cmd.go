@@ -72,6 +72,10 @@ func GetRawLogFromTxOut(val *network.Validator, out testutil.BufferWriter) (stri
 	if err != nil {
 		return "", err
 	}
+	if txResponse.Code != 0 {
+		err = errors.New(txResponse.RawLog)
+		return "", err
+	}
 	args := []string{
 		txResponse.TxHash,
 	}

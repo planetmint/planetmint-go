@@ -2,17 +2,18 @@ package dao
 
 import (
 	"bufio"
-	"encoding/json"
+	"bytes"
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 
 	"cosmossdk.io/math"
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	"github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/lib"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
@@ -115,24 +116,19 @@ func (s *E2ETestSuite) TearDownSuite() {
 }
 
 func (s *E2ETestSuite) TestDistributeCollectedFees() {
-	conf := config.GetConfig()
 	val := s.network.Validators[0]
 
 	// sending funds to alice and pay some fees to be distributed
-	args := []string{
-		val.Moniker,
-		aliceAddr.String(),
-		"1000stake",
-		"--yes",
-		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
-	}
-	_, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
+	coin := sdk.NewCoins(sdk.NewInt64Coin("stake", 1000))
+	msg := banktypes.NewMsgSend(val.Address, aliceAddr, coin)
+
+	_, err := lib.BroadcastTxWithFileLock(val.Address, msg)
 	s.Require().NoError(err)
 
 	err = s.network.WaitForNextBlock()
 	s.Require().NoError(err)
 
-	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
+	_, err = lib.BroadcastTxWithFileLock(val.Address, msg)
 	s.Require().NoError(err)
 
 	err = s.network.WaitForNextBlock()
@@ -141,40 +137,27 @@ func (s *E2ETestSuite) TestDistributeCollectedFees() {
 	err = s.network.WaitForNextBlock()
 	s.Require().NoError(err)
 
-	// assert that alice has 6 of 20 paid fee tokens based on 5000 stake of 15000 total stake
+	// assert that alice has 0 of 20 paid fee tokens based on 5000 stake of 15000 total stake
 	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		aliceAddr.String(),
 	})
-	assert.Contains(s.T(), out.String(), "node0token")
-	assert.Contains(s.T(), out.String(), "6")
+	assert.False(s.T(), strings.Contains(out.String(), "node0token"))
 	s.Require().NoError(err)
 
-	// assert that bob has 13 of 20 paid fee tokens based on 10000 stake of 15000 total stake
+	// assert that bob has 1 of 20 paid fee tokens based on 10000 stake of 15000 total stake
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		bobAddr.String(),
 	})
-	assert.Contains(s.T(), out.String(), "node0token")
-	assert.Contains(s.T(), out.String(), "13")
+	assert.Contains(s.T(), out.String(), "amount: \"1\"\n  denom: node0token")
 	s.Require().NoError(err)
 }
 
 func (s *E2ETestSuite) TestMintToken() {
-	conf := config.GetConfig()
 	val := s.network.Validators[0]
 
 	mintRequest := sample.MintRequest(aliceAddr.String(), 1000, "hash")
-	mrJSON, err := json.Marshal(&mintRequest)
-	s.Require().NoError(err)
-
-	// send mint token request from mint address
-	args := []string{
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Moniker),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
-		"--yes",
-		string(mrJSON),
-	}
-
-	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdMintToken(), args)
+	msg1 := daotypes.NewMsgMintToken(val.Address.String(), &mintRequest)
+	out, err := lib.BroadcastTxWithFileLock(val.Address, msg1)
 	s.Require().NoError(err)
 
 	txResponse, err := clitestutil.GetTxResponseFromOut(out)
@@ -188,9 +171,14 @@ func (s *E2ETestSuite) TestMintToken() {
 	assert.Contains(s.T(), rawLog, "planetmintgo.dao.MsgMintToken")
 
 	// assert that alice has actually received the minted tokens 10000 (initial supply) + 1000 (minted) = 11000 (total)
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
+	output, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		aliceAddr.String(),
 	})
+	out, ok := output.(*bytes.Buffer)
+	if !ok {
+		err = lib.ErrTypeAssertionFailed
+		s.Require().NoError(err)
+	}
 	assert.Contains(s.T(), out.String(), "plmnt")
 	assert.Contains(s.T(), out.String(), "11000")
 	s.Require().NoError(err)
@@ -203,26 +191,17 @@ func (s *E2ETestSuite) TestMintToken() {
 	addr, _ := account.GetAddress()
 
 	// sending funds to account to initialize on chain
-	args = []string{
-		val.Moniker,
-		addr.String(),
-		sample.Amount,
-		"--yes",
-		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
-	}
-	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
+	coin := sdk.NewCoins(sdk.NewInt64Coin("stake", 1000))
+	msg2 := banktypes.NewMsgSend(val.Address, addr, coin)
+	_, err = lib.BroadcastTxWithFileLock(val.Address, msg2)
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
 
-	args = []string{
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, addr.String()),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
-		"--yes",
-		string(mrJSON),
-	}
+	msg1 = daotypes.NewMsgMintToken(addr.String(), &mintRequest)
+	out, err = lib.BroadcastTxWithFileLock(addr, msg1)
+	s.Require().NoError(err)
 
-	out, _ = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdMintToken(), args)
 	txResponse, err = clitestutil.GetTxResponseFromOut(out)
 	s.Require().NoError(err)
 	s.Require().Equal(int(2), int(txResponse.Code))
@@ -285,144 +264,107 @@ func (s *E2ETestSuite) TestReissuance() {
 	s.Require().NoError(err)
 }
 
-// disabled due to indeterministic behaviour.
-// TODO can be reintegrated asap  clitestutil.ExecTestCLICmd(val.ClientCtx supports sequence locking
-// func (s *E2ETestSuite) TestPoPResult() {
-// 	conf := config.GetConfig()
-// 	conf.PopEpochs = 1
-// 	val := s.network.Validators[0]
+func (s *E2ETestSuite) TestPoPResult() {
+	conf := config.GetConfig()
+	conf.PopEpochs = 5
+	val := s.network.Validators[0]
 
-// 	// send PoP results
-// 	challenges := make([]daotypes.Challenge, 5)
-// 	for i := range challenges {
-// 		blockHeight := (i + 1) * config.GetConfig().PopEpochs
-// 		challenges[i].Height = int64(blockHeight)
-// 		challenges[i].Initiator = val.Address.String()
-// 		challenges[i].Challenger = aliceAddr.String()
-// 		challenges[i].Challengee = bobAddr.String()
-// 		challenges[i].Success = true
-// 		challenges[i].Finished = true
+	// send PoP results
+	challenges := make([]daotypes.Challenge, 5)
+	for i := range challenges {
+		blockHeight := (i + 1) * config.GetConfig().PopEpochs
+		challenges[i].Height = int64(blockHeight)
+		challenges[i].Initiator = val.Address.String()
+		challenges[i].Challenger = aliceAddr.String()
+		challenges[i].Challengee = bobAddr.String()
+		challenges[i].Success = true
+		challenges[i].Finished = true
 
-// 		chJSON, err := json.Marshal(&challenges[i])
-// 		s.Require().NoError(err)
+		msg := daotypes.NewMsgReportPopResult(val.Address.String(), &challenges[i])
+		_, err := lib.BroadcastTxWithFileLock(val.Address, msg)
+		s.Require().NoError(err)
+		s.Require().NoError(s.network.WaitForNextBlock())
+	}
 
-// 		args := []string{
-// 			fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Moniker),
-// 			fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
-// 			"--yes",
-// 			string(chJSON),
-// 		}
+	// check balance for stagedcrddl
+	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetCmdQueryTotalSupply(), []string{
+		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.StagedDenom),
+	})
+	s.Require().NoError(err)
+	assert.Contains(s.T(), out.String(), conf.StagedDenom)
+	assert.Contains(s.T(), out.String(), "39954337890") // Total supply 5 * 7990867578 = 39954337890
 
-// 		_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdReportPopResult(), args)
-// 		s.Require().NoError(err)
-// 		s.Require().NoError(s.network.WaitForNextBlock())
-// 	}
+	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
+		aliceAddr.String(),
+		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.StagedDenom),
+	})
+	s.Require().NoError(err)
+	assert.Contains(s.T(), out.String(), conf.StagedDenom)
+	assert.Contains(s.T(), out.String(), "9988584470") // 5 * 1997716894 = 9988584470
 
-// 	// check balance for stagedcrddl
-// 	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetCmdQueryTotalSupply(), []string{
-// 		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.StagedDenom),
-// 	})
-// 	s.Require().NoError(err)
-// 	assert.Contains(s.T(), out.String(), conf.StagedDenom)
-// 	assert.Contains(s.T(), out.String(), "39954337890") // Total supply 5 * 7990867578 = 39954337890
+	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
+		bobAddr.String(),
+		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.StagedDenom),
+	})
+	s.Require().NoError(err)
+	assert.Contains(s.T(), out.String(), conf.StagedDenom)
+	assert.Contains(s.T(), out.String(), "29965753420") // 5 * 5993150684 = 29965753420
 
-// 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
-// 		aliceAddr.String(),
-// 		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.StagedDenom),
-// 	})
-// 	s.Require().NoError(err)
-// 	assert.Contains(s.T(), out.String(), conf.StagedDenom)
-// 	assert.Contains(s.T(), out.String(), "9988584470") // 5 * 1997716894 = 9988584470
+	// send ReissuanceProposal
+	msg1 := daotypes.NewMsgReissueRDDLProposal(val.Address.String(), aliceAddr.String(),
+		"reissueasset 7add40beb27df701e02ee85089c5bc0021bc813823fedb5f1dcb5debda7f3da9 2996.07000000",
+		challenges[4].Height, challenges[0].Height, challenges[2].Height)
+	_, err = lib.BroadcastTxWithFileLock(val.Address, msg1)
+	s.Require().NoError(err)
+	s.Require().NoError(s.network.WaitForNextBlock())
 
-// 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
-// 		bobAddr.String(),
-// 		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.StagedDenom),
-// 	})
-// 	s.Require().NoError(err)
-// 	assert.Contains(s.T(), out.String(), conf.StagedDenom)
-// 	assert.Contains(s.T(), out.String(), "29965753420") // 5 * 5993150684 = 29965753420
+	// send ReissuanceResult
+	msg2 := daotypes.NewMsgReissueRDDLResult(val.Address.String(), aliceAddr.String(), "TxID", challenges[4].Height)
+	_, err = lib.BroadcastTxWithFileLock(val.Address, msg2)
+	s.Require().NoError(err)
+	s.Require().NoError(s.network.WaitForNextBlock())
 
-// 	// send ReissuanceProposal
-// 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdReissueRDDLProposal(), []string{
-// 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Moniker),
-// 		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
-// 		"--yes",
-// 		aliceAddr.String(),
-// 		"reissueasset 7add40beb27df701e02ee85089c5bc0021bc813823fedb5f1dcb5debda7f3da9 2996.07000000",
-// 		strconv.FormatInt(challenges[4].Height, 10),
-// 		strconv.FormatInt(challenges[0].Height, 10),
-// 		strconv.FormatInt(challenges[2].Height, 10),
-// 	})
-// 	s.Require().NoError(err)
-// 	s.Require().NoError(s.network.WaitForNextBlock())
+	// send DistributionRequest
+	distributionOrder := daotypes.DistributionOrder{
+		Proposer:     aliceAddr.String(),
+		FirstPop:     challenges[0].Height,
+		LastPop:      challenges[2].Height,
+		DaoTxID:      "DaoTxID",
+		PopTxID:      "PoPTxID",
+		InvestorTxID: "InvestorTxID",
+	}
+	msg3 := daotypes.NewMsgDistributionRequest(val.Address.String(), &distributionOrder)
+	_, err = lib.BroadcastTxWithFileLock(val.Address, msg3)
+	s.Require().NoError(err)
+	s.Require().NoError(s.network.WaitForNextBlock())
 
-// 	// send ReissuanceResult
-// 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdReissueRDDLResult(), []string{
-// 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Moniker),
-// 		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
-// 		"--yes",
-// 		aliceAddr.String(),
-// 		"TxID",
-// 		strconv.FormatInt(challenges[4].Height, 10),
-// 	})
-// 	s.Require().NoError(err)
-// 	s.Require().NoError(s.network.WaitForNextBlock())
+	// send DistributionResult
+	msg4 := daotypes.NewMsgDistributionResult(val.Address.String(), challenges[2].Height, "DaoTxID", "InvestorTxID", "PoPTxID")
+	_, err = lib.BroadcastTxWithFileLock(val.Address, msg4)
+	s.Require().NoError(err)
+	s.Require().NoError(s.network.WaitForNextBlock())
 
-// 	// send DistributionRequest
-// 	distributionOrder := daotypes.DistributionOrder{
-// 		Proposer:     aliceAddr.String(),
-// 		FirstPop:     challenges[0].Height,
-// 		LastPop:      challenges[2].Height,
-// 		DaoTxID:      "DaoTxID",
-// 		PopTxID:      "PoPTxID",
-// 		InvestorTxID: "InvestorTxID",
-// 	}
-// 	doJSON, err := json.Marshal(&distributionOrder)
-// 	s.Require().NoError(err)
+	// check balance for crddl
+	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetCmdQueryTotalSupply(), []string{
+		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.ClaimDenom),
+	})
+	s.Require().NoError(err)
+	assert.Contains(s.T(), out.String(), conf.ClaimDenom)
+	assert.Contains(s.T(), out.String(), "0") // Total supply 3 * 5993150684 + 3 * 1997716894 = 23972602734
 
-// 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdDistributionRequest(), []string{
-// 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Moniker),
-// 		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
-// 		"--yes",
-// 		string(doJSON),
-// 	})
-// 	s.Require().NoError(err)
-// 	s.Require().NoError(s.network.WaitForNextBlock())
+	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
+		aliceAddr.String(),
+		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.ClaimDenom),
+	})
+	s.Require().NoError(err)
+	assert.Contains(s.T(), out.String(), conf.ClaimDenom)
+	assert.Contains(s.T(), out.String(), "0") // 3 * 1997716894 = 5993150682
 
-// 	// send DistributionResult
-// 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdDistributionResult(), []string{
-// 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Moniker),
-// 		fmt.Sprintf("--%s=%s", flags.FlagFees, fmt.Sprintf("10%s", conf.FeeDenom)),
-// 		"--yes",
-// 		strconv.FormatInt(challenges[2].Height, 10),
-// 		"DaoTxID",
-// 		"InvestorTxID",
-// 		"PoPTxID",
-// 	})
-// 	s.Require().NoError(err)
-// 	s.Require().NoError(s.network.WaitForNextBlock())
-
-// 	// check balance for crddl
-// 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetCmdQueryTotalSupply(), []string{
-// 		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.ClaimDenom),
-// 	})
-// 	s.Require().NoError(err)
-// 	assert.Contains(s.T(), out.String(), conf.ClaimDenom)
-// 	assert.Contains(s.T(), out.String(), "0") // Total supply 3 * 5993150684 + 3 * 1997716894 = 23972602734
-
-// 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
-// 		aliceAddr.String(),
-// 		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.ClaimDenom),
-// 	})
-// 	s.Require().NoError(err)
-// 	assert.Contains(s.T(), out.String(), conf.ClaimDenom)
-// 	assert.Contains(s.T(), out.String(), "0") // 3 * 1997716894 = 5993150682
-
-// 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
-// 		bobAddr.String(),
-// 		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.ClaimDenom),
-// 	})
-// 	s.Require().NoError(err)
-// 	assert.Contains(s.T(), out.String(), conf.ClaimDenom)
-// 	assert.Contains(s.T(), out.String(), "0") // 3 * 5993150684 = 17979452052
-// }
+	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
+		bobAddr.String(),
+		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.ClaimDenom),
+	})
+	s.Require().NoError(err)
+	assert.Contains(s.T(), out.String(), conf.ClaimDenom)
+	assert.Contains(s.T(), out.String(), "0") // 3 * 5993150684 = 17979452052
+}

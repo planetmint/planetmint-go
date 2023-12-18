@@ -11,7 +11,7 @@ var (
 	ErrMachineNotFound              = errorsmod.Register(ModuleName, 2, "machine not found")
 	ErrTrustAnchorNotFound          = errorsmod.Register(ModuleName, 3, "trust anchor not found")
 	ErrTrustAnchorAlreadyInUse      = errorsmod.Register(ModuleName, 4, "trust anchor already in use")
-	ErrMachineIsNotCreator          = errorsmod.Register(ModuleName, 5, "the machine.address is no the message creator address")
+	ErrMachineIsNotCreator          = errorsmod.Register(ModuleName, 5, "the machine.address is not the message creator address")
 	ErrInvalidKey                   = errorsmod.Register(ModuleName, 6, "invalid key")
 	ErrNFTIssuanceFailed            = errorsmod.Register(ModuleName, 7, "an error occurred while issuing the machine NFT")
 	ErrMachineTypeUndefined         = errorsmod.Register(ModuleName, 8, "the machine type has to be defined")

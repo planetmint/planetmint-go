@@ -61,6 +61,7 @@ func getTxFactoryWithAccountNumberAndSequence(clientCtx client.Context, accountN
 		WithAccountNumber(accountNumber).
 		WithAccountRetriever(clientCtx.AccountRetriever).
 		WithChainID(clientCtx.ChainID).
+		WithFeeGranter(clientCtx.FeeGranter).
 		WithGas(200000).
 		WithGasPrices("0.000005" + GetConfig().FeeDenom).
 		WithKeybase(clientCtx.Keyring).
@@ -140,16 +141,16 @@ func BuildUnsignedTx(address sdk.AccAddress, msgs ...sdk.Msg) (txJSON string, er
 }
 
 // BroadcastTx broadcasts a transaction via RPC.
-func BroadcastTx(address sdk.AccAddress, msgs ...sdk.Msg) (broadcastTxResponseJSON string, err error) {
+func BroadcastTx(address sdk.AccAddress, msgs ...sdk.Msg) (out *bytes.Buffer, err error) {
 	clientCtx, txf, err := getClientContextAndTxFactory(address)
 	if err != nil {
 		return
 	}
-	broadcastTxResponseJSON, err = broadcastTx(clientCtx, txf, msgs...)
+	out, err = broadcastTx(clientCtx, txf, msgs...)
 	return
 }
 
-func broadcastTx(clientCtx client.Context, txf tx.Factory, msgs ...sdk.Msg) (broadcastTxResponseJSON string, err error) {
+func broadcastTx(clientCtx client.Context, txf tx.Factory, msgs ...sdk.Msg) (out *bytes.Buffer, err error) {
 	err = tx.GenerateOrBroadcastTxWithFactory(clientCtx, txf, msgs...)
 	if err != nil {
 		return
@@ -166,17 +167,10 @@ func broadcastTx(clientCtx client.Context, txf tx.Factory, msgs ...sdk.Msg) (bro
 	if err != nil {
 		return
 	}
-	code, ok := result["code"].(float64)
-	if !ok {
-		err = ErrTypeAssertionFailed
-		return
-	}
-	if code != 0 {
-		err = errors.New(output.String())
-		return
-	}
 
-	broadcastTxResponseJSON = output.String()
+	// Make a copy because we `defer output.Reset()`
+	out = &bytes.Buffer{}
+	*out = *output
 	return
 }
 func getSequenceFromFile(seqFile *os.File, filename string) (sequence uint64, err error) {
@@ -216,7 +210,7 @@ func getSequenceFromChain(clientCtx client.Context) (sequence uint64, err error)
 }
 
 // BroadcastTxWithFileLock broadcasts a transaction via gRPC and synchronises requests via a file lock.
-func BroadcastTxWithFileLock(address sdk.AccAddress, msgs ...sdk.Msg) (broadcastTxResponseJSON string, err error) {
+func BroadcastTxWithFileLock(address sdk.AccAddress, msgs ...sdk.Msg) (out *bytes.Buffer, err error) {
 	// open and lock file, if it exists
 	usr, err := user.Current()
 	if err != nil {
@@ -272,7 +266,7 @@ func BroadcastTxWithFileLock(address sdk.AccAddress, msgs ...sdk.Msg) (broadcast
 
 	// Set new sequence number
 	txf = txf.WithSequence(sequence)
-	broadcastTxResponseJSON, err = broadcastTx(clientCtx, txf, msgs...)
+	out, err = broadcastTx(clientCtx, txf, msgs...)
 	if err != nil {
 		return
 	}
