@@ -48,7 +48,7 @@ func TestDistributionOrder(t *testing.T) {
 func TestTokenDistribution(t *testing.T) {
 	t.Parallel()
 	k, ctx := keepertest.DaoKeeper(t)
-	reissuanceValue := 998.69000000
+	reissuanceValue := 998.85844748
 	reissuances := 1000
 	Amount1stBatch := 781.0
 	Amount2ndBatch := 219.0
