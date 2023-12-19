@@ -10,33 +10,27 @@ import (
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
-func GetPopNumber(blockHeight int64) float64 {
-	return float64(blockHeight) / float64(config.GetConfig().PopEpochs)
-}
-
-var PopsPerCycle float64
 var ReIssueCommand string
 
 func init() {
-	PopsPerCycle = 1051200.0
 	ReIssueCommand = "reissueasset"
 }
 
 func GetReissuanceAsStringValue(blockHeight int64) string {
-	PopNumber := GetPopNumber(blockHeight)
-	exactCycleID := PopNumber / PopsPerCycle
+	PopNumber := util.GetPopNumber(blockHeight)
+	exactCycleID := PopNumber / util.PopsPerCycle
 
 	switch cycleID := math.Floor(exactCycleID); cycleID {
 	case 0:
-		return "998.69000000"
+		return "998.85844748"
 	case 1:
-		return "499.34000000"
+		return "499.42922374"
 	case 2:
-		return "249.67000000"
+		return "249.71461187"
 	case 3:
-		return "124.83000000"
+		return "124.85730593"
 	case 4:
-		return "62.42000000"
+		return "62.42865296"
 	default:
 		return "0.0"
 	}

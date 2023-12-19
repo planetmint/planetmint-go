@@ -6,6 +6,7 @@ import (
 
 	"github.com/planetmint/planetmint-go/config"
 	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
+	"github.com/planetmint/planetmint-go/util"
 	"github.com/stretchr/testify/assert"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -30,7 +31,7 @@ func createNReissuances(k *daokeeper.Keeper, ctx sdk.Context, n int) []types.Rei
 func TestReissuanceComputation(t *testing.T) {
 	t.Parallel()
 	k, ctx := keepertest.DaoKeeper(t)
-	var reissuanceValue uint64 = 99869000000
+	var reissuanceValue uint64 = 99885844748
 	numChallenges := 1000
 	popepoch := int64(config.GetConfig().PopEpochs)
 	_ = createNChallenge(k, ctx, numChallenges)
@@ -78,10 +79,10 @@ func TestGetReissuances(t *testing.T) {
 func TestReissuanceValueComputation(t *testing.T) {
 	t.Parallel()
 	popsPerEpoch := float64(config.GetConfig().PopEpochs)
-	assert.Equal(t, "998.69000000", daokeeper.GetReissuanceAsStringValue(1))
-	assert.Equal(t, "499.34000000", daokeeper.GetReissuanceAsStringValue(int64(daokeeper.PopsPerCycle*popsPerEpoch*1+1)))
-	assert.Equal(t, "249.67000000", daokeeper.GetReissuanceAsStringValue(int64(daokeeper.PopsPerCycle*popsPerEpoch*2+1)))
-	assert.Equal(t, "124.83000000", daokeeper.GetReissuanceAsStringValue(int64(daokeeper.PopsPerCycle*popsPerEpoch*3+1)))
-	assert.Equal(t, "62.42000000", daokeeper.GetReissuanceAsStringValue(int64(daokeeper.PopsPerCycle*popsPerEpoch*4+1)))
-	assert.Equal(t, "0.0", daokeeper.GetReissuanceAsStringValue(int64(daokeeper.PopsPerCycle*popsPerEpoch*5+1)))
+	assert.Equal(t, "998.85844748", daokeeper.GetReissuanceAsStringValue(1))
+	assert.Equal(t, "499.42922374", daokeeper.GetReissuanceAsStringValue(int64(util.PopsPerCycle*popsPerEpoch*1+1)))
+	assert.Equal(t, "249.71461187", daokeeper.GetReissuanceAsStringValue(int64(util.PopsPerCycle*popsPerEpoch*2+1)))
+	assert.Equal(t, "124.85730593", daokeeper.GetReissuanceAsStringValue(int64(util.PopsPerCycle*popsPerEpoch*3+1)))
+	assert.Equal(t, "62.42865296", daokeeper.GetReissuanceAsStringValue(int64(util.PopsPerCycle*popsPerEpoch*4+1)))
+	assert.Equal(t, "0.0", daokeeper.GetReissuanceAsStringValue(int64(util.PopsPerCycle*popsPerEpoch*5+1)))
 }

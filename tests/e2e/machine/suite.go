@@ -1,19 +1,19 @@
 package machine
 
 import (
-	"encoding/json"
-	"fmt"
-
+	"github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/lib"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	machinecli "github.com/planetmint/planetmint-go/x/machine/client/cli"
+	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
-	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
-	feegrant "github.com/cosmos/cosmos-sdk/x/feegrant/client/cli"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	"github.com/cosmos/cosmos-sdk/x/feegrant"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -33,6 +33,9 @@ func NewE2ETestSuite(cfg network.Config) *E2ETestSuite {
 
 // SetupSuite initializes machine E2ETestSuite
 func (s *E2ETestSuite) SetupSuite() {
+	conf := config.GetConfig()
+	conf.FeeDenom = "stake"
+
 	s.T().Log("setting up e2e test suite")
 
 	s.network = network.New(s.T())
@@ -45,21 +48,13 @@ func (s *E2ETestSuite) SetupSuite() {
 	addr, _ := account.GetAddress()
 
 	// sending funds to machine to initialize account on chain
-	args := []string{
-		val.Moniker,
-		addr.String(),
-		sample.Amount,
-		"--yes",
-		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
-	}
-	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
-	s.Require().NoError(err)
-
-	txResponse, err := clitestutil.GetTxResponseFromOut(out)
+	coin := sdk.NewCoins(sdk.NewInt64Coin("stake", 1000))
+	msg := banktypes.NewMsgSend(val.Address, addr, coin)
+	out, err := lib.BroadcastTxWithFileLock(val.Address, msg)
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
-	rawLog, err := clitestutil.GetRawLogFromTxResponse(val, txResponse)
+	rawLog, err := clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().NoError(err)
 
 	assert.Contains(s.T(), rawLog, "cosmos.bank.v1beta1.MsgSend")
@@ -78,23 +73,12 @@ func (s *E2ETestSuite) TestAttestMachine() {
 	prvKey, pubKey := sample.KeyPair()
 
 	ta := sample.TrustAnchor(pubKey)
-	taJSON, err := json.Marshal(&ta)
-	s.Require().NoError(err)
-	args := []string{
-		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
-		"--yes",
-		string(taJSON),
-	}
-	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdRegisterTrustAnchor(), args)
-	s.Require().NoError(err)
-
-	txResponse, err := clitestutil.GetTxResponseFromOut(out)
+	msg1 := machinetypes.NewMsgRegisterTrustAnchor(val.Address.String(), &ta)
+	out, err := lib.BroadcastTxWithFileLock(val.Address, msg1)
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
-	rawLog, err := clitestutil.GetRawLogFromTxResponse(val, txResponse)
+	rawLog, err := clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().NoError(err)
 
 	assert.Contains(s.T(), rawLog, "planetmintgo.machine.MsgRegisterTrustAnchor")
@@ -103,31 +87,25 @@ func (s *E2ETestSuite) TestAttestMachine() {
 	s.Require().NoError(err)
 	addr, _ := k.GetAddress()
 
+	// name and address of private key with which to sign
+	clientCtx := val.ClientCtx.
+		WithFromAddress(addr).
+		WithFromName(sample.Name)
+	libConfig := lib.GetConfig()
+	libConfig.SetClientCtx(clientCtx)
+
 	machine := sample.Machine(sample.Name, pubKey, prvKey, addr.String())
-	machineJSON, err := json.Marshal(&machine)
-	s.Require().NoError(err)
-
-	args = []string{
-		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
-		"--yes",
-		string(machineJSON),
-	}
-
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
-	s.Require().NoError(err)
-
-	txResponse, err = clitestutil.GetTxResponseFromOut(out)
+	msg2 := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
+	out, err = lib.BroadcastTxWithFileLock(addr, msg2)
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
-	rawLog, err = clitestutil.GetRawLogFromTxResponse(val, txResponse)
+	rawLog, err = clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().NoError(err)
 
 	assert.Contains(s.T(), rawLog, "planetmintgo.machine.MsgAttestMachine")
 
-	args = []string{
+	args := []string{
 		pubKey,
 	}
 
@@ -146,40 +124,27 @@ func (s *E2ETestSuite) TestInvalidAttestMachine() {
 	addr, _ := k.GetAddress()
 
 	machine := sample.Machine(sample.Name, pubKey, prvKey, addr.String())
-	machineJSON, err := json.Marshal(&machine)
 	s.Require().NoError(err)
 
-	args := []string{
-		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
-		"--yes",
-		string(machineJSON),
-	}
+	// name and address of private key with which to sign
+	clientCtx := val.ClientCtx.
+		WithFromAddress(addr).
+		WithFromName(sample.Name)
+	libConfig := lib.GetConfig()
+	libConfig.SetClientCtx(clientCtx)
 
-	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
-	s.Require().NoError(err)
-
+	msg := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
+	out, _ := lib.BroadcastTxWithFileLock(addr, msg)
 	txResponse, err := clitestutil.GetTxResponseFromOut(out)
 	s.Require().NoError(err)
 	s.Require().Equal(int(txResponse.Code), int(4))
 
 	unregisteredPubKey, unregisteredPrivKey := sample.KeyPair(2)
 	machine = sample.Machine(sample.Name, unregisteredPubKey, unregisteredPrivKey, addr.String())
-	machineJSON, err = json.Marshal(&machine)
 	s.Require().NoError(err)
 
-	args = []string{
-		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
-		"--yes",
-		string(machineJSON),
-	}
-
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
-	s.Require().NoError(err)
-
+	msg = machinetypes.NewMsgAttestMachine(addr.String(), &machine)
+	out, _ = lib.BroadcastTxWithFileLock(addr, msg)
 	txResponse, err = clitestutil.GetTxResponseFromOut(out)
 	s.Require().NoError(err)
 	s.Require().Equal(int(txResponse.Code), int(3))
@@ -199,56 +164,65 @@ func (s *E2ETestSuite) TestMachineAllowanceAttestation() {
 	// register TA
 	prvKey, pubKey := sample.KeyPair(3)
 
+	// name and address of private key with which to sign
+	libConfig := lib.GetConfig()
+	libConfig.SetClientCtx(val.ClientCtx)
+
 	ta := sample.TrustAnchor(pubKey)
-	taJSON, err := json.Marshal(&ta)
+	msg1 := machinetypes.NewMsgRegisterTrustAnchor(val.Address.String(), &ta)
+	out, err := lib.BroadcastTxWithFileLock(val.Address, msg1)
 	s.Require().NoError(err)
-	args := []string{
-		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Moniker),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
-		"--yes",
-		string(taJSON),
-	}
-	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdRegisterTrustAnchor(), args)
+
+	s.Require().NoError(s.network.WaitForNextBlock())
+	_, err = clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
 
 	// create allowance for machine
-	args = []string{
-		val.Moniker,   // granter
-		addr.String(), // grantee
-		fmt.Sprintf("--%s=%s", feegrant.FlagAllowedMsgs, "/planetmintgo.machine.MsgAttestMachine"),
-		fmt.Sprintf("--%s=%s", feegrant.FlagSpendLimit, "2stake"),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
-		"--yes",
+	allowedMsgs := []string{"/planetmintgo.machine.MsgAttestMachine"}
+	limit := sdk.NewCoins(sdk.NewInt64Coin("stake", 2))
+	basic := feegrant.BasicAllowance{
+		SpendLimit: limit,
 	}
+	var grant feegrant.FeeAllowanceI
+	grant = &basic
+	grant, err = feegrant.NewAllowedMsgAllowance(grant, allowedMsgs)
+	s.Require().NoError(err)
 
-	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, feegrant.NewCmdFeeGrant(), args)
+	msg2, err := feegrant.NewMsgGrantAllowance(grant, val.Address, addr)
+	s.Require().NoError(err)
+	_, err = lib.BroadcastTxWithFileLock(val.Address, msg2)
+	s.Require().NoError(err)
+
+	s.Require().NoError(s.network.WaitForNextBlock())
+	_, err = clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
 
 	// attest machine with fee granter without funding the machine account first
 	machine := sample.Machine(sample.Name, pubKey, prvKey, addr.String())
-	machineJSON, err := json.Marshal(&machine)
 	s.Require().NoError(err)
 
-	args = []string{
-		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, addr.String()),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
-		fmt.Sprintf("--%s=%s", flags.FlagFeeGranter, val.Address.String()),
-		"--yes",
-		string(machineJSON),
-	}
+	// name and address of private key with which to sign
+	clientCtx := val.ClientCtx.
+		WithFromAddress(addr).
+		WithFromName("AllowanceMachine").
+		WithFeeGranterAddress(val.Address)
+	libConfig.SetClientCtx(clientCtx)
 
-	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
+	msg3 := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
+	_, err = lib.BroadcastTxWithFileLock(addr, msg3)
+	s.Require().NoError(err)
+
+	s.Require().NoError(s.network.WaitForNextBlock())
+	_, err = clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
 
-	args = []string{
+	args := []string{
 		pubKey,
 	}
 

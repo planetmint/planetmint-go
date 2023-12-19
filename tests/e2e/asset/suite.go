@@ -1,20 +1,18 @@
 package asset
 
 import (
-	"encoding/json"
-	"fmt"
-
+	"github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/lib"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
-	assetcli "github.com/planetmint/planetmint-go/x/asset/client/cli"
-	machinecli "github.com/planetmint/planetmint-go/x/machine/client/cli"
+	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
-	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -39,6 +37,9 @@ func NewE2ETestSuite(cfg network.Config) *E2ETestSuite {
 
 // SetupSuite initializes asset E2ETestSuite
 func (s *E2ETestSuite) SetupSuite() {
+	conf := config.GetConfig()
+	conf.FeeDenom = "stake"
+
 	s.T().Log("setting up e2e test suite")
 
 	s.network = network.New(s.T())
@@ -51,22 +52,13 @@ func (s *E2ETestSuite) SetupSuite() {
 	addr, _ := account.GetAddress()
 
 	// sending funds to machine to initialize account on chain
-	args := []string{
-		val.Moniker,
-		addr.String(),
-		sample.Amount,
-		"--yes",
-		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
-	}
-
-	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
-	s.Require().NoError(err)
-
-	txResponse, err := clitestutil.GetTxResponseFromOut(out)
+	coin := sdk.NewCoins(sdk.NewInt64Coin("stake", 1000))
+	msg1 := banktypes.NewMsgSend(val.Address, addr, coin)
+	out, err := lib.BroadcastTxWithFileLock(val.Address, msg1)
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
-	rawLog, err := clitestutil.GetRawLogFromTxResponse(val, txResponse)
+	rawLog, err := clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().NoError(err)
 
 	assert.Contains(s.T(), rawLog, "cosmos.bank.v1beta1.MsgSend")
@@ -76,39 +68,30 @@ func (s *E2ETestSuite) SetupSuite() {
 	prvKey, pubKey = sample.KeyPair()
 
 	ta := sample.TrustAnchor(pubKey)
-	taJSON, err := json.Marshal(&ta)
-	s.Require().NoError(err)
-	args = []string{
-		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, addr.String()),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
-		"--yes",
-		string(taJSON),
-	}
-	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdRegisterTrustAnchor(), args)
+	msg2 := machinetypes.NewMsgRegisterTrustAnchor(val.Address.String(), &ta)
+	out, err = lib.BroadcastTxWithFileLock(val.Address, msg2)
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
+	_, err = clitestutil.GetRawLogFromTxOut(val, out)
+	s.Require().NoError(err)
+
+	s.Require().NoError(s.network.WaitForNextBlock())
+
+	// name and address of private key with which to sign
+	clientCtx := val.ClientCtx.
+		WithFromAddress(addr).
+		WithFromName(sample.Name)
+	libConfig := lib.GetConfig()
+	libConfig.SetClientCtx(clientCtx)
 
 	machine := sample.Machine(sample.Name, pubKey, prvKey, addr.String())
-	machineJSON, err := json.Marshal(&machine)
-	s.Require().NoError(err)
-
-	args = []string{
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, sample.Name),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
-		"--yes",
-		string(machineJSON),
-	}
-
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
-	s.Require().NoError(err)
-
-	txResponse, err = clitestutil.GetTxResponseFromOut(out)
+	msg3 := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
+	out, err = lib.BroadcastTxWithFileLock(addr, msg3)
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
-	rawLog, err = clitestutil.GetRawLogFromTxResponse(val, txResponse)
+	rawLog, err = clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().NoError(err)
 
 	assert.Contains(s.T(), rawLog, "planetmintgo.machine.MsgAttestMachine")
@@ -126,36 +109,31 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 	s.Require().NoError(err)
 
 	addr, _ := k.GetAddress()
-	cid := sample.Asset()
+	liquidAsset := machinetypes.LiquidAsset{}
 
 	testCases := []struct {
 		name             string
-		args             []string
+		msg              *machinetypes.MsgNotarizeLiquidAsset
 		rawLog           string
 		expectCheckTxErr bool
 	}{
 		{
 			"valid notarization",
-			[]string{
-				cid,
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, addr.String()),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
-				"--yes",
-			},
+			machinetypes.NewMsgNotarizeLiquidAsset(addr.String(), &liquidAsset),
 			"[]",
 			true,
 		},
 	}
 
 	for _, tc := range testCases {
-		out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, assetcli.CmdNotarizeAsset(), tc.args)
+		out, err := lib.BroadcastTxWithFileLock(addr, tc.msg)
 		s.Require().NoError(err)
 
 		txResponse, err := clitestutil.GetTxResponseFromOut(out)
 		s.Require().NoError(err)
 
 		s.Require().NoError(s.network.WaitForNextBlock())
-		rawLog, err := clitestutil.GetRawLogFromTxResponse(val, txResponse)
+		rawLog, err := clitestutil.GetRawLogFromTxOut(val, out)
 
 		if !tc.expectCheckTxErr {
 			s.Require().NoError(err)
