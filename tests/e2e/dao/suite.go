@@ -250,11 +250,10 @@ func (s *E2ETestSuite) TestReissuance() {
 		s.Require().NoError(err)
 
 		// wait + for sending the re-issuance result, i.e.:
-		//   block 25: initializing RDDL re-issuance broadcast tx succeeded
-		//   block 26: sending the re-issuance result broadcast tx succeeded
-		//   block 27: wait so that GetReissuance can be collected
-
-		wait = 3
+		// 0:  block 25: initializing RDDL re-issuance broadcast tx succeeded
+		// 1:  block 26: sending the re-issuance result broadcast tx succeeded
+		// 2:  block 27: confirmation
+		wait = 2
 		if latestHeight%int64(conf.ReIssuanceEpochs+wait) == 0 {
 			break
 		}
