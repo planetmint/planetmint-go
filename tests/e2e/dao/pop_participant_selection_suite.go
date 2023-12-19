@@ -13,6 +13,7 @@ import (
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
+	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
 	machinecli "github.com/planetmint/planetmint-go/x/machine/client/cli"
 	"github.com/stretchr/testify/suite"
 )
@@ -92,6 +93,14 @@ func (s *PopSelectionE2ETestSuite) TestPopSelection() {
 	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
+
+	args := []string{
+		fmt.Sprintf("--%s=%d", flags.FlagLimit, 10),
+		fmt.Sprintf("--%s=%d", flags.FlagOffset, 0),
+	}
+	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdChallenges(), args)
+	s.Require().NoError(err)
+	fmt.Println(out)
 }
 
 func (s *PopSelectionE2ETestSuite) attestMachine(name string, mnemonic string, num int) {
