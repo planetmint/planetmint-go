@@ -250,8 +250,9 @@ func (s *E2ETestSuite) TestReissuance() {
 		s.Require().NoError(err)
 
 		// wait + for sending the re-issuance result, i.e.:
-		//   block 25: initializing RDDL re-issuance broadcast tx succeeded
-		//   block 26: sending the re-issuance result broadcast tx succeeded
+		// 0:  block 25: initializing RDDL re-issuance broadcast tx succeeded
+		// 1:  block 26: sending the re-issuance result broadcast tx succeeded
+		// 2:  block 27: confirmation
 		wait = 2
 		if latestHeight%int64(conf.ReIssuanceEpochs+wait) == 0 {
 			break
@@ -312,7 +313,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 
 	// send ReissuanceProposal
 	msg1 := daotypes.NewMsgReissueRDDLProposal(val.Address.String(), aliceAddr.String(),
-		"reissueasset 7add40beb27df701e02ee85089c5bc0021bc813823fedb5f1dcb5debda7f3da9 2996.07000000",
+		"reissueasset 7add40beb27df701e02ee85089c5bc0021bc813823fedb5f1dcb5debda7f3da9 2996.57534244",
 		challenges[4].Height, challenges[0].Height, challenges[2].Height)
 	_, err = lib.BroadcastTxWithFileLock(val.Address, msg1)
 	s.Require().NoError(err)
