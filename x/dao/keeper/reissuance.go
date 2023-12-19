@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
@@ -140,8 +141,8 @@ func (k Keeper) ComputeReIssuanceValue(ctx sdk.Context, startHeight int64, endHe
 			popReIssuanceString := GetReissuanceAsStringValue(obj.GetHeight())
 			amount, err := util.RDDLTokenStringToUint(popReIssuanceString)
 			if err != nil {
-				util.GetAppLogger().Error(ctx, "unable to compute PoP re-issuance value (firstPop %u, Pops height %u, current height %u)",
-					startHeight, obj.GetHeight(), endHeight)
+				util.GetAppLogger().Error(ctx, fmt.Sprintf("unable to compute PoP re-issuance value (firstPop %d, Pop height %d, current height %d)",
+					startHeight, obj.GetHeight(), endHeight))
 				continue
 			}
 			if firstIncludedPop == 0 {
@@ -150,8 +151,8 @@ func (k Keeper) ComputeReIssuanceValue(ctx sdk.Context, startHeight int64, endHe
 			lastIncludedPop = obj.GetHeight()
 			overallAmount += amount
 		} else {
-			util.GetAppLogger().Debug(ctx, "the PoP is not part of the reissuance (firstPop %u, Pops height %u, current height %u)",
-				startHeight, obj.GetHeight(), endHeight)
+			util.GetAppLogger().Debug(ctx, fmt.Sprintf("the PoP is not part of the reissuance (firstPop %d, Pop height %d, current height %d)",
+				startHeight, obj.GetHeight(), endHeight))
 			if obj.GetHeight()+2*popEpochs > endHeight {
 				break
 			}
