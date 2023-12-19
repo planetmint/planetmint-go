@@ -359,7 +359,7 @@ func initAppConfig(clientCtx client.Context) (string, interface{}) {
 	type CustomAppConfig struct {
 		serverconfig.Config
 		PlmntConfig planetmintconfig.Config
-		RPCConfig   lib.Config
+		LibConfig   lib.Config
 	}
 
 	// Optionally allow the chain developer to overwrite the SDK's default
@@ -379,16 +379,16 @@ func initAppConfig(clientCtx client.Context) (string, interface{}) {
 	// In simapp, we set the min gas prices to 0.
 	srvCfg.MinGasPrices = "0stake"
 
-	plmntCfg := planetmintconfig.GetConfig()
-	plmntCfg.SetRoot(clientCtx.HomeDir)
+	plmntConfig := planetmintconfig.GetConfig()
+	plmntConfig.SetRoot(clientCtx.HomeDir)
 
-	rpcCfg := lib.GetConfig()
-	rpcCfg.SetChainID(clientCtx.ChainID)
+	libConfig := lib.GetConfig()
+	libConfig.SetChainID(clientCtx.ChainID)
 
 	customAppConfig := CustomAppConfig{
 		Config:      *srvCfg,
-		PlmntConfig: *plmntCfg,
-		RPCConfig:   *rpcCfg,
+		PlmntConfig: *plmntConfig,
+		LibConfig:   *libConfig,
 	}
 	customAppTemplate := serverconfig.DefaultConfigTemplate + planetmintconfig.DefaultConfigTemplate
 
