@@ -172,7 +172,7 @@ func (k Keeper) SelectPopParticipants(ctx sdk.Context) (challenger string, chall
 	var participants []sdk.AccAddress
 	for ; iterator.Valid(); iterator.Next() {
 		participant := sdk.AccAddress(iterator.Value())
-		_, found := k.machineKeeper.GetMachineIndexByPubKey(ctx, participant.String())
+		_, found := k.machineKeeper.GetMachineIndexByAddress(ctx, participant.String())
 		if found {
 			participants = append(participants, participant)
 		}
@@ -188,7 +188,7 @@ func (k Keeper) SelectPopParticipants(ctx sdk.Context) (challenger string, chall
 
 		for ; iterator.Valid(); iterator.Next() {
 			participant := sdk.AccAddress(iterator.Value())
-			_, found := k.machineKeeper.GetMachineIndexByPubKey(ctx, participant.String())
+			_, found := k.machineKeeper.GetMachineIndexByAddress(ctx, participant.String())
 			if found {
 				participants = append(participants, participant)
 			}

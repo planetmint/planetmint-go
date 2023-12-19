@@ -27,5 +27,5 @@ type BankKeeper interface {
 }
 
 type MachineKeeper interface {
-	GetMachineIndexByPubKey(ctx sdk.Context, pubKey string) (val machinetypes.MachineIndex, found bool)
+	GetMachineIndexByAddress(ctx sdk.Context, address string) (val machinetypes.MachineIndex, found bool)
 }
