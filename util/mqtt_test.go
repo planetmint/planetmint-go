@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/planetmint/planetmint-go/x/dao/types"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSendMqttMessages(t *testing.T) {
@@ -16,5 +17,6 @@ func TestSendMqttMessages(t *testing.T) {
 	challenge.Challengee = "plmnt15gdanx0nm2lwsx30a6wft7429p32dhzaq37c06"
 	challenge.Challenger = "plmnt1683t0us0r85840nsepx6jrk2kjxw7zrcnkf0rp"
 	challenge.Height = 58
-	sendMqttMessages(challenge)
+	err := sendMqttMessages(challenge)
+	assert.NoError(t, err)
 }
