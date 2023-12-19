@@ -314,7 +314,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 
 	// send ReissuanceProposal
 	msg1 := daotypes.NewMsgReissueRDDLProposal(val.Address.String(), aliceAddr.String(),
-		"reissueasset 7add40beb27df701e02ee85089c5bc0021bc813823fedb5f1dcb5debda7f3da9 2996.07000000",
+		"reissueasset 7add40beb27df701e02ee85089c5bc0021bc813823fedb5f1dcb5debda7f3da9 2996.57534244",
 		challenges[4].Height, challenges[0].Height, challenges[2].Height)
 	_, err = lib.BroadcastTxWithFileLock(val.Address, msg1)
 	s.Require().NoError(err)
