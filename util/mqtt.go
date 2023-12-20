@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"net"
 	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -19,7 +20,8 @@ func SendMqttMessagesToServer(ctx sdk.Context, challenge types.Challenge) {
 
 func sendMqttMessages(challenge types.Challenge) (err error) {
 	conf := config.GetConfig()
-	uri := fmt.Sprintf("tcp://%s:%d", conf.MqttDomain, conf.MqttPort)
+	hostPort := net.JoinHostPort(conf.MqttDomain, strconv.FormatInt(int64(conf.MqttPort), 10))
+	uri := fmt.Sprintf("tcp://%s", hostPort)
 
 	opts := mqtt.NewClientOptions().AddBroker(uri)
 	opts.SetClientID(conf.ValidatorAddress)
