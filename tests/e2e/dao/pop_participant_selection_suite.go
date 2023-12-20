@@ -3,6 +3,7 @@ package dao
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
@@ -79,7 +80,7 @@ func (s *PopSelectionE2ETestSuite) TestPopSelection() {
 	height, _ := s.network.LatestHeight()
 	queryHeight := height - 1
 	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetChallenge(), []string{
-		fmt.Sprintf("%d", queryHeight),
+		strconv.FormatInt(queryHeight, 10),
 	})
 	s.Require().NoError(err)
 
