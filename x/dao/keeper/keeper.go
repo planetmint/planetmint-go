@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"cosmossdk.io/math"
+	db "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
@@ -164,39 +165,10 @@ func (k Keeper) SelectPopParticipants(ctx sdk.Context) (challenger string, chall
 		startAccountNumber = lastAccount.GetAccountNumber() + 1
 	}
 
-	store := ctx.KVStore(k.accountKeeperKey)
-	accountsStore := prefix.NewStore(store, authtypes.AccountNumberStoreKeyPrefix)
-	iterator := accountsStore.Iterator(sdk.Uint64ToBigEndian(startAccountNumber), nil)
-	defer iterator.Close()
-
 	var participants []sdk.AccAddress
-	for ; iterator.Valid(); iterator.Next() {
-		participant := sdk.AccAddress(iterator.Value())
-		_, found := k.machineKeeper.GetMachineIndexByAddress(ctx, participant.String())
-		if found {
-			participants = append(participants, participant)
-		}
-
-		if len(participants) == 2 {
-			break
-		}
-	}
-
+	k.iterateAccountsForMachines(ctx, startAccountNumber, &participants, true)
 	if len(participants) != 2 {
-		iterator := accountsStore.Iterator(nil, sdk.Uint64ToBigEndian(startAccountNumber))
-		defer iterator.Close()
-
-		for ; iterator.Valid(); iterator.Next() {
-			participant := sdk.AccAddress(iterator.Value())
-			_, found := k.machineKeeper.GetMachineIndexByAddress(ctx, participant.String())
-			if found {
-				participants = append(participants, participant)
-			}
-
-			if len(participants) == 2 {
-				break
-			}
-		}
+		k.iterateAccountsForMachines(ctx, startAccountNumber, &participants, false)
 	}
 
 	// Not enough participants
@@ -208,4 +180,28 @@ func (k Keeper) SelectPopParticipants(ctx sdk.Context) (challenger string, chall
 	challengee = participants[1].String()
 
 	return
+}
+
+func (k Keeper) iterateAccountsForMachines(ctx sdk.Context, start uint64, participants *[]sdk.AccAddress, iterateFromStart bool) {
+	store := ctx.KVStore(k.accountKeeperKey)
+	accountStore := prefix.NewStore(store, authtypes.AccountNumberStoreKeyPrefix)
+	var iterator db.Iterator
+	if iterateFromStart {
+		iterator = accountStore.Iterator(sdk.Uint64ToBigEndian(start), nil)
+	} else {
+		iterator = accountStore.Iterator(nil, sdk.Uint64ToBigEndian(start))
+	}
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		participant := sdk.AccAddress(iterator.Value())
+		_, found := k.machineKeeper.GetMachineIndexByAddress(ctx, participant.String())
+		if found {
+			*participants = append(*participants, participant)
+		}
+
+		if len(*participants) == 2 {
+			return
+		}
+	}
 }
