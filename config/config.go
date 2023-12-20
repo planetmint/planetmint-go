@@ -104,8 +104,8 @@ func DefaultConfig() *Config {
 		DistributionAddrPop: "vjTvXCFSReRsZ7grdsAreRR12KuKpDw8idueQJK9Yh1BYS7ggAqgvCxCgwh13KGK6M52y37HUmvr4GdD",
 		DistributionEpochs:  17640, // CometBFT epochs of 5s equate 1 day (12*60*24) + 30 min (12*30) to wait for confirmations on the re-issuance
 		ReIssuanceEpochs:    17280, // CometBFT epochs of 5s equate 1 day (12*60*24)
-		MqttDomain:          "mqtt.rddl.io",
-		MqttPort:            1883,
+		MqttDomain:          "testnet-mqtt.rddl.io",
+		MqttPort:            1885,
 		MqttUser:            "user",
 		MqttPassword:        "password",
 	}
