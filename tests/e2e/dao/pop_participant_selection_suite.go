@@ -7,7 +7,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	"github.com/planetmint/planetmint-go/config"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
@@ -15,12 +14,8 @@ import (
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
 	machinecli "github.com/planetmint/planetmint-go/x/machine/client/cli"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-)
-
-var (
-	R2D2Addr sdk.AccAddress
-	C3POAddr sdk.AccAddress
 )
 
 var machines = []struct {
@@ -52,10 +47,13 @@ func NewPopSelectionE2ETestSuite(cfg network.Config) *PopSelectionE2ETestSuite {
 }
 
 func (s *PopSelectionE2ETestSuite) SetupSuite() {
-	// create 2 machines accounts
 	s.T().Log("setting up e2e test suite")
+	cfg := config.GetConfig()
+	cfg.FeeDenom = "stake"
+
 	s.network = network.New(s.T(), s.cfg)
 
+	// create 2 machines accounts
 	for i, machine := range machines {
 		s.attestMachine(machine.name, machine.mnemonic, i)
 	}
@@ -69,38 +67,24 @@ func (s *PopSelectionE2ETestSuite) TearDownSuite() {
 func (s *PopSelectionE2ETestSuite) TestPopSelection() {
 	val := s.network.Validators[0]
 
-	// wait for PopInit
-
-	// out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdGetMachineByPublicKey(), args)
-	// s.Require().NoError(err)
-
-	for _, machine := range machines {
-		args := []string{
-			machine.address,
-		}
-
-		out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdGetMachineByAddress(), args)
-		s.Require().NoError(err)
-
-		fmt.Println(out)
-	}
-
-	// check if machines are selected as challanger/challengee
+	// set PopEpochs to 1 in Order to trigger some participant selections
 	cfg := config.GetConfig()
 	cfg.PopEpochs = 1
 
-	s.Require().NoError(s.network.WaitForNextBlock())
-	s.Require().NoError(s.network.WaitForNextBlock())
+	// wait for some blocks so challenges get stored
 	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
 
-	args := []string{
-		fmt.Sprintf("--%s=%d", flags.FlagLimit, 10),
-		fmt.Sprintf("--%s=%d", flags.FlagOffset, 0),
-	}
-	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdChallenges(), args)
+	// check if machines are selected as challanger/challengee
+	height, _ := s.network.LatestHeight()
+	queryHeight := height - 1
+	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetChallenge(), []string{
+		fmt.Sprintf("%d", queryHeight),
+	})
 	s.Require().NoError(err)
-	fmt.Println(out)
+
+	assert.Contains(s.T(), out.String(), machines[0].address)
+	assert.Contains(s.T(), out.String(), machines[1].address)
 }
 
 func (s *PopSelectionE2ETestSuite) attestMachine(name string, mnemonic string, num int) {
@@ -110,19 +94,18 @@ func (s *PopSelectionE2ETestSuite) attestMachine(name string, mnemonic string, n
 	account, err := kb.NewAccount(name, mnemonic, keyring.DefaultBIP39Passphrase, sample.DefaultDerivationPath, hd.Secp256k1)
 	s.Require().NoError(err)
 
-	R2D2Addr, _ := account.GetAddress()
+	addr, _ := account.GetAddress()
 
 	// sending funds to machine to initialize account on chain
 	args := []string{
 		val.Moniker,
-		R2D2Addr.String(),
+		addr.String(),
 		sample.Amount,
 		"--yes",
 		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
 	}
-	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
+	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
 	s.Require().NoError(err)
-	fmt.Println(out)
 	s.Require().NoError(s.network.WaitForNextBlock())
 
 	// register Ta
@@ -138,12 +121,11 @@ func (s *PopSelectionE2ETestSuite) attestMachine(name string, mnemonic string, n
 		"--yes",
 		string(taJSON),
 	}
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdRegisterTrustAnchor(), args)
+	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdRegisterTrustAnchor(), args)
 	s.Require().NoError(err)
-	fmt.Println(out)
 	s.Require().NoError(s.network.WaitForNextBlock())
 
-	machine := sample.Machine(name, pubKey, prvKey, R2D2Addr.String())
+	machine := sample.Machine(name, pubKey, prvKey, addr.String())
 	machineJSON, err := json.Marshal(&machine)
 	s.Require().NoError(err)
 
@@ -155,8 +137,7 @@ func (s *PopSelectionE2ETestSuite) attestMachine(name string, mnemonic string, n
 		string(machineJSON),
 	}
 
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
+	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
 	s.Require().NoError(err)
-	fmt.Println(out)
 	s.Require().NoError(s.network.WaitForNextBlock())
 }
