@@ -82,7 +82,7 @@ var (
 func DefaultConfig() *Config {
 	return &Config{
 		AssetRegistryScheme: "https",
-		AssetRegistryDomain: "assets.rddl.io",
+		AssetRegistryDomain: "testnet-assets.rddl.io",
 		AssetRegistryPath:   "register_asset",
 		TokenDenom:          "plmnt",
 		StakeDenom:          "plmntstake",
