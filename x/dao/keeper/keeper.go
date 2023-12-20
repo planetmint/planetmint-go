@@ -155,11 +155,10 @@ func (k Keeper) processBalances(ctx sdk.Context, balances map[string]math.Int, t
 func (k Keeper) SelectPopParticipants(ctx sdk.Context) (challenger string, challengee string) {
 	cfg := config.GetConfig()
 
-	var startAccountNumber uint64 = 0
-
+	var startAccountNumber uint64
 	lastPopHeight := ctx.BlockHeight() - int64(cfg.PopEpochs)
 	lastPop, found := k.LookupChallenge(ctx, lastPopHeight)
-	if found {
+	if lastPopHeight > 0 && found {
 		lastAccountAddr := sdk.MustAccAddressFromBech32(lastPop.Challengee)
 		lastAccount := k.accountKeeper.GetAccount(ctx, lastAccountAddr)
 		startAccountNumber = lastAccount.GetAccountNumber() + 1
