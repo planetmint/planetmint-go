@@ -17,13 +17,14 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	elements "github.com/rddl-network/elements-rpc"
-	"github.com/rddl-network/elements-rpc/utils/mocks"
+	elementsmocks "github.com/rddl-network/elements-rpc/utils/mocks"
 	"github.com/stretchr/testify/require"
 
 	"github.com/planetmint/planetmint-go/app"
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/lib"
 	"github.com/planetmint/planetmint-go/util"
+	"github.com/planetmint/planetmint-go/util/mocks"
 )
 
 type (
@@ -46,7 +47,8 @@ func New(t *testing.T, configs ...Config) *Network {
 	validatorTmpDir := t.TempDir()
 
 	// use mock client for testing
-	elements.Client = &mocks.MockClient{}
+	util.MQTTClient = &mocks.MockMQTTClient{}
+	elements.Client = &elementsmocks.MockClient{}
 
 	// enable application logger in tests
 	appLogger := util.GetAppLogger()

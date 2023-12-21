@@ -11,14 +11,18 @@ import (
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
-func SendMqttMessagesToServer(ctx sdk.Context, challenge types.Challenge) {
-	err := sendMqttMessages(challenge)
-	if err != nil {
-		GetAppLogger().Error(ctx, "MQTT error: "+err.Error())
-	}
+// MQTTClientI interface
+type MQTTClientI interface {
+	Connect() mqtt.Token
+	Disconnect(quiesce uint)
+	Publish(topic string, qos byte, retained bool, payload interface{}) mqtt.Token
 }
 
-func sendMqttMessages(challenge types.Challenge) (err error) {
+var (
+	MQTTClient MQTTClientI
+)
+
+func init() {
 	conf := config.GetConfig()
 	hostPort := net.JoinHostPort(conf.MqttDomain, strconv.FormatInt(int64(conf.MqttPort), 10))
 	uri := fmt.Sprintf("tcp://%s", hostPort)
@@ -27,27 +31,38 @@ func sendMqttMessages(challenge types.Challenge) (err error) {
 	opts.SetClientID(conf.ValidatorAddress)
 	opts.SetUsername(conf.MqttUser)
 	opts.SetPassword(conf.MqttPassword)
-	client := mqtt.NewClient(opts)
+	MQTTClient = mqtt.NewClient(opts)
+}
 
-	if token := client.Connect(); token.Wait() && token.Error() != nil {
+func SendMqttMessagesToServer(ctx sdk.Context, challenge types.Challenge) {
+	err := sendMqttMessages(challenge)
+	if err != nil {
+		GetAppLogger().Error(ctx, "MQTT error: "+err.Error())
+		return
+	}
+	GetAppLogger().Info(ctx, "MQTT message successfully sent")
+}
+
+func sendMqttMessages(challenge types.Challenge) (err error) {
+	if token := MQTTClient.Connect(); token.Wait() && token.Error() != nil {
 		err = token.Error()
 		return
 	}
 	blockHeight := strconv.FormatInt(challenge.GetHeight(), 10)
-	token := client.Publish("cmnd/"+challenge.GetChallengee()+"/PoPInit", 0, false, blockHeight)
+	token := MQTTClient.Publish("cmnd/"+challenge.GetChallengee()+"/PoPInit", 0, false, blockHeight)
 	token.Wait()
 	err = token.Error()
 	if err != nil {
 		return
 	}
 
-	token = client.Publish("cmnd/"+challenge.GetChallenger()+"/PoPInit", 0, false, blockHeight)
+	token = MQTTClient.Publish("cmnd/"+challenge.GetChallenger()+"/PoPInit", 0, false, blockHeight)
 	token.Wait()
 	err = token.Error()
 	if err != nil {
 		return
 	}
 
-	client.Disconnect(1000)
+	MQTTClient.Disconnect(1000)
 	return
 }
