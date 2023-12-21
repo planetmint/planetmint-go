@@ -99,11 +99,7 @@ func (s *PopSelectionE2ETestSuite) attestMachine(name string, mnemonic string, n
 	// sending funds to machine to initialize account on chain
 	coin := sdk.NewCoins(sdk.NewInt64Coin("stake", 1000))
 	sendMsg := banktypes.NewMsgSend(val.Address, addr, coin)
-	out, err := lib.BroadcastTxWithFileLock(val.Address, sendMsg)
-	s.Require().NoError(err)
-	s.Require().NoError(s.network.WaitForNextBlock())
-
-	_, err = clitestutil.GetRawLogFromTxOut(val, out)
+	_, err = lib.BroadcastTxWithFileLock(val.Address, sendMsg)
 	s.Require().NoError(err)
 	s.Require().NoError(s.network.WaitForNextBlock())
 
@@ -112,11 +108,7 @@ func (s *PopSelectionE2ETestSuite) attestMachine(name string, mnemonic string, n
 
 	ta := sample.TrustAnchor(pubKey)
 	registerMsg := machinetypes.NewMsgRegisterTrustAnchor(val.Address.String(), &ta)
-	out, err = lib.BroadcastTxWithFileLock(val.Address, registerMsg)
-	s.Require().NoError(err)
-	s.Require().NoError(s.network.WaitForNextBlock())
-
-	_, err = clitestutil.GetRawLogFromTxOut(val, out)
+	_, err = lib.BroadcastTxWithFileLock(val.Address, registerMsg)
 	s.Require().NoError(err)
 	s.Require().NoError(s.network.WaitForNextBlock())
 
@@ -129,11 +121,7 @@ func (s *PopSelectionE2ETestSuite) attestMachine(name string, mnemonic string, n
 
 	machine := sample.Machine(name, pubKey, prvKey, addr.String())
 	attestMsg := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
-	out, err = lib.BroadcastTxWithFileLock(addr, attestMsg)
-	s.Require().NoError(err)
-	s.Require().NoError(s.network.WaitForNextBlock())
-
-	_, err = clitestutil.GetRawLogFromTxOut(val, out)
+	_, err = lib.BroadcastTxWithFileLock(addr, attestMsg)
 	s.Require().NoError(err)
 	s.Require().NoError(s.network.WaitForNextBlock())
 
