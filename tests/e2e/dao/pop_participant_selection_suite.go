@@ -1,20 +1,19 @@
 package dao
 
 import (
-	"encoding/json"
-	"fmt"
 	"strconv"
 
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
-	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/lib"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
-	machinecli "github.com/planetmint/planetmint-go/x/machine/client/cli"
+	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -98,14 +97,13 @@ func (s *PopSelectionE2ETestSuite) attestMachine(name string, mnemonic string, n
 	addr, _ := account.GetAddress()
 
 	// sending funds to machine to initialize account on chain
-	args := []string{
-		val.Moniker,
-		addr.String(),
-		sample.Amount,
-		"--yes",
-		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
-	}
-	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.NewSendTxCmd(), args)
+	coin := sdk.NewCoins(sdk.NewInt64Coin("stake", 1000))
+	sendMsg := banktypes.NewMsgSend(val.Address, addr, coin)
+	out, err := lib.BroadcastTxWithFileLock(val.Address, sendMsg)
+	s.Require().NoError(err)
+	s.Require().NoError(s.network.WaitForNextBlock())
+
+	_, err = clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().NoError(err)
 	s.Require().NoError(s.network.WaitForNextBlock())
 
@@ -113,32 +111,32 @@ func (s *PopSelectionE2ETestSuite) attestMachine(name string, mnemonic string, n
 	prvKey, pubKey := sample.KeyPair(num)
 
 	ta := sample.TrustAnchor(pubKey)
-	taJSON, err := json.Marshal(&ta)
-	s.Require().NoError(err)
-	args = []string{
-		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, name),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
-		"--yes",
-		string(taJSON),
-	}
-	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdRegisterTrustAnchor(), args)
+	registerMsg := machinetypes.NewMsgRegisterTrustAnchor(val.Address.String(), &ta)
+	out, err = lib.BroadcastTxWithFileLock(val.Address, registerMsg)
 	s.Require().NoError(err)
 	s.Require().NoError(s.network.WaitForNextBlock())
+
+	_, err = clitestutil.GetRawLogFromTxOut(val, out)
+	s.Require().NoError(err)
+	s.Require().NoError(s.network.WaitForNextBlock())
+
+	// name and address of private key with which to sign
+	clientCtx := val.ClientCtx.
+		WithFromAddress(addr).
+		WithFromName(name)
+	libConfig := lib.GetConfig()
+	libConfig.SetClientCtx(clientCtx)
 
 	machine := sample.Machine(name, pubKey, prvKey, addr.String())
-	machineJSON, err := json.Marshal(&machine)
-	s.Require().NoError(err)
-
-	args = []string{
-		fmt.Sprintf("--%s=%s", flags.FlagChainID, s.network.Config.ChainID),
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, name),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, sample.Fees),
-		"--yes",
-		string(machineJSON),
-	}
-
-	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdAttestMachine(), args)
+	attestMsg := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
+	out, err = lib.BroadcastTxWithFileLock(addr, attestMsg)
 	s.Require().NoError(err)
 	s.Require().NoError(s.network.WaitForNextBlock())
+
+	_, err = clitestutil.GetRawLogFromTxOut(val, out)
+	s.Require().NoError(err)
+	s.Require().NoError(s.network.WaitForNextBlock())
+
+	// reset clientCtx to validator ctx
+	libConfig.SetClientCtx(val.ClientCtx)
 }
