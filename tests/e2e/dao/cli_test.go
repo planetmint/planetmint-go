@@ -9,7 +9,11 @@ import (
 )
 
 func TestE2ETestSuite(t *testing.T) {
-	t.Parallel()
 	cfg := network.DefaultConfig()
 	suite.Run(t, NewE2ETestSuite(cfg))
+}
+
+func TestPopE2ETestSuite(t *testing.T) {
+	cfg := network.DefaultConfig()
+	suite.Run(t, NewPopSelectionE2ETestSuite(cfg))
 }

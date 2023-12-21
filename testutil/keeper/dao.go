@@ -64,8 +64,10 @@ func DaoKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		challengeStoreKey,
 		mintRequestHashStoreKey,
 		mintRequestAddressStoreKey,
+		nil, // TODO: mount and add store/key
 		paramsSubspace,
 		bk,
+		nil,
 		nil,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)

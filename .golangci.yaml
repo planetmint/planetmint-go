@@ -103,3 +103,6 @@ issues:
       linters:
         - dupl
         - paralleltest
+    - path: tests/.*/*\.go
+      linters:
+        - paralleltest

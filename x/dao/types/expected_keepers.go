@@ -3,6 +3,7 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
+	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 )
 
 // AccountKeeper defines the expected account keeper used for simulations (noalias)
@@ -23,4 +24,8 @@ type BankKeeper interface {
 	BurnCoins(ctx sdk.Context, moduleName string, amt sdk.Coins) error
 	GetBalance(ctx sdk.Context, addr sdk.AccAddress, denom string) sdk.Coin
 	// Methods imported from bank should be defined here
+}
+
+type MachineKeeper interface {
+	GetMachineIndexByAddress(ctx sdk.Context, address string) (val machinetypes.MachineIndex, found bool)
 }

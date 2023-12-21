@@ -4,8 +4,10 @@ import (
 	"fmt"
 
 	"cosmossdk.io/math"
+	db "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/store/prefix"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -25,10 +27,12 @@ type (
 		challengeKey          storetypes.StoreKey
 		mintRequestHashKey    storetypes.StoreKey
 		mintRequestAddressKey storetypes.StoreKey
+		accountKeeperKey      storetypes.StoreKey
 		paramstore            paramtypes.Subspace
 
 		bankKeeper    types.BankKeeper
 		accountKeeper types.AccountKeeper
+		machineKeeper types.MachineKeeper
 		authority     string
 	}
 )
@@ -40,10 +44,12 @@ func NewKeeper(
 	challengeKey storetypes.StoreKey,
 	mintRequestHashKey storetypes.StoreKey,
 	mintRequestAddressKey storetypes.StoreKey,
+	accountKeeperKey storetypes.StoreKey,
 	ps paramtypes.Subspace,
 
 	bankKeeper types.BankKeeper,
 	accountKeeper types.AccountKeeper,
+	machineKeeper types.MachineKeeper,
 	authority string,
 ) *Keeper {
 	// set KeyTable if it has not already been set
@@ -58,10 +64,12 @@ func NewKeeper(
 		challengeKey:          challengeKey,
 		mintRequestHashKey:    mintRequestHashKey,
 		mintRequestAddressKey: mintRequestAddressKey,
+		accountKeeperKey:      accountKeeperKey,
 		paramstore:            ps,
 
 		bankKeeper:    bankKeeper,
 		accountKeeper: accountKeeper,
+		machineKeeper: machineKeeper,
 		authority:     authority,
 	}
 }
@@ -142,4 +150,57 @@ func (k Keeper) processBalances(ctx sdk.Context, balances map[string]math.Int, t
 		}
 	}
 	return nil
+}
+
+func (k Keeper) SelectPopParticipants(ctx sdk.Context) (challenger string, challengee string) {
+	cfg := config.GetConfig()
+
+	var startAccountNumber uint64
+	lastPopHeight := ctx.BlockHeight() - int64(cfg.PopEpochs)
+	lastPop, found := k.LookupChallenge(ctx, lastPopHeight)
+	if lastPopHeight > 0 && found {
+		lastAccountAddr := sdk.MustAccAddressFromBech32(lastPop.Challengee)
+		lastAccount := k.accountKeeper.GetAccount(ctx, lastAccountAddr)
+		startAccountNumber = lastAccount.GetAccountNumber() + 1
+	}
+
+	var participants []sdk.AccAddress
+	k.iterateAccountsForMachines(ctx, startAccountNumber, &participants, true)
+	if len(participants) != 2 {
+		k.iterateAccountsForMachines(ctx, startAccountNumber, &participants, false)
+	}
+
+	// Not enough participants
+	if len(participants) != 2 {
+		return
+	}
+
+	challenger = participants[0].String()
+	challengee = participants[1].String()
+
+	return
+}
+
+func (k Keeper) iterateAccountsForMachines(ctx sdk.Context, start uint64, participants *[]sdk.AccAddress, iterateFromStart bool) {
+	store := ctx.KVStore(k.accountKeeperKey)
+	accountStore := prefix.NewStore(store, authtypes.AccountNumberStoreKeyPrefix)
+	var iterator db.Iterator
+	if iterateFromStart {
+		iterator = accountStore.Iterator(sdk.Uint64ToBigEndian(start), nil)
+	} else {
+		iterator = accountStore.Iterator(nil, sdk.Uint64ToBigEndian(start))
+	}
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		participant := sdk.AccAddress(iterator.Value())
+		_, found := k.machineKeeper.GetMachineIndexByAddress(ctx, participant.String())
+		if found {
+			*participants = append(*participants, participant)
+		}
+
+		if len(*participants) == 2 {
+			return
+		}
+	}
 }

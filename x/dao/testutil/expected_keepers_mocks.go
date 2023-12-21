@@ -10,6 +10,7 @@ import (
 	types "github.com/cosmos/cosmos-sdk/types"
 	types0 "github.com/cosmos/cosmos-sdk/x/auth/types"
 	gomock "github.com/golang/mock/gomock"
+	types1 "github.com/planetmint/planetmint-go/x/machine/types"
 )
 
 // MockAccountKeeper is a mock of AccountKeeper interface.
@@ -194,4 +195,42 @@ func (m *MockBankKeeper) SpendableCoins(ctx types.Context, addr types.AccAddress
 func (mr *MockBankKeeperMockRecorder) SpendableCoins(ctx, addr interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SpendableCoins", reflect.TypeOf((*MockBankKeeper)(nil).SpendableCoins), ctx, addr)
+}
+
+// MockMachineKeeper is a mock of MachineKeeper interface.
+type MockMachineKeeper struct {
+	ctrl     *gomock.Controller
+	recorder *MockMachineKeeperMockRecorder
+}
+
+// MockMachineKeeperMockRecorder is the mock recorder for MockMachineKeeper.
+type MockMachineKeeperMockRecorder struct {
+	mock *MockMachineKeeper
+}
+
+// NewMockMachineKeeper creates a new mock instance.
+func NewMockMachineKeeper(ctrl *gomock.Controller) *MockMachineKeeper {
+	mock := &MockMachineKeeper{ctrl: ctrl}
+	mock.recorder = &MockMachineKeeperMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockMachineKeeper) EXPECT() *MockMachineKeeperMockRecorder {
+	return m.recorder
+}
+
+// GetMachineIndexByAddress mocks base method.
+func (m *MockMachineKeeper) GetMachineIndexByAddress(ctx types.Context, address string) (types1.MachineIndex, bool) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetMachineIndexByAddress", ctx, address)
+	ret0, _ := ret[0].(types1.MachineIndex)
+	ret1, _ := ret[1].(bool)
+	return ret0, ret1
+}
+
+// GetMachineIndexByAddress indicates an expected call of GetMachineIndexByAddress.
+func (mr *MockMachineKeeperMockRecorder) GetMachineIndexByAddress(ctx, address interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMachineIndexByAddress", reflect.TypeOf((*MockMachineKeeper)(nil).GetMachineIndexByAddress), ctx, address)
 }
