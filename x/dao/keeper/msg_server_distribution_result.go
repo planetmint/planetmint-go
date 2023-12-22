@@ -4,7 +4,6 @@ import (
 	"context"
 	"strconv"
 
-	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/util"
@@ -21,11 +20,13 @@ func (k msgServer) DistributionResult(goCtx context.Context, msg *types.MsgDistr
 		distribution.InvestorTxID = msg.InvestorTxID
 		err := k.resolveStagedClaims(ctx, distribution.FirstPop, distribution.LastPop)
 		if err != nil {
-			return nil, errorsmod.Wrapf(types.ErrResolvingStagedClaims, " for provided PoP heights: %d %d", distribution.FirstPop, distribution.LastPop)
+			util.GetAppLogger().Error(ctx, "%s for provided PoP heights: %d %d", types.ErrResolvingStagedClaims.Error(), distribution.FirstPop, distribution.LastPop)
+		} else {
+			util.GetAppLogger().Info(ctx, "staged claims successfully for provided PoP heights: %d %d", distribution.FirstPop, distribution.LastPop)
 		}
 		k.StoreDistributionOrder(ctx, distribution)
 	} else {
-		return nil, errorsmod.Wrapf(types.ErrDistributionNotFound, " for provided block height %s", strconv.FormatInt(msg.GetLastPop(), 10))
+		util.GetAppLogger().Error(ctx, "%s for provided block height %s", types.ErrDistributionNotFound.Error(), strconv.FormatInt(msg.GetLastPop(), 10))
 	}
 
 	return &types.MsgDistributionResultResponse{}, nil
