@@ -21,6 +21,9 @@ func (k msgServer) DistributionRequest(goCtx context.Context, msg *types.MsgDist
 		return nil, errorsmod.Wrap(types.ErrReissuanceTxIDMissing, "for last reissuance height")
 	}
 
+	util.GetAppLogger().Info(ctx, "distribution request: storing distribution")
+	k.StoreDistributionOrder(ctx, *msg.GetDistribution())
+
 	validatorIdentity, validResult := util.GetValidatorCometBFTIdentity(ctx)
 	if validResult && msg.Distribution.GetProposer() == validatorIdentity {
 		util.GetAppLogger().Info(ctx, "distribution request: Entering Asset Distribution Mode")
@@ -43,8 +46,6 @@ func (k msgServer) DistributionRequest(goCtx context.Context, msg *types.MsgDist
 		msg.Distribution.DaoTxID = daoTx
 		util.SendDistributionResult(goCtx, msg.Distribution.LastPop, daoTx, investorTx, popTx)
 	}
-	util.GetAppLogger().Info(ctx, "distribution request: storing distribution")
-	k.StoreDistributionOrder(ctx, *msg.GetDistribution())
 
 	return &types.MsgDistributionRequestResponse{}, nil
 }
