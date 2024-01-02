@@ -163,6 +163,7 @@ func broadcastTx(clientCtx client.Context, txf tx.Factory, msgs ...sdk.Msg) (out
 	*out = *output
 	return
 }
+
 func getSequenceFromFile(seqFile *os.File, filename string) (sequence uint64, err error) {
 	var sequenceString string
 	lineCount := int64(0)
