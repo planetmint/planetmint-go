@@ -7,6 +7,7 @@ import (
 	"github.com/planetmint/planetmint-go/testutil/sample"
 
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
+	assettypes "github.com/planetmint/planetmint-go/x/asset/types"
 	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
@@ -109,17 +110,16 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 	s.Require().NoError(err)
 
 	addr, _ := k.GetAddress()
-	liquidAsset := machinetypes.LiquidAsset{}
 
 	testCases := []struct {
 		name             string
-		msg              *machinetypes.MsgNotarizeLiquidAsset
+		msg              *assettypes.MsgNotarizeAsset
 		rawLog           string
 		expectCheckTxErr bool
 	}{
 		{
 			"valid notarization",
-			machinetypes.NewMsgNotarizeLiquidAsset(addr.String(), &liquidAsset),
+			assettypes.NewMsgNotarizeAsset(addr.String(), sample.Asset()),
 			"[]",
 			true,
 		},
@@ -134,9 +134,9 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 
 		s.Require().NoError(s.network.WaitForNextBlock())
 		rawLog, err := clitestutil.GetRawLogFromTxOut(val, out)
+		s.Require().NoError(err)
 
 		if !tc.expectCheckTxErr {
-			s.Require().NoError(err)
 			assert.Contains(s.T(), rawLog, tc.rawLog)
 		} else {
 			assert.Contains(s.T(), txResponse.RawLog, tc.rawLog)
