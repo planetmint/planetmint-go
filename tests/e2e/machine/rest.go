@@ -3,14 +3,45 @@ package machine
 import (
 	"fmt"
 
+	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/testutil"
+	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
+	"github.com/stretchr/testify/suite"
 
 	txtypes "github.com/cosmos/cosmos-sdk/types/tx"
 )
 
-func (s *E2ETestSuite) TestAttestMachineREST() {
+type RestE2ETestSuite struct {
+	suite.Suite
+
+	cfg     network.Config
+	network *network.Network
+}
+
+func NewRestE2ETestSuite(cfg network.Config) *RestE2ETestSuite {
+	return &RestE2ETestSuite{cfg: cfg}
+}
+
+func (s *RestE2ETestSuite) SetupSuite() {
+	cfg := config.GetConfig()
+	cfg.FeeDenom = "stake"
+
+	s.T().Log("setting up e2e test suite")
+
+	s.network = network.New(s.T())
+	// create machine account for attestation
+	err := CreateAccount(s.network, sample.Name, sample.Mnemonic)
+	s.Require().NoError(err)
+}
+
+// TearDownSuite clean up after testing
+func (s *RestE2ETestSuite) TearDownSuite() {
+	s.T().Log("tearing down e2e test suite")
+}
+
+func (s *RestE2ETestSuite) TestAttestMachineREST() {
 	val := s.network.Validators[0]
 	baseURL := val.APIAddress
 
@@ -21,7 +52,7 @@ func (s *E2ETestSuite) TestAttestMachineREST() {
 	addr, err := k.GetAddress()
 	s.Require().NoError(err)
 
-	prvKey, pubKey := sample.KeyPair(1)
+	prvKey, pubKey := sample.KeyPair()
 
 	// Register TA
 	ta := sample.TrustAnchor(pubKey)

@@ -1,6 +1,9 @@
 package machine
 
 import (
+	"errors"
+	"strings"
+
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/lib"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
@@ -39,25 +42,48 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.T().Log("setting up e2e test suite")
 
 	s.network = network.New(s.T())
-	val := s.network.Validators[0]
+	// create machine account for attestation
+	err := CreateAccount(s.network, sample.Name, sample.Mnemonic)
+	s.Require().NoError(err)
+}
+
+func CreateAccount(network *network.Network, name string, mnemonic string) (err error) {
+	val := network.Validators[0]
 
 	kb := val.ClientCtx.Keyring
-	account, err := kb.NewAccount(sample.Name, sample.Mnemonic, keyring.DefaultBIP39Passphrase, sample.DefaultDerivationPath, hd.Secp256k1)
-	s.Require().NoError(err)
+	account, err := kb.NewAccount(name, mnemonic, keyring.DefaultBIP39Passphrase, sample.DefaultDerivationPath, hd.Secp256k1)
+	if err != nil {
+		return err
+	}
 
-	addr, _ := account.GetAddress()
+	addr, err := account.GetAddress()
+	if err != nil {
+		return err
+	}
 
 	// sending funds to machine to initialize account on chain
 	coin := sdk.NewCoins(sdk.NewInt64Coin("stake", 1000))
 	msg := banktypes.NewMsgSend(val.Address, addr, coin)
 	out, err := lib.BroadcastTxWithFileLock(val.Address, msg)
-	s.Require().NoError(err)
+	if err != nil {
+		return err
+	}
 
-	s.Require().NoError(s.network.WaitForNextBlock())
+	err = network.WaitForNextBlock()
+	if err != nil {
+		return err
+	}
+
 	rawLog, err := clitestutil.GetRawLogFromTxOut(val, out)
-	s.Require().NoError(err)
+	if err != nil {
+		return err
+	}
 
-	assert.Contains(s.T(), rawLog, "cosmos.bank.v1beta1.MsgSend")
+	if !strings.Contains(rawLog, "cosmos.bank.v1beta1.MsgSend") {
+		err = errors.New("failed to fund account")
+	}
+
+	return
 }
 
 // TearDownSuite clean up after testing
@@ -116,8 +142,8 @@ func (s *E2ETestSuite) TestAttestMachine() {
 func (s *E2ETestSuite) TestInvalidAttestMachine() {
 	val := s.network.Validators[0]
 
-	// already used in REST test case
-	prvKey, pubKey := sample.KeyPair(1)
+	// already used in previous test case
+	prvKey, pubKey := sample.KeyPair()
 
 	k, err := val.ClientCtx.Keyring.Key(sample.Name)
 	s.Require().NoError(err)
