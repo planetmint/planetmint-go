@@ -163,6 +163,7 @@ func broadcastTx(clientCtx client.Context, txf tx.Factory, msgs ...sdk.Msg) (out
 	*out = *output
 	return
 }
+
 func getSequenceFromFile(seqFile *os.File, filename string) (sequence uint64, err error) {
 	var sequenceString string
 	lineCount := int64(0)
@@ -258,6 +259,16 @@ func BroadcastTxWithFileLock(address sdk.AccAddress, msgs ...sdk.Msg) (out *byte
 	txf = txf.WithSequence(sequence)
 	out, err = broadcastTx(clientCtx, txf, msgs...)
 	if err != nil {
+		return
+	}
+
+	txResponse, err := GetTxResponseFromOut(out)
+	if err != nil {
+		return
+	}
+
+	// Only increase counter if broadcast was successful
+	if txResponse.Code != 0 {
 		return
 	}
 
