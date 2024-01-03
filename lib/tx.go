@@ -261,6 +261,16 @@ func BroadcastTxWithFileLock(address sdk.AccAddress, msgs ...sdk.Msg) (out *byte
 		return
 	}
 
+	txResponse, err := GetTxResponseFromOut(out)
+	if err != nil {
+		return
+	}
+
+	// Only increase counter if broadcast was successful
+	if txResponse.Code != 0 {
+		return
+	}
+
 	// Increase counter for next round.
 	sequence++
 
