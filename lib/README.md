@@ -45,7 +45,7 @@ func main() {
         }
         fmt.Println(txJSON)
 
-        _, err = lib.BroadcastTx(addr0, msg1, msg2, msg3)
+        _, err = lib.BroadcastTxWithFileLock(addr0, msg1, msg2, msg3)
         if err != nil {
                 log.Fatal(err)
         }

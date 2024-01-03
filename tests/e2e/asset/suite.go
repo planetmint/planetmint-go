@@ -129,7 +129,7 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 		out, err := lib.BroadcastTxWithFileLock(addr, tc.msg)
 		s.Require().NoError(err)
 
-		txResponse, err := clitestutil.GetTxResponseFromOut(out)
+		txResponse, err := lib.GetTxResponseFromOut(out)
 		s.Require().NoError(err)
 
 		s.Require().NoError(s.network.WaitForNextBlock())

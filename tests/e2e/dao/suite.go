@@ -160,7 +160,7 @@ func (s *E2ETestSuite) TestMintToken() {
 	out, err := lib.BroadcastTxWithFileLock(val.Address, msg1)
 	s.Require().NoError(err)
 
-	txResponse, err := clitestutil.GetTxResponseFromOut(out)
+	txResponse, err := lib.GetTxResponseFromOut(out)
 	s.Require().NoError(err)
 	s.Require().Equal(int(0), int(txResponse.Code))
 
@@ -202,7 +202,7 @@ func (s *E2ETestSuite) TestMintToken() {
 	out, err = lib.BroadcastTxWithFileLock(addr, msg1)
 	s.Require().NoError(err)
 
-	txResponse, err = clitestutil.GetTxResponseFromOut(out)
+	txResponse, err = lib.GetTxResponseFromOut(out)
 	s.Require().NoError(err)
 	s.Require().Equal(int(2), int(txResponse.Code))
 }

@@ -135,7 +135,7 @@ func (s *E2ETestSuite) TestInvalidAttestMachine() {
 
 	msg := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
 	out, _ := lib.BroadcastTxWithFileLock(addr, msg)
-	txResponse, err := clitestutil.GetTxResponseFromOut(out)
+	txResponse, err := lib.GetTxResponseFromOut(out)
 	s.Require().NoError(err)
 	s.Require().Equal(int(txResponse.Code), int(4))
 
@@ -145,7 +145,7 @@ func (s *E2ETestSuite) TestInvalidAttestMachine() {
 
 	msg = machinetypes.NewMsgAttestMachine(addr.String(), &machine)
 	out, _ = lib.BroadcastTxWithFileLock(addr, msg)
-	txResponse, err = clitestutil.GetTxResponseFromOut(out)
+	txResponse, err = lib.GetTxResponseFromOut(out)
 	s.Require().NoError(err)
 	s.Require().Equal(int(txResponse.Code), int(3))
 }
