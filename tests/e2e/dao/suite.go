@@ -9,12 +9,12 @@ import (
 	"strings"
 
 	"cosmossdk.io/math"
-	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/lib"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
+	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
@@ -184,19 +184,11 @@ func (s *E2ETestSuite) TestMintToken() {
 	s.Require().NoError(err)
 
 	// send mint token request from non mint address
-	kb := val.ClientCtx.Keyring
-	account, err := kb.NewAccount(sample.Name, sample.Mnemonic, keyring.DefaultBIP39Passphrase, sample.DefaultDerivationPath, hd.Secp256k1)
+	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
 	s.Require().NoError(err)
-
+	err = e2etestutil.FundAccount(s.network, account)
+	s.Require().NoError(err)
 	addr, _ := account.GetAddress()
-
-	// sending funds to account to initialize on chain
-	coin := sdk.NewCoins(sdk.NewInt64Coin("stake", 1000))
-	msg2 := banktypes.NewMsgSend(val.Address, addr, coin)
-	_, err = lib.BroadcastTxWithFileLock(val.Address, msg2)
-	s.Require().NoError(err)
-
-	s.Require().NoError(s.network.WaitForNextBlock())
 
 	msg1 = daotypes.NewMsgMintToken(addr.String(), &mintRequest)
 	out, err = lib.BroadcastTxWithFileLock(addr, msg1)
