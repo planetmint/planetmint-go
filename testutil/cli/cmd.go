@@ -1,94 +1,81 @@
 package cli
 
 import (
+	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
-	"regexp"
 
+	"github.com/planetmint/planetmint-go/lib"
 	"github.com/planetmint/planetmint-go/testutil"
 
 	"github.com/cosmos/cosmos-sdk/testutil/network"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/cobra"
-	"sigs.k8s.io/yaml"
 )
 
 // ExecTestCLICmd builds the client context, mocks the output and executes the command.
-func ExecTestCLICmd(clientCtx client.Context, cmd *cobra.Command, extraArgs []string) (testutil.BufferWriter, error) {
+func ExecTestCLICmd(clientCtx client.Context, cmd *cobra.Command, extraArgs []string) (out testutil.BufferWriter, err error) {
 	cmd.SetArgs(extraArgs)
 
-	_, out := testutil.ApplyMockIO(cmd)
+	_, out = testutil.ApplyMockIO(cmd)
 	clientCtx = clientCtx.WithOutput(out)
 
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, client.ClientContextKey, &clientCtx)
 
-	if err := cmd.ExecuteContext(ctx); err != nil {
-		return out, err
+	if err = cmd.ExecuteContext(ctx); err != nil {
+		return
 	}
 
-	txResponse, err := GetTxResponseFromOut(out)
+	output, ok := out.(*bytes.Buffer)
+	if !ok {
+		err = lib.ErrTypeAssertionFailed
+		return
+	}
+
+	txResponse, err := lib.GetTxResponseFromOut(output)
 	if err != nil {
-		return out, err
+		return
 	}
 
 	if txResponse.Code != 0 {
 		err = errors.New(txResponse.RawLog)
-		return out, err
+		return
 	}
-
-	return out, nil
-}
-
-// GetTxResponseFromOut converts strings to numbers and unmarshalles out into TxResponse struct
-func GetTxResponseFromOut(out testutil.BufferWriter) (sdk.TxResponse, error) {
-	var txResponse sdk.TxResponse
-
-	m := regexp.MustCompile(`"([0-9]+?)"`)
-	str := m.ReplaceAllString(out.String(), "${1}")
-
-	// We might have YAML here, so we need to convert to JSON first, because TxResponse struct lacks `yaml:"height,omitempty"`, etc.
-	// Since JSON is a subset of YAML, passing JSON through YAMLToJSON is a no-op and the result is the byte array of the JSON again.
-	j, err := yaml.YAMLToJSON([]byte(str))
-	if err != nil {
-		return txResponse, err
-	}
-
-	err = json.Unmarshal(j, &txResponse)
-	if err != nil {
-		return txResponse, err
-	}
-
-	return txResponse, nil
+	return
 }
 
 // GetRawLogFromTxOut queries the TxHash of out from the chain and returns the RawLog from the answer.
-func GetRawLogFromTxOut(val *network.Validator, out testutil.BufferWriter) (string, error) {
-	txResponse, err := GetTxResponseFromOut(out)
+func GetRawLogFromTxOut(val *network.Validator, out *bytes.Buffer) (rawLog string, err error) {
+	txResponse, err := lib.GetTxResponseFromOut(out)
 	if err != nil {
-		return "", err
+		return
 	}
 	if txResponse.Code != 0 {
 		err = errors.New(txResponse.RawLog)
-		return "", err
+		return
 	}
 	args := []string{
 		txResponse.TxHash,
 	}
 
-	out, err = ExecTestCLICmd(val.ClientCtx, authcmd.QueryTxCmd(), args)
+	output, err := ExecTestCLICmd(val.ClientCtx, authcmd.QueryTxCmd(), args)
 	if err != nil {
-		return "", err
+		return
 	}
 
-	txRes, err := GetTxResponseFromOut(out)
-	if err != nil {
-		return "", err
+	out, ok := output.(*bytes.Buffer)
+	if !ok {
+		err = lib.ErrTypeAssertionFailed
+		return
 	}
 
-	return txRes.RawLog, nil
+	txRes, err := lib.GetTxResponseFromOut(out)
+	if err != nil {
+		return
+	}
+	rawLog = txRes.RawLog
+	return
 }
