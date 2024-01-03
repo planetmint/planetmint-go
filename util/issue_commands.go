@@ -8,6 +8,7 @@ import (
 	"github.com/planetmint/planetmint-go/lib"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
+	"sigs.k8s.io/yaml"
 )
 
 func buildSignBroadcastTx(goCtx context.Context, loggingContext string, sendingValidatorAddress string, msg sdk.Msg) {
@@ -20,12 +21,22 @@ func buildSignBroadcastTx(goCtx context.Context, loggingContext string, sendingV
 			return
 		}
 		GetAppLogger().Debug(ctx, loggingContext+" unsigned tx: "+txJSON)
-		_, err = lib.BroadcastTxWithFileLock(addr, msg)
+		out, err := lib.BroadcastTxWithFileLock(addr, msg)
 		if err != nil {
 			GetAppLogger().Error(ctx, loggingContext+" broadcast tx failed: "+err.Error())
 			return
 		}
-		GetAppLogger().Info(ctx, loggingContext+" broadcast tx succeeded")
+		txResponse, err := lib.GetTxResponseFromOut(out)
+		if err != nil {
+			GetAppLogger().Error(ctx, loggingContext+" getting tx response from out failed: "+err.Error())
+			return
+		}
+		txResponseJSON, err := yaml.YAMLToJSON([]byte(txResponse.String()))
+		if err != nil {
+			GetAppLogger().Error(ctx, loggingContext+" converting tx response from yaml to json failed: "+err.Error())
+			return
+		}
+		GetAppLogger().Info(ctx, loggingContext+" broadcast tx succeeded: "+string(txResponseJSON))
 	}()
 }
 
