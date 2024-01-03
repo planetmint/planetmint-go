@@ -49,7 +49,8 @@ func (s *PopSelectionE2ETestSuite) SetupSuite() {
 
 	// create 2 machines accounts
 	for i, machine := range machines {
-		e2etestutil.AttestMachine(s.network, machine.name, machine.mnemonic, i)
+		err := e2etestutil.AttestMachine(s.network, machine.name, machine.mnemonic, i)
+		s.Require().NoError(err)
 	}
 }
 

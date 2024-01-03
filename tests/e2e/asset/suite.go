@@ -14,11 +14,6 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-var (
-	pubKey string
-	prvKey string
-)
-
 // E2ETestSuite struct definition of asset suite
 type E2ETestSuite struct {
 	suite.Suite
@@ -40,7 +35,8 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.T().Log("setting up e2e test suite")
 
 	s.network = network.New(s.T())
-	e2etestutil.AttestMachine(s.network, sample.Name, sample.Mnemonic, 0)
+	err := e2etestutil.AttestMachine(s.network, sample.Name, sample.Mnemonic, 0)
+	s.Require().NoError(err)
 
 	val := s.network.Validators[0]
 	k, err := val.ClientCtx.Keyring.Key(sample.Name)

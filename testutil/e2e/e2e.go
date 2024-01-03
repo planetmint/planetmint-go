@@ -82,7 +82,10 @@ func AttestMachine(network *network.Network, name string, mnemonic string, num i
 	if err != nil {
 		return err
 	}
-	network.WaitForNextBlock()
+	err = network.WaitForNextBlock()
+	if err != nil {
+		return err
+	}
 
 	addr, err := account.GetAddress()
 	if err != nil {
@@ -99,7 +102,14 @@ func AttestMachine(network *network.Network, name string, mnemonic string, num i
 	machine := sample.Machine(name, pubKey, prvKey, addr.String())
 	attestMsg := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
 	_, err = lib.BroadcastTxWithFileLock(addr, attestMsg)
-	network.WaitForNextBlock()
+	if err != nil {
+		return err
+	}
+
+	err = network.WaitForNextBlock()
+	if err != nil {
+		return err
+	}
 
 	// reset clientCtx to validator ctx
 	libConfig.SetClientCtx(val.ClientCtx)
