@@ -3,13 +3,10 @@ package dao
 import (
 	"strconv"
 
-	"github.com/cosmos/cosmos-sdk/crypto/hd"
-	"github.com/cosmos/cosmos-sdk/crypto/keyring"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/lib"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
+	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
@@ -90,18 +87,10 @@ func (s *PopSelectionE2ETestSuite) TestPopSelection() {
 func (s *PopSelectionE2ETestSuite) attestMachine(name string, mnemonic string, num int) {
 	val := s.network.Validators[0]
 
-	kb := val.ClientCtx.Keyring
-	account, err := kb.NewAccount(name, mnemonic, keyring.DefaultBIP39Passphrase, sample.DefaultDerivationPath, hd.Secp256k1)
+	account, err := e2etestutil.CreateAccount(s.network, name, mnemonic)
 	s.Require().NoError(err)
-
-	addr, _ := account.GetAddress()
-
-	// sending funds to machine to initialize account on chain
-	coin := sdk.NewCoins(sdk.NewInt64Coin("stake", 1000))
-	sendMsg := banktypes.NewMsgSend(val.Address, addr, coin)
-	_, err = lib.BroadcastTxWithFileLock(val.Address, sendMsg)
+	err = e2etestutil.FundAccount(s.network, account)
 	s.Require().NoError(err)
-	s.Require().NoError(s.network.WaitForNextBlock())
 
 	// register Ta
 	prvKey, pubKey := sample.KeyPair(num)
@@ -111,6 +100,9 @@ func (s *PopSelectionE2ETestSuite) attestMachine(name string, mnemonic string, n
 	_, err = lib.BroadcastTxWithFileLock(val.Address, registerMsg)
 	s.Require().NoError(err)
 	s.Require().NoError(s.network.WaitForNextBlock())
+
+	addr, err := account.GetAddress()
+	s.Require().NoError(err)
 
 	// name and address of private key with which to sign
 	clientCtx := val.ClientCtx.

@@ -1,9 +1,6 @@
 package machine
 
 import (
-	"errors"
-	"strings"
-
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/lib"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
@@ -15,8 +12,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
+	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -43,47 +40,10 @@ func (s *E2ETestSuite) SetupSuite() {
 
 	s.network = network.New(s.T())
 	// create machine account for attestation
-	err := CreateAccount(s.network, sample.Name, sample.Mnemonic)
+	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
 	s.Require().NoError(err)
-}
-
-func CreateAccount(network *network.Network, name string, mnemonic string) (err error) {
-	val := network.Validators[0]
-
-	kb := val.ClientCtx.Keyring
-	account, err := kb.NewAccount(name, mnemonic, keyring.DefaultBIP39Passphrase, sample.DefaultDerivationPath, hd.Secp256k1)
-	if err != nil {
-		return err
-	}
-
-	addr, err := account.GetAddress()
-	if err != nil {
-		return err
-	}
-
-	// sending funds to machine to initialize account on chain
-	coin := sdk.NewCoins(sdk.NewInt64Coin("stake", 1000))
-	msg := banktypes.NewMsgSend(val.Address, addr, coin)
-	out, err := lib.BroadcastTxWithFileLock(val.Address, msg)
-	if err != nil {
-		return err
-	}
-
-	err = network.WaitForNextBlock()
-	if err != nil {
-		return err
-	}
-
-	rawLog, err := clitestutil.GetRawLogFromTxOut(val, out)
-	if err != nil {
-		return err
-	}
-
-	if !strings.Contains(rawLog, "cosmos.bank.v1beta1.MsgSend") {
-		err = errors.New("failed to fund account")
-	}
-
-	return
+	err = e2etestutil.FundAccount(s.network, account)
+	s.Require().NoError(err)
 }
 
 // TearDownSuite clean up after testing

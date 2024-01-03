@@ -10,6 +10,8 @@ import (
 	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 	"github.com/stretchr/testify/suite"
 
+	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
+
 	txtypes "github.com/cosmos/cosmos-sdk/types/tx"
 )
 
@@ -32,7 +34,9 @@ func (s *RestE2ETestSuite) SetupSuite() {
 
 	s.network = network.New(s.T())
 	// create machine account for attestation
-	err := CreateAccount(s.network, sample.Name, sample.Mnemonic)
+	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
+	s.Require().NoError(err)
+	err = e2etestutil.FundAccount(s.network, account)
 	s.Require().NoError(err)
 }
 

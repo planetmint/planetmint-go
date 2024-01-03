@@ -7,13 +7,10 @@ import (
 	"github.com/planetmint/planetmint-go/testutil/sample"
 
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
+	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
 	assettypes "github.com/planetmint/planetmint-go/x/asset/types"
 	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 
-	"github.com/cosmos/cosmos-sdk/crypto/hd"
-	"github.com/cosmos/cosmos-sdk/crypto/keyring"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -46,31 +43,17 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.network = network.New(s.T())
 	val := s.network.Validators[0]
 
-	kb := val.ClientCtx.Keyring
-	account, err := kb.NewAccount(sample.Name, sample.Mnemonic, keyring.DefaultBIP39Passphrase, sample.DefaultDerivationPath, hd.Secp256k1)
+	// create machine account for attestation
+	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
 	s.Require().NoError(err)
-
-	addr, _ := account.GetAddress()
-
-	// sending funds to machine to initialize account on chain
-	coin := sdk.NewCoins(sdk.NewInt64Coin("stake", 1000))
-	msg1 := banktypes.NewMsgSend(val.Address, addr, coin)
-	out, err := lib.BroadcastTxWithFileLock(val.Address, msg1)
+	err = e2etestutil.FundAccount(s.network, account)
 	s.Require().NoError(err)
-
-	s.Require().NoError(s.network.WaitForNextBlock())
-	rawLog, err := clitestutil.GetRawLogFromTxOut(val, out)
-	s.Require().NoError(err)
-
-	assert.Contains(s.T(), rawLog, "cosmos.bank.v1beta1.MsgSend")
-
-	s.Require().NoError(s.network.WaitForNextBlock())
 
 	prvKey, pubKey = sample.KeyPair()
 
 	ta := sample.TrustAnchor(pubKey)
 	msg2 := machinetypes.NewMsgRegisterTrustAnchor(val.Address.String(), &ta)
-	out, err = lib.BroadcastTxWithFileLock(val.Address, msg2)
+	out, err := lib.BroadcastTxWithFileLock(val.Address, msg2)
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
@@ -80,6 +63,8 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.Require().NoError(s.network.WaitForNextBlock())
 
 	// name and address of private key with which to sign
+	addr, err := account.GetAddress()
+	s.Require().NoError(err)
 	clientCtx := val.ClientCtx.
 		WithFromAddress(addr).
 		WithFromName(sample.Name)
@@ -92,7 +77,7 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
-	rawLog, err = clitestutil.GetRawLogFromTxOut(val, out)
+	rawLog, err := clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().NoError(err)
 
 	assert.Contains(s.T(), rawLog, "planetmintgo.machine.MsgAttestMachine")
