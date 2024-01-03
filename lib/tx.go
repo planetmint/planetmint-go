@@ -140,16 +140,6 @@ func BuildUnsignedTx(address sdk.AccAddress, msgs ...sdk.Msg) (txJSON string, er
 	return
 }
 
-// BroadcastTx broadcasts a transaction via RPC.
-func BroadcastTx(address sdk.AccAddress, msgs ...sdk.Msg) (out *bytes.Buffer, err error) {
-	clientCtx, txf, err := getClientContextAndTxFactory(address)
-	if err != nil {
-		return
-	}
-	out, err = broadcastTx(clientCtx, txf, msgs...)
-	return
-}
-
 func broadcastTx(clientCtx client.Context, txf tx.Factory, msgs ...sdk.Msg) (out *bytes.Buffer, err error) {
 	err = tx.GenerateOrBroadcastTxWithFactory(clientCtx, txf, msgs...)
 	if err != nil {
