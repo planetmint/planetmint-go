@@ -12,6 +12,7 @@ import (
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
+	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 )
 
 func CreateAccount(network *network.Network, name string, mnemonic string) (account *keyring.Record, err error) {
@@ -55,6 +56,53 @@ func FundAccount(network *network.Network, account *keyring.Record) (err error) 
 	if !strings.Contains(rawLog, "cosmos.bank.v1beta1.MsgSend") {
 		err = errors.New("failed to fund account")
 	}
+
+	return
+}
+
+func AttestMachine(network *network.Network, name string, mnemonic string, num int) (err error) {
+	val := network.Validators[0]
+
+	account, err := CreateAccount(network, name, mnemonic)
+	if err != nil {
+		return err
+	}
+
+	err = FundAccount(network, account)
+	if err != nil {
+		return err
+	}
+
+	// register Ta
+	prvKey, pubKey := sample.KeyPair(num)
+
+	ta := sample.TrustAnchor(pubKey)
+	registerMsg := machinetypes.NewMsgRegisterTrustAnchor(val.Address.String(), &ta)
+	_, err = lib.BroadcastTxWithFileLock(val.Address, registerMsg)
+	if err != nil {
+		return err
+	}
+	network.WaitForNextBlock()
+
+	addr, err := account.GetAddress()
+	if err != nil {
+		return err
+	}
+
+	// name and address of private key with which to sign
+	clientCtx := val.ClientCtx.
+		WithFromAddress(addr).
+		WithFromName(name)
+	libConfig := lib.GetConfig()
+	libConfig.SetClientCtx(clientCtx)
+
+	machine := sample.Machine(name, pubKey, prvKey, addr.String())
+	attestMsg := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
+	_, err = lib.BroadcastTxWithFileLock(addr, attestMsg)
+	network.WaitForNextBlock()
+
+	// reset clientCtx to validator ctx
+	libConfig.SetClientCtx(val.ClientCtx)
 
 	return
 }

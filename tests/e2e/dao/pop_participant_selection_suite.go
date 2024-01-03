@@ -4,13 +4,10 @@ import (
 	"strconv"
 
 	"github.com/planetmint/planetmint-go/config"
-	"github.com/planetmint/planetmint-go/lib"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
 	"github.com/planetmint/planetmint-go/testutil/network"
-	"github.com/planetmint/planetmint-go/testutil/sample"
 	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
-	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -52,7 +49,7 @@ func (s *PopSelectionE2ETestSuite) SetupSuite() {
 
 	// create 2 machines accounts
 	for i, machine := range machines {
-		s.attestMachine(machine.name, machine.mnemonic, i)
+		e2etestutil.AttestMachine(s.network, machine.name, machine.mnemonic, i)
 	}
 }
 
@@ -82,41 +79,4 @@ func (s *PopSelectionE2ETestSuite) TestPopSelection() {
 
 	assert.Contains(s.T(), out.String(), machines[0].address)
 	assert.Contains(s.T(), out.String(), machines[1].address)
-}
-
-func (s *PopSelectionE2ETestSuite) attestMachine(name string, mnemonic string, num int) {
-	val := s.network.Validators[0]
-
-	account, err := e2etestutil.CreateAccount(s.network, name, mnemonic)
-	s.Require().NoError(err)
-	err = e2etestutil.FundAccount(s.network, account)
-	s.Require().NoError(err)
-
-	// register Ta
-	prvKey, pubKey := sample.KeyPair(num)
-
-	ta := sample.TrustAnchor(pubKey)
-	registerMsg := machinetypes.NewMsgRegisterTrustAnchor(val.Address.String(), &ta)
-	_, err = lib.BroadcastTxWithFileLock(val.Address, registerMsg)
-	s.Require().NoError(err)
-	s.Require().NoError(s.network.WaitForNextBlock())
-
-	addr, err := account.GetAddress()
-	s.Require().NoError(err)
-
-	// name and address of private key with which to sign
-	clientCtx := val.ClientCtx.
-		WithFromAddress(addr).
-		WithFromName(name)
-	libConfig := lib.GetConfig()
-	libConfig.SetClientCtx(clientCtx)
-
-	machine := sample.Machine(name, pubKey, prvKey, addr.String())
-	attestMsg := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
-	_, err = lib.BroadcastTxWithFileLock(addr, attestMsg)
-	s.Require().NoError(err)
-	s.Require().NoError(s.network.WaitForNextBlock())
-
-	// reset clientCtx to validator ctx
-	libConfig.SetClientCtx(val.ClientCtx)
 }

@@ -9,7 +9,6 @@ import (
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
 	assettypes "github.com/planetmint/planetmint-go/x/asset/types"
-	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -41,46 +40,19 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.T().Log("setting up e2e test suite")
 
 	s.network = network.New(s.T())
+	e2etestutil.AttestMachine(s.network, sample.Name, sample.Mnemonic, 0)
+
 	val := s.network.Validators[0]
-
-	// create machine account for attestation
-	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
-	s.Require().NoError(err)
-	err = e2etestutil.FundAccount(s.network, account)
+	k, err := val.ClientCtx.Keyring.Key(sample.Name)
 	s.Require().NoError(err)
 
-	prvKey, pubKey = sample.KeyPair()
+	addr, _ := k.GetAddress()
 
-	ta := sample.TrustAnchor(pubKey)
-	msg2 := machinetypes.NewMsgRegisterTrustAnchor(val.Address.String(), &ta)
-	out, err := lib.BroadcastTxWithFileLock(val.Address, msg2)
-	s.Require().NoError(err)
-
-	s.Require().NoError(s.network.WaitForNextBlock())
-	_, err = clitestutil.GetRawLogFromTxOut(val, out)
-	s.Require().NoError(err)
-
-	s.Require().NoError(s.network.WaitForNextBlock())
-
-	// name and address of private key with which to sign
-	addr, err := account.GetAddress()
-	s.Require().NoError(err)
 	clientCtx := val.ClientCtx.
 		WithFromAddress(addr).
 		WithFromName(sample.Name)
 	libConfig := lib.GetConfig()
 	libConfig.SetClientCtx(clientCtx)
-
-	machine := sample.Machine(sample.Name, pubKey, prvKey, addr.String())
-	msg3 := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
-	out, err = lib.BroadcastTxWithFileLock(addr, msg3)
-	s.Require().NoError(err)
-
-	s.Require().NoError(s.network.WaitForNextBlock())
-	rawLog, err := clitestutil.GetRawLogFromTxOut(val, out)
-	s.Require().NoError(err)
-
-	assert.Contains(s.T(), rawLog, "planetmintgo.machine.MsgAttestMachine")
 }
 
 // TearDownSuite clean up after testing
