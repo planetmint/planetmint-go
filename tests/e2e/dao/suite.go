@@ -3,6 +3,7 @@ package dao
 import (
 	"bufio"
 	"bytes"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"strconv"
@@ -308,7 +309,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 	assert.Contains(s.T(), out.String(), "29965753420") // 5 * 5993150684 = 29965753420
 
 	// send ReissuanceProposal
-	msg1 := daotypes.NewMsgReissueRDDLProposal(val.Address.String(), aliceAddr.String(),
+	msg1 := daotypes.NewMsgReissueRDDLProposal(val.Address.String(), hex.EncodeToString(val.PubKey.Address()),
 		"reissueasset 7add40beb27df701e02ee85089c5bc0021bc813823fedb5f1dcb5debda7f3da9 2996.57534244",
 		challenges[4].Height, challenges[0].Height, challenges[2].Height)
 	output, err := lib.BroadcastTxWithFileLock(val.Address, msg1)
@@ -331,7 +332,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 
 	// send DistributionRequest
 	distributionOrder := daotypes.DistributionOrder{
-		Proposer:     aliceAddr.String(),
+		Proposer:     hex.EncodeToString(val.PubKey.Address()),
 		FirstPop:     challenges[0].Height,
 		LastPop:      challenges[2].Height,
 		DaoTxID:      "DaoTxID",
