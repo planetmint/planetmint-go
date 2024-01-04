@@ -3,17 +3,11 @@ package dao
 import (
 	"strconv"
 
-	"github.com/cosmos/cosmos-sdk/crypto/hd"
-	"github.com/cosmos/cosmos-sdk/crypto/keyring"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/planetmint/planetmint-go/config"
-	"github.com/planetmint/planetmint-go/lib"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
+	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
 	"github.com/planetmint/planetmint-go/testutil/network"
-	"github.com/planetmint/planetmint-go/testutil/sample"
 	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
-	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -55,7 +49,8 @@ func (s *PopSelectionE2ETestSuite) SetupSuite() {
 
 	// create 2 machines accounts
 	for i, machine := range machines {
-		s.attestMachine(machine.name, machine.mnemonic, i)
+		err := e2etestutil.AttestMachine(s.network, machine.name, machine.mnemonic, i)
+		s.Require().NoError(err)
 	}
 }
 
@@ -85,46 +80,4 @@ func (s *PopSelectionE2ETestSuite) TestPopSelection() {
 
 	assert.Contains(s.T(), out.String(), machines[0].address)
 	assert.Contains(s.T(), out.String(), machines[1].address)
-}
-
-func (s *PopSelectionE2ETestSuite) attestMachine(name string, mnemonic string, num int) {
-	val := s.network.Validators[0]
-
-	kb := val.ClientCtx.Keyring
-	account, err := kb.NewAccount(name, mnemonic, keyring.DefaultBIP39Passphrase, sample.DefaultDerivationPath, hd.Secp256k1)
-	s.Require().NoError(err)
-
-	addr, _ := account.GetAddress()
-
-	// sending funds to machine to initialize account on chain
-	coin := sdk.NewCoins(sdk.NewInt64Coin("stake", 1000))
-	sendMsg := banktypes.NewMsgSend(val.Address, addr, coin)
-	_, err = lib.BroadcastTxWithFileLock(val.Address, sendMsg)
-	s.Require().NoError(err)
-	s.Require().NoError(s.network.WaitForNextBlock())
-
-	// register Ta
-	prvKey, pubKey := sample.KeyPair(num)
-
-	ta := sample.TrustAnchor(pubKey)
-	registerMsg := machinetypes.NewMsgRegisterTrustAnchor(val.Address.String(), &ta)
-	_, err = lib.BroadcastTxWithFileLock(val.Address, registerMsg)
-	s.Require().NoError(err)
-	s.Require().NoError(s.network.WaitForNextBlock())
-
-	// name and address of private key with which to sign
-	clientCtx := val.ClientCtx.
-		WithFromAddress(addr).
-		WithFromName(name)
-	libConfig := lib.GetConfig()
-	libConfig.SetClientCtx(clientCtx)
-
-	machine := sample.Machine(name, pubKey, prvKey, addr.String())
-	attestMsg := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
-	_, err = lib.BroadcastTxWithFileLock(addr, attestMsg)
-	s.Require().NoError(err)
-	s.Require().NoError(s.network.WaitForNextBlock())
-
-	// reset clientCtx to validator ctx
-	libConfig.SetClientCtx(val.ClientCtx)
 }

@@ -12,8 +12,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
+	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -39,25 +39,11 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.T().Log("setting up e2e test suite")
 
 	s.network = network.New(s.T())
-	val := s.network.Validators[0]
-
-	kb := val.ClientCtx.Keyring
-	account, err := kb.NewAccount(sample.Name, sample.Mnemonic, keyring.DefaultBIP39Passphrase, sample.DefaultDerivationPath, hd.Secp256k1)
+	// create machine account for attestation
+	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
 	s.Require().NoError(err)
-
-	addr, _ := account.GetAddress()
-
-	// sending funds to machine to initialize account on chain
-	coin := sdk.NewCoins(sdk.NewInt64Coin("stake", 1000))
-	msg := banktypes.NewMsgSend(val.Address, addr, coin)
-	out, err := lib.BroadcastTxWithFileLock(val.Address, msg)
+	err = e2etestutil.FundAccount(s.network, account)
 	s.Require().NoError(err)
-
-	s.Require().NoError(s.network.WaitForNextBlock())
-	rawLog, err := clitestutil.GetRawLogFromTxOut(val, out)
-	s.Require().NoError(err)
-
-	assert.Contains(s.T(), rawLog, "cosmos.bank.v1beta1.MsgSend")
 }
 
 // TearDownSuite clean up after testing
@@ -116,8 +102,8 @@ func (s *E2ETestSuite) TestAttestMachine() {
 func (s *E2ETestSuite) TestInvalidAttestMachine() {
 	val := s.network.Validators[0]
 
-	// already used in REST test case
-	prvKey, pubKey := sample.KeyPair(1)
+	// already used in previous test case
+	prvKey, pubKey := sample.KeyPair()
 
 	k, err := val.ClientCtx.Keyring.Key(sample.Name)
 	s.Require().NoError(err)
