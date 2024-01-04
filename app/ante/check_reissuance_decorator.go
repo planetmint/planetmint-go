@@ -7,6 +7,10 @@ import (
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 )
 
+var (
+	anteHandlerTag = "ante handler: "
+)
+
 type CheckReissuanceDecorator struct {
 	dk DaoKeeper
 }
@@ -22,13 +26,13 @@ func (cmad CheckReissuanceDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simu
 		if sdk.MsgTypeURL(msg) == "/planetmintgo.dao.MsgReissueRDDLProposal" {
 			MsgProposal, ok := msg.(*daotypes.MsgReissueRDDLProposal)
 			if ok {
-				util.GetAppLogger().Debug(ctx, "ante handler - received re-issuance proposal")
+				util.GetAppLogger().Debug(ctx, anteHandlerTag+"received re-issuance proposal: "+MsgProposal.String())
 				isValid := cmad.dk.IsValidReIssuanceProposal(ctx, MsgProposal)
 				if !isValid {
-					util.GetAppLogger().Info(ctx, "ante handler - rejected re-issuance proposal")
+					util.GetAppLogger().Info(ctx, anteHandlerTag+"rejected re-issuance proposal")
 					return ctx, errorsmod.Wrapf(daotypes.ErrReissuanceProposal, "error during CheckTx or ReCheckTx")
 				}
-				util.GetAppLogger().Debug(ctx, "ante handler - accepted re-issuance proposal")
+				util.GetAppLogger().Debug(ctx, anteHandlerTag+"accepted re-issuance proposal: "+MsgProposal.String())
 			}
 		}
 	}

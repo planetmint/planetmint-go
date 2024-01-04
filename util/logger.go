@@ -44,7 +44,7 @@ func (logger *AppLogger) testingLog(msg string, keyvals ...interface{}) {
 		logger.testingLogger.Log(msg)
 		return
 	}
-	logger.testingLogger.Log(msg, keyvals)
+	logger.testingLogger.Logf(msg, keyvals...)
 }
 
 func (logger *AppLogger) Info(ctx sdk.Context, msg string, keyvals ...interface{}) {
