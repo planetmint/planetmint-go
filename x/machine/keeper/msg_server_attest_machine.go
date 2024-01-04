@@ -56,12 +56,12 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 	}
 
 	if k.isNFTCreationRequest(msg.Machine) && util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress) {
-		util.GetAppLogger().Info(ctx, "Issuing Machine NFT")
+		util.GetAppLogger().Info(ctx, "Issuing Machine NFT: "+msg.Machine.String())
 		err := k.issueMachineNFT(goCtx, msg.Machine)
 		if err != nil {
 			util.GetAppLogger().Error(ctx, "Machine NFT issuance failed : "+err.Error())
 		} else {
-			util.GetAppLogger().Info(ctx, "Machine NFT issuance successful")
+			util.GetAppLogger().Info(ctx, "Machine NFT issuance successful: "+msg.Machine.String())
 		}
 	} else {
 		util.GetAppLogger().Info(ctx, "skipping Machine NFT issuance")

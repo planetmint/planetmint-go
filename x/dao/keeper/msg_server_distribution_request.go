@@ -9,6 +9,10 @@ import (
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
+var (
+	distributionRequestTag = "distribution request: "
+)
+
 func (k msgServer) DistributionRequest(goCtx context.Context, msg *types.MsgDistributionRequest) (*types.MsgDistributionRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -21,30 +25,32 @@ func (k msgServer) DistributionRequest(goCtx context.Context, msg *types.MsgDist
 		return nil, errorsmod.Wrap(types.ErrReissuanceTxIDMissing, "for last reissuance height")
 	}
 
-	util.GetAppLogger().Info(ctx, "distribution request: storing distribution")
+	util.GetAppLogger().Info(ctx, distributionRequestTag+"storing distribution: "+msg.GetDistribution().String())
 	k.StoreDistributionOrder(ctx, *msg.GetDistribution())
 
 	validatorIdentity, validResult := util.GetValidatorCometBFTIdentity(ctx)
 	if validResult && msg.Distribution.GetProposer() == validatorIdentity {
-		util.GetAppLogger().Info(ctx, "distribution request: Entering Asset Distribution Mode")
+		util.GetAppLogger().Info(ctx, distributionRequestTag+"entering asset distribution mode")
 		// issue three distributions:
 		investorTx, err := util.DistributeAsset(msg.Distribution.InvestorAddr, msg.Distribution.InvestorAmount)
 		if err != nil {
-			util.GetAppLogger().Error(ctx, "Distribution Request: could not distribute asset to Investors: ", err.Error())
+			util.GetAppLogger().Error(ctx, distributionRequestTag+"could not distribute asset to Investors: ", err.Error())
 		}
 		popTx, err := util.DistributeAsset(msg.Distribution.PopAddr, msg.Distribution.PopAmount)
 		if err != nil {
-			util.GetAppLogger().Error(ctx, "Distribution Request: could not distribute asset to PoP: ", err.Error())
+			util.GetAppLogger().Error(ctx, distributionRequestTag+"could not distribute asset to PoP: ", err.Error())
 		}
 		daoTx, err := util.DistributeAsset(msg.Distribution.DaoAddr, msg.Distribution.DaoAmount)
 		if err != nil {
-			util.GetAppLogger().Error(ctx, "Distribution Request: could not distribute asset to DAO: ", err.Error())
+			util.GetAppLogger().Error(ctx, distributionRequestTag+"could not distribute asset to DAO: ", err.Error())
 		}
 
 		msg.Distribution.InvestorTxID = investorTx
 		msg.Distribution.PopTxID = popTx
 		msg.Distribution.DaoTxID = daoTx
 		util.SendDistributionResult(goCtx, msg.Distribution.LastPop, daoTx, investorTx, popTx)
+	} else {
+		util.GetAppLogger().Error(ctx, distributionRequestTag+"failed. valid result: %v proposer: %s validator identity: %s", validResult, msg.Distribution.GetProposer(), validatorIdentity)
 	}
 
 	return &types.MsgDistributionRequestResponse{}, nil
