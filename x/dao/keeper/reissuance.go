@@ -136,23 +136,23 @@ func (k Keeper) ComputeReIssuanceValue(ctx sdk.Context, startHeight int64, endHe
 	var overallAmount uint64
 	popEpochs := int64(config.GetConfig().PopEpochs)
 	for _, obj := range challenges {
+		popString := fmt.Sprintf("firstPoP: %d, PoP height: %d, current height %d", startHeight, obj.GetHeight(), endHeight)
 		// if (index == 0 && startHeight == 0 && obj.BlockHeight == 0) || // corner case (beginning of the chain)
 		if startHeight < obj.GetHeight() && obj.GetHeight()+2*popEpochs <= endHeight {
 			popReIssuanceString := GetReissuanceAsStringValue(obj.GetHeight())
 			amount, err := util.RDDLTokenStringToUint(popReIssuanceString)
 			if err != nil {
-				util.GetAppLogger().Error(ctx, fmt.Sprintf("unable to compute PoP re-issuance value (firstPop %d, Pop height %d, current height %d)",
-					startHeight, obj.GetHeight(), endHeight))
+				util.GetAppLogger().Error(ctx, "unable to compute PoP re-issuance value: "+popString)
 				continue
 			}
+			util.GetAppLogger().Info(ctx, "PoP is part of the reissuance: "+popString)
 			if firstIncludedPop == 0 {
 				firstIncludedPop = obj.GetHeight()
 			}
 			lastIncludedPop = obj.GetHeight()
 			overallAmount += amount
 		} else {
-			util.GetAppLogger().Debug(ctx, fmt.Sprintf("the PoP is not part of the reissuance (firstPop %d, Pop height %d, current height %d)",
-				startHeight, obj.GetHeight(), endHeight))
+			util.GetAppLogger().Debug(ctx, "PoP is not part of the reissuance: "+popString)
 			if obj.GetHeight()+2*popEpochs > endHeight {
 				break
 			}

@@ -40,7 +40,7 @@ func SendMqttMessagesToServer(ctx sdk.Context, challenge types.Challenge) {
 		GetAppLogger().Error(ctx, "MQTT error: "+err.Error())
 		return
 	}
-	GetAppLogger().Info(ctx, "MQTT message successfully sent")
+	GetAppLogger().Info(ctx, "MQTT message successfully sent: "+challenge.String())
 }
 
 func sendMqttMessages(challenge types.Challenge) (err error) {
