@@ -3,6 +3,7 @@ package dao
 import (
 	"bufio"
 	"bytes"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"strconv"
@@ -274,9 +275,13 @@ func (s *E2ETestSuite) TestPoPResult() {
 		challenges[i].Finished = true
 
 		msg := daotypes.NewMsgReportPopResult(val.Address.String(), &challenges[i])
-		_, err := lib.BroadcastTxWithFileLock(val.Address, msg)
+		out, err := lib.BroadcastTxWithFileLock(val.Address, msg)
 		s.Require().NoError(err)
 		s.Require().NoError(s.network.WaitForNextBlock())
+
+		txResponse, err := lib.GetTxResponseFromOut(out)
+		s.Require().NoError(err)
+		assert.Equal(s.T(), "[]", txResponse.RawLog)
 	}
 
 	// check balance for stagedcrddl
@@ -304,22 +309,30 @@ func (s *E2ETestSuite) TestPoPResult() {
 	assert.Contains(s.T(), out.String(), "29965753420") // 5 * 5993150684 = 29965753420
 
 	// send ReissuanceProposal
-	msg1 := daotypes.NewMsgReissueRDDLProposal(val.Address.String(), aliceAddr.String(),
+	msg1 := daotypes.NewMsgReissueRDDLProposal(val.Address.String(), hex.EncodeToString(val.PubKey.Address()),
 		"reissueasset 7add40beb27df701e02ee85089c5bc0021bc813823fedb5f1dcb5debda7f3da9 2996.57534244",
 		challenges[4].Height, challenges[0].Height, challenges[2].Height)
-	_, err = lib.BroadcastTxWithFileLock(val.Address, msg1)
+	output, err := lib.BroadcastTxWithFileLock(val.Address, msg1)
 	s.Require().NoError(err)
 	s.Require().NoError(s.network.WaitForNextBlock())
+
+	txResponse, err := lib.GetTxResponseFromOut(output)
+	s.Require().NoError(err)
+	assert.Equal(s.T(), "[]", txResponse.RawLog)
 
 	// send ReissuanceResult
 	msg2 := daotypes.NewMsgReissueRDDLResult(val.Address.String(), aliceAddr.String(), "TxID", challenges[4].Height)
-	_, err = lib.BroadcastTxWithFileLock(val.Address, msg2)
+	output, err = lib.BroadcastTxWithFileLock(val.Address, msg2)
 	s.Require().NoError(err)
 	s.Require().NoError(s.network.WaitForNextBlock())
 
+	txResponse, err = lib.GetTxResponseFromOut(output)
+	s.Require().NoError(err)
+	assert.Equal(s.T(), "[]", txResponse.RawLog)
+
 	// send DistributionRequest
 	distributionOrder := daotypes.DistributionOrder{
-		Proposer:     aliceAddr.String(),
+		Proposer:     hex.EncodeToString(val.PubKey.Address()),
 		FirstPop:     challenges[0].Height,
 		LastPop:      challenges[2].Height,
 		DaoTxID:      "DaoTxID",
@@ -327,15 +340,23 @@ func (s *E2ETestSuite) TestPoPResult() {
 		InvestorTxID: "InvestorTxID",
 	}
 	msg3 := daotypes.NewMsgDistributionRequest(val.Address.String(), &distributionOrder)
-	_, err = lib.BroadcastTxWithFileLock(val.Address, msg3)
+	output, err = lib.BroadcastTxWithFileLock(val.Address, msg3)
 	s.Require().NoError(err)
 	s.Require().NoError(s.network.WaitForNextBlock())
 
+	txResponse, err = lib.GetTxResponseFromOut(output)
+	s.Require().NoError(err)
+	assert.Equal(s.T(), "[]", txResponse.RawLog)
+
 	// send DistributionResult
 	msg4 := daotypes.NewMsgDistributionResult(val.Address.String(), challenges[2].Height, "DaoTxID", "InvestorTxID", "PoPTxID")
-	_, err = lib.BroadcastTxWithFileLock(val.Address, msg4)
+	output, err = lib.BroadcastTxWithFileLock(val.Address, msg4)
 	s.Require().NoError(err)
 	s.Require().NoError(s.network.WaitForNextBlock())
+
+	txResponse, err = lib.GetTxResponseFromOut(output)
+	s.Require().NoError(err)
+	assert.Equal(s.T(), "[]", txResponse.RawLog)
 
 	// check balance for crddl
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetCmdQueryTotalSupply(), []string{

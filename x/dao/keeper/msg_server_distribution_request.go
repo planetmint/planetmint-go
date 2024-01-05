@@ -34,15 +34,15 @@ func (k msgServer) DistributionRequest(goCtx context.Context, msg *types.MsgDist
 		// issue three distributions:
 		investorTx, err := util.DistributeAsset(msg.Distribution.InvestorAddr, msg.Distribution.InvestorAmount)
 		if err != nil {
-			util.GetAppLogger().Error(ctx, distributionRequestTag+"could not distribute asset to Investors: ", err.Error())
+			util.GetAppLogger().Error(ctx, distributionRequestTag+"could not distribute asset to investors: "+err.Error())
 		}
 		popTx, err := util.DistributeAsset(msg.Distribution.PopAddr, msg.Distribution.PopAmount)
 		if err != nil {
-			util.GetAppLogger().Error(ctx, distributionRequestTag+"could not distribute asset to PoP: ", err.Error())
+			util.GetAppLogger().Error(ctx, distributionRequestTag+"could not distribute asset to PoP: "+err.Error())
 		}
 		daoTx, err := util.DistributeAsset(msg.Distribution.DaoAddr, msg.Distribution.DaoAmount)
 		if err != nil {
-			util.GetAppLogger().Error(ctx, distributionRequestTag+"could not distribute asset to DAO: ", err.Error())
+			util.GetAppLogger().Error(ctx, distributionRequestTag+"could not distribute asset to DAO: "+err.Error())
 		}
 
 		msg.Distribution.InvestorTxID = investorTx
