@@ -123,13 +123,13 @@ func (s *E2ETestSuite) TestDistributeCollectedFees() {
 	coin := sdk.NewCoins(sdk.NewInt64Coin("stake", 1000))
 	msg := banktypes.NewMsgSend(val.Address, aliceAddr, coin)
 
-	_, err := lib.BroadcastTxWithFileLock(val.Address, msg)
+	_, err := e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg)
 	s.Require().NoError(err)
 
 	err = s.network.WaitForNextBlock()
 	s.Require().NoError(err)
 
-	_, err = lib.BroadcastTxWithFileLock(val.Address, msg)
+	_, err = e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg)
 	s.Require().NoError(err)
 
 	err = s.network.WaitForNextBlock()
@@ -158,12 +158,8 @@ func (s *E2ETestSuite) TestMintToken() {
 
 	mintRequest := sample.MintRequest(aliceAddr.String(), 1000, "hash")
 	msg1 := daotypes.NewMsgMintToken(val.Address.String(), &mintRequest)
-	out, err := lib.BroadcastTxWithFileLock(val.Address, msg1)
+	out, err := e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg1)
 	s.Require().NoError(err)
-
-	txResponse, err := lib.GetTxResponseFromOut(out)
-	s.Require().NoError(err)
-	s.Require().Equal(int(0), int(txResponse.Code))
 
 	s.Require().NoError(s.network.WaitForNextBlock())
 	rawLog, err := clitestutil.GetRawLogFromTxOut(val, out)
@@ -195,7 +191,7 @@ func (s *E2ETestSuite) TestMintToken() {
 	out, err = lib.BroadcastTxWithFileLock(addr, msg1)
 	s.Require().NoError(err)
 
-	txResponse, err = lib.GetTxResponseFromOut(out)
+	txResponse, err := lib.GetTxResponseFromOut(out)
 	s.Require().NoError(err)
 	s.Require().Equal(int(2), int(txResponse.Code))
 }
@@ -275,7 +271,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 		challenges[i].Finished = true
 
 		msg := daotypes.NewMsgReportPopResult(val.Address.String(), &challenges[i])
-		out, err := lib.BroadcastTxWithFileLock(val.Address, msg)
+		out, err := e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg)
 		s.Require().NoError(err)
 		s.Require().NoError(s.network.WaitForNextBlock())
 
@@ -312,7 +308,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 	msg1 := daotypes.NewMsgReissueRDDLProposal(val.Address.String(), hex.EncodeToString(val.PubKey.Address()),
 		"reissueasset 7add40beb27df701e02ee85089c5bc0021bc813823fedb5f1dcb5debda7f3da9 2996.57534244",
 		challenges[4].Height, challenges[0].Height, challenges[2].Height)
-	output, err := lib.BroadcastTxWithFileLock(val.Address, msg1)
+	output, err := e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg1)
 	s.Require().NoError(err)
 	s.Require().NoError(s.network.WaitForNextBlock())
 
@@ -322,7 +318,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 
 	// send ReissuanceResult
 	msg2 := daotypes.NewMsgReissueRDDLResult(val.Address.String(), aliceAddr.String(), "TxID", challenges[4].Height)
-	output, err = lib.BroadcastTxWithFileLock(val.Address, msg2)
+	output, err = e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg2)
 	s.Require().NoError(err)
 	s.Require().NoError(s.network.WaitForNextBlock())
 
@@ -340,7 +336,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 		InvestorTxID: "InvestorTxID",
 	}
 	msg3 := daotypes.NewMsgDistributionRequest(val.Address.String(), &distributionOrder)
-	output, err = lib.BroadcastTxWithFileLock(val.Address, msg3)
+	output, err = e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg3)
 	s.Require().NoError(err)
 	s.Require().NoError(s.network.WaitForNextBlock())
 
@@ -350,7 +346,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 
 	// send DistributionResult
 	msg4 := daotypes.NewMsgDistributionResult(val.Address.String(), challenges[2].Height, "DaoTxID", "InvestorTxID", "PoPTxID")
-	output, err = lib.BroadcastTxWithFileLock(val.Address, msg4)
+	output, err = e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg4)
 	s.Require().NoError(err)
 	s.Require().NoError(s.network.WaitForNextBlock())
 
