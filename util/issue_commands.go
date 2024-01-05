@@ -33,12 +33,16 @@ func buildSignBroadcastTx(goCtx context.Context, loggingContext string, sendingV
 			GetAppLogger().Error(ctx, loggingContext+" getting tx response from out failed: "+err.Error())
 			return
 		}
+		if txResponse.Code == 0 {
+			GetAppLogger().Info(ctx, loggingContext+" broadcast tx succeeded")
+			return
+		}
 		txResponseJSON, err := yaml.YAMLToJSON([]byte(txResponse.String()))
 		if err != nil {
 			GetAppLogger().Error(ctx, loggingContext+" converting tx response from yaml to json failed: "+err.Error())
 			return
 		}
-		GetAppLogger().Info(ctx, loggingContext+" broadcast tx succeeded: "+string(txResponseJSON))
+		GetAppLogger().Error(ctx, loggingContext+" broadcast tx failed: "+string(txResponseJSON))
 	}()
 }
 
