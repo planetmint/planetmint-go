@@ -60,7 +60,7 @@ func (s *E2ETestSuite) TestAttestMachine() {
 
 	ta := sample.TrustAnchor(pubKey)
 	msg1 := machinetypes.NewMsgRegisterTrustAnchor(val.Address.String(), &ta)
-	out, err := lib.BroadcastTxWithFileLock(val.Address, msg1)
+	out, err := e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg1)
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
@@ -82,7 +82,7 @@ func (s *E2ETestSuite) TestAttestMachine() {
 
 	machine := sample.Machine(sample.Name, pubKey, prvKey, addr.String())
 	msg2 := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
-	out, err = lib.BroadcastTxWithFileLock(addr, msg2)
+	out, err = e2etestutil.BuildSignBroadcastTx(s.T(), addr, msg2)
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
@@ -156,13 +156,8 @@ func (s *E2ETestSuite) TestMachineAllowanceAttestation() {
 
 	ta := sample.TrustAnchor(pubKey)
 	msg1 := machinetypes.NewMsgRegisterTrustAnchor(val.Address.String(), &ta)
-	out, err := lib.BroadcastTxWithFileLock(val.Address, msg1)
+	_, err = e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg1)
 	s.Require().NoError(err)
-
-	s.Require().NoError(s.network.WaitForNextBlock())
-	_, err = clitestutil.GetRawLogFromTxOut(val, out)
-	s.Require().NoError(err)
-
 	s.Require().NoError(s.network.WaitForNextBlock())
 
 	// create allowance for machine
@@ -178,13 +173,8 @@ func (s *E2ETestSuite) TestMachineAllowanceAttestation() {
 
 	msg2, err := feegrant.NewMsgGrantAllowance(grant, val.Address, addr)
 	s.Require().NoError(err)
-	_, err = lib.BroadcastTxWithFileLock(val.Address, msg2)
+	_, err = e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg2)
 	s.Require().NoError(err)
-
-	s.Require().NoError(s.network.WaitForNextBlock())
-	_, err = clitestutil.GetRawLogFromTxOut(val, out)
-	s.Require().NoError(err)
-
 	s.Require().NoError(s.network.WaitForNextBlock())
 
 	// attest machine with fee granter without funding the machine account first
@@ -199,13 +189,8 @@ func (s *E2ETestSuite) TestMachineAllowanceAttestation() {
 	libConfig.SetClientCtx(clientCtx)
 
 	msg3 := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
-	_, err = lib.BroadcastTxWithFileLock(addr, msg3)
+	_, err = e2etestutil.BuildSignBroadcastTx(s.T(), addr, msg3)
 	s.Require().NoError(err)
-
-	s.Require().NoError(s.network.WaitForNextBlock())
-	_, err = clitestutil.GetRawLogFromTxOut(val, out)
-	s.Require().NoError(err)
-
 	s.Require().NoError(s.network.WaitForNextBlock())
 
 	args := []string{

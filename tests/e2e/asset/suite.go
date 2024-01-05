@@ -79,7 +79,7 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 	}
 
 	for _, tc := range testCases {
-		out, err := lib.BroadcastTxWithFileLock(addr, tc.msg)
+		out, err := e2etestutil.BuildSignBroadcastTx(s.T(), addr, tc.msg)
 		s.Require().NoError(err)
 
 		txResponse, err := lib.GetTxResponseFromOut(out)
