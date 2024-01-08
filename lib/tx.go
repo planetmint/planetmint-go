@@ -38,23 +38,23 @@ func getAccountNumberAndSequence(clientCtx client.Context) (accountNumber, seque
 	return
 }
 
-func getClientContextAndTxFactory(address sdk.AccAddress) (clientCtx client.Context, txf tx.Factory, err error) {
+func getClientContextAndTxFactory(fromAddress sdk.AccAddress) (clientCtx client.Context, txf tx.Factory, err error) {
 	clientCtx = GetConfig().ClientCtx
 	// at least we need an account retriever
 	// it would be better to check for an empty client context, but that does not work at the moment
 	if clientCtx.AccountRetriever == nil {
-		clientCtx, err = getClientContext(address)
+		clientCtx, err = getClientContext(fromAddress)
 		if err != nil {
 			return
 		}
 	}
-	record, err := clientCtx.Keyring.KeyByAddress(address)
+	record, err := clientCtx.Keyring.KeyByAddress(fromAddress)
 	if err != nil {
 		return
 	}
 	// name and address of private key with which to sign
 	clientCtx = clientCtx.
-		WithFromAddress(address).
+		WithFromAddress(fromAddress).
 		WithFromName(record.Name)
 
 	accountNumber, sequence, err := getAccountNumberAndSequence(clientCtx)
@@ -78,7 +78,7 @@ func getTxFactoryWithAccountNumberAndSequence(clientCtx client.Context, accountN
 		WithTxConfig(clientCtx.TxConfig)
 }
 
-func getClientContext(address sdk.AccAddress) (clientCtx client.Context, err error) {
+func getClientContext(fromAddress sdk.AccAddress) (clientCtx client.Context, err error) {
 	encodingConfig := GetConfig().EncodingConfig
 
 	rootDir := GetConfig().RootDir
@@ -91,7 +91,7 @@ func getClientContext(address sdk.AccAddress) (clientCtx client.Context, err err
 		return
 	}
 
-	record, err := keyring.KeyByAddress(address)
+	record, err := keyring.KeyByAddress(fromAddress)
 	if err != nil {
 		return
 	}
@@ -110,8 +110,8 @@ func getClientContext(address sdk.AccAddress) (clientCtx client.Context, err err
 		ChainID:           GetConfig().ChainID,
 		Client:            wsClient,
 		Codec:             codec,
-		From:              address.String(),
-		FromAddress:       address,
+		From:              fromAddress.String(),
+		FromAddress:       fromAddress,
 		FromName:          record.Name,
 		HomeDir:           rootDir,
 		Input:             input,
@@ -131,8 +131,8 @@ func getClientContext(address sdk.AccAddress) (clientCtx client.Context, err err
 
 // BuildUnsignedTx builds a transaction to be signed given a set of messages.
 // Once created, the fee, memo, and messages are set.
-func BuildUnsignedTx(address sdk.AccAddress, msgs ...sdk.Msg) (txJSON string, err error) {
-	clientCtx, txf, err := getClientContextAndTxFactory(address)
+func BuildUnsignedTx(fromAddress sdk.AccAddress, msgs ...sdk.Msg) (txJSON string, err error) {
+	clientCtx, txf, err := getClientContextAndTxFactory(fromAddress)
 	if err != nil {
 		return
 	}
@@ -212,7 +212,7 @@ func getSequenceFromChain(clientCtx client.Context) (sequence uint64, err error)
 }
 
 // BroadcastTxWithFileLock broadcasts a transaction via gRPC and synchronises requests via a file lock.
-func BroadcastTxWithFileLock(address sdk.AccAddress, msgs ...sdk.Msg) (out *bytes.Buffer, err error) {
+func BroadcastTxWithFileLock(fromAddress sdk.AccAddress, msgs ...sdk.Msg) (out *bytes.Buffer, err error) {
 	// open and lock file, if it exists
 	usr, err := user.Current()
 	if err != nil {
@@ -220,7 +220,7 @@ func BroadcastTxWithFileLock(address sdk.AccAddress, msgs ...sdk.Msg) (out *byte
 	}
 	homeDir := usr.HomeDir
 
-	addrHex := hex.EncodeToString(address)
+	addrHex := hex.EncodeToString(fromAddress)
 	filename := filepath.Join(GetConfig().RootDir, addrHex+".sequence")
 
 	// Expand tilde to user's home directory.
@@ -248,7 +248,7 @@ func BroadcastTxWithFileLock(address sdk.AccAddress, msgs ...sdk.Msg) (out *byte
 	}()
 
 	// get basic chain information
-	clientCtx, txf, err := getClientContextAndTxFactory(address)
+	clientCtx, txf, err := getClientContextAndTxFactory(fromAddress)
 	if err != nil {
 		return
 	}
