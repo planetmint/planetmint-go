@@ -37,18 +37,6 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.network = network.New(s.T())
 	err := e2etestutil.AttestMachine(s.network, sample.Name, sample.Mnemonic, 0)
 	s.Require().NoError(err)
-
-	val := s.network.Validators[0]
-	k, err := val.ClientCtx.Keyring.Key(sample.Name)
-	s.Require().NoError(err)
-
-	addr, _ := k.GetAddress()
-
-	clientCtx := val.ClientCtx.
-		WithFromAddress(addr).
-		WithFromName(sample.Name)
-	libConfig := lib.GetConfig()
-	libConfig.SetClientCtx(clientCtx)
 }
 
 // TearDownSuite clean up after testing

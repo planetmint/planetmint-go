@@ -73,13 +73,6 @@ func (s *E2ETestSuite) TestAttestMachine() {
 	s.Require().NoError(err)
 	addr, _ := k.GetAddress()
 
-	// name and address of private key with which to sign
-	clientCtx := val.ClientCtx.
-		WithFromAddress(addr).
-		WithFromName(sample.Name)
-	libConfig := lib.GetConfig()
-	libConfig.SetClientCtx(clientCtx)
-
 	machine := sample.Machine(sample.Name, pubKey, prvKey, addr.String())
 	msg2 := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
 	out, err = e2etestutil.BuildSignBroadcastTx(s.T(), addr, msg2)
@@ -112,13 +105,6 @@ func (s *E2ETestSuite) TestInvalidAttestMachine() {
 	machine := sample.Machine(sample.Name, pubKey, prvKey, addr.String())
 	s.Require().NoError(err)
 
-	// name and address of private key with which to sign
-	clientCtx := val.ClientCtx.
-		WithFromAddress(addr).
-		WithFromName(sample.Name)
-	libConfig := lib.GetConfig()
-	libConfig.SetClientCtx(clientCtx)
-
 	msg := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
 	out, _ := lib.BroadcastTxWithFileLock(addr, msg)
 	txResponse, err := lib.GetTxResponseFromOut(out)
@@ -150,10 +136,6 @@ func (s *E2ETestSuite) TestMachineAllowanceAttestation() {
 	// register TA
 	prvKey, pubKey := sample.KeyPair(3)
 
-	// name and address of private key with which to sign
-	libConfig := lib.GetConfig()
-	libConfig.SetClientCtx(val.ClientCtx)
-
 	ta := sample.TrustAnchor(pubKey)
 	msg1 := machinetypes.NewMsgRegisterTrustAnchor(val.Address.String(), &ta)
 	_, err = e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg1)
@@ -183,15 +165,17 @@ func (s *E2ETestSuite) TestMachineAllowanceAttestation() {
 
 	// name and address of private key with which to sign
 	clientCtx := val.ClientCtx.
-		WithFromAddress(addr).
-		WithFromName("AllowanceMachine").
 		WithFeeGranterAddress(val.Address)
+	libConfig := lib.GetConfig()
 	libConfig.SetClientCtx(clientCtx)
 
 	msg3 := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
 	_, err = e2etestutil.BuildSignBroadcastTx(s.T(), addr, msg3)
 	s.Require().NoError(err)
 	s.Require().NoError(s.network.WaitForNextBlock())
+
+	// reset clientCtx to validator ctx
+	libConfig.SetClientCtx(val.ClientCtx)
 
 	args := []string{
 		pubKey,

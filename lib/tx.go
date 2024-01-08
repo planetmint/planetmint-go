@@ -48,6 +48,15 @@ func getClientContextAndTxFactory(address sdk.AccAddress) (clientCtx client.Cont
 			return
 		}
 	}
+	record, err := clientCtx.Keyring.KeyByAddress(address)
+	if err != nil {
+		return
+	}
+	// name and address of private key with which to sign
+	clientCtx = clientCtx.
+		WithFromAddress(address).
+		WithFromName(record.Name)
+
 	accountNumber, sequence, err := getAccountNumberAndSequence(clientCtx)
 	if err != nil {
 		return

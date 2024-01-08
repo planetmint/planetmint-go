@@ -92,13 +92,6 @@ func AttestMachine(network *network.Network, name string, mnemonic string, num i
 		return err
 	}
 
-	// name and address of private key with which to sign
-	clientCtx := val.ClientCtx.
-		WithFromAddress(addr).
-		WithFromName(name)
-	libConfig := lib.GetConfig()
-	libConfig.SetClientCtx(clientCtx)
-
 	machine := sample.Machine(name, pubKey, prvKey, addr.String())
 	attestMsg := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
 	_, err = lib.BroadcastTxWithFileLock(addr, attestMsg)
@@ -110,9 +103,6 @@ func AttestMachine(network *network.Network, name string, mnemonic string, num i
 	if err != nil {
 		return err
 	}
-
-	// reset clientCtx to validator ctx
-	libConfig.SetClientCtx(val.ClientCtx)
 
 	return
 }
