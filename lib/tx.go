@@ -169,7 +169,9 @@ func broadcastTx(clientCtx client.Context, txf tx.Factory, msgs ...sdk.Msg) (out
 
 	// Make a copy because we `defer output.Reset()`
 	out = &bytes.Buffer{}
-	*out = *output
+	// This is still copying references: *out = *output
+	// Make a real copy: https://stackoverflow.com/a/69758157
+	out.Write(output.Bytes())
 	return
 }
 
