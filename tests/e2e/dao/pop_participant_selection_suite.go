@@ -42,8 +42,8 @@ func NewPopSelectionE2ETestSuite(cfg network.Config) *PopSelectionE2ETestSuite {
 
 func (s *PopSelectionE2ETestSuite) SetupSuite() {
 	s.T().Log("setting up e2e test suite")
-	cfg := config.GetConfig()
-	cfg.FeeDenom = "stake"
+	conf := config.GetConfig()
+	conf.FeeDenom = "stake"
 
 	s.network = network.New(s.T(), s.cfg)
 
@@ -63,8 +63,8 @@ func (s *PopSelectionE2ETestSuite) TestPopSelection() {
 	val := s.network.Validators[0]
 
 	// set PopEpochs to 1 in Order to trigger some participant selections
-	cfg := config.GetConfig()
-	cfg.PopEpochs = 1
+	conf := config.GetConfig()
+	conf.PopEpochs = 1
 
 	// wait for some blocks so challenges get stored
 	s.Require().NoError(s.network.WaitForNextBlock())

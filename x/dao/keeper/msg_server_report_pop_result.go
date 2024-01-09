@@ -32,10 +32,10 @@ func (k msgServer) ReportPopResult(goCtx context.Context, msg *types.MsgReportPo
 }
 
 func (k msgServer) issuePoPRewards(ctx sdk.Context, challenge types.Challenge) (err error) {
-	cfg := config.GetConfig()
+	conf := config.GetConfig()
 	total, _, _ := util.GetPopReward(challenge.Height)
 
-	stagedCRDDL := sdk.NewCoin(cfg.StagedDenom, sdk.NewIntFromUint64(total))
+	stagedCRDDL := sdk.NewCoin(conf.StagedDenom, sdk.NewIntFromUint64(total))
 	err = k.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(stagedCRDDL))
 	if err != nil {
 		return err
@@ -57,11 +57,11 @@ func (k msgServer) issuePoPRewards(ctx sdk.Context, challenge types.Challenge) (
 }
 
 func (k msgServer) handlePoPSuccess(ctx sdk.Context, challenge types.Challenge) (err error) {
-	cfg := config.GetConfig()
+	conf := config.GetConfig()
 	_, challengerAmt, challengeeAmt := util.GetPopReward(challenge.Height)
 
-	challengerCoin := sdk.NewCoin(cfg.StagedDenom, sdk.NewIntFromUint64(challengerAmt))
-	challengeeCoin := sdk.NewCoin(cfg.StagedDenom, sdk.NewIntFromUint64(challengeeAmt))
+	challengerCoin := sdk.NewCoin(conf.StagedDenom, sdk.NewIntFromUint64(challengerAmt))
+	challengeeCoin := sdk.NewCoin(conf.StagedDenom, sdk.NewIntFromUint64(challengeeAmt))
 	challengee, err := sdk.AccAddressFromBech32(challenge.Challengee)
 	if err != nil {
 		return err

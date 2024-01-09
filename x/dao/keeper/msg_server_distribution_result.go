@@ -64,17 +64,17 @@ func (k msgServer) resolveStagedClaims(ctx sdk.Context, start int64, end int64) 
 
 // convert per account
 func (k msgServer) convertClaim(ctx sdk.Context, participant string, amount uint64) (err error) {
-	cfg := config.GetConfig()
+	conf := config.GetConfig()
 	accAddr, err := sdk.AccAddressFromBech32(participant)
 	if err != nil {
 		return err
 	}
 
-	accStagedClaim := k.bankKeeper.GetBalance(ctx, accAddr, cfg.StagedDenom)
+	accStagedClaim := k.bankKeeper.GetBalance(ctx, accAddr, conf.StagedDenom)
 
 	if accStagedClaim.Amount.GTE(sdk.NewIntFromUint64(amount)) {
-		burnCoins := sdk.NewCoins(sdk.NewCoin(cfg.StagedDenom, sdk.NewIntFromUint64(amount)))
-		mintCoins := sdk.NewCoins(sdk.NewCoin(cfg.ClaimDenom, sdk.NewIntFromUint64(amount)))
+		burnCoins := sdk.NewCoins(sdk.NewCoin(conf.StagedDenom, sdk.NewIntFromUint64(amount)))
+		mintCoins := sdk.NewCoins(sdk.NewCoin(conf.ClaimDenom, sdk.NewIntFromUint64(amount)))
 
 		err = k.bankKeeper.SendCoinsFromAccountToModule(ctx, accAddr, types.ModuleName, burnCoins)
 		if err != nil {

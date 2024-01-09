@@ -11,7 +11,7 @@ import (
 
 func (k msgServer) MintToken(goCtx context.Context, msg *types.MsgMintToken) (*types.MsgMintTokenResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	cfg := config.GetConfig()
+	conf := config.GetConfig()
 
 	_, found := k.GetMintRequestByHash(ctx, msg.GetMintRequest().GetLiquidTxHash())
 	if found {
@@ -25,7 +25,7 @@ func (k msgServer) MintToken(goCtx context.Context, msg *types.MsgMintToken) (*t
 		return nil, errorsmod.Wrapf(types.ErrInvalidAddress, "for provided address %s", beneficiary)
 	}
 
-	coin := sdk.NewCoin(cfg.TokenDenom, sdk.NewIntFromUint64(amt))
+	coin := sdk.NewCoin(conf.TokenDenom, sdk.NewIntFromUint64(amt))
 	coins := sdk.NewCoins(coin)
 	err = k.bankKeeper.MintCoins(ctx, types.ModuleName, coins)
 	if err != nil {
