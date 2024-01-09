@@ -55,12 +55,12 @@ func New(t *testing.T, configs ...Config) *Network {
 	appLogger.SetTestingLogger(t)
 
 	// set the proper root dir for the test environment so that the abci.go logic works
-	appConfig := config.GetConfig()
-	appConfig.SetRoot(validatorTmpDir + "/node0/simd")
+	conf := config.GetConfig()
+	conf.SetRoot(validatorTmpDir + "/node0/simd")
 
 	net, err := network.New(t, validatorTmpDir, cfg)
 
-	appConfig.ValidatorAddress = net.Validators[0].Address.String()
+	conf.ValidatorAddress = net.Validators[0].Address.String()
 	// set missing validator client context values for sending txs
 	var output bytes.Buffer
 	net.Validators[0].ClientCtx.BroadcastMode = "sync"
@@ -72,7 +72,7 @@ func New(t *testing.T, configs ...Config) *Network {
 
 	libConfig := lib.GetConfig()
 	libConfig.SetClientCtx(net.Validators[0].ClientCtx)
-	libConfig.SetFeeDenom(appConfig.FeeDenom)
+	libConfig.SetFeeDenom(conf.FeeDenom)
 	libConfig.SetRoot(validatorTmpDir + "/node0/simd")
 
 	require.NoError(t, err)

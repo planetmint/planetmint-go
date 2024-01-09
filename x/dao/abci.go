@@ -54,18 +54,18 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 }
 
 func isPopHeight(height int64) bool {
-	cfg := config.GetConfig()
-	return height%int64(cfg.PopEpochs) == 0
+	conf := config.GetConfig()
+	return height%int64(conf.PopEpochs) == 0
 }
 
 func isReIssuanceHeight(height int64) bool {
-	cfg := config.GetConfig()
-	return height%int64(cfg.ReIssuanceEpochs) == 0
+	conf := config.GetConfig()
+	return height%int64(conf.ReIssuanceEpochs) == 0
 }
 
 func isDistributionHeight(height int64) bool {
-	cfg := config.GetConfig()
-	return height%int64(cfg.DistributionEpochs) == 0
+	conf := config.GetConfig()
+	return height%int64(conf.DistributionEpochs) == 0
 }
 
 func EndBlocker(ctx sdk.Context, _ abci.RequestEndBlock, k keeper.Keeper) {

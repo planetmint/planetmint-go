@@ -30,8 +30,8 @@ func NewRestE2ETestSuite(cfg network.Config) *RestE2ETestSuite {
 
 // SetupSuite initializes machine E2ETestSuite
 func (s *RestE2ETestSuite) SetupSuite() {
-	cfg := config.GetConfig()
-	cfg.FeeDenom = "stake"
+	conf := config.GetConfig()
+	conf.FeeDenom = "stake"
 
 	s.T().Log("setting up e2e test suite")
 
