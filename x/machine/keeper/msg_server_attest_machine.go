@@ -24,12 +24,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func (k msgServer) isNFTCreationRequest(machine *types.Machine) bool {
-	if !machine.GetReissue() && machine.GetAmount() == 1 && machine.GetPrecision() == 8 {
-		return true
-	}
-	return false
-}
 func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMachine) (*types.MsgAttestMachineResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -55,7 +49,7 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 		return nil, types.ErrMachineTypeUndefined
 	}
 
-	if k.isNFTCreationRequest(msg.Machine) && util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress) {
+	if util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress) {
 		util.GetAppLogger().Info(ctx, "Issuing Machine NFT: "+msg.Machine.String())
 		err := k.issueMachineNFT(goCtx, msg.Machine)
 		if err != nil {
@@ -64,7 +58,7 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 			util.GetAppLogger().Info(ctx, "Machine NFT issuance successful: "+msg.Machine.String())
 		}
 	} else {
-		util.GetAppLogger().Info(ctx, "skipping Machine NFT issuance")
+		util.GetAppLogger().Info(ctx, "Not block proposer: skipping Machine NFT issuance")
 	}
 
 	k.StoreMachine(ctx, *msg.Machine)
