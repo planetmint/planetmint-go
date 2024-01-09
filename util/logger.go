@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	"sync"
 	"testing"
 
@@ -36,28 +37,35 @@ func (logger *AppLogger) SetTestingLogger(testingLogger *testing.T) *AppLogger {
 	return logger
 }
 
+func format(msg string, keyvals ...interface{}) string {
+	if len(keyvals) == 0 {
+		return msg
+	}
+	return fmt.Sprintf(msg, keyvals...)
+}
+
 func (logger *AppLogger) testingLog(msg string, keyvals ...interface{}) {
 	if logger.testingLogger == nil {
 		return
 	}
-	if len(keyvals) == 0 {
-		logger.testingLogger.Log(msg)
-		return
-	}
-	logger.testingLogger.Logf(msg, keyvals...)
+	msg = format(msg, keyvals...)
+	logger.testingLogger.Logf(msg)
 }
 
 func (logger *AppLogger) Info(ctx sdk.Context, msg string, keyvals ...interface{}) {
-	logger.testingLog(globalApplicationLoggerTag+msg, keyvals...)
-	ctx.Logger().Info(globalApplicationLoggerTag+msg, keyvals...)
+	msg = format(msg, keyvals...)
+	logger.testingLog(globalApplicationLoggerTag + msg)
+	ctx.Logger().Info(globalApplicationLoggerTag + msg)
 }
 
 func (logger *AppLogger) Debug(ctx sdk.Context, msg string, keyvals ...interface{}) {
-	logger.testingLog(globalApplicationLoggerTag+msg, keyvals...)
-	ctx.Logger().Debug(globalApplicationLoggerTag+msg, keyvals...)
+	msg = format(msg, keyvals...)
+	logger.testingLog(globalApplicationLoggerTag + msg)
+	ctx.Logger().Debug(globalApplicationLoggerTag + msg)
 }
 
 func (logger *AppLogger) Error(ctx sdk.Context, msg string, keyvals ...interface{}) {
-	logger.testingLog(globalApplicationLoggerTag+msg, keyvals...)
-	ctx.Logger().Error(globalApplicationLoggerTag+msg, keyvals...)
+	msg = format(msg, keyvals...)
+	logger.testingLog(globalApplicationLoggerTag + msg)
+	ctx.Logger().Error(globalApplicationLoggerTag + msg)
 }
