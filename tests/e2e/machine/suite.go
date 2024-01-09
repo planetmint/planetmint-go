@@ -78,7 +78,11 @@ func (s *E2ETestSuite) TestAttestMachine() {
 	out, err = e2etestutil.BuildSignBroadcastTx(s.T(), addr, msg2)
 	s.Require().NoError(err)
 
+	// give machine attestation some time to issue the liquid asset
 	s.Require().NoError(s.network.WaitForNextBlock())
+	s.Require().NoError(s.network.WaitForNextBlock())
+	s.Require().NoError(s.network.WaitForNextBlock())
+
 	rawLog, err = clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().NoError(err)
 
@@ -172,6 +176,10 @@ func (s *E2ETestSuite) TestMachineAllowanceAttestation() {
 	msg3 := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
 	_, err = e2etestutil.BuildSignBroadcastTx(s.T(), addr, msg3)
 	s.Require().NoError(err)
+
+	// give machine attestation some time to issue the liquid asset
+	s.Require().NoError(s.network.WaitForNextBlock())
+	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
 
 	// reset clientCtx to validator ctx
