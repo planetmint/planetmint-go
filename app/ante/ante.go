@@ -21,6 +21,7 @@ type HandlerOptions struct {
 	TxFeeChecker           TxFeeChecker
 	MachineKeeper          MachineKeeper
 	DaoKeeper              DaoKeeper
+	StakingKeeper          StakingKeeper
 }
 
 // NewAnteHandler returns an AnteHandler that checks and increments sequence
@@ -45,10 +46,14 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 	if options.DaoKeeper == nil {
 		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, "dao keeper is required for ante builder")
 	}
+	if options.StakingKeeper == nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, "staking keeper is required for ante builder")
+	}
 
 	anteDecorators := []sdk.AnteDecorator{
 		ante.NewSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
 		ante.NewExtensionOptionsDecorator(options.ExtensionOptionChecker),
+		NewGasKVCostDecorator(options.StakingKeeper),
 		ante.NewValidateBasicDecorator(),
 		ante.NewTxTimeoutHeightDecorator(),
 		ante.NewValidateMemoDecorator(options.AccountKeeper),
