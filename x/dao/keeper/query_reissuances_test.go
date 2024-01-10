@@ -49,7 +49,7 @@ func TestQueryReissuances(t *testing.T) {
 			responseReissuance: reissuances[1:6],
 		},
 		{
-			desc: "query 5*ReIssuanceEpochs key 0 offset 10 limit",
+			desc: "query 5*ReissuanceEpochs key 0 offset 10 limit",
 			request: &types.QueryReissuancesRequest{
 				Pagination: &query.PageRequest{
 					Key:        util.SerializeInt64(4),

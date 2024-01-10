@@ -11,10 +11,10 @@ import (
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
-var ReIssueCommand string
+var ReissueCommand string
 
 func init() {
-	ReIssueCommand = "reissueasset"
+	ReissueCommand = "reissueasset"
 }
 
 func GetReissuanceAsStringValue(blockHeight int64) string {
@@ -38,45 +38,45 @@ func GetReissuanceAsStringValue(blockHeight int64) string {
 }
 
 func GetReissuanceCommand(assetID string, blockHeight int64) string {
-	return ReIssueCommand + " " + assetID + " " + GetReissuanceAsStringValue(blockHeight)
+	return ReissueCommand + " " + assetID + " " + GetReissuanceAsStringValue(blockHeight)
 }
 
 func IsValidReissuanceCommand(reissuanceStr string, assetID string, blockHeight int64) bool {
-	expected := ReIssueCommand + " " + assetID + " " + GetReissuanceAsStringValue(blockHeight)
+	expected := ReissueCommand + " " + assetID + " " + GetReissuanceAsStringValue(blockHeight)
 	return reissuanceStr == expected
 }
 
 func GetReissuanceCommandForValue(assetID string, value uint64) string {
-	return ReIssueCommand + " " + assetID + " " + util.UintValueToRDDLTokenString(value)
+	return ReissueCommand + " " + assetID + " " + util.UintValueToRDDLTokenString(value)
 }
 
-func (k Keeper) CreateNextReIssuanceObject(ctx sdk.Context, currentBlockHeight int64) (reIssuance types.Reissuance, err error) {
+func (k Keeper) CreateNextReissuanceObject(ctx sdk.Context, currentBlockHeight int64) (reissuance types.Reissuance, err error) {
 	var lastReissuedPop int64
-	lastReIssuance, found := k.GetLastReIssuance(ctx)
+	lastReissuance, found := k.GetLastReissuance(ctx)
 	if found {
-		lastReissuedPop = lastReIssuance.LastIncludedPop
+		lastReissuedPop = lastReissuance.LastIncludedPop
 	}
-	reIssuanceValue, firstIncludedPop, lastIncludedPop, err := k.ComputeReIssuanceValue(ctx, lastReissuedPop, currentBlockHeight)
+	reissuanceValue, firstIncludedPop, lastIncludedPop, err := k.ComputeReissuanceValue(ctx, lastReissuedPop, currentBlockHeight)
 	if err != nil {
 		return
 	}
 
-	reIssuance.Command = GetReissuanceCommandForValue(config.GetConfig().ReissuanceAsset, reIssuanceValue)
-	reIssuance.BlockHeight = currentBlockHeight
-	reIssuance.FirstIncludedPop = firstIncludedPop
-	reIssuance.LastIncludedPop = lastIncludedPop
+	reissuance.Command = GetReissuanceCommandForValue(config.GetConfig().ReissuanceAsset, reissuanceValue)
+	reissuance.BlockHeight = currentBlockHeight
+	reissuance.FirstIncludedPop = firstIncludedPop
+	reissuance.LastIncludedPop = lastIncludedPop
 	return
 }
 
-func (k Keeper) IsValidReIssuanceProposal(ctx sdk.Context, msg *types.MsgReissueRDDLProposal) (isValid bool) {
-	reIssuance, err := k.CreateNextReIssuanceObject(ctx, msg.GetBlockHeight())
+func (k Keeper) IsValidReissuanceProposal(ctx sdk.Context, msg *types.MsgReissueRDDLProposal) (isValid bool) {
+	reissuance, err := k.CreateNextReissuanceObject(ctx, msg.GetBlockHeight())
 	if err != nil {
 		return
 	}
-	if reIssuance.GetBlockHeight() == msg.GetBlockHeight() &&
-		reIssuance.GetFirstIncludedPop() == msg.GetFirstIncludedPop() &&
-		reIssuance.GetLastIncludedPop() == msg.GetLastIncludedPop() &&
-		reIssuance.GetCommand() == msg.GetCommand() &&
+	if reissuance.GetBlockHeight() == msg.GetBlockHeight() &&
+		reissuance.GetFirstIncludedPop() == msg.GetFirstIncludedPop() &&
+		reissuance.GetLastIncludedPop() == msg.GetLastIncludedPop() &&
+		reissuance.GetCommand() == msg.GetCommand() &&
 		msg.GetProposer() != "" {
 		isValid = true
 	}
@@ -114,20 +114,20 @@ func (k Keeper) getReissuancesRange(ctx sdk.Context, from int64) (reissuances []
 	return
 }
 
-func (k Keeper) GetLastReIssuance(ctx sdk.Context) (val types.Reissuance, found bool) {
+func (k Keeper) GetLastReissuance(ctx sdk.Context) (val types.Reissuance, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReissuanceBlockHeightKey))
 
 	iterator := store.ReverseIterator(nil, nil)
 	defer iterator.Close()
 	found = iterator.Valid()
 	if found {
-		reIssuance := iterator.Value()
-		k.cdc.MustUnmarshal(reIssuance, &val)
+		reissuance := iterator.Value()
+		k.cdc.MustUnmarshal(reissuance, &val)
 	}
 	return val, found
 }
 
-func (k Keeper) ComputeReIssuanceValue(ctx sdk.Context, startHeight int64, endHeight int64) (reIssuanceValue uint64, firstIncludedPop int64, lastIncludedPop int64, err error) {
+func (k Keeper) ComputeReissuanceValue(ctx sdk.Context, startHeight int64, endHeight int64) (reissuanceValue uint64, firstIncludedPop int64, lastIncludedPop int64, err error) {
 	challenges, err := k.GetChallengeRange(ctx, startHeight, endHeight)
 	if err != nil {
 		util.GetAppLogger().Error(ctx, "unable to compute get challenges")
@@ -139,8 +139,8 @@ func (k Keeper) ComputeReIssuanceValue(ctx sdk.Context, startHeight int64, endHe
 		popString := fmt.Sprintf("firstPoP: %d, PoP height: %d, current height %d", startHeight, obj.GetHeight(), endHeight)
 		// if (index == 0 && startHeight == 0 && obj.BlockHeight == 0) || // corner case (beginning of the chain)
 		if startHeight < obj.GetHeight() && obj.GetHeight()+2*popEpochs <= endHeight {
-			popReIssuanceString := GetReissuanceAsStringValue(obj.GetHeight())
-			amount, err := util.RDDLTokenStringToUint(popReIssuanceString)
+			popReissuanceString := GetReissuanceAsStringValue(obj.GetHeight())
+			amount, err := util.RDDLTokenStringToUint(popReissuanceString)
 			if err != nil {
 				util.GetAppLogger().Error(ctx, "unable to compute PoP re-issuance value: "+popString)
 				continue
@@ -158,6 +158,6 @@ func (k Keeper) ComputeReIssuanceValue(ctx sdk.Context, startHeight int64, endHe
 			}
 		}
 	}
-	reIssuanceValue = overallAmount
+	reissuanceValue = overallAmount
 	return
 }

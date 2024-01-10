@@ -33,11 +33,11 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 		}
 	}
 
-	if isReIssuanceHeight(currentBlockHeight) {
-		reIssuance, err := k.CreateNextReIssuanceObject(ctx, currentBlockHeight)
+	if isReissuanceHeight(currentBlockHeight) {
+		reissuance, err := k.CreateNextReissuanceObject(ctx, currentBlockHeight)
 		if err == nil {
-			util.SendInitReissuance(ctx, hexProposerAddress, reIssuance.GetCommand(), currentBlockHeight,
-				reIssuance.GetFirstIncludedPop(), reIssuance.GetLastIncludedPop())
+			util.SendInitReissuance(ctx, hexProposerAddress, reissuance.GetCommand(), currentBlockHeight,
+				reissuance.GetFirstIncludedPop(), reissuance.GetLastIncludedPop())
 		} else {
 			util.GetAppLogger().Error(ctx, "error while computing the RDDL re-issuance ", err)
 		}
@@ -58,9 +58,9 @@ func isPopHeight(height int64) bool {
 	return height%int64(conf.PopEpochs) == 0
 }
 
-func isReIssuanceHeight(height int64) bool {
+func isReissuanceHeight(height int64) bool {
 	conf := config.GetConfig()
-	return height%int64(conf.ReIssuanceEpochs) == 0
+	return height%int64(conf.ReissuanceEpochs) == 0
 }
 
 func isDistributionHeight(height int64) bool {
