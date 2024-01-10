@@ -29,20 +29,21 @@ func (s *GasConsumptionE2ETestSuite) SetupSuite() {
 	conf := config.GetConfig()
 	conf.FeeDenom = "stake"
 	s.network = network.New(s.T(), s.cfg)
+	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
+	s.Require().NoError(err)
+	e2etestutil.FundAccount(s.network, account)
 }
 
 func (s *GasConsumptionE2ETestSuite) TearDownSuite() {
 	s.T().Log("tearing down e2e test suites")
 }
 
-func (s *GasConsumptionE2ETestSuite) TestConsumption() {
+func (s *GasConsumptionE2ETestSuite) TestValidatorConsumption() {
 	val := s.network.Validators[0]
 
-	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
+	k, err := val.ClientCtx.Keyring.Key(sample.Name)
 	s.Require().NoError(err)
-
-	addr, err := account.GetAddress()
-	s.Require().NoError(err)
+	addr, _ := k.GetAddress()
 
 	// send huge tx but as val and with no gas kv costs
 	msgs := createMsgs(val.Address, addr, 10)
@@ -54,18 +55,26 @@ func (s *GasConsumptionE2ETestSuite) TestConsumption() {
 
 	_, err = clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().NoError(err)
+}
+
+func (s *GasConsumptionE2ETestSuite) TestNonValidatorConsumptionOverflow() {
+	val := s.network.Validators[0]
+
+	k, err := val.ClientCtx.Keyring.Key(sample.Name)
+	s.Require().NoError(err)
+	addr, _ := k.GetAddress()
 
 	// exceed gas limit with too many msgs as non validator
-	msgs = createMsgs(addr, val.Address, 10)
+	msgs := createMsgs(addr, val.Address, 10)
 
-	out, err = lib.BroadcastTxWithFileLock(addr, msgs...)
+	out, err := lib.BroadcastTxWithFileLock(addr, msgs...)
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
 
 	_, err = clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().Error(err)
-	assert.Contains(s.T(), err.Error(), "out of gas")
+	assert.Contains(s.T(), err.Error(), "out of gas in location: Has; gasWanted: 200000, gasUsed: 200241: out of gas")
 }
 
 func createMsgs(from sdk.AccAddress, to sdk.AccAddress, n int) (msgs []sdk.Msg) {
