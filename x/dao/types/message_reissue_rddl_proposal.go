@@ -10,12 +10,12 @@ const TypeMsgReissueRDDLProposal = "reissue_rddl_proposal"
 
 var _ sdk.Msg = &MsgReissueRDDLProposal{}
 
-func NewMsgReissueRDDLProposal(creator string, proposer string, tx string, blockHeight int64,
+func NewMsgReissueRDDLProposal(creator string, proposer string, command string, blockHeight int64,
 	firstIncludedPop int64, lastIncludedPop int64) *MsgReissueRDDLProposal {
 	return &MsgReissueRDDLProposal{
 		Creator:          creator,
 		Proposer:         proposer,
-		Tx:               tx,
+		Command:          command,
 		BlockHeight:      blockHeight,
 		FirstIncludedPop: firstIncludedPop,
 		LastIncludedPop:  lastIncludedPop,

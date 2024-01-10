@@ -16,8 +16,8 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	validatorIdentity, validResult := util.GetValidatorCometBFTIdentity(ctx)
 	if validResult && msg.Proposer == validatorIdentity {
-		util.GetAppLogger().Info(ctx, reissueTag+"asset: "+msg.GetTx())
-		txID, err := util.ReissueAsset(msg.Tx)
+		util.GetAppLogger().Info(ctx, reissueTag+"asset: "+msg.GetCommand())
+		txID, err := util.ReissueAsset(msg.Command)
 		if err != nil {
 			util.GetAppLogger().Error(ctx, reissueTag+"asset reissuance failed: "+err.Error())
 		}
@@ -30,7 +30,7 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 	var reissuance types.Reissuance
 	reissuance.BlockHeight = msg.GetBlockHeight()
 	reissuance.Proposer = msg.GetProposer()
-	reissuance.RawTx = msg.GetTx()
+	reissuance.Command = msg.GetCommand()
 	reissuance.FirstIncludedPop = msg.GetFirstIncludedPop()
 	reissuance.LastIncludedPop = msg.GetLastIncludedPop()
 	k.StoreReissuance(ctx, reissuance)

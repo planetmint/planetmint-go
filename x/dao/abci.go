@@ -36,7 +36,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	if isReIssuanceHeight(currentBlockHeight) {
 		reIssuance, err := k.CreateNextReIssuanceObject(ctx, currentBlockHeight)
 		if err == nil {
-			util.SendInitReissuance(ctx, hexProposerAddress, reIssuance.GetRawTx(), currentBlockHeight,
+			util.SendInitReissuance(ctx, hexProposerAddress, reIssuance.GetCommand(), currentBlockHeight,
 				reIssuance.GetFirstIncludedPop(), reIssuance.GetLastIncludedPop())
 		} else {
 			util.GetAppLogger().Error(ctx, "error while computing the RDDL re-issuance ", err)

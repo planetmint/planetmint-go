@@ -34,7 +34,7 @@ message MsgReportPopResultResponse {}
 message MsgReissueRDDLProposal {
   string creator          = 1;
   string proposer         = 2;
-  string tx               = 3;
+  string command          = 3;
   int64  blockHeight      = 4;
   int64  firstIncludedPop = 5;
   int64  lastIncludedPop  = 6;

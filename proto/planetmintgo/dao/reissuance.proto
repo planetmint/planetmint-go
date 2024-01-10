@@ -6,7 +6,7 @@ option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
 message Reissuance {
   
   string proposer = 1; 
-  string rawTx = 2; 
+  string command = 2; 
   string txID = 3; 
   int64  blockHeight = 4; 
   int64 firstIncludedPop = 5; 
