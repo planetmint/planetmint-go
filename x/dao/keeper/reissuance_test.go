@@ -36,7 +36,7 @@ func TestReissuanceComputation(t *testing.T) {
 	popepoch := int64(config.GetConfig().PopEpochs)
 	_ = createNChallenge(k, ctx, numChallenges)
 
-	reIssuanceValue1, firstIncludedPop, lastIncludedPop, err := k.ComputeReIssuanceValue(ctx, 0, 780*popepoch)
+	reissuanceValue1, firstIncludedPop, lastIncludedPop, err := k.ComputeReissuanceValue(ctx, 0, 780*popepoch)
 	assert.Nil(t, err)
 
 	// explaining the numbers:
@@ -46,22 +46,22 @@ func TestReissuanceComputation(t *testing.T) {
 	assert.Equal(t, indexFirst, int64(1))
 	assert.Equal(t, indexLast, int64(778))
 	expSum := reissuanceValue * uint64(indexLast-indexFirst+1) // add 1 to count for the one that is missing by subtraction
-	assert.Equal(t, expSum, reIssuanceValue1)
+	assert.Equal(t, expSum, reissuanceValue1)
 
-	var lastReIssuance types.Reissuance
-	lastReIssuance.FirstIncludedPop = firstIncludedPop
-	lastReIssuance.LastIncludedPop = lastIncludedPop
-	k.StoreReissuance(ctx, lastReIssuance)
-	lastReIssuanceValue2nd, firstIncludedPop, lastIncludedPop, err0 := k.ComputeReIssuanceValue(ctx, lastIncludedPop, 1000*int64(config.GetConfig().PopEpochs))
+	var lastReissuance types.Reissuance
+	lastReissuance.FirstIncludedPop = firstIncludedPop
+	lastReissuance.LastIncludedPop = lastIncludedPop
+	k.StoreReissuance(ctx, lastReissuance)
+	lastReissuanceValue2nd, firstIncludedPop, lastIncludedPop, err0 := k.ComputeReissuanceValue(ctx, lastIncludedPop, 1000*int64(config.GetConfig().PopEpochs))
 	assert.Nil(t, err0)
 	indexFirst2nd := firstIncludedPop / popepoch
 	indexLast2nd := lastIncludedPop / popepoch
 	assert.Equal(t, indexLast+1, indexFirst2nd)
 	assert.Equal(t, int64(numChallenges-2), indexLast2nd)
 	expSum = reissuanceValue * uint64(indexLast2nd-indexFirst2nd+1) // add the [0] of the
-	assert.Equal(t, expSum, lastReIssuanceValue2nd)
+	assert.Equal(t, expSum, lastReissuanceValue2nd)
 	expectedSum := uint64(numChallenges-2) * reissuanceValue
-	computedSum := lastReIssuanceValue2nd + reIssuanceValue1
+	computedSum := lastReissuanceValue2nd + reissuanceValue1
 	assert.Equal(t, expectedSum, computedSum)
 }
 

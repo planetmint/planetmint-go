@@ -52,7 +52,7 @@ func (s *E2ETestSuite) SetupSuite() {
 	conf := config.GetConfig()
 	conf.FeeDenom = "node0token"
 	// set epochs: make sure to start after initial height of 7
-	conf.ReIssuanceEpochs = 25
+	conf.ReissuanceEpochs = 25
 	conf.SetPlanetmintConfig(conf)
 
 	s.T().Log("setting up e2e test suite")
@@ -243,7 +243,7 @@ func (s *E2ETestSuite) TestReissuance() {
 		// 1:  block 26: sending the re-issuance result broadcast tx succeeded
 		// 2:  block 27: confirmation
 		wait = 2
-		if latestHeight%int64(conf.ReIssuanceEpochs+wait) == 0 {
+		if latestHeight%int64(conf.ReissuanceEpochs+wait) == 0 {
 			break
 		}
 	}

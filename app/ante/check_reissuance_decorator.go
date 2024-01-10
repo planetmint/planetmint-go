@@ -27,7 +27,7 @@ func (cmad CheckReissuanceDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simu
 			MsgProposal, ok := msg.(*daotypes.MsgReissueRDDLProposal)
 			if ok {
 				util.GetAppLogger().Debug(ctx, anteHandlerTag+"received re-issuance proposal: "+MsgProposal.String())
-				isValid := cmad.dk.IsValidReIssuanceProposal(ctx, MsgProposal)
+				isValid := cmad.dk.IsValidReissuanceProposal(ctx, MsgProposal)
 				if !isValid {
 					util.GetAppLogger().Info(ctx, anteHandlerTag+"rejected re-issuance proposal")
 					return ctx, errorsmod.Wrapf(daotypes.ErrReissuanceProposal, "error during CheckTx or ReCheckTx")

@@ -34,7 +34,7 @@ distribution-address-inv = "{{ .PlmntConfig.DistributionAddrInv }}"
 distribution-address-dao = "{{ .PlmntConfig.DistributionAddrDAO }}"
 distribution-address-pop = "{{ .PlmntConfig.DistributionAddrPop }}"
 distribution-epochs = {{ .PlmntConfig.DistributionEpochs }}
-re-issuance-epochs = {{ .PlmntConfig.ReIssuanceEpochs }}
+re-issuance-epochs = {{ .PlmntConfig.ReissuanceEpochs }}
 mqtt-domain = "{{ .PlmntConfig.MqttDomain }}"
 mqtt-port = {{ .PlmntConfig.MqttPort }}
 mqtt-user = "{{ .PlmntConfig.MqttUser }}"
@@ -65,7 +65,7 @@ type Config struct {
 	DistributionAddrDAO string `json:"distribution-addr-dao" mapstructure:"distribution-addr-dao"`
 	DistributionAddrPop string `json:"distribution-addr-pop" mapstructure:"distribution-addr-pop"`
 	DistributionEpochs  int    `json:"distribution-epochs"   mapstructure:"distribution-epochs"`
-	ReIssuanceEpochs    int    `json:"re-issuance-epochs"    mapstructure:"re-issuance-epochs"`
+	ReissuanceEpochs    int    `json:"reissuance-epochs"     mapstructure:"reissuance-epochs"`
 	MqttDomain          string `json:"mqtt-domain"           mapstructure:"mqtt-domain"`
 	MqttPort            int    `json:"mqtt-port"             mapstructure:"mqtt-port"`
 	MqttUser            string `json:"mqtt-user"             mapstructure:"mqtt-user"`
@@ -103,12 +103,12 @@ func DefaultConfig() *Config {
 		DistributionAddrDAO: "vjU8eMzU3JbUWZEpVANt2ePJuPWSPixgjiSj2jDMvkVVQQi2DDnZuBRVX4Ygt5YGBf5zvTWCr1ntdqYH",
 		DistributionAddrPop: "vjTvXCFSReRsZ7grdsAreRR12KuKpDw8idueQJK9Yh1BYS7ggAqgvCxCgwh13KGK6M52y37HUmvr4GdD",
 		DistributionEpochs:  17640, // CometBFT epochs of 5s equate 1 day (12*60*24) + 30 min (12*30) to wait for confirmations on the re-issuance
-		// `ReIssuanceEpochs` is a configuration parameter that determines the number of CometBFT epochs
+		// `ReissuanceEpochs` is a configuration parameter that determines the number of CometBFT epochs
 		// required for re-issuance. In the context of Planetmint, re-issuance refers to the process of
 		// issuing new tokens. This configuration parameter specifies the number of epochs (each epoch is 5
-		// seconds) that need to pass before re-issuance can occur. In this case, `ReIssuanceEpochs` is set
+		// seconds) that need to pass before re-issuance can occur. In this case, `ReissuanceEpochs` is set
 		// to 17280, which means that re-issuance can occur after 1 day (12*60*24) of epochs.
-		ReIssuanceEpochs: 17280,
+		ReissuanceEpochs: 17280,
 		MqttDomain:       "testnet-mqtt.rddl.io",
 		MqttPort:         1885,
 		MqttUser:         "user",

@@ -16,7 +16,7 @@ var (
 func (k msgServer) DistributionRequest(goCtx context.Context, msg *types.MsgDistributionRequest) (*types.MsgDistributionRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	lastReissuance, found := k.GetLastReIssuance(ctx)
+	lastReissuance, found := k.GetLastReissuance(ctx)
 	if !found {
 		return nil, errorsmod.Wrap(types.ErrReissuanceNotFound, "for last reissuance height")
 	}
