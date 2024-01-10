@@ -31,7 +31,8 @@ func (s *GasConsumptionE2ETestSuite) SetupSuite() {
 	s.network = network.New(s.T(), s.cfg)
 	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
 	s.Require().NoError(err)
-	e2etestutil.FundAccount(s.network, account)
+	err = e2etestutil.FundAccount(s.network, account)
+	s.Require().NoError(err)
 }
 
 func (s *GasConsumptionE2ETestSuite) TearDownSuite() {
