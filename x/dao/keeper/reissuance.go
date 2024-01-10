@@ -61,7 +61,7 @@ func (k Keeper) CreateNextReIssuanceObject(ctx sdk.Context, currentBlockHeight i
 		return
 	}
 
-	reIssuance.RawTx = GetReissuanceCommandForValue(config.GetConfig().ReissuanceAsset, reIssuanceValue)
+	reIssuance.Command = GetReissuanceCommandForValue(config.GetConfig().ReissuanceAsset, reIssuanceValue)
 	reIssuance.BlockHeight = currentBlockHeight
 	reIssuance.FirstIncludedPop = firstIncludedPop
 	reIssuance.LastIncludedPop = lastIncludedPop
@@ -76,7 +76,7 @@ func (k Keeper) IsValidReIssuanceProposal(ctx sdk.Context, msg *types.MsgReissue
 	if reIssuance.GetBlockHeight() == msg.GetBlockHeight() &&
 		reIssuance.GetFirstIncludedPop() == msg.GetFirstIncludedPop() &&
 		reIssuance.GetLastIncludedPop() == msg.GetLastIncludedPop() &&
-		reIssuance.GetRawTx() == msg.GetTx() &&
+		reIssuance.GetCommand() == msg.GetCommand() &&
 		msg.GetProposer() != "" {
 		isValid = true
 	}

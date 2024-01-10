@@ -19,7 +19,7 @@ func createNReissuances(k *daokeeper.Keeper, ctx sdk.Context, n int) []types.Rei
 	for i := range items {
 		items[i].BlockHeight = int64(i)
 		items[i].Proposer = fmt.Sprintf("proposer_%v", i)
-		items[i].RawTx = daokeeper.GetReissuanceCommand("asset_id", int64(i))
+		items[i].Command = daokeeper.GetReissuanceCommand("asset_id", int64(i))
 		items[i].TxID = ""
 		items[i].FirstIncludedPop = int64(i)
 		items[i].LastIncludedPop = int64(i)

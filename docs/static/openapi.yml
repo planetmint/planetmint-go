@@ -46700,7 +46700,7 @@ paths:
                 properties:
                   proposer:
                     type: string
-                  rawTx:
+                  command:
                     type: string
                   txID:
                     type: string
@@ -46845,7 +46845,7 @@ paths:
                   properties:
                     proposer:
                       type: string
-                    rawTx:
+                    command:
                       type: string
                     txID:
                       type: string
@@ -76488,7 +76488,7 @@ definitions:
         properties:
           proposer:
             type: string
-          rawTx:
+          command:
             type: string
           txID:
             type: string
@@ -76539,7 +76539,7 @@ definitions:
           properties:
             proposer:
               type: string
-            rawTx:
+            command:
               type: string
             txID:
               type: string
@@ -76583,7 +76583,7 @@ definitions:
     properties:
       proposer:
         type: string
-      rawTx:
+      command:
         type: string
       txID:
         type: string
