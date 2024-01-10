@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 )
 
@@ -38,4 +39,8 @@ type DaoKeeper interface {
 	GetMintRequestByHash(ctx sdk.Context, hash string) (val daotypes.MintRequest, found bool)
 	GetMintAddress(ctx sdk.Context) (mintAddress string)
 	IsValidReissuanceProposal(ctx sdk.Context, msg *daotypes.MsgReissueRDDLProposal) (isValid bool)
+}
+
+type StakingKeeper interface {
+	GetValidator(ctx sdk.Context, addr sdk.ValAddress) (validator stakingtypes.Validator, found bool)
 }

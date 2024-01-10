@@ -17,3 +17,8 @@ func TestPopE2ETestSuite(t *testing.T) {
 	cfg := network.DefaultConfig()
 	suite.Run(t, NewPopSelectionE2ETestSuite(cfg))
 }
+
+func TestGasConsumptionE2ETestSuite(t *testing.T) {
+	cfg := network.DefaultConfig()
+	suite.Run(t, NewGasConsumptionE2ETestSuite(cfg))
+}
