@@ -55,7 +55,7 @@ func (s *GasConsumptionE2ETestSuite) TestConsumption() {
 	_, err = clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().NoError(err)
 
-	// exceed gas limit with to many msgs as non validator
+	// exceed gas limit with too many msgs as non validator
 	msgs = createMsgs(addr, val.Address, 10)
 
 	out, err = lib.BroadcastTxWithFileLock(addr, msgs...)
