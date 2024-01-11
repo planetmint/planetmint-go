@@ -57,6 +57,7 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		ante.NewValidateBasicDecorator(),
 		ante.NewTxTimeoutHeightDecorator(),
 		ante.NewValidateMemoDecorator(options.AccountKeeper),
+		NewCheckValidatorDecorator(options.StakingKeeper),
 		NewCheckMachineDecorator(options.MachineKeeper),
 		NewCheckMintAddressDecorator(options.DaoKeeper),
 		NewCheckReissuanceDecorator(options.DaoKeeper),

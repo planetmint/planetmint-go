@@ -64,10 +64,10 @@ func (s *RestE2ETestSuite) TestAttestMachineREST() {
 	// Register TA
 	ta := sample.TrustAnchor(pubKey)
 	taMsg := machinetypes.MsgRegisterTrustAnchor{
-		Creator:     addr.String(),
+		Creator:     val.Address.String(),
 		TrustAnchor: &ta,
 	}
-	out, err := e2etestutil.BuildSignBroadcastTx(s.T(), addr, &taMsg)
+	out, err := e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, &taMsg)
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
