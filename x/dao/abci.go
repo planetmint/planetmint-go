@@ -60,12 +60,18 @@ func isPopHeight(height int64) bool {
 
 func isReissuanceHeight(height int64) bool {
 	conf := config.GetConfig()
+	// e.g. 483840 % 17280 = 0
 	return height%int64(conf.ReissuanceEpochs) == 0
 }
 
 func isDistributionHeight(height int64) bool {
 	conf := config.GetConfig()
-	return height%int64(conf.DistributionEpochs) == 0
+	// e.g. 360 % 17280 = 360
+	if height <= int64(conf.ReissuanceEpochs) {
+		return false
+	}
+	// e.g. 484200 % 17280 = 360
+	return height%int64(conf.ReissuanceEpochs) == int64(conf.DistributionOffset)
 }
 
 func EndBlocker(ctx sdk.Context, _ abci.RequestEndBlock, k keeper.Keeper) {

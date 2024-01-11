@@ -52,6 +52,7 @@ func (s *E2ETestSuite) SetupSuite() {
 	conf := config.GetConfig()
 	conf.FeeDenom = "node0token"
 	// set epochs: make sure to start after initial height of 7
+	conf.DistributionOffset = 5
 	conf.ReissuanceEpochs = 25
 	conf.SetPlanetmintConfig(conf)
 
