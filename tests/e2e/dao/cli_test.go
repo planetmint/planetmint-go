@@ -22,3 +22,8 @@ func TestGasConsumptionE2ETestSuite(t *testing.T) {
 	cfg := network.DefaultConfig()
 	suite.Run(t, NewGasConsumptionE2ETestSuite(cfg))
 }
+
+func TestRestrictedMsgsE2ETestSuite(t *testing.T) {
+	cfg := network.DefaultConfig()
+	suite.Run(t, NewRestrictedMsgsE2ESuite(cfg))
+}

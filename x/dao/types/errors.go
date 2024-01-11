@@ -24,4 +24,5 @@ var (
 	ErrFailedPoPRewardsIssuance = errorsmod.Register(ModuleName, 15, "PoP rewards issuance failed")
 	ErrResolvingStagedClaims    = errorsmod.Register(ModuleName, 16, "resolving staged claims failed")
 	ErrReissuanceTxIDMissing    = errorsmod.Register(ModuleName, 17, "reissuance has no transaction id")
+	ErrRestrictedMsg            = errorsmod.Register(ModuleName, 18, "restricted validator msg")
 )
