@@ -145,14 +145,14 @@ func (k Keeper) ComputeReissuanceValue(ctx sdk.Context, startHeight int64, endHe
 				util.GetAppLogger().Error(ctx, "unable to compute PoP re-issuance value: "+popString)
 				continue
 			}
-			util.GetAppLogger().Info(ctx, "PoP is part of the reissuance: "+popString)
+			util.GetAppLogger().Debug(ctx, "PoP is part of the reissuance: "+popString)
 			if firstIncludedPop == 0 {
 				firstIncludedPop = obj.GetHeight()
 			}
 			lastIncludedPop = obj.GetHeight()
 			overallAmount += amount
 		} else {
-			util.GetAppLogger().Debug(ctx, "PoP is not part of the reissuance: "+popString)
+			util.GetAppLogger().Info(ctx, "PoP is not part of the reissuance: "+popString)
 			if obj.GetHeight()+2*popEpochs > endHeight {
 				break
 			}
