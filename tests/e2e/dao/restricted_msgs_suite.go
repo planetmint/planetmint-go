@@ -8,6 +8,7 @@ import (
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
+	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -17,6 +18,8 @@ var msgs = []sdk.Msg{
 	&daotypes.MsgDistributionResult{},
 	&daotypes.MsgReissueRDDLProposal{},
 	&daotypes.MsgReissueRDDLResult{},
+	&machinetypes.MsgRegisterTrustAnchor{},
+	&machinetypes.MsgNotarizeLiquidAsset{},
 }
 
 type RestrictedMsgsE2ESuite struct {
@@ -33,7 +36,7 @@ func NewRestrictedMsgsE2ESuite(cfg network.Config) *RestrictedMsgsE2ESuite {
 func (s *RestrictedMsgsE2ESuite) SetupSuite() {
 	s.T().Log("setting up e2e test suite")
 	conf := config.GetConfig()
-	conf.FeeDenom = "stake"
+	conf.FeeDenom = sample.FeeDenom
 
 	s.network = network.New(s.T(), s.cfg)
 	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
@@ -101,6 +104,16 @@ func setCreator(msg sdk.Msg, creator string) sdk.Msg {
 		}
 	case "/planetmintgo.dao.MsgReissueRDDLResult":
 		msg, ok := msg.(*daotypes.MsgReissueRDDLResult)
+		if ok {
+			msg.Creator = creator
+		}
+	case "/planetmintgo.machine.MsgNotarizeLiquidAsset":
+		msg, ok := msg.(*machinetypes.MsgNotarizeLiquidAsset)
+		if ok {
+			msg.Creator = creator
+		}
+	case "/planetmintgo.machine.MsgRegisterTrustAnchor":
+		msg, ok := msg.(*machinetypes.MsgRegisterTrustAnchor)
 		if ok {
 			msg.Creator = creator
 		}

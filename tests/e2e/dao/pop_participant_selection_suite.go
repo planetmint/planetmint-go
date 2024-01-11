@@ -7,6 +7,7 @@ import (
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
 	"github.com/planetmint/planetmint-go/testutil/network"
+	"github.com/planetmint/planetmint-go/testutil/sample"
 	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -43,7 +44,7 @@ func NewPopSelectionE2ETestSuite(cfg network.Config) *PopSelectionE2ETestSuite {
 func (s *PopSelectionE2ETestSuite) SetupSuite() {
 	s.T().Log("setting up e2e test suite")
 	conf := config.GetConfig()
-	conf.FeeDenom = "stake"
+	conf.FeeDenom = sample.FeeDenom
 
 	s.network = network.New(s.T(), s.cfg)
 

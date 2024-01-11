@@ -27,7 +27,7 @@ func NewGasConsumptionE2ETestSuite(cfg network.Config) *GasConsumptionE2ETestSui
 func (s *GasConsumptionE2ETestSuite) SetupSuite() {
 	s.T().Log("setting up e2e test suite")
 	conf := config.GetConfig()
-	conf.FeeDenom = "stake"
+	conf.FeeDenom = sample.FeeDenom
 	s.network = network.New(s.T(), s.cfg)
 	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
 	s.Require().NoError(err)

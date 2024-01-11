@@ -4,6 +4,7 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/planetmint/planetmint-go/x/dao/types"
+	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 )
 
 type CheckValidatorDecorator struct {
@@ -45,6 +46,16 @@ func (cv CheckValidatorDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulat
 			reissueResultMsg, ok := msg.(*types.MsgReissueRDDLResult)
 			if ok {
 				ctx, err = cv.handleMsg(ctx, reissueResultMsg)
+			}
+		case "/planetmintgo.machine.MsgNotarizeLiquidAsset":
+			notarizeLiquidAssetMsg, ok := msg.(*machinetypes.MsgNotarizeLiquidAsset)
+			if ok {
+				ctx, err = cv.handleMsg(ctx, notarizeLiquidAssetMsg)
+			}
+		case "/planetmintgo.machine.MsgRegisterTrustAnchor":
+			resgisterTAMsg, ok := msg.(*machinetypes.MsgRegisterTrustAnchor)
+			if ok {
+				ctx, err = cv.handleMsg(ctx, resgisterTAMsg)
 			}
 		default:
 			continue
