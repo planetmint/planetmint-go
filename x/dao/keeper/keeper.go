@@ -196,7 +196,10 @@ func (k Keeper) iterateAccountsForMachines(ctx sdk.Context, start uint64, partic
 		participant := sdk.AccAddress(iterator.Value())
 		_, found := k.machineKeeper.GetMachineIndexByAddress(ctx, participant.String())
 		if found {
-			*participants = append(*participants, participant)
+			available, err := util.GetMqttStatusOfParticipant(participant.String())
+			if err == nil && available {
+				*participants = append(*participants, participant)
+			}
 		}
 
 		if len(*participants) == 2 {

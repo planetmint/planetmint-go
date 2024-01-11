@@ -45,6 +45,7 @@ func (s *PopSelectionE2ETestSuite) SetupSuite() {
 	s.T().Log("setting up e2e test suite")
 	conf := config.GetConfig()
 	conf.FeeDenom = sample.FeeDenom
+	conf.MqttResponseTimeout = 200
 
 	s.network = network.New(s.T(), s.cfg)
 

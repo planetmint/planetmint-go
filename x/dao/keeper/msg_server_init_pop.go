@@ -19,7 +19,10 @@ func (k msgServer) InitPop(goCtx context.Context, msg *types.MsgInitPop) (*types
 
 	k.StoreChallenge(ctx, challenge)
 
-	go util.SendMqttMessagesToServer(ctx, challenge)
+	validatorIdentity, validResult := util.GetValidatorCometBFTIdentity(ctx)
+	if validResult && msg.Initiator == validatorIdentity {
+		go util.SendMqttPopInitMessagesToServer(ctx, challenge)
+	}
 
 	return &types.MsgInitPopResponse{}, nil
 }

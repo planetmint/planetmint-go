@@ -39,6 +39,7 @@ mqtt-domain = "{{ .PlmntConfig.MqttDomain }}"
 mqtt-port = {{ .PlmntConfig.MqttPort }}
 mqtt-user = "{{ .PlmntConfig.MqttUser }}"
 mqtt-password = "{{ .PlmntConfig.MqttPassword }}"
+mqtt-response-timeout = {{ .PlmntConfig.MqttResponseTimeout }}
 `
 
 // Config defines Planetmint's top level configuration
@@ -70,6 +71,7 @@ type Config struct {
 	MqttPort            int    `json:"mqtt-port"             mapstructure:"mqtt-port"`
 	MqttUser            string `json:"mqtt-user"             mapstructure:"mqtt-user"`
 	MqttPassword        string `json:"mqtt-password"         mapstructure:"mqtt-password"`
+	MqttResponseTimeout int    `json:"mqtt-response-timeout" mapstructure:"mqtt-response-timeout"`
 }
 
 // cosmos-sdk wide global singleton
@@ -110,11 +112,12 @@ func DefaultConfig() *Config {
 		// issuing new tokens. This configuration parameter specifies the number of epochs (each epoch is 5
 		// seconds) that need to pass before reissuance can occur. In this case, `ReissuanceEpochs` is set
 		// to 17280, which means that reissuance can occur after 1 day (12*60*24) of epochs.
-		ReissuanceEpochs: 17280,
-		MqttDomain:       "testnet-mqtt.rddl.io",
-		MqttPort:         1885,
-		MqttUser:         "user",
-		MqttPassword:     "password",
+		ReissuanceEpochs:    17280,
+		MqttDomain:          "testnet-mqtt.rddl.io",
+		MqttPort:            1885,
+		MqttUser:            "user",
+		MqttPassword:        "password",
+		MqttResponseTimeout: 2000, // the value is defined in milliseconds
 	}
 }
 
