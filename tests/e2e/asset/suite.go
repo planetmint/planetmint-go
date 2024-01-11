@@ -8,6 +8,7 @@ import (
 
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
+	assetcli "github.com/planetmint/planetmint-go/x/asset/client/cli"
 	assettypes "github.com/planetmint/planetmint-go/x/asset/types"
 
 	"github.com/stretchr/testify/assert"
@@ -62,23 +63,35 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 			"valid notarization",
 			assettypes.NewMsgNotarizeAsset(addr.String(), sample.Asset()),
 			"[]",
+			false,
+		},
+		{
+			"machine not found",
+			assettypes.NewMsgNotarizeAsset("plmnt1v5394e8vmfrp4qzdav7xkze0f567w3tsgxf09j", sample.Asset()),
+			"error during CheckTx or ReCheckTx: machine not found",
 			true,
 		},
 	}
 
 	for _, tc := range testCases {
 		out, err := e2etestutil.BuildSignBroadcastTx(s.T(), addr, tc.msg)
-		s.Require().NoError(err)
+		if tc.expectCheckTxErr {
+			s.Require().Error(err)
+		} else {
+			s.Require().NoError(err)
+		}
 
 		txResponse, err := lib.GetTxResponseFromOut(out)
 		s.Require().NoError(err)
 
 		s.Require().NoError(s.network.WaitForNextBlock())
-		rawLog, err := clitestutil.GetRawLogFromTxOut(val, out)
-		s.Require().NoError(err)
 
 		if !tc.expectCheckTxErr {
-			assert.Contains(s.T(), rawLog, tc.rawLog)
+			assert.Equal(s.T(), int(0), int(txResponse.Code))
+			args := []string{sample.Asset()}
+			asset, err := clitestutil.ExecTestCLICmd(val.ClientCtx, assetcli.CmdGetNotarizedAsset(), args)
+			s.Require().NoError(err)
+			assert.Contains(s.T(), asset.String(), sample.Asset())
 		} else {
 			assert.Contains(s.T(), txResponse.RawLog, tc.rawLog)
 		}
