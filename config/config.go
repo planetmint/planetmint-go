@@ -34,7 +34,7 @@ distribution-address-inv = "{{ .PlmntConfig.DistributionAddrInv }}"
 distribution-address-dao = "{{ .PlmntConfig.DistributionAddrDAO }}"
 distribution-address-pop = "{{ .PlmntConfig.DistributionAddrPop }}"
 distribution-offset = {{ .PlmntConfig.DistributionOffset }}
-re-issuance-epochs = {{ .PlmntConfig.ReissuanceEpochs }}
+reissuance-epochs = {{ .PlmntConfig.ReissuanceEpochs }}
 mqtt-domain = "{{ .PlmntConfig.MqttDomain }}"
 mqtt-port = {{ .PlmntConfig.MqttPort }}
 mqtt-user = "{{ .PlmntConfig.MqttUser }}"
@@ -106,10 +106,10 @@ func DefaultConfig() *Config {
 		// to wait for confirmations on the reissuance
 		DistributionOffset: 360,
 		// `ReissuanceEpochs` is a configuration parameter that determines the number of CometBFT epochs
-		// required for re-issuance. In the context of Planetmint, re-issuance refers to the process of
+		// required for reissuance. In the context of Planetmint, reissuance refers to the process of
 		// issuing new tokens. This configuration parameter specifies the number of epochs (each epoch is 5
-		// seconds) that need to pass before re-issuance can occur. In this case, `ReissuanceEpochs` is set
-		// to 17280, which means that re-issuance can occur after 1 day (12*60*24) of epochs.
+		// seconds) that need to pass before reissuance can occur. In this case, `ReissuanceEpochs` is set
+		// to 17280, which means that reissuance can occur after 1 day (12*60*24) of epochs.
 		ReissuanceEpochs: 17280,
 		MqttDomain:       "testnet-mqtt.rddl.io",
 		MqttPort:         1885,

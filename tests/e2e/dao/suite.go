@@ -239,9 +239,9 @@ func (s *E2ETestSuite) TestReissuance() {
 		latestHeight, err = s.network.WaitForHeight(latestHeight + 1)
 		s.Require().NoError(err)
 
-		// wait + for sending the re-issuance result, i.e.:
-		// 0:  block 25: initializing RDDL re-issuance broadcast tx succeeded
-		// 1:  block 26: sending the re-issuance result broadcast tx succeeded
+		// wait + for sending the reissuance result, i.e.:
+		// 0:  block 25: initializing RDDL reissuance broadcast tx succeeded
+		// 1:  block 26: sending the reissuance result broadcast tx succeeded
 		// 2:  block 27: confirmation
 		wait = 2
 		if latestHeight%int64(conf.ReissuanceEpochs+wait) == 0 {
@@ -249,7 +249,7 @@ func (s *E2ETestSuite) TestReissuance() {
 		}
 	}
 
-	// - because we waited on the re-issuance result, see above
+	// - because we waited on the reissuance result, see above
 	intValue := strconv.FormatInt(latestHeight-int64(wait), 10)
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetReissuance(), []string{intValue})
 	s.Require().NoError(err)
