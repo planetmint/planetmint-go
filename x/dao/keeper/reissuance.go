@@ -142,7 +142,7 @@ func (k Keeper) ComputeReissuanceValue(ctx sdk.Context, startHeight int64, endHe
 			popReissuanceString := GetReissuanceAsStringValue(obj.GetHeight())
 			amount, err := util.RDDLTokenStringToUint(popReissuanceString)
 			if err != nil {
-				util.GetAppLogger().Error(ctx, "unable to compute PoP re-issuance value: "+popString)
+				util.GetAppLogger().Error(ctx, "unable to compute PoP reissuance value: "+popString)
 				continue
 			}
 			util.GetAppLogger().Debug(ctx, "PoP is part of the reissuance: "+popString)

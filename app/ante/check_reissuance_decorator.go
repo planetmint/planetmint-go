@@ -26,13 +26,13 @@ func (cmad CheckReissuanceDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simu
 		if sdk.MsgTypeURL(msg) == "/planetmintgo.dao.MsgReissueRDDLProposal" {
 			MsgProposal, ok := msg.(*daotypes.MsgReissueRDDLProposal)
 			if ok {
-				util.GetAppLogger().Debug(ctx, anteHandlerTag+"received re-issuance proposal: "+MsgProposal.String())
+				util.GetAppLogger().Debug(ctx, anteHandlerTag+"received reissuance proposal: "+MsgProposal.String())
 				isValid := cmad.dk.IsValidReissuanceProposal(ctx, MsgProposal)
 				if !isValid {
-					util.GetAppLogger().Info(ctx, anteHandlerTag+"rejected re-issuance proposal")
+					util.GetAppLogger().Info(ctx, anteHandlerTag+"rejected reissuance proposal")
 					return ctx, errorsmod.Wrapf(daotypes.ErrReissuanceProposal, "error during CheckTx or ReCheckTx")
 				}
-				util.GetAppLogger().Debug(ctx, anteHandlerTag+"accepted re-issuance proposal: "+MsgProposal.String())
+				util.GetAppLogger().Debug(ctx, anteHandlerTag+"accepted reissuance proposal: "+MsgProposal.String())
 			}
 		}
 	}

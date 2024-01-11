@@ -39,7 +39,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 			util.SendInitReissuance(ctx, hexProposerAddress, reissuance.GetCommand(), currentBlockHeight,
 				reissuance.GetFirstIncludedPop(), reissuance.GetLastIncludedPop())
 		} else {
-			util.GetAppLogger().Error(ctx, "error while computing the RDDL re-issuance ", err)
+			util.GetAppLogger().Error(ctx, "error while computing the RDDL reissuance ", err)
 		}
 	}
 
