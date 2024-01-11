@@ -33,7 +33,7 @@ validator-address = "{{ .PlmntConfig.ValidatorAddress }}"
 distribution-address-inv = "{{ .PlmntConfig.DistributionAddrInv }}"
 distribution-address-dao = "{{ .PlmntConfig.DistributionAddrDAO }}"
 distribution-address-pop = "{{ .PlmntConfig.DistributionAddrPop }}"
-distribution-epochs = {{ .PlmntConfig.DistributionEpochs }}
+distribution-offset = {{ .PlmntConfig.DistributionOffset }}
 re-issuance-epochs = {{ .PlmntConfig.ReissuanceEpochs }}
 mqtt-domain = "{{ .PlmntConfig.MqttDomain }}"
 mqtt-port = {{ .PlmntConfig.MqttPort }}
@@ -64,7 +64,7 @@ type Config struct {
 	DistributionAddrInv string `json:"distribution-addr-inv" mapstructure:"distribution-addr-inv"`
 	DistributionAddrDAO string `json:"distribution-addr-dao" mapstructure:"distribution-addr-dao"`
 	DistributionAddrPop string `json:"distribution-addr-pop" mapstructure:"distribution-addr-pop"`
-	DistributionEpochs  int    `json:"distribution-epochs"   mapstructure:"distribution-epochs"`
+	DistributionOffset  int    `json:"distribution-offset"   mapstructure:"distribution-offset"`
 	ReissuanceEpochs    int    `json:"reissuance-epochs"     mapstructure:"reissuance-epochs"`
 	MqttDomain          string `json:"mqtt-domain"           mapstructure:"mqtt-domain"`
 	MqttPort            int    `json:"mqtt-port"             mapstructure:"mqtt-port"`
@@ -102,7 +102,9 @@ func DefaultConfig() *Config {
 		DistributionAddrInv: "vjTyRN2G42Yq3T5TJBecHj1dF1xdhKF89hKV4HJN3uXxUbaVGVR76hAfVRQqQCovWaEpar7G5qBBprFG",
 		DistributionAddrDAO: "vjU8eMzU3JbUWZEpVANt2ePJuPWSPixgjiSj2jDMvkVVQQi2DDnZuBRVX4Ygt5YGBf5zvTWCr1ntdqYH",
 		DistributionAddrPop: "vjTvXCFSReRsZ7grdsAreRR12KuKpDw8idueQJK9Yh1BYS7ggAqgvCxCgwh13KGK6M52y37HUmvr4GdD",
-		DistributionEpochs:  17640, // CometBFT epochs of 5s equate 1 day (12*60*24) + 30 min (12*30) to wait for confirmations on the re-issuance
+		// `DistributionOffset` relative to `ReissuanceEpochs`. CometBFT epochs of 5s equate 30 min (12*30)
+		// to wait for confirmations on the reissuance
+		DistributionOffset: 360,
 		// `ReissuanceEpochs` is a configuration parameter that determines the number of CometBFT epochs
 		// required for re-issuance. In the context of Planetmint, re-issuance refers to the process of
 		// issuing new tokens. This configuration parameter specifies the number of epochs (each epoch is 5
