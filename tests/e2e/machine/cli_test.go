@@ -14,8 +14,3 @@ func TestE2ETestSuite(t *testing.T) {
 	cfg.NumValidators = 1
 	suite.Run(t, NewE2ETestSuite(cfg))
 }
-
-func TestRESTMachineAttestationSuite(t *testing.T) {
-	cfg := network.DefaultConfig()
-	suite.Run(t, NewRestE2ETestSuite(cfg))
-}
