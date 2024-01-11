@@ -4,7 +4,6 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/planetmint/planetmint-go/x/dao/types"
-	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 )
 
 type CheckValidatorDecorator struct {
@@ -23,40 +22,19 @@ func (cv CheckValidatorDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulat
 	for _, msg := range tx.GetMsgs() {
 		switch sdk.MsgTypeURL(msg) {
 		case "/planetmintgo.dao.MsgInitPop":
-			initPopMsg, ok := msg.(*types.MsgInitPop)
-			if ok {
-				ctx, err = cv.handleMsg(ctx, initPopMsg)
-			}
+			fallthrough
 		case "/planetmintgo.dao.MsgDistributionRequest":
-			distributionRequestMsg, ok := msg.(*types.MsgDistributionRequest)
-			if ok {
-				ctx, err = cv.handleMsg(ctx, distributionRequestMsg)
-			}
+			fallthrough
 		case "/planetmintgo.dao.MsgDistributionResult":
-			distributionResultMsg, ok := msg.(*types.MsgDistributionResult)
-			if ok {
-				ctx, err = cv.handleMsg(ctx, distributionResultMsg)
-			}
+			fallthrough
 		case "/planetmintgo.dao.MsgReissueRDDLProposal":
-			reissueProposalMsg, ok := msg.(*types.MsgReissueRDDLProposal)
-			if ok {
-				ctx, err = cv.handleMsg(ctx, reissueProposalMsg)
-			}
+			fallthrough
 		case "/planetmintgo.dao.MsgReissueRDDLResult":
-			reissueResultMsg, ok := msg.(*types.MsgReissueRDDLResult)
-			if ok {
-				ctx, err = cv.handleMsg(ctx, reissueResultMsg)
-			}
+			fallthrough
 		case "/planetmintgo.machine.MsgNotarizeLiquidAsset":
-			notarizeLiquidAssetMsg, ok := msg.(*machinetypes.MsgNotarizeLiquidAsset)
-			if ok {
-				ctx, err = cv.handleMsg(ctx, notarizeLiquidAssetMsg)
-			}
+			fallthrough
 		case "/planetmintgo.machine.MsgRegisterTrustAnchor":
-			resgisterTAMsg, ok := msg.(*machinetypes.MsgRegisterTrustAnchor)
-			if ok {
-				ctx, err = cv.handleMsg(ctx, resgisterTAMsg)
-			}
+			ctx, err = cv.handleMsg(ctx, msg)
 		default:
 			continue
 		}
