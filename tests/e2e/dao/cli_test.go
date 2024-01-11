@@ -27,3 +27,8 @@ func TestRestrictedMsgsE2ETestSuite(t *testing.T) {
 	cfg := network.DefaultConfig()
 	suite.Run(t, NewRestrictedMsgsE2ESuite(cfg))
 }
+
+func TestAssetDistributionE2ETestSuite(t *testing.T) {
+	cfg := network.DefaultConfig()
+	suite.Run(t, NewAssetDistributionE2ETestSuite(cfg))
+}
