@@ -21,7 +21,12 @@ func (k msgServer) InitPop(goCtx context.Context, msg *types.MsgInitPop) (*types
 
 	validatorIdentity, validResult := util.GetValidatorCometBFTIdentity(ctx)
 	if validResult && msg.Initiator == validatorIdentity {
-		go util.SendMqttPopInitMessagesToServer(ctx, challenge)
+		// challenger is always set first. So the protocol is at least
+		// executed even though there wasn't any challengee found
+		// this is also needed so that the challenger is rewarded
+		if challenge.Challenger != "" {
+			go util.SendMqttPopInitMessagesToServer(ctx, challenge)
+		}
 	}
 
 	return &types.MsgInitPopResponse{}, nil
