@@ -46,6 +46,8 @@ func (s *PopSelectionE2ETestSuite) SetupSuite() {
 	conf := config.GetConfig()
 	conf.FeeDenom = sample.FeeDenom
 	conf.MqttResponseTimeout = 200
+	// set PopEpochs to 1 in Order to trigger some participant selections
+	conf.PopEpochs = 1
 
 	s.network = network.New(s.T(), s.cfg)
 }
@@ -55,13 +57,8 @@ func (s *PopSelectionE2ETestSuite) TearDownSuite() {
 	s.T().Log("tearing down e2e test suite")
 }
 
-func (s *PopSelectionE2ETestSuite) TestPopSelection() {
+func (s *PopSelectionE2ETestSuite) TestPopSelectionNoActors() {
 	val := s.network.Validators[0]
-
-	// set PopEpochs to 1 in Order to trigger some participant selections
-	conf := config.GetConfig()
-	conf.PopEpochs = 1
-
 	// wait for some blocks so challenges get stored
 	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
@@ -76,11 +73,14 @@ func (s *PopSelectionE2ETestSuite) TestPopSelection() {
 
 	assert.NotContains(s.T(), out.String(), machines[0].address)
 	assert.NotContains(s.T(), out.String(), machines[1].address)
+}
 
+func (s *PopSelectionE2ETestSuite) TestPopSelectionOneActors() {
+	val := s.network.Validators[0]
 	////////////////////////////////////////////////////
 	// create 1 machinesaccounts
 	// ensure that a single machine isn't added to a PoP with only one participant
-	err = e2etestutil.AttestMachine(s.network, machines[0].name, machines[0].mnemonic, 0)
+	err := e2etestutil.AttestMachine(s.network, machines[0].name, machines[0].mnemonic, 0)
 	s.Require().NoError(err)
 
 	// wait for some blocks so challenges get stored
@@ -88,9 +88,9 @@ func (s *PopSelectionE2ETestSuite) TestPopSelection() {
 	s.Require().NoError(s.network.WaitForNextBlock())
 
 	// check if the next PoP went through with only the challenger selected
-	height, _ = s.network.LatestHeight()
-	queryHeight = height - 1
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetChallenge(), []string{
+	height, _ := s.network.LatestHeight()
+	queryHeight := height - 1
+	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetChallenge(), []string{
 		strconv.FormatInt(queryHeight, 10),
 	})
 	s.Require().NoError(err)
@@ -98,9 +98,13 @@ func (s *PopSelectionE2ETestSuite) TestPopSelection() {
 	assert.NotContains(s.T(), out.String(), machines[0].address)
 	assert.NotContains(s.T(), out.String(), machines[1].address)
 
+}
+
+func (s *PopSelectionE2ETestSuite) TestPopSelectionTwoActors() {
+	val := s.network.Validators[0]
 	////////////////////////////////////////////////////
 	// create 2nd machine
-	err = e2etestutil.AttestMachine(s.network, machines[1].name, machines[1].mnemonic, 1)
+	err := e2etestutil.AttestMachine(s.network, machines[1].name, machines[1].mnemonic, 1)
 	s.Require().NoError(err)
 
 	// wait for some blocks so challenges get stored
@@ -108,9 +112,9 @@ func (s *PopSelectionE2ETestSuite) TestPopSelection() {
 	s.Require().NoError(s.network.WaitForNextBlock())
 
 	// check if the next PoP went through with only the challenger selected
-	height, _ = s.network.LatestHeight()
-	queryHeight = height - 1
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetChallenge(), []string{
+	height, _ := s.network.LatestHeight()
+	queryHeight := height - 1
+	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetChallenge(), []string{
 		strconv.FormatInt(queryHeight, 10),
 	})
 	s.Require().NoError(err)
