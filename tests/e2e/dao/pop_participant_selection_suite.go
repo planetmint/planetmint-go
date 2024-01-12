@@ -48,12 +48,6 @@ func (s *PopSelectionE2ETestSuite) SetupSuite() {
 	conf.MqttResponseTimeout = 200
 
 	s.network = network.New(s.T(), s.cfg)
-
-	// create 2 machines accounts
-	for i, machine := range machines {
-		err := e2etestutil.AttestMachine(s.network, machine.name, machine.mnemonic, i)
-		s.Require().NoError(err)
-	}
 }
 
 // TearDownSuite clean up after testing
@@ -72,10 +66,51 @@ func (s *PopSelectionE2ETestSuite) TestPopSelection() {
 	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
 
-	// check if machines are selected as challanger/challengee
+	// check if a PoP without challenger and challengee passes
 	height, _ := s.network.LatestHeight()
 	queryHeight := height - 1
 	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetChallenge(), []string{
+		strconv.FormatInt(queryHeight, 10),
+	})
+	s.Require().NoError(err)
+
+	assert.NotContains(s.T(), out.String(), machines[0].address)
+	assert.NotContains(s.T(), out.String(), machines[1].address)
+
+	////////////////////////////////////////////////////
+	// create 1 machinesaccounts
+	// ensure that a single machine isn't added to a PoP with only one participant
+	err = e2etestutil.AttestMachine(s.network, machines[0].name, machines[0].mnemonic, 0)
+	s.Require().NoError(err)
+
+	// wait for some blocks so challenges get stored
+	s.Require().NoError(s.network.WaitForNextBlock())
+	s.Require().NoError(s.network.WaitForNextBlock())
+
+	// check if the next PoP went through with only the challenger selected
+	height, _ = s.network.LatestHeight()
+	queryHeight = height - 1
+	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetChallenge(), []string{
+		strconv.FormatInt(queryHeight, 10),
+	})
+	s.Require().NoError(err)
+
+	assert.NotContains(s.T(), out.String(), machines[0].address)
+	assert.NotContains(s.T(), out.String(), machines[1].address)
+
+	////////////////////////////////////////////////////
+	// create 2nd machine
+	err = e2etestutil.AttestMachine(s.network, machines[1].name, machines[1].mnemonic, 1)
+	s.Require().NoError(err)
+
+	// wait for some blocks so challenges get stored
+	s.Require().NoError(s.network.WaitForNextBlock())
+	s.Require().NoError(s.network.WaitForNextBlock())
+
+	// check if the next PoP went through with only the challenger selected
+	height, _ = s.network.LatestHeight()
+	queryHeight = height - 1
+	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetChallenge(), []string{
 		strconv.FormatInt(queryHeight, 10),
 	})
 	s.Require().NoError(err)

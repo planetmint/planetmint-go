@@ -21,10 +21,8 @@ func (k msgServer) InitPop(goCtx context.Context, msg *types.MsgInitPop) (*types
 
 	validatorIdentity, validResult := util.GetValidatorCometBFTIdentity(ctx)
 	if validResult && msg.Initiator == validatorIdentity {
-		// challenger is always set first. So the protocol is at least
-		// executed even though there wasn't any challengee found
-		// this is also needed so that the challenger is rewarded
-		if challenge.Challenger != "" {
+		// PoP can only be executed if at least two actors are available.
+		if challenge.Challenger != "" && challenge.Challengee != "" {
 			go util.SendMqttPopInitMessagesToServer(ctx, challenge)
 		}
 	}
