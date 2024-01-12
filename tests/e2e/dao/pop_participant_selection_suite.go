@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/testutil"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
 	"github.com/planetmint/planetmint-go/testutil/network"
@@ -75,49 +76,42 @@ func (s *PopSelectionE2ETestSuite) TestPopSelectionNoActors() {
 	assert.NotContains(s.T(), out.String(), machines[1].address)
 }
 
-func (s *PopSelectionE2ETestSuite) TestPopSelectionOneActors() {
+func (s *PopSelectionE2ETestSuite) perpareLocalTest() testutil.BufferWriter {
 	val := s.network.Validators[0]
+	// wait for some blocks so challenges get stored
+	s.Require().NoError(s.network.WaitForNextBlock())
+	s.Require().NoError(s.network.WaitForNextBlock())
+
+	// check if the next PoP went through with only the challenger selected
+	height, _ := s.network.LatestHeight()
+	queryHeight := height - 1
+	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetChallenge(), []string{
+		strconv.FormatInt(queryHeight, 10),
+	})
+	s.Require().NoError(err)
+	return out
+}
+
+func (s *PopSelectionE2ETestSuite) TestPopSelectionOneActors() {
 	////////////////////////////////////////////////////
 	// create 1 machinesaccounts
 	// ensure that a single machine isn't added to a PoP with only one participant
 	err := e2etestutil.AttestMachine(s.network, machines[0].name, machines[0].mnemonic, 0)
 	s.Require().NoError(err)
 
-	// wait for some blocks so challenges get stored
-	s.Require().NoError(s.network.WaitForNextBlock())
-	s.Require().NoError(s.network.WaitForNextBlock())
-
-	// check if the next PoP went through with only the challenger selected
-	height, _ := s.network.LatestHeight()
-	queryHeight := height - 1
-	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetChallenge(), []string{
-		strconv.FormatInt(queryHeight, 10),
-	})
-	s.Require().NoError(err)
+	out := s.perpareLocalTest()
 
 	assert.NotContains(s.T(), out.String(), machines[0].address)
 	assert.NotContains(s.T(), out.String(), machines[1].address)
-
 }
 
 func (s *PopSelectionE2ETestSuite) TestPopSelectionTwoActors() {
-	val := s.network.Validators[0]
 	////////////////////////////////////////////////////
 	// create 2nd machine
 	err := e2etestutil.AttestMachine(s.network, machines[1].name, machines[1].mnemonic, 1)
 	s.Require().NoError(err)
 
-	// wait for some blocks so challenges get stored
-	s.Require().NoError(s.network.WaitForNextBlock())
-	s.Require().NoError(s.network.WaitForNextBlock())
-
-	// check if the next PoP went through with only the challenger selected
-	height, _ := s.network.LatestHeight()
-	queryHeight := height - 1
-	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetChallenge(), []string{
-		strconv.FormatInt(queryHeight, 10),
-	})
-	s.Require().NoError(err)
+	out := s.perpareLocalTest()
 
 	assert.Contains(s.T(), out.String(), machines[0].address)
 	assert.Contains(s.T(), out.String(), machines[1].address)
