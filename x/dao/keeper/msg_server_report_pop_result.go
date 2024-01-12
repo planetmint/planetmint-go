@@ -20,9 +20,9 @@ func (k msgServer) ReportPopResult(goCtx context.Context, msg *types.MsgReportPo
 	}
 
 	if msg.Challenge.GetSuccess() {
-		util.GetAppLogger().Info(ctx, "PoP at height %v was unsuccessful", msg.Challenge.GetHeight())
-	} else {
 		util.GetAppLogger().Info(ctx, "PoP at height %v was successful", msg.Challenge.GetHeight())
+	} else {
+		util.GetAppLogger().Info(ctx, "PoP at height %v was unsuccessful", msg.Challenge.GetHeight())
 	}
 
 	// TODO: develop a more resilient pattern: if the distribution does not work,
