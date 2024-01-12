@@ -77,11 +77,11 @@ func sendMqttPopInitMessages(challenge types.Challenge) (err error) {
 	return
 }
 
-var myMap map[string]bool
+var mqttMachineByAddressAvailabilityMapping map[string]bool
 var rwMu sync.RWMutex
 
 func init() {
-	myMap = make(map[string]bool)
+	mqttMachineByAddressAvailabilityMapping = make(map[string]bool)
 }
 
 func GetMqttStatusOfParticipant(address string) (isAvailable bool, err error) {
@@ -90,7 +90,7 @@ func GetMqttStatusOfParticipant(address string) (isAvailable bool, err error) {
 		return
 	}
 	rwMu.RLock() // Lock for reading
-	_, ok := myMap[address]
+	_, ok := mqttMachineByAddressAvailabilityMapping[address]
 	rwMu.RUnlock() // Unlock after reading
 	if ok {
 		return
@@ -99,7 +99,7 @@ func GetMqttStatusOfParticipant(address string) (isAvailable bool, err error) {
 		topicParts := strings.Split(msg.Topic(), "/")
 		if len(topicParts) == 3 && topicParts[1] == address {
 			rwMu.Lock() // Lock for writing
-			myMap[address] = true
+			mqttMachineByAddressAvailabilityMapping[address] = true
 			rwMu.Unlock() // Unlock after writing
 		}
 	}
@@ -112,7 +112,7 @@ func GetMqttStatusOfParticipant(address string) (isAvailable bool, err error) {
 	}
 
 	rwMu.Lock() // Lock for writing
-	myMap[address] = false
+	mqttMachineByAddressAvailabilityMapping[address] = false
 	rwMu.Unlock() // Unlock after writing
 
 	if token := MQTTClient.Publish(publishingTopic, 0, false, ""); token.Wait() && token.Error() != nil {
@@ -128,8 +128,8 @@ func GetMqttStatusOfParticipant(address string) (isAvailable bool, err error) {
 	}
 
 	rwMu.Lock() // Lock for writing
-	isAvailable = myMap[address]
-	delete(myMap, address)
+	isAvailable = mqttMachineByAddressAvailabilityMapping[address]
+	delete(mqttMachineByAddressAvailabilityMapping, address)
 	rwMu.Unlock() // Unlock after writing
 	MQTTClient.Disconnect(1000)
 	return
