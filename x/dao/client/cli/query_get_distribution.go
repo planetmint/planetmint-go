@@ -18,7 +18,7 @@ func CmdGetDistribution() *cobra.Command {
 		Short: "Query get_distribution",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			reqLastPopHeight, err := cast.ToInt64E(args[0])
+			requestHeight, err := cast.ToInt64E(args[0])
 			if err != nil {
 				return err
 			}
@@ -31,8 +31,7 @@ func CmdGetDistribution() *cobra.Command {
 			queryClient := types.NewQueryClient(clientCtx)
 
 			params := &types.QueryGetDistributionRequest{
-
-				LastPopHeight: reqLastPopHeight,
+				Height: requestHeight,
 			}
 
 			res, err := queryClient.GetDistribution(cmd.Context(), params)

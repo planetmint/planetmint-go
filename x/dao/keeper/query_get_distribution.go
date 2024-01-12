@@ -16,7 +16,7 @@ func (k Keeper) GetDistribution(goCtx context.Context, req *types.QueryGetDistri
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	distribution, found := k.LookupDistributionOrder(ctx, req.GetLastPopHeight())
+	distribution, found := k.LookupDistributionOrder(ctx, req.GetHeight())
 	if !found {
 		return nil, status.Error(codes.NotFound, "distribution not found")
 	}

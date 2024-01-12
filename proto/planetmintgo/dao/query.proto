@@ -61,7 +61,7 @@ service Query {
   
   // Queries a list of GetDistribution items.
   rpc GetDistribution (QueryGetDistributionRequest) returns (QueryGetDistributionResponse) {
-    option (google.api.http).get = "/planetmint/planetmint-go/dao/get_distribution/{lastPopHeight}";
+    option (google.api.http).get = "/planetmint/planetmint-go/dao/get_distribution/{height}";
   
   }
 }
@@ -132,7 +132,7 @@ message QueryChallengesResponse {
 }
 
 message QueryGetDistributionRequest {
-  int64 lastPopHeight = 1;
+  int64 height = 1;
 }
 
 message QueryGetDistributionResponse {

@@ -47148,7 +47148,7 @@ paths:
           format: int64
       tags:
         - Query
-  /planetmint/planetmint-go/dao/get_distribution/{lastPopHeight}:
+  /planetmint/planetmint-go/dao/get_distribution/{height}:
     get:
       summary: Queries a list of GetDistribution items.
       operationId: PlanetmintgoDaoGetDistribution
@@ -47206,7 +47206,7 @@ paths:
                       type: string
                   additionalProperties: {}
       parameters:
-        - name: lastPopHeight
+        - name: height
           in: path
           required: true
           type: string
