@@ -19,6 +19,12 @@ func (k msgServer) ReportPopResult(goCtx context.Context, msg *types.MsgReportPo
 		return nil, errorsmod.Wrapf(types.ErrInvalidChallenge, err.Error())
 	}
 
+	if msg.Challenge.GetSuccess() {
+		util.GetAppLogger().Info(ctx, "PoP at height %v was successful", msg.Challenge.GetHeight())
+	} else {
+		util.GetAppLogger().Info(ctx, "PoP at height %v was unsuccessful", msg.Challenge.GetHeight())
+	}
+
 	// TODO: develop a more resilient pattern: if the distribution does not work,
 	//       the challenge shouldn't be discarded. it's most likely not the fault of the PoP participants.
 	err = k.issuePoPRewards(ctx, *msg.Challenge)
