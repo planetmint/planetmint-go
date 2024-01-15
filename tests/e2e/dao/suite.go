@@ -110,6 +110,7 @@ func (s *E2ETestSuite) SetupSuite() {
 
 	s.cfg.MinGasPrices = fmt.Sprintf("0.000006%s", conf.FeeDenom)
 	s.network = network.New(s.T(), s.cfg)
+	conf.ValidatorAddress = s.network.Validators[0].Address.String()
 }
 
 // TearDownSuite clean up after testing
@@ -257,7 +258,7 @@ func (s *E2ETestSuite) TestReissuance() {
 
 func (s *E2ETestSuite) TestPoPResult() {
 	conf := config.GetConfig()
-	conf.PopEpochs = 5
+	conf.PopEpochs = 40 // this collides with internal chain INIT POP calls
 	val := s.network.Validators[0]
 
 	// send PoP results

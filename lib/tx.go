@@ -159,7 +159,6 @@ func broadcastTx(clientCtx client.Context, txf tx.Factory, msgs ...sdk.Msg) (out
 		err = ErrTypeAssertionFailed
 		return
 	}
-	defer output.Reset()
 
 	result := make(map[string]interface{})
 	err = json.Unmarshal(output.Bytes(), &result)
@@ -172,6 +171,7 @@ func broadcastTx(clientCtx client.Context, txf tx.Factory, msgs ...sdk.Msg) (out
 	// This is still copying references: *out = *output
 	// Make a real copy: https://stackoverflow.com/a/69758157
 	out.Write(output.Bytes())
+	output.Reset()
 	return
 }
 

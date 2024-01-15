@@ -34,6 +34,7 @@ func (s *AssetDistributionE2ETestSuite) SetupSuite() {
 	conf.ReissuanceEpochs = 10
 
 	s.network = network.New(s.T(), s.cfg)
+	conf.ValidatorAddress = s.network.Validators[0].Address.String()
 }
 
 func (s *AssetDistributionE2ETestSuite) TearDownSuite() {
