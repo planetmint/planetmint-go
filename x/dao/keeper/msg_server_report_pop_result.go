@@ -47,42 +47,40 @@ func (k msgServer) issuePoPRewards(ctx sdk.Context, challenge types.Challenge) (
 		return err
 	}
 
-	if challenge.Success {
-		err = k.handlePoPSuccess(ctx, challenge)
-		if err != nil {
-			return err
-		}
-	} else {
-		err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, sdk.AccAddress(challenge.Challenger), sdk.NewCoins(stagedCRDDL))
-		if err != nil {
-			return err
-		}
+	err = k.handlePoP(ctx, challenge)
+	if err != nil {
+		return err
 	}
 
 	return err
 }
 
-func (k msgServer) handlePoPSuccess(ctx sdk.Context, challenge types.Challenge) (err error) {
-	conf := config.GetConfig()
+func (k msgServer) handlePoP(ctx sdk.Context, challenge types.Challenge) (err error) {
 	_, challengerAmt, challengeeAmt := util.GetPopReward(challenge.Height)
 
-	challengerCoin := sdk.NewCoin(conf.StagedDenom, sdk.NewIntFromUint64(challengerAmt))
-	challengeeCoin := sdk.NewCoin(conf.StagedDenom, sdk.NewIntFromUint64(challengeeAmt))
-	challengee, err := sdk.AccAddressFromBech32(challenge.Challengee)
+	err = k.sendRewards(ctx, challenge.GetChallenger(), challengerAmt)
 	if err != nil {
 		return err
 	}
-	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, challengee, sdk.NewCoins(challengeeCoin))
+
+	if !challenge.GetSuccess() {
+		return
+	}
+
+	err = k.sendRewards(ctx, challenge.GetChallengee(), challengeeAmt)
 	if err != nil {
 		return err
 	}
-	challenger, err := sdk.AccAddressFromBech32(challenge.Challenger)
-	if err != nil {
-		return err
-	}
-	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, challenger, sdk.NewCoins(challengerCoin))
-	if err != nil {
-		return err
-	}
+
 	return
+}
+
+func (k msgServer) sendRewards(ctx sdk.Context, receiver string, amt uint64) (err error) {
+	conf := config.GetConfig()
+	coins := sdk.NewCoins(sdk.NewCoin(conf.StagedDenom, sdk.NewIntFromUint64(amt)))
+	receiverAddr, err := sdk.AccAddressFromBech32(receiver)
+	if err != nil {
+		return err
+	}
+	return k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, receiverAddr, coins)
 }
