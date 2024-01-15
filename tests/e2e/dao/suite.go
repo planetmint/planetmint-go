@@ -345,7 +345,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 	s.Require().NoError(err)
 	assert.Equal(s.T(), "[]", txResponse.RawLog)
 
-	// send DistributionResult implicitely
+	// send DistributionResult implicitly
 	s.Require().NoError(s.network.WaitForNextBlock())
 
 	// check balance for crddl
