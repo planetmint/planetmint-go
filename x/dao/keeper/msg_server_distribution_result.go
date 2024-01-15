@@ -40,11 +40,16 @@ func (k msgServer) resolveStagedClaims(ctx sdk.Context, start int64, end int64) 
 	}
 
 	popParticipants := make(map[string]uint64)
+	daoModuleAmt := uint64(0)
 
 	for _, challenge := range challenges {
-		challengerAmt, challengeeAmt := getAmountsForChallenge(challenge)
+		_, challengerAmt, challengeeAmt := util.GetPopReward(challenge.Height)
 		popParticipants[challenge.Challenger] += challengerAmt
-		popParticipants[challenge.Challengee] += challengeeAmt
+		if challenge.GetSuccess() {
+			popParticipants[challenge.Challengee] += challengeeAmt
+		} else {
+			daoModuleAmt += challengeeAmt
+		}
 	}
 
 	// second data structure because map iteration order is not guaranteed in GO
@@ -53,7 +58,7 @@ func (k msgServer) resolveStagedClaims(ctx sdk.Context, start int64, end int64) 
 		keys = append(keys, p)
 	}
 	for _, p := range keys {
-		err = k.convertClaim(ctx, p, popParticipants[p])
+		err = k.convertAccountClaim(ctx, p, popParticipants[p])
 		if err != nil {
 			return err
 		}
@@ -63,7 +68,7 @@ func (k msgServer) resolveStagedClaims(ctx sdk.Context, start int64, end int64) 
 }
 
 // convert per account
-func (k msgServer) convertClaim(ctx sdk.Context, participant string, amount uint64) (err error) {
+func (k msgServer) convertAccountClaim(ctx sdk.Context, participant string, amount uint64) (err error) {
 	conf := config.GetConfig()
 	accAddr, err := sdk.AccAddressFromBech32(participant)
 	if err != nil {
@@ -73,21 +78,17 @@ func (k msgServer) convertClaim(ctx sdk.Context, participant string, amount uint
 	accStagedClaim := k.bankKeeper.GetBalance(ctx, accAddr, conf.StagedDenom)
 
 	if accStagedClaim.Amount.GTE(sdk.NewIntFromUint64(amount)) {
-		burnCoins := sdk.NewCoins(sdk.NewCoin(conf.StagedDenom, sdk.NewIntFromUint64(amount)))
-		mintCoins := sdk.NewCoins(sdk.NewCoin(conf.ClaimDenom, sdk.NewIntFromUint64(amount)))
-
+		burnCoins, mintCoins := getConvertCoins(amount)
 		err = k.bankKeeper.SendCoinsFromAccountToModule(ctx, accAddr, types.ModuleName, burnCoins)
 		if err != nil {
 			return err
 		}
-		err = k.bankKeeper.BurnCoins(ctx, types.ModuleName, burnCoins)
+
+		err = k.convertCoins(ctx, burnCoins, mintCoins)
 		if err != nil {
 			return err
 		}
-		err = k.bankKeeper.MintCoins(ctx, types.ModuleName, mintCoins)
-		if err != nil {
-			return err
-		}
+
 		err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, accAddr, mintCoins)
 		if err != nil {
 			return err
@@ -97,11 +98,21 @@ func (k msgServer) convertClaim(ctx sdk.Context, participant string, amount uint
 	return
 }
 
-// gather amounts for accounts
-func getAmountsForChallenge(challenge types.Challenge) (challenger uint64, challengee uint64) {
-	totalAmt, challengerAmt, challengeeAmt := util.GetPopReward(challenge.Height)
-	if challenge.Success {
-		return challengerAmt, challengeeAmt
+func (k msgServer) convertCoins(ctx sdk.Context, burnCoins sdk.Coins, mintCoins sdk.Coins) (err error) {
+	err = k.bankKeeper.BurnCoins(ctx, types.ModuleName, burnCoins)
+	if err != nil {
+		return err
 	}
-	return totalAmt, 0
+	err = k.bankKeeper.MintCoins(ctx, types.ModuleName, mintCoins)
+	if err != nil {
+		return err
+	}
+	return
+}
+
+func getConvertCoins(amount uint64) (burnCoins sdk.Coins, mintCoins sdk.Coins) {
+	conf := config.GetConfig()
+	burnCoins = sdk.NewCoins(sdk.NewCoin(conf.StagedDenom, sdk.NewIntFromUint64(amount)))
+	mintCoins = sdk.NewCoins(sdk.NewCoin(conf.ClaimDenom, sdk.NewIntFromUint64(amount)))
+	return
 }
