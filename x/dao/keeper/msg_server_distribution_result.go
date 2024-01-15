@@ -64,6 +64,10 @@ func (k msgServer) resolveStagedClaims(ctx sdk.Context, start int64, end int64) 
 		}
 	}
 
+	// convert dao module claims
+	burnCoins, mintCoins := getConvertCoins(daoModuleAmt)
+	err = k.convertCoins(ctx, burnCoins, mintCoins)
+
 	return
 }
 
