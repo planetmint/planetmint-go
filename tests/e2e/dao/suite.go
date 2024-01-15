@@ -268,7 +268,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 		challenges[i].Initiator = val.Address.String()
 		challenges[i].Challenger = aliceAddr.String()
 		challenges[i].Challengee = bobAddr.String()
-		challenges[i].Success = true
+		challenges[i].Success = blockHeight%2 == 0
 		challenges[i].Finished = true
 
 		msg := daotypes.NewMsgReportPopResult(val.Address.String(), &challenges[i])
@@ -303,7 +303,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), conf.StagedDenom)
-	assert.Contains(s.T(), out.String(), "29965753420") // 5 * 5993150684 = 29965753420
+	assert.Contains(s.T(), out.String(), "11986301368") // 2 * 5993150684 = 11986301368
 
 	// send ReissuanceProposal
 	msg1 := daotypes.NewMsgReissueRDDLProposal(val.Address.String(), hex.EncodeToString(val.PubKey.Address()),
@@ -345,15 +345,8 @@ func (s *E2ETestSuite) TestPoPResult() {
 	s.Require().NoError(err)
 	assert.Equal(s.T(), "[]", txResponse.RawLog)
 
-	// send DistributionResult
-	msg4 := daotypes.NewMsgDistributionResult(val.Address.String(), challenges[2].Height, "DaoTxID", "InvestorTxID", "PoPTxID")
-	output, err = e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg4)
-	s.Require().NoError(err)
+	// send DistributionResult implicitely
 	s.Require().NoError(s.network.WaitForNextBlock())
-
-	txResponse, err = lib.GetTxResponseFromOut(output)
-	s.Require().NoError(err)
-	assert.Equal(s.T(), "[]", txResponse.RawLog)
 
 	// check balance for crddl
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetCmdQueryTotalSupply(), []string{
@@ -377,5 +370,5 @@ func (s *E2ETestSuite) TestPoPResult() {
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), conf.ClaimDenom)
-	assert.Equal(s.T(), "amount: \"17979452052\"\ndenom: crddl\n", out.String()) // 3 * 5993150684 = 17979452052
+	assert.Equal(s.T(), "amount: \"5993150684\"\ndenom: crddl\n", out.String()) // 1 * 5993150684 = 5993150684
 }
