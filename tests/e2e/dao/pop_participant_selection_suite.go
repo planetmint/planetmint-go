@@ -50,9 +50,10 @@ func (s *PopSelectionE2ETestSuite) SetupSuite() {
 	conf.MqttResponseTimeout = 200
 	s.PopEpochBackup = conf.PopEpochs
 	// set PopEpochs to 1 in Order to trigger some participant selections
-	conf.PopEpochs = 1
+	conf.PopEpochs = 10
 
 	s.network = network.New(s.T(), s.cfg)
+	conf.PopEpochs = 1
 }
 
 // TearDownSuite clean up after testing
