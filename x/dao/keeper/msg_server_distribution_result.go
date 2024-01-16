@@ -104,11 +104,7 @@ func (k msgServer) convertCoins(ctx sdk.Context, burnCoins sdk.Coins, mintCoins 
 	if err != nil {
 		return err
 	}
-	err = k.bankKeeper.MintCoins(ctx, types.ModuleName, mintCoins)
-	if err != nil {
-		return err
-	}
-	return
+	return k.bankKeeper.MintCoins(ctx, types.ModuleName, mintCoins)
 }
 
 func getConvertCoins(amount uint64) (burnCoins sdk.Coins, mintCoins sdk.Coins) {
