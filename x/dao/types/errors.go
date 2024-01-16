@@ -25,4 +25,5 @@ var (
 	ErrResolvingStagedClaims    = errorsmod.Register(ModuleName, 16, "resolving staged claims failed")
 	ErrReissuanceTxIDMissing    = errorsmod.Register(ModuleName, 17, "reissuance has no transaction id")
 	ErrRestrictedMsg            = errorsmod.Register(ModuleName, 18, "restricted validator msg")
+	ErrDistributionWrongHeight  = errorsmod.Register(ModuleName, 19, "distribution wrong height")
 )

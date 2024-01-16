@@ -16,9 +16,9 @@ func (k Keeper) StoreDistributionOrder(ctx sdk.Context, distributionOrder types.
 	store.Set(util.SerializeInt64(distributionOrder.LastPop), appendValue)
 }
 
-func (k Keeper) LookupDistributionOrder(ctx sdk.Context, lastPopHeight int64) (val types.DistributionOrder, found bool) {
+func (k Keeper) LookupDistributionOrder(ctx sdk.Context, height int64) (val types.DistributionOrder, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DistributionKey))
-	distributionOrder := store.Get(util.SerializeInt64(lastPopHeight))
+	distributionOrder := store.Get(util.SerializeInt64(height))
 	if distributionOrder == nil {
 		return val, false
 	}
