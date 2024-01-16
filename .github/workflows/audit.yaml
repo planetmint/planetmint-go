@@ -23,6 +23,18 @@ jobs:
       - name: Build
         run: go build -v ./...
 
+  proto:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Check proto files
+        run: |
+          if [ "$(find . -name 'query.proto' -exec grep 'option (google.api.http).* = ./planetmint/planetmint-go/' {} \; | wc -l)" -gt 0 ]; then exit 1; fi
+
   ignite:
     runs-on: ubuntu-latest
     steps:
