@@ -34,8 +34,9 @@ var machines = []struct {
 type PopSelectionE2ETestSuite struct {
 	suite.Suite
 
-	cfg     network.Config
-	network *network.Network
+	cfg            network.Config
+	network        *network.Network
+	PopEpochBackup int
 }
 
 func NewPopSelectionE2ETestSuite(cfg network.Config) *PopSelectionE2ETestSuite {
@@ -47,6 +48,7 @@ func (s *PopSelectionE2ETestSuite) SetupSuite() {
 	conf := config.GetConfig()
 	conf.FeeDenom = sample.FeeDenom
 	conf.MqttResponseTimeout = 200
+	s.PopEpochBackup = conf.PopEpochs
 	// set PopEpochs to 1 in Order to trigger some participant selections
 	conf.PopEpochs = 1
 
@@ -57,6 +59,8 @@ func (s *PopSelectionE2ETestSuite) SetupSuite() {
 // TearDownSuite clean up after testing
 func (s *PopSelectionE2ETestSuite) TearDownSuite() {
 	s.T().Log("tearing down e2e test suite")
+	conf := config.GetConfig()
+	conf.PopEpochs = s.PopEpochBackup
 }
 
 func (s *PopSelectionE2ETestSuite) TestPopSelectionNoActors() {

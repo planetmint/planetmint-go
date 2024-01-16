@@ -158,7 +158,7 @@ func (k Keeper) SelectPopParticipants(ctx sdk.Context) (challenger string, chall
 	var startAccountNumber uint64
 	lastPopHeight := ctx.BlockHeight() - int64(conf.PopEpochs)
 	lastPop, found := k.LookupChallenge(ctx, lastPopHeight)
-	if lastPopHeight > 0 && found {
+	if lastPopHeight > 0 && found && lastPop.Challengee != "" {
 		lastAccountAddr := sdk.MustAccAddressFromBech32(lastPop.Challengee)
 		lastAccount := k.accountKeeper.GetAccount(ctx, lastAccountAddr)
 		startAccountNumber = lastAccount.GetAccountNumber() + 1
