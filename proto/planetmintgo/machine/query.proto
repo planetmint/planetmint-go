@@ -40,7 +40,7 @@ service Query {
   
   // Queries a list of GetLiquidAssetsByMachineid items.
   rpc GetLiquidAssetsByMachineid (QueryGetLiquidAssetsByMachineidRequest) returns (QueryGetLiquidAssetsByMachineidResponse) {
-    option (google.api.http).get = "/planetmint/planetmint-go/machine/get_liquid_assets_by_machineid/{machineID}";
+    option (google.api.http).get = "/planetmint/machine/get_liquid_assets_by_machineid/{machineID}";
   
   }
 }
