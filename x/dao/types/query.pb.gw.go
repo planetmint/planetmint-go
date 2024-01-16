@@ -798,11 +798,11 @@ var (
 
 	pattern_Query_Reissuances_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"planetmint", "dao", "reissuances"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_GetChallenge_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"planetmint", "planetmint-go", "dao", "get_challenge", "height"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_GetChallenge_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"planetmint", "dao", "get_challenge", "height"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_Challenges_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"planetmint", "planetmint-go", "dao", "challenges"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Challenges_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"planetmint", "dao", "challenges"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_GetDistribution_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"planetmint", "planetmint-go", "dao", "get_distribution", "height"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_GetDistribution_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"planetmint", "dao", "get_distribution", "height"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (

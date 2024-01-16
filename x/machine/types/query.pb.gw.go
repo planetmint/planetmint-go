@@ -541,7 +541,7 @@ var (
 
 	pattern_Query_GetMachineByAddress_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"planetmint", "machine", "get_machine_by_address", "address"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_GetLiquidAssetsByMachineid_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"planetmint", "planetmint-go", "machine", "get_liquid_assets_by_machineid", "machineID"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_GetLiquidAssetsByMachineid_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"planetmint", "machine", "get_liquid_assets_by_machineid", "machineID"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (
