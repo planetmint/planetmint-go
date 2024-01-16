@@ -53,7 +53,6 @@ func (s *PopSelectionE2ETestSuite) SetupSuite() {
 	conf.PopEpochs = 1
 
 	s.network = network.New(s.T(), s.cfg)
-	conf.ValidatorAddress = s.network.Validators[0].Address.String()
 }
 
 // TearDownSuite clean up after testing

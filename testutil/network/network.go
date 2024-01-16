@@ -60,6 +60,7 @@ func New(t *testing.T, configs ...Config) *Network {
 
 	net, err := network.New(t, validatorTmpDir, cfg)
 
+	conf.ValidatorAddress = net.Validators[0].Address.String()
 	// set missing validator client context values for sending txs
 	var output bytes.Buffer
 	net.Validators[0].ClientCtx.BroadcastMode = "sync"
