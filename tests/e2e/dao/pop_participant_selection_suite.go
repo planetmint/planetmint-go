@@ -101,9 +101,13 @@ func (s *PopSelectionE2ETestSuite) TestPopSelectionOneActors() {
 	////////////////////////////////////////////////////
 	// create 1 machinesaccounts
 	// ensure that a single machine isn't added to a PoP with only one participant
+	conf := config.GetConfig()
+	conf.PopEpochs = 200
+
 	err := e2etestutil.AttestMachine(s.network, machines[0].name, machines[0].mnemonic, 0)
 	s.Require().NoError(err)
 
+	conf.PopEpochs = 1
 	out := s.perpareLocalTest()
 
 	assert.NotContains(s.T(), out.String(), machines[0].address)
@@ -113,9 +117,12 @@ func (s *PopSelectionE2ETestSuite) TestPopSelectionOneActors() {
 func (s *PopSelectionE2ETestSuite) TestPopSelectionTwoActors() {
 	////////////////////////////////////////////////////
 	// create 2nd machine
+	conf := config.GetConfig()
+	conf.PopEpochs = 200
 	err := e2etestutil.AttestMachine(s.network, machines[1].name, machines[1].mnemonic, 1)
 	s.Require().NoError(err)
 
+	conf.PopEpochs = 1
 	out := s.perpareLocalTest()
 
 	assert.Contains(s.T(), out.String(), machines[0].address)
