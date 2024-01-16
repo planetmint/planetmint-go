@@ -37,8 +37,9 @@ var (
 type E2ETestSuite struct {
 	suite.Suite
 
-	cfg     network.Config
-	network *network.Network
+	cfg            network.Config
+	network        *network.Network
+	PopEpochBackup int
 }
 
 // NewE2ETestSuite returns configured dao E2ETestSuite
@@ -50,6 +51,7 @@ func NewE2ETestSuite(cfg network.Config) *E2ETestSuite {
 func (s *E2ETestSuite) SetupSuite() {
 	// set FeeDenom to node0token because the sending account is initialized with no plmnt tokens
 	conf := config.GetConfig()
+	s.PopEpochBackup = conf.PopEpochs
 	conf.FeeDenom = "node0token"
 	// set epochs: make sure to start after initial height of 7
 	conf.DistributionOffset = 5
@@ -115,6 +117,8 @@ func (s *E2ETestSuite) SetupSuite() {
 // TearDownSuite clean up after testing
 func (s *E2ETestSuite) TearDownSuite() {
 	s.T().Log("tearing down e2e test suite")
+	conf := config.GetConfig()
+	conf.PopEpochs = s.PopEpochBackup
 }
 
 func (s *E2ETestSuite) TestDistributeCollectedFees() {

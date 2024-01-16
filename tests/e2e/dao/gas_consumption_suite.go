@@ -29,7 +29,6 @@ func (s *GasConsumptionE2ETestSuite) SetupSuite() {
 	conf := config.GetConfig()
 	conf.FeeDenom = sample.FeeDenom
 	s.network = network.New(s.T(), s.cfg)
-
 	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
 	s.Require().NoError(err)
 	err = e2etestutil.FundAccount(s.network, account)
