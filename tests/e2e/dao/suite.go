@@ -287,7 +287,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), conf.StagedDenom)
-	assert.Contains(s.T(), out.String(), "39954337890") // Total supply 5 * 7990867578 = 39954337890
+	assert.Equal(s.T(), "amount: \"21974885838\"\ndenom: stagedcrddl\n", out.String()) // Total supply 5 * 1997716894 + 2 * 5993150684 = 21974885838
 
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		aliceAddr.String(),
@@ -295,7 +295,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), conf.StagedDenom)
-	assert.Contains(s.T(), out.String(), "9988584470") // 5 * 1997716894 = 9988584470
+	assert.Equal(s.T(), "amount: \"9988584470\"\ndenom: stagedcrddl\n", out.String()) // 5 * 1997716894 = 9988584470
 
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		bobAddr.String(),
@@ -303,7 +303,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), conf.StagedDenom)
-	assert.Contains(s.T(), out.String(), "11986301368") // 2 * 5993150684 = 11986301368
+	assert.Equal(s.T(), "amount: \"11986301368\"\ndenom: stagedcrddl\n", out.String()) // 2 * 5993150684 = 11986301368
 
 	// send ReissuanceProposal
 	msg1 := daotypes.NewMsgReissueRDDLProposal(val.Address.String(), hex.EncodeToString(val.PubKey.Address()),
@@ -354,7 +354,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), conf.ClaimDenom)
-	assert.Equal(s.T(), "amount: \"23972602734\"\ndenom: crddl\n", out.String()) // Total supply 3 * 5993150684 + 3 * 1997716894 = 23972602734
+	assert.Equal(s.T(), "amount: \"11986301366\"\ndenom: crddl\n", out.String()) // Total supply 1 * 5993150684 + 3 * 1997716894 = 11986301366
 
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		aliceAddr.String(),

@@ -40,15 +40,16 @@ func (k msgServer) resolveStagedClaims(ctx sdk.Context, start int64, end int64) 
 	}
 
 	popParticipants := make(map[string]uint64)
-	daoModuleAmt := uint64(0)
 
 	for _, challenge := range challenges {
+		// if challenge not finished nobody has claims
+		if !challenge.GetFinished() {
+			continue
+		}
 		_, challengerAmt, challengeeAmt := util.GetPopReward(challenge.Height)
 		popParticipants[challenge.Challenger] += challengerAmt
 		if challenge.GetSuccess() {
 			popParticipants[challenge.Challengee] += challengeeAmt
-		} else {
-			daoModuleAmt += challengeeAmt
 		}
 	}
 
@@ -63,10 +64,6 @@ func (k msgServer) resolveStagedClaims(ctx sdk.Context, start int64, end int64) 
 			return err
 		}
 	}
-
-	// convert dao module claims
-	burnCoins, mintCoins := getConvertCoins(daoModuleAmt)
-	err = k.convertCoins(ctx, burnCoins, mintCoins)
 
 	return
 }
