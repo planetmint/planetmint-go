@@ -5,23 +5,19 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/planetmint/planetmint-go/x/dao/types"
-	"github.com/spf13/cast"
+	"github.com/planetmint/planetmint-go/x/machine/types"
 	"github.com/spf13/cobra"
 )
 
 var _ = strconv.Itoa(0)
 
-func CmdGetReissuance() *cobra.Command {
+func CmdGetMachineByPublicKey() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get-reissuance [block-height]",
-		Short: "Query get_reissuance",
+		Use:   "public-key [public-key]",
+		Short: "Query for machines by public key",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			reqBlockHeight, err := cast.ToInt64E(args[0])
-			if err != nil {
-				return err
-			}
+			reqPublicKey := args[0]
 
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -30,12 +26,12 @@ func CmdGetReissuance() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryGetReissuanceRequest{
+			params := &types.QueryGetMachineByPublicKeyRequest{
 
-				BlockHeight: reqBlockHeight,
+				PublicKey: reqPublicKey,
 			}
 
-			res, err := queryClient.GetReissuance(cmd.Context(), params)
+			res, err := queryClient.GetMachineByPublicKey(cmd.Context(), params)
 			if err != nil {
 				return err
 			}

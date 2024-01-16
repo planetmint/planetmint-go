@@ -13,8 +13,8 @@ var _ = strconv.Itoa(0)
 
 func CmdGetMintRequestsByHash() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get-mint-requests-by-hash [hash]",
-		Short: "Query get-mint-requests-by-hash",
+		Use:   "mint-requests-hash [hash]",
+		Short: "Query for mint requests by hash",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			reqHash := args[0]

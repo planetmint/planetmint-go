@@ -14,7 +14,7 @@ var _ = strconv.Itoa(0)
 func CmdChallenges() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "challenges",
-		Short: "Query challenges",
+		Short: "Query for challenges",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientQueryContext(cmd)

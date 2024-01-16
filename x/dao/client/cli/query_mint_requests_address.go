@@ -5,19 +5,19 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/planetmint/planetmint-go/x/asset/types"
+	"github.com/planetmint/planetmint-go/x/dao/types"
 	"github.com/spf13/cobra"
 )
 
 var _ = strconv.Itoa(0)
 
-func CmdGetNotarizedAsset() *cobra.Command {
+func CmdMintRequestsByAddress() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get-notarized-asset [cid]",
-		Short: "Query get_notarized_asset",
+		Use:   "mint-requests-address [address]",
+		Short: "Query for mint requests by address",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			reqCid := args[0]
+			reqAddress := args[0]
 
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -26,12 +26,12 @@ func CmdGetNotarizedAsset() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryGetNotarizedAssetRequest{
+			params := &types.QueryMintRequestsByAddressRequest{
 
-				Cid: reqCid,
+				Address: reqAddress,
 			}
 
-			res, err := queryClient.GetNotarizedAsset(cmd.Context(), params)
+			res, err := queryClient.MintRequestsByAddress(cmd.Context(), params)
 			if err != nil {
 				return err
 			}

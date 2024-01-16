@@ -14,7 +14,7 @@ var _ = strconv.Itoa(0)
 func CmdGetReissuances() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "reissuances",
-		Short: "Query reissuances",
+		Short: "Query for reissuances",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientQueryContext(cmd)

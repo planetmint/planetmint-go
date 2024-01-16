@@ -11,13 +11,13 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdGetTrustAnchorStatus() *cobra.Command {
+func CmdGetMachineByAddress() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get-trust-anchor-status [machineid]",
-		Short: "Query get_trust_anchor_status",
+		Use:   "address [address]",
+		Short: "Query for machines by address",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			reqMachineid := args[0]
+			reqAddress := args[0]
 
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -26,12 +26,12 @@ func CmdGetTrustAnchorStatus() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryGetTrustAnchorStatusRequest{
+			params := &types.QueryGetMachineByAddressRequest{
 
-				Machineid: reqMachineid,
+				Address: reqAddress,
 			}
 
-			res, err := queryClient.GetTrustAnchorStatus(cmd.Context(), params)
+			res, err := queryClient.GetMachineByAddress(cmd.Context(), params)
 			if err != nil {
 				return err
 			}

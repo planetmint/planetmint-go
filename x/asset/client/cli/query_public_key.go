@@ -14,8 +14,8 @@ var _ = strconv.Itoa(0)
 
 func CmdGetCIDsByAddress() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get-assets-by-pub-key [ext-pub-key] [lookup-period-in-min]",
-		Short: "Query get_cids_by_address",
+		Use:   "public-key [pub-key] [lookup-period-in-min]",
+		Short: "Query for assets by public key",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			reqAddress := args[0]

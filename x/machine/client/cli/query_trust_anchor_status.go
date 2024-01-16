@@ -5,23 +5,19 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/planetmint/planetmint-go/x/dao/types"
-	"github.com/spf13/cast"
+	"github.com/planetmint/planetmint-go/x/machine/types"
 	"github.com/spf13/cobra"
 )
 
 var _ = strconv.Itoa(0)
 
-func CmdGetChallenge() *cobra.Command {
+func CmdGetTrustAnchorStatus() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get-challenge [height]",
-		Short: "Query get_challenge",
+		Use:   "trust-anchor-status [machine-id]",
+		Short: "Query for trust anchor status by machine ID",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			reqHeight, err := cast.ToInt64E(args[0])
-			if err != nil {
-				return err
-			}
+			reqMachineid := args[0]
 
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -30,12 +26,12 @@ func CmdGetChallenge() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryGetChallengeRequest{
+			params := &types.QueryGetTrustAnchorStatusRequest{
 
-				Height: reqHeight,
+				Machineid: reqMachineid,
 			}
 
-			res, err := queryClient.GetChallenge(cmd.Context(), params)
+			res, err := queryClient.GetTrustAnchorStatus(cmd.Context(), params)
 			if err != nil {
 				return err
 			}
