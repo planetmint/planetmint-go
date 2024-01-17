@@ -10,4 +10,5 @@ message Params {
   option (gogoproto.goproto_stringer) = false;
   
   string mint_address = 1;
+  string claim_address = 2;
 }

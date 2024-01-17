@@ -13,15 +13,16 @@ func ParamKeyTable() paramtypes.KeyTable {
 }
 
 // NewParams creates a new Params instance
-func NewParams(mintAddress string) Params {
+func NewParams(mintAddress string, claimAddress string) Params {
 	return Params{
-		MintAddress: mintAddress,
+		MintAddress:  mintAddress,
+		ClaimAddress: claimAddress,
 	}
 }
 
 // DefaultParams returns a default set of parameters
 func DefaultParams() Params {
-	return NewParams("plmnt1dyuhg8ldu3d6nvhrvzzemtc3893dys9v9lvdty")
+	return NewParams("plmnt1dyuhg8ldu3d6nvhrvzzemtc3893dys9v9lvdty", "plmnt1dyuhg8ldu3d6nvhrvzzemtc3893dys9v9lvdty")
 }
 
 // ParamSetPairs get the params.ParamSet
