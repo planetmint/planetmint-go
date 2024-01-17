@@ -23,9 +23,8 @@ func (k msgServer) DistributionResult(goCtx context.Context, msg *types.MsgDistr
 		if err != nil {
 			util.GetAppLogger().Error(ctx, "%s for provided PoP heights: %d %d", types.ErrResolvingStagedClaims.Error(), distribution.FirstPop, distribution.LastPop)
 			return nil, errorsmod.Wrap(types.ErrConvertClaims, err.Error())
-		} else {
-			util.GetAppLogger().Info(ctx, "staged claims successfully for provided PoP heights: %d %d", distribution.FirstPop, distribution.LastPop)
 		}
+		util.GetAppLogger().Info(ctx, "staged claims successfully for provided PoP heights: %d %d", distribution.FirstPop, distribution.LastPop)
 		k.StoreDistributionOrder(ctx, distribution)
 	} else {
 		util.GetAppLogger().Error(ctx, "%s for provided block height %s", types.ErrDistributionNotFound.Error(), strconv.FormatInt(msg.GetLastPop(), 10))
