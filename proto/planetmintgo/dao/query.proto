@@ -12,6 +12,7 @@ import "planetmintgo/dao/reissuance.proto";
 import "planetmintgo/dao/challenge.proto";
 import "amino/amino.proto";
 import "planetmintgo/dao/distribution_order.proto";
+import "planetmintgo/dao/redeem_claim.proto";
 
 option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
 
@@ -57,11 +58,22 @@ service Query {
   // Queries a list of Challenges items.
   rpc Challenges (QueryChallengesRequest) returns (QueryChallengesResponse) {
     option (google.api.http).get = "/planetmint/dao/challenges";
+  
   }
   
   // Queries a list of GetDistribution items.
   rpc GetDistribution (QueryGetDistributionRequest) returns (QueryGetDistributionResponse) {
     option (google.api.http).get = "/planetmint/dao/get_distribution/{height}";
+  
+  }
+  
+  // Queries a list of RedeemClaim items.
+  rpc RedeemClaim    (QueryGetRedeemClaimRequest) returns (QueryGetRedeemClaimResponse) {
+    option (google.api.http).get = "/planetmint/planetmint-go/dao/redeem_claim/{beneficiary}/{liquidTxHash}";
+  
+  }
+  rpc RedeemClaimAll (QueryAllRedeemClaimRequest) returns (QueryAllRedeemClaimResponse) {
+    option (google.api.http).get = "/planetmint/planetmint-go/dao/redeem_claim";
   
   }
 }
@@ -104,11 +116,8 @@ message QueryReissuancesRequest {
 }
 
 message QueryReissuancesResponse {
-  repeated Reissuance                    reissuances = 1 [
-    (gogoproto.nullable)     = false,
-    (amino.dont_omitempty)   = true
-  ];
-  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+  repeated Reissuance                             reissuances = 1 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+           cosmos.base.query.v1beta1.PageResponse pagination  = 2;
 }
 
 message QueryGetChallengeRequest {
@@ -124,11 +133,8 @@ message QueryChallengesRequest {
 }
 
 message QueryChallengesResponse {
-  repeated Challenge                     challenges  = 1 [
-    (gogoproto.nullable)     = false,
-    (amino.dont_omitempty)   = true
-  ];
-  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+  repeated Challenge                              challenges = 1 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+           cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 message QueryGetDistributionRequest {
@@ -137,5 +143,23 @@ message QueryGetDistributionRequest {
 
 message QueryGetDistributionResponse {
   DistributionOrder distribution = 1;
+}
+
+message QueryGetRedeemClaimRequest {
+  string beneficiary  = 1;
+  string liquidTxHash = 2;
+}
+
+message QueryGetRedeemClaimResponse {
+  RedeemClaim redeemClaim = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllRedeemClaimRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllRedeemClaimResponse {
+  repeated RedeemClaim                            redeemClaim = 1 [(gogoproto.nullable) = false];
+           cosmos.base.query.v1beta1.PageResponse pagination  = 2;
 }
 

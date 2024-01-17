@@ -15,6 +15,16 @@ func TestGenesis(t *testing.T) {
 	genesisState := types.GenesisState{
 		Params: types.DefaultParams(),
 
+		RedeemClaimList: []types.RedeemClaim{
+			{
+				Beneficiary:  "0",
+				LiquidTxHash: "0",
+			},
+			{
+				Beneficiary:  "1",
+				LiquidTxHash: "1",
+			},
+		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -26,5 +36,6 @@ func TestGenesis(t *testing.T) {
 	nullify.Fill(&genesisState)
 	nullify.Fill(got)
 
+	require.ElementsMatch(t, genesisState.RedeemClaimList, got.RedeemClaimList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

@@ -20,12 +20,38 @@ func TestGenesisState_Validate(t *testing.T) {
 			valid:    true,
 		},
 		{
-			desc:     "valid genesis state",
+			desc: "valid genesis state",
 			genState: &types.GenesisState{
 
+				RedeemClaimList: []types.RedeemClaim{
+					{
+						Beneficiary:  "0",
+						LiquidTxHash: "0",
+					},
+					{
+						Beneficiary:  "1",
+						LiquidTxHash: "1",
+					},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
+		},
+		{
+			desc: "duplicated redeemClaim",
+			genState: &types.GenesisState{
+				RedeemClaimList: []types.RedeemClaim{
+					{
+						Beneficiary:  "0",
+						LiquidTxHash: "0",
+					},
+					{
+						Beneficiary:  "0",
+						LiquidTxHash: "0",
+					},
+				},
+			},
+			valid: false,
 		},
 		// this line is used by starport scaffolding # types/genesis/testcase
 	}

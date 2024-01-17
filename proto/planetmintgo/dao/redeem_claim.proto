@@ -1,0 +1,13 @@
+syntax = "proto3";
+package planetmintgo.dao;
+
+option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
+
+message RedeemClaim {
+  string beneficiary = 1; 
+  string liquidTxHash = 2; 
+  string amount = 3; 
+  bool issued = 4; 
+  string creator = 5;
+}
+

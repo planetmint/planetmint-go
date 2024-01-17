@@ -10,6 +10,7 @@ import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
 import "cosmos/msg/v1/msg.proto";
+import "planetmintgo/dao/redeem_claim.proto";
 
 option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
 
@@ -23,6 +24,9 @@ service Msg {
   rpc UpdateParams        (MsgUpdateParams       ) returns (MsgUpdateParamsResponse       );
   rpc ReportPopResult     (MsgReportPopResult    ) returns (MsgReportPopResultResponse    );
   rpc InitPop             (MsgInitPop            ) returns (MsgInitPopResponse            );
+  rpc CreateRedeemClaim   (MsgCreateRedeemClaim  ) returns (MsgCreateRedeemClaimResponse  );
+  rpc UpdateRedeemClaim   (MsgUpdateRedeemClaim  ) returns (MsgUpdateRedeemClaimResponse  );
+  rpc DeleteRedeemClaim   (MsgDeleteRedeemClaim  ) returns (MsgDeleteRedeemClaimResponse  );
 }
 message MsgReportPopResult {
   string    creator   = 1;
@@ -98,4 +102,32 @@ message MsgInitPop {
 }
 
 message MsgInitPopResponse {}
+
+message MsgCreateRedeemClaim {
+  string creator      = 1;
+  string beneficiary  = 2;
+  string liquidTxHash = 3;
+  string amount       = 4;
+  bool   issued       = 5;
+}
+
+message MsgCreateRedeemClaimResponse {}
+
+message MsgUpdateRedeemClaim {
+  string creator      = 1;
+  string beneficiary  = 2;
+  string liquidTxHash = 3;
+  string amount       = 4;
+  bool   issued       = 5;
+}
+
+message MsgUpdateRedeemClaimResponse {}
+
+message MsgDeleteRedeemClaim {
+  string creator      = 1;
+  string beneficiary  = 2;
+  string liquidTxHash = 3;
+}
+
+message MsgDeleteRedeemClaimResponse {}
 

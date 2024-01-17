@@ -39,6 +39,18 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgInitPop int = 100
 
+	opWeightMsgCreateRedeemClaim = "op_weight_msg_redeem_claim"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgCreateRedeemClaim int = 100
+
+	opWeightMsgUpdateRedeemClaim = "op_weight_msg_redeem_claim"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgUpdateRedeemClaim int = 100
+
+	opWeightMsgDeleteRedeemClaim = "op_weight_msg_redeem_claim"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgDeleteRedeemClaim int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -50,6 +62,18 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	}
 	daoGenesis := types.GenesisState{
 		Params: types.DefaultParams(),
+		RedeemClaimList: []types.RedeemClaim{
+			{
+				Creator:      sample.AccAddress(),
+				Beneficiary:  "0",
+				LiquidTxHash: "0",
+			},
+			{
+				Creator:      sample.AccAddress(),
+				Beneficiary:  "1",
+				LiquidTxHash: "1",
+			},
+		},
 		// this line is used by starport scaffolding # simapp/module/genesisState
 	}
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&daoGenesis)
@@ -111,6 +135,39 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		daosimulation.SimulateMsgInitPop(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
+	var weightMsgCreateRedeemClaim int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgCreateRedeemClaim, &weightMsgCreateRedeemClaim, nil,
+		func(_ *rand.Rand) {
+			weightMsgCreateRedeemClaim = defaultWeightMsgCreateRedeemClaim
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgCreateRedeemClaim,
+		daosimulation.SimulateMsgCreateRedeemClaim(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgUpdateRedeemClaim int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgUpdateRedeemClaim, &weightMsgUpdateRedeemClaim, nil,
+		func(_ *rand.Rand) {
+			weightMsgUpdateRedeemClaim = defaultWeightMsgUpdateRedeemClaim
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgUpdateRedeemClaim,
+		daosimulation.SimulateMsgUpdateRedeemClaim(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgDeleteRedeemClaim int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgDeleteRedeemClaim, &weightMsgDeleteRedeemClaim, nil,
+		func(_ *rand.Rand) {
+			weightMsgDeleteRedeemClaim = defaultWeightMsgDeleteRedeemClaim
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgDeleteRedeemClaim,
+		daosimulation.SimulateMsgDeleteRedeemClaim(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
 	// this line is used by starport scaffolding # simapp/module/operation
 
 	return operations
@@ -148,6 +205,30 @@ func (am AppModule) ProposalMsgs(_ module.SimulationState) []simtypes.WeightedPr
 			defaultWeightMsgInitPop,
 			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
 				daosimulation.SimulateMsgInitPop(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgCreateRedeemClaim,
+			defaultWeightMsgCreateRedeemClaim,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				daosimulation.SimulateMsgCreateRedeemClaim(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgUpdateRedeemClaim,
+			defaultWeightMsgUpdateRedeemClaim,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				daosimulation.SimulateMsgUpdateRedeemClaim(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgDeleteRedeemClaim,
+			defaultWeightMsgDeleteRedeemClaim,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				daosimulation.SimulateMsgDeleteRedeemClaim(am.accountKeeper, am.bankKeeper, am.keeper)
 				return nil
 			},
 		),
