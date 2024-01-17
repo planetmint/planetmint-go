@@ -50,18 +50,18 @@ service Query {
   
   // Queries a list of GetChallenge items.
   rpc GetChallenge (QueryGetChallengeRequest) returns (QueryGetChallengeResponse) {
-    option (google.api.http).get = "/planetmint/planetmint-go/dao/get_challenge/{height}";
+    option (google.api.http).get = "/planetmint/dao/get_challenge/{height}";
   
   }
   
   // Queries a list of Challenges items.
   rpc Challenges (QueryChallengesRequest) returns (QueryChallengesResponse) {
-    option (google.api.http).get = "/planetmint/planetmint-go/dao/challenges";
+    option (google.api.http).get = "/planetmint/dao/challenges";
   }
   
   // Queries a list of GetDistribution items.
   rpc GetDistribution (QueryGetDistributionRequest) returns (QueryGetDistributionResponse) {
-    option (google.api.http).get = "/planetmint/planetmint-go/dao/get_distribution/{lastPopHeight}";
+    option (google.api.http).get = "/planetmint/dao/get_distribution/{height}";
   
   }
 }
@@ -132,7 +132,7 @@ message QueryChallengesResponse {
 }
 
 message QueryGetDistributionRequest {
-  int64 lastPopHeight = 1;
+  int64 height = 1;
 }
 
 message QueryGetDistributionResponse {
