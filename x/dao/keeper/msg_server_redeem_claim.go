@@ -27,7 +27,7 @@ func (k msgServer) CreateRedeemClaim(goCtx context.Context, msg *types.MsgCreate
 		Beneficiary:  msg.Beneficiary,
 		LiquidTxHash: msg.LiquidTxHash,
 		Amount:       msg.Amount,
-		Issued:       msg.Issued,
+		Confirmed:    msg.Confirmed,
 	}
 
 	k.SetRedeemClaim(
@@ -60,7 +60,7 @@ func (k msgServer) UpdateRedeemClaim(goCtx context.Context, msg *types.MsgUpdate
 		Beneficiary:  msg.Beneficiary,
 		LiquidTxHash: msg.LiquidTxHash,
 		Amount:       msg.Amount,
-		Issued:       msg.Issued,
+		Confirmed:    msg.Confirmed,
 	}
 
 	k.SetRedeemClaim(ctx, redeemClaim)

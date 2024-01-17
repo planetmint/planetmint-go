@@ -18,7 +18,7 @@ func NewMsgCreateRedeemClaim(
 	beneficiary string,
 	liquidTxHash string,
 	amount string,
-	issued bool,
+	confirmed bool,
 
 ) *MsgCreateRedeemClaim {
 	return &MsgCreateRedeemClaim{
@@ -26,7 +26,7 @@ func NewMsgCreateRedeemClaim(
 		Beneficiary:  beneficiary,
 		LiquidTxHash: liquidTxHash,
 		Amount:       amount,
-		Issued:       issued,
+		Confirmed:    confirmed,
 	}
 }
 
@@ -66,7 +66,7 @@ func NewMsgUpdateRedeemClaim(
 	beneficiary string,
 	liquidTxHash string,
 	amount string,
-	issued bool,
+	confirmed bool,
 
 ) *MsgUpdateRedeemClaim {
 	return &MsgUpdateRedeemClaim{
@@ -74,7 +74,7 @@ func NewMsgUpdateRedeemClaim(
 		Beneficiary:  beneficiary,
 		LiquidTxHash: liquidTxHash,
 		Amount:       amount,
-		Issued:       issued,
+		Confirmed:    confirmed,
 	}
 }
 

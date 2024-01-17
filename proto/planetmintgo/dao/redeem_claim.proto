@@ -7,7 +7,7 @@ message RedeemClaim {
   string beneficiary = 1; 
   string liquidTxHash = 2; 
   string amount = 3; 
-  bool issued = 4; 
+  bool confirmed = 4; 
   string creator = 5;
 }
 

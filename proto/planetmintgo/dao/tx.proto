@@ -107,7 +107,7 @@ message MsgCreateRedeemClaim {
   string beneficiary  = 2;
   string liquidTxHash = 3;
   string amount       = 4;
-  bool   issued       = 5;
+  bool   confirmed       = 5;
 }
 
 message MsgCreateRedeemClaimResponse {}
@@ -117,7 +117,7 @@ message MsgUpdateRedeemClaim {
   string beneficiary  = 2;
   string liquidTxHash = 3;
   string amount       = 4;
-  bool   issued       = 5;
+  bool   confirmed       = 5;
 }
 
 message MsgUpdateRedeemClaimResponse {}
