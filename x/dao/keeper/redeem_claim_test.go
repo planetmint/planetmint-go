@@ -41,21 +41,6 @@ func TestRedeemClaimGet(t *testing.T) {
 		)
 	}
 }
-func TestRedeemClaimRemove(t *testing.T) {
-	keeper, ctx := keepertest.DaoKeeper(t)
-	items := createNRedeemClaim(keeper, ctx, 10)
-	for _, item := range items {
-		keeper.RemoveRedeemClaim(ctx,
-			item.Beneficiary,
-			item.LiquidTxHash,
-		)
-		_, found := keeper.GetRedeemClaim(ctx,
-			item.Beneficiary,
-			item.LiquidTxHash,
-		)
-		require.False(t, found)
-	}
-}
 
 func TestRedeemClaimGetAll(t *testing.T) {
 	keeper, ctx := keepertest.DaoKeeper(t)

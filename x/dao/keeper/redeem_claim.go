@@ -37,20 +37,6 @@ func (k Keeper) GetRedeemClaim(
 	return val, true
 }
 
-// RemoveRedeemClaim removes a redeemClaim from the store
-func (k Keeper) RemoveRedeemClaim(
-	ctx sdk.Context,
-	beneficiary string,
-	liquidTxHash string,
-
-) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RedeemClaimKeyPrefix))
-	store.Delete(types.RedeemClaimKey(
-		beneficiary,
-		liquidTxHash,
-	))
-}
-
 // GetAllRedeemClaim returns all redeemClaim
 func (k Keeper) GetAllRedeemClaim(ctx sdk.Context) (list []types.RedeemClaim) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RedeemClaimKeyPrefix))

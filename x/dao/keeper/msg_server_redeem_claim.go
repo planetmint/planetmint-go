@@ -66,30 +66,3 @@ func (k msgServer) UpdateRedeemClaim(goCtx context.Context, msg *types.MsgUpdate
 
 	return &types.MsgUpdateRedeemClaimResponse{}, nil
 }
-
-func (k msgServer) DeleteRedeemClaim(goCtx context.Context, msg *types.MsgDeleteRedeemClaim) (*types.MsgDeleteRedeemClaimResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	// Check if the value exists
-	valFound, isFound := k.GetRedeemClaim(
-		ctx,
-		msg.Beneficiary,
-		msg.LiquidTxHash,
-	)
-	if !isFound {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
-	}
-
-	// Checks if the the msg creator is the same as the current owner
-	if msg.Creator != valFound.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
-	}
-
-	k.RemoveRedeemClaim(
-		ctx,
-		msg.Beneficiary,
-		msg.LiquidTxHash,
-	)
-
-	return &types.MsgDeleteRedeemClaimResponse{}, nil
-}

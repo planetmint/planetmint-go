@@ -26,7 +26,6 @@ service Msg {
   rpc InitPop             (MsgInitPop            ) returns (MsgInitPopResponse            );
   rpc CreateRedeemClaim   (MsgCreateRedeemClaim  ) returns (MsgCreateRedeemClaimResponse  );
   rpc UpdateRedeemClaim   (MsgUpdateRedeemClaim  ) returns (MsgUpdateRedeemClaimResponse  );
-  rpc DeleteRedeemClaim   (MsgDeleteRedeemClaim  ) returns (MsgDeleteRedeemClaimResponse  );
 }
 message MsgReportPopResult {
   string    creator   = 1;
@@ -122,12 +121,3 @@ message MsgUpdateRedeemClaim {
 }
 
 message MsgUpdateRedeemClaimResponse {}
-
-message MsgDeleteRedeemClaim {
-  string creator      = 1;
-  string beneficiary  = 2;
-  string liquidTxHash = 3;
-}
-
-message MsgDeleteRedeemClaimResponse {}
-

@@ -90,34 +90,3 @@ func CmdUpdateRedeemClaim() *cobra.Command {
 
 	return cmd
 }
-
-func CmdDeleteRedeemClaim() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "delete-redeem-claim [beneficiary] [liquid-tx-hash]",
-		Short: "Delete a redeem-claim",
-		Args:  cobra.ExactArgs(2),
-		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			indexBeneficiary := args[0]
-			indexLiquidTxHash := args[1]
-
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			msg := types.NewMsgDeleteRedeemClaim(
-				clientCtx.GetFromAddress().String(),
-				indexBeneficiary,
-				indexLiquidTxHash,
-			)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
-	}
-
-	flags.AddTxFlagsToCmd(cmd)
-
-	return cmd
-}
