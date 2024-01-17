@@ -23,9 +23,7 @@ func GetQueryCmd(_ string) *cobra.Command {
 
 	cmd.AddCommand(CmdQueryParams())
 
-	cmd.AddCommand(CmdGetMintRequestsByHash())
-
-	cmd.AddCommand(CmdMintRequestsByAddress())
+	cmd.AddCommand(CmdGetMintRequests())
 
 	cmd.AddCommand(CmdGetReissuance())
 

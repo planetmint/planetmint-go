@@ -26,13 +26,13 @@ service Query {
   
   // Queries a list of GetMintRequestsByHash items.
   rpc GetMintRequestsByHash (QueryGetMintRequestsByHashRequest) returns (QueryGetMintRequestsByHashResponse) {
-    option (google.api.http).get = "/planetmint/dao/mint_requests_hash/{hash}";
+    option (google.api.http).get = "/planetmint/dao/mint_requests/hash/{hash}";
   
   }
   
   // Queries a list of MintRequestsByAddress items.
   rpc MintRequestsByAddress (QueryMintRequestsByAddressRequest) returns (QueryMintRequestsByAddressResponse) {
-    option (google.api.http).get = "/planetmint/dao/mint_requests_address/{address}";
+    option (google.api.http).get = "/planetmint/dao/mint_requests/address/{address}";
   
   }
   

@@ -46890,7 +46890,7 @@ paths:
           format: int64
       tags:
         - Query
-  /planetmint/dao/mint_requests_address/{address}:
+  /planetmint/dao/mint_requests/address/{address}:
     get:
       summary: Queries a list of MintRequestsByAddress items.
       operationId: PlanetmintgoDaoMintRequestsByAddress
@@ -46940,7 +46940,7 @@ paths:
           type: string
       tags:
         - Query
-  /planetmint/dao/mint_requests_hash/{hash}:
+  /planetmint/dao/mint_requests/hash/{hash}:
     get:
       summary: Queries a list of GetMintRequestsByHash items.
       operationId: PlanetmintgoDaoGetMintRequestsByHash
@@ -47447,7 +47447,7 @@ paths:
           type: string
       tags:
         - Query
-  /planetmint/machine/trust_anchor_status/{machineid}:
+  /planetmint/machine/trust_anchor/status/{machineid}:
     get:
       summary: Queries a list of GetTrustAnchorStatus items.
       operationId: PlanetmintgoMachineGetTrustAnchorStatus

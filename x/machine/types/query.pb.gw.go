@@ -537,7 +537,7 @@ var (
 
 	pattern_Query_GetMachineByPublicKey_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"planetmint", "machine", "public_key", "publicKey"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_GetTrustAnchorStatus_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"planetmint", "machine", "trust_anchor_status", "machineid"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_GetTrustAnchorStatus_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"planetmint", "machine", "trust_anchor", "status", "machineid"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Query_GetMachineByAddress_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 2}, []string{"planetmint", "machine", "address"}, "", runtime.AssumeColonVerbOpt(true)))
 

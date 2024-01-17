@@ -28,7 +28,7 @@ service Query {
   
   // Queries a list of GetTrustAnchorStatus items.
   rpc GetTrustAnchorStatus (QueryGetTrustAnchorStatusRequest) returns (QueryGetTrustAnchorStatusResponse) {
-    option (google.api.http).get = "/planetmint/machine/trust_anchor_status/{machineid}";
+    option (google.api.http).get = "/planetmint/machine/trust_anchor/status/{machineid}";
   
   }
   
