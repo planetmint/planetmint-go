@@ -18,6 +18,8 @@ func (k msgServer) ReportPopResult(goCtx context.Context, msg *types.MsgReportPo
 	if err != nil {
 		return nil, errorsmod.Wrapf(types.ErrInvalidChallenge, err.Error())
 	}
+	// ensure the challenge is stored even without the token reward minting
+	k.StoreChallenge(ctx, *msg.Challenge)
 
 	if msg.Challenge.GetSuccess() {
 		util.GetAppLogger().Info(ctx, "PoP at height %v was successful", msg.Challenge.GetHeight())
@@ -25,14 +27,10 @@ func (k msgServer) ReportPopResult(goCtx context.Context, msg *types.MsgReportPo
 		util.GetAppLogger().Info(ctx, "PoP at height %v was unsuccessful", msg.Challenge.GetHeight())
 	}
 
-	// TODO: develop a more resilient pattern: if the distribution does not work,
-	//       the challenge shouldn't be discarded. it's most likely not the fault of the PoP participants.
 	err = k.issuePoPRewards(ctx, *msg.Challenge)
 	if err != nil {
 		return nil, errorsmod.Wrapf(types.ErrFailedPoPRewardsIssuance, err.Error())
 	}
-
-	k.StoreChallenge(ctx, *msg.Challenge)
 
 	return &types.MsgReportPopResultResponse{}, nil
 }
