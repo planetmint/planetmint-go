@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"math"
 	"strconv"
 
 	"github.com/planetmint/planetmint-go/config"
@@ -34,9 +35,8 @@ var machines = []struct {
 type PopSelectionE2ETestSuite struct {
 	suite.Suite
 
-	cfg            network.Config
-	network        *network.Network
-	PopEpochBackup int
+	cfg     network.Config
+	network *network.Network
 }
 
 func NewPopSelectionE2ETestSuite(cfg network.Config) *PopSelectionE2ETestSuite {
@@ -48,66 +48,53 @@ func (s *PopSelectionE2ETestSuite) SetupSuite() {
 	conf := config.GetConfig()
 	conf.FeeDenom = sample.FeeDenom
 	conf.MqttResponseTimeout = 200
-	s.PopEpochBackup = conf.PopEpochs
-	// set PopEpochs to 1 in Order to trigger some participant selections
-	conf.PopEpochs = 10
 
 	s.network = network.New(s.T(), s.cfg)
-	conf.PopEpochs = 1
+
+	// trigger one participant selection per test
+	conf.PopEpochs = 10
 }
 
 // TearDownSuite clean up after testing
 func (s *PopSelectionE2ETestSuite) TearDownSuite() {
 	s.T().Log("tearing down e2e test suite")
-	conf := config.GetConfig()
-	conf.PopEpochs = s.PopEpochBackup
-}
-
-func (s *PopSelectionE2ETestSuite) TestPopSelectionNoActors() {
-	val := s.network.Validators[0]
-	// wait for some blocks so challenges get stored
-	s.Require().NoError(s.network.WaitForNextBlock())
-	s.Require().NoError(s.network.WaitForNextBlock())
-
-	// check if a PoP without challenger and challengee passes
-	height, _ := s.network.LatestHeight()
-	queryHeight := height - 1
-	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetChallenge(), []string{
-		strconv.FormatInt(queryHeight, 10),
-	})
-	s.Require().NoError(err)
-
-	assert.NotContains(s.T(), out.String(), machines[0].address)
-	assert.NotContains(s.T(), out.String(), machines[1].address)
 }
 
 func (s *PopSelectionE2ETestSuite) perpareLocalTest() testutil.BufferWriter {
 	val := s.network.Validators[0]
-	// wait for some blocks so challenges get stored
-	s.Require().NoError(s.network.WaitForNextBlock())
-	s.Require().NoError(s.network.WaitForNextBlock())
+	conf := config.GetConfig()
 
-	// check if the next PoP went through with only the challenger selected
-	height, _ := s.network.LatestHeight()
-	queryHeight := height - 1
+	latestHeight, err := s.network.LatestHeight()
+	s.Require().NoError(err)
+
+	wait := int(math.Ceil(float64(conf.PopEpochs) / 2.0))
+	for {
+		latestHeight, err = s.network.WaitForHeight(latestHeight + 1)
+		s.Require().NoError(err)
+
+		if latestHeight%int64(conf.PopEpochs) == int64(wait) {
+			break
+		}
+	}
+
 	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetChallenge(), []string{
-		strconv.FormatInt(queryHeight, 10),
+		strconv.Itoa(int(latestHeight) - wait),
 	})
 	s.Require().NoError(err)
 	return out
 }
 
-func (s *PopSelectionE2ETestSuite) TestPopSelectionOneActors() {
-	////////////////////////////////////////////////////
-	// create 1 machinesaccounts
-	// ensure that a single machine isn't added to a PoP with only one participant
-	conf := config.GetConfig()
-	conf.PopEpochs = 200
+func (s *PopSelectionE2ETestSuite) TestPopSelectionNoActors() {
+	out := s.perpareLocalTest()
 
+	assert.NotContains(s.T(), out.String(), machines[0].address)
+	assert.NotContains(s.T(), out.String(), machines[1].address)
+}
+
+func (s *PopSelectionE2ETestSuite) TestPopSelectionOneActors() {
 	err := e2etestutil.AttestMachine(s.network, machines[0].name, machines[0].mnemonic, 0)
 	s.Require().NoError(err)
 
-	conf.PopEpochs = 1
 	out := s.perpareLocalTest()
 
 	assert.NotContains(s.T(), out.String(), machines[0].address)
@@ -115,14 +102,9 @@ func (s *PopSelectionE2ETestSuite) TestPopSelectionOneActors() {
 }
 
 func (s *PopSelectionE2ETestSuite) TestPopSelectionTwoActors() {
-	////////////////////////////////////////////////////
-	// create 2nd machine
-	conf := config.GetConfig()
-	conf.PopEpochs = 200
 	err := e2etestutil.AttestMachine(s.network, machines[1].name, machines[1].mnemonic, 1)
 	s.Require().NoError(err)
 
-	conf.PopEpochs = 1
 	out := s.perpareLocalTest()
 
 	assert.Contains(s.T(), out.String(), machines[0].address)

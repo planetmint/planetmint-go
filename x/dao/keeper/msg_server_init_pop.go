@@ -21,10 +21,7 @@ func (k msgServer) InitPop(goCtx context.Context, msg *types.MsgInitPop) (*types
 
 	validatorIdentity, validResult := util.GetValidatorCometBFTIdentity(ctx)
 	if validResult && msg.Initiator == validatorIdentity {
-		// PoP can only be executed if at least two actors are available.
-		if challenge.Challenger != "" && challenge.Challengee != "" {
-			go util.SendMqttPopInitMessagesToServer(ctx, challenge)
-		}
+		go util.SendMqttPopInitMessagesToServer(ctx, challenge)
 	}
 
 	return &types.MsgInitPopResponse{}, nil

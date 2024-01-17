@@ -44,6 +44,10 @@ func init() {
 }
 
 func SendMqttPopInitMessagesToServer(ctx sdk.Context, challenge types.Challenge) {
+	// PoP can only be executed if at least two actors are available.
+	if challenge.Challenger != "" && challenge.Challengee != "" {
+		return
+	}
 	err := sendMqttPopInitMessages(challenge)
 	if err != nil {
 		GetAppLogger().Error(ctx, "MQTT error: "+err.Error())
