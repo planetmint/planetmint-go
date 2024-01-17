@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 
+	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/planetmint/planetmint-go/x/dao/types"
@@ -18,7 +19,7 @@ func (k msgServer) CreateRedeemClaim(goCtx context.Context, msg *types.MsgCreate
 		msg.LiquidTxHash,
 	)
 	if isFound {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "index already set")
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "index already set")
 	}
 
 	var redeemClaim = types.RedeemClaim{
@@ -46,12 +47,12 @@ func (k msgServer) UpdateRedeemClaim(goCtx context.Context, msg *types.MsgUpdate
 		msg.LiquidTxHash,
 	)
 	if !isFound {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
+		return nil, errorsmod.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
 	}
 
 	// Checks if the the msg creator is the same as the current owner
 	if msg.Creator != valFound.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
 	var redeemClaim = types.RedeemClaim{
