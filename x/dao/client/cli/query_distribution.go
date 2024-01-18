@@ -17,7 +17,7 @@ var _ = strconv.Itoa(0)
 
 func CmdGetDistribution() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get-distribution [height]",
+		Use:   "distribution [height]",
 		Short: "Query for distributions by height",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {

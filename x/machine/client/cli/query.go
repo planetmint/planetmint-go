@@ -27,7 +27,7 @@ func GetQueryCmd(_ string) *cobra.Command {
 	cmd.AddCommand(CmdQueryParams())
 	cmd.AddCommand(CmdGetMachineByPublicKey())
 
-	cmd.AddCommand(CmdGetTrustAnchorStatus())
+	cmd.AddCommand(CmdGetTrustAnchor())
 	cmd.AddCommand(CmdGetMachineByAddress())
 
 	cmd.AddCommand(CmdGetLiquidAssetsByMachineid())

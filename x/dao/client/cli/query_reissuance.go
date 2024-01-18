@@ -5,19 +5,23 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/planetmint/planetmint-go/x/machine/types"
+	"github.com/planetmint/planetmint-go/x/dao/types"
+	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 )
 
 var _ = strconv.Itoa(0)
 
-func CmdGetLiquidAssetsByMachineid() *cobra.Command {
+func CmdGetReissuance() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get-liquid-assets-by-machineid [machine-id]",
-		Short: "Query get_liquid_assets_by_machineid",
+		Use:   "reissuance [height]",
+		Short: "Query for reissuance by height",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			reqMachineID := args[0]
+			reqBlockHeight, err := cast.ToInt64E(args[0])
+			if err != nil {
+				return err
+			}
 
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -26,12 +30,12 @@ func CmdGetLiquidAssetsByMachineid() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryGetLiquidAssetsByMachineidRequest{
+			params := &types.QueryGetReissuanceRequest{
 
-				MachineID: reqMachineID,
+				BlockHeight: reqBlockHeight,
 			}
 
-			res, err := queryClient.GetLiquidAssetsByMachineid(cmd.Context(), params)
+			res, err := queryClient.GetReissuance(cmd.Context(), params)
 			if err != nil {
 				return err
 			}

@@ -11,13 +11,13 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdGetMachineByAddress() *cobra.Command {
+func CmdGetLiquidAssetsByMachineid() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get-machine-by-address [address]",
-		Short: "Query get-machine-by-address",
+		Use:   "liquid-assets [machine-id]",
+		Short: "Query for liquid assets by machine ID",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			reqAddress := args[0]
+			reqMachineID := args[0]
 
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -26,12 +26,12 @@ func CmdGetMachineByAddress() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryGetMachineByAddressRequest{
+			params := &types.QueryGetLiquidAssetsByMachineidRequest{
 
-				Address: reqAddress,
+				MachineID: reqMachineID,
 			}
 
-			res, err := queryClient.GetMachineByAddress(cmd.Context(), params)
+			res, err := queryClient.GetLiquidAssetsByMachineid(cmd.Context(), params)
 			if err != nil {
 				return err
 			}

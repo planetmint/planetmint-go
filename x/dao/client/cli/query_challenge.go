@@ -5,19 +5,23 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/planetmint/planetmint-go/x/asset/types"
+	"github.com/planetmint/planetmint-go/x/dao/types"
+	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 )
 
 var _ = strconv.Itoa(0)
 
-func CmdGetNotarizedAsset() *cobra.Command {
+func CmdGetChallenge() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get-notarized-asset [cid]",
-		Short: "Query get_notarized_asset",
+		Use:   "challenge [height]",
+		Short: "Query for challenge by height",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			reqCid := args[0]
+			reqHeight, err := cast.ToInt64E(args[0])
+			if err != nil {
+				return err
+			}
 
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -26,12 +30,12 @@ func CmdGetNotarizedAsset() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryGetNotarizedAssetRequest{
+			params := &types.QueryGetChallengeRequest{
 
-				Cid: reqCid,
+				Height: reqHeight,
 			}
 
-			res, err := queryClient.GetNotarizedAsset(cmd.Context(), params)
+			res, err := queryClient.GetChallenge(cmd.Context(), params)
 			if err != nil {
 				return err
 			}
