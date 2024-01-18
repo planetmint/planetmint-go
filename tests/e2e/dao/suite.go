@@ -268,7 +268,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 		challenges[i].Initiator = val.Address.String()
 		challenges[i].Challenger = aliceAddr.String()
 		challenges[i].Challengee = bobAddr.String()
-		challenges[i].Success = blockHeight%2 == 0
+		challenges[i].Success = blockHeight%2 == 0 // Need some successful and unsuccessful challenges for assertion of correct behavior
 		challenges[i].Finished = true
 
 		msg := daotypes.NewMsgReportPopResult(val.Address.String(), &challenges[i])
