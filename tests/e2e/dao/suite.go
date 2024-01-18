@@ -106,6 +106,7 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.Require().NoError(err)
 
 	daoGenState.Params.MintAddress = valAddr.String()
+	daoGenState.Params.ClaimAddress = valAddr.String()
 	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
 
 	s.cfg.MinGasPrices = fmt.Sprintf("0.000006%s", conf.FeeDenom)
@@ -195,6 +196,10 @@ func (s *E2ETestSuite) TestMintToken() {
 	txResponse, err := lib.GetTxResponseFromOut(out)
 	s.Require().NoError(err)
 	s.Require().Equal(int(2), int(txResponse.Code))
+}
+
+func (s *E2ETestSuite) TestRedeemClaim() {
+	// TODO: send msg as val and as other address check state
 }
 
 func (s *E2ETestSuite) createValAccount(cfg network.Config) (address sdk.AccAddress, err error) {

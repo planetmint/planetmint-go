@@ -6,31 +6,27 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
 func (k msgServer) CreateRedeemClaim(goCtx context.Context, msg *types.MsgCreateRedeemClaim) (*types.MsgCreateRedeemClaimResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check if the value already exists
-	_, isFound := k.GetRedeemClaim(
-		ctx,
-		msg.Beneficiary,
-		msg.LiquidTxHash,
-	)
-	if isFound {
-		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "index already set")
+	// TODO: check for sufficient claim
+
+	if util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress) {
+		util.GetAppLogger().Info(ctx, "Issuing RDDL claim: ") // Add Beneficiary and Claim Index
+		// TODO: send message to elements service
 	}
 
 	var redeemClaim = types.RedeemClaim{
-		Creator:      msg.Creator,
-		Beneficiary:  msg.Beneficiary,
-		LiquidTxHash: msg.LiquidTxHash,
-		Amount:       msg.Amount,
-		Confirmed:    msg.Confirmed,
+		Creator:     msg.Creator,
+		Beneficiary: msg.Beneficiary,
+		Amount:      msg.Amount,
 	}
 
-	k.SetRedeemClaim(
+	k.CreateNewRedeemClaim(
 		ctx,
 		redeemClaim,
 	)
@@ -44,7 +40,7 @@ func (k msgServer) UpdateRedeemClaim(goCtx context.Context, msg *types.MsgUpdate
 	valFound, isFound := k.GetRedeemClaim(
 		ctx,
 		msg.Beneficiary,
-		msg.LiquidTxHash,
+		msg.Id,
 	)
 	if !isFound {
 		return nil, errorsmod.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
@@ -59,11 +55,13 @@ func (k msgServer) UpdateRedeemClaim(goCtx context.Context, msg *types.MsgUpdate
 		Creator:      msg.Creator,
 		Beneficiary:  msg.Beneficiary,
 		LiquidTxHash: msg.LiquidTxHash,
-		Amount:       msg.Amount,
-		Confirmed:    msg.Confirmed,
+		Amount:       valFound.Amount,
+		Id:           valFound.Id,
 	}
 
 	k.SetRedeemClaim(ctx, redeemClaim)
 
 	return &types.MsgUpdateRedeemClaimResponse{}, nil
 }
+
+// TODO: add msg handler for confirm claim

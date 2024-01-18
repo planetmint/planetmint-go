@@ -23,14 +23,13 @@ func TestRedeemClaimMsgServerCreate(t *testing.T) {
 	creator := "A"
 	for i := 0; i < 5; i++ {
 		expected := &types.MsgCreateRedeemClaim{Creator: creator,
-			Beneficiary:  strconv.Itoa(i),
-			LiquidTxHash: strconv.Itoa(i),
+			Beneficiary: strconv.Itoa(i),
 		}
 		_, err := srv.CreateRedeemClaim(wctx, expected)
 		require.NoError(t, err)
 		rst, found := k.GetRedeemClaim(ctx,
 			expected.Beneficiary,
-			expected.LiquidTxHash,
+			uint64(0),
 		)
 		require.True(t, found)
 		require.Equal(t, expected.Creator, rst.Creator)
@@ -75,8 +74,7 @@ func TestRedeemClaimMsgServerUpdate(t *testing.T) {
 			srv := keeper.NewMsgServerImpl(*k)
 			wctx := sdk.WrapSDKContext(ctx)
 			expected := &types.MsgCreateRedeemClaim{Creator: creator,
-				Beneficiary:  strconv.Itoa(0),
-				LiquidTxHash: strconv.Itoa(0),
+				Beneficiary: strconv.Itoa(0),
 			}
 			_, err := srv.CreateRedeemClaim(wctx, expected)
 			require.NoError(t, err)
@@ -88,7 +86,7 @@ func TestRedeemClaimMsgServerUpdate(t *testing.T) {
 				require.NoError(t, err)
 				rst, found := k.GetRedeemClaim(ctx,
 					expected.Beneficiary,
-					expected.LiquidTxHash,
+					uint64(0),
 				)
 				require.True(t, found)
 				require.Equal(t, expected.Creator, rst.Creator)

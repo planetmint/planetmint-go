@@ -69,7 +69,7 @@ service Query {
   
   // Queries a list of RedeemClaim items.
   rpc RedeemClaim    (QueryGetRedeemClaimRequest) returns (QueryGetRedeemClaimResponse) {
-    option (google.api.http).get = "/planetmint/planetmint-go/dao/redeem_claim/{beneficiary}/{liquidTxHash}";
+    option (google.api.http).get = "/planetmint/planetmint-go/dao/redeem_claim/{beneficiary}/{id}";
   
   }
   rpc RedeemClaimAll (QueryAllRedeemClaimRequest) returns (QueryAllRedeemClaimResponse) {
@@ -147,7 +147,7 @@ message QueryGetDistributionResponse {
 
 message QueryGetRedeemClaimRequest {
   string beneficiary  = 1;
-  string liquidTxHash = 2;
+  uint64 id = 2;
 }
 
 message QueryGetRedeemClaimResponse {

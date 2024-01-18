@@ -23,7 +23,7 @@ func (gs GenesisState) Validate() error {
 	redeemClaimIndexMap := make(map[string]struct{})
 
 	for _, elem := range gs.RedeemClaimList {
-		index := string(RedeemClaimKey(elem.Beneficiary, elem.LiquidTxHash))
+		index := string(RedeemClaimKey(elem.Beneficiary, elem.Id))
 		if _, ok := redeemClaimIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for redeemClaim")
 		}

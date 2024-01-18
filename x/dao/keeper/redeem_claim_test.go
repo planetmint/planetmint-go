@@ -19,9 +19,8 @@ func createNRedeemClaim(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.R
 	items := make([]types.RedeemClaim, n)
 	for i := range items {
 		items[i].Beneficiary = strconv.Itoa(i)
-		items[i].LiquidTxHash = strconv.Itoa(i)
-
-		keeper.SetRedeemClaim(ctx, items[i])
+		id := keeper.CreateNewRedeemClaim(ctx, items[i])
+		items[i].Id = id
 	}
 	return items
 }
@@ -32,7 +31,7 @@ func TestRedeemClaimGet(t *testing.T) {
 	for _, item := range items {
 		rst, found := keeper.GetRedeemClaim(ctx,
 			item.Beneficiary,
-			item.LiquidTxHash,
+			item.Id,
 		)
 		require.True(t, found)
 		require.Equal(t,

@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"strconv"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
@@ -46,7 +48,7 @@ func CmdListRedeemClaim() *cobra.Command {
 
 func CmdShowRedeemClaim() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-redeem-claim [beneficiary] [liquid-tx-hash]",
+		Use:   "show-redeem-claim [beneficiary] [id]",
 		Short: "shows a redeem-claim",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -58,11 +60,14 @@ func CmdShowRedeemClaim() *cobra.Command {
 			queryClient := types.NewQueryClient(clientCtx)
 
 			argBeneficiary := args[0]
-			argLiquidTxHash := args[1]
+			argId, err := strconv.ParseUint(args[1], 10, 64)
+			if err != nil {
+				return err
+			}
 
 			params := &types.QueryGetRedeemClaimRequest{
-				Beneficiary:  argBeneficiary,
-				LiquidTxHash: argLiquidTxHash,
+				Beneficiary: argBeneficiary,
+				Id:          argId,
 			}
 
 			res, err := queryClient.RedeemClaim(cmd.Context(), params)

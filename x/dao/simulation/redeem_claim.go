@@ -27,12 +27,11 @@ func SimulateMsgCreateRedeemClaim(
 
 		i := r.Int()
 		msg := &types.MsgCreateRedeemClaim{
-			Creator:      simAccount.Address.String(),
-			Beneficiary:  strconv.Itoa(i),
-			LiquidTxHash: strconv.Itoa(i),
+			Creator:     simAccount.Address.String(),
+			Beneficiary: strconv.Itoa(i),
 		}
 
-		_, found := k.GetRedeemClaim(ctx, msg.Beneficiary, msg.LiquidTxHash)
+		_, found := k.GetRedeemClaim(ctx, msg.Beneficiary, uint64(i))
 		if found {
 			return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "RedeemClaim already exist"), nil, nil
 		}

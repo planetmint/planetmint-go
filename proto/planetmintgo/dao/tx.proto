@@ -105,19 +105,16 @@ message MsgInitPopResponse {}
 message MsgCreateRedeemClaim {
   string creator      = 1;
   string beneficiary  = 2;
-  string liquidTxHash = 3;
   string amount       = 4;
-  bool   confirmed       = 5;
 }
 
 message MsgCreateRedeemClaimResponse {}
 
 message MsgUpdateRedeemClaim {
   string creator      = 1;
-  string beneficiary  = 2;
-  string liquidTxHash = 3;
-  string amount       = 4;
-  bool   confirmed       = 5;
+  uint64 id           = 2;
+  string beneficiary  = 3;
+  string liquidTxHash = 4;
 }
 
 message MsgUpdateRedeemClaimResponse {}

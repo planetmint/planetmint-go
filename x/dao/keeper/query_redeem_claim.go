@@ -48,7 +48,7 @@ func (k Keeper) RedeemClaim(goCtx context.Context, req *types.QueryGetRedeemClai
 	val, found := k.GetRedeemClaim(
 		ctx,
 		req.Beneficiary,
-		req.LiquidTxHash,
+		req.Id,
 	)
 	if !found {
 		return nil, status.Error(codes.NotFound, "not found")

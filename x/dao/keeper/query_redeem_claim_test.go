@@ -31,24 +31,24 @@ func TestRedeemClaimQuerySingle(t *testing.T) {
 		{
 			desc: "First",
 			request: &types.QueryGetRedeemClaimRequest{
-				Beneficiary:  msgs[0].Beneficiary,
-				LiquidTxHash: msgs[0].LiquidTxHash,
+				Beneficiary: msgs[0].Beneficiary,
+				Id:          msgs[0].Id,
 			},
 			response: &types.QueryGetRedeemClaimResponse{RedeemClaim: msgs[0]},
 		},
 		{
 			desc: "Second",
 			request: &types.QueryGetRedeemClaimRequest{
-				Beneficiary:  msgs[1].Beneficiary,
-				LiquidTxHash: msgs[1].LiquidTxHash,
+				Beneficiary: msgs[1].Beneficiary,
+				Id:          msgs[1].Id,
 			},
 			response: &types.QueryGetRedeemClaimResponse{RedeemClaim: msgs[1]},
 		},
 		{
 			desc: "KeyNotFound",
 			request: &types.QueryGetRedeemClaimRequest{
-				Beneficiary:  strconv.Itoa(100000),
-				LiquidTxHash: strconv.Itoa(100000),
+				Beneficiary: strconv.Itoa(100000),
+				Id:          uint64(100000),
 			},
 			err: status.Error(codes.NotFound, "not found"),
 		},

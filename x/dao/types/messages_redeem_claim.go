@@ -16,17 +16,13 @@ var _ sdk.Msg = &MsgCreateRedeemClaim{}
 func NewMsgCreateRedeemClaim(
 	creator string,
 	beneficiary string,
-	liquidTxHash string,
 	amount string,
-	confirmed bool,
 
 ) *MsgCreateRedeemClaim {
 	return &MsgCreateRedeemClaim{
-		Creator:      creator,
-		Beneficiary:  beneficiary,
-		LiquidTxHash: liquidTxHash,
-		Amount:       amount,
-		Confirmed:    confirmed,
+		Creator:     creator,
+		Beneficiary: beneficiary,
+		Amount:      amount,
 	}
 }
 
@@ -65,16 +61,14 @@ func NewMsgUpdateRedeemClaim(
 	creator string,
 	beneficiary string,
 	liquidTxHash string,
-	amount string,
-	confirmed bool,
+	id uint64,
 
 ) *MsgUpdateRedeemClaim {
 	return &MsgUpdateRedeemClaim{
 		Creator:      creator,
 		Beneficiary:  beneficiary,
 		LiquidTxHash: liquidTxHash,
-		Amount:       amount,
-		Confirmed:    confirmed,
+		Id:           id,
 	}
 }
 
