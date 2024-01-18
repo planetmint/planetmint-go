@@ -11,10 +11,10 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdGetNotarizedAsset() *cobra.Command {
+func CmdGetByCID() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "notarized [cid]",
-		Short: "Query for notarized assets by CID",
+		Use:   "cid [cid]",
+		Short: "Query for assets by CID",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			reqCid := args[0]

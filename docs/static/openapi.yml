@@ -46437,7 +46437,7 @@ paths:
                         }
       tags:
         - Query
-  /planetmint/asset/get_cids_by_address/{address}/{lookupPeriodInMin}:
+  /planetmint/asset/address/{address}/{lookupPeriodInMin}:
     get:
       summary: Queries a list of GetCIDsByAddress items.
       operationId: PlanetmintgoAssetGetCIDsByAddress
@@ -46565,7 +46565,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /planetmint/asset/get_notarized_asset/{cid}:
+  /planetmint/asset/cid/{cid}:
     get:
       summary: Queries a list of GetNotarizedAsset items.
       operationId: PlanetmintgoAssetGetNotarizedAsset
