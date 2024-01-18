@@ -38,8 +38,3 @@ func DistributeAsset(address string, amount string) (txID string, err error) {
 	})
 	return
 }
-
-// TODO: maybe ask DistributeAsset can be used
-func ClaimRDDL(beneficiary string, amount string) (txID string, err error) {
-	return
-}

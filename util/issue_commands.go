@@ -90,3 +90,10 @@ func SendInitPoP(goCtx context.Context, proposer string, challenger string, chal
 	loggingContext := "PoP"
 	buildSignBroadcastTx(goCtx, loggingContext, sendingValidatorAddress, msg)
 }
+
+func SendUpdateRedeemClaim(goCtx context.Context, beneficiary string, id uint64, txID string) {
+	sendingValidatorAddress := config.GetConfig().ValidatorAddress
+	msg := daotypes.NewMsgUpdateRedeemClaim(sendingValidatorAddress, beneficiary, txID, id)
+	loggingContext := "redeem claim"
+	buildSignBroadcastTx(goCtx, loggingContext, sendingValidatorAddress, msg)
+}
