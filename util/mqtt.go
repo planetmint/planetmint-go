@@ -24,7 +24,9 @@ type MQTTClientI interface {
 }
 
 var (
-	MQTTClient MQTTClientI
+	MQTTClient                              MQTTClientI
+	mqttMachineByAddressAvailabilityMapping map[string]bool
+	rwMu                                    sync.RWMutex
 )
 
 const (
@@ -41,6 +43,8 @@ func init() {
 	opts.SetUsername(conf.MqttUser)
 	opts.SetPassword(conf.MqttPassword)
 	MQTTClient = mqtt.NewClient(opts)
+
+	mqttMachineByAddressAvailabilityMapping = make(map[string]bool)
 }
 
 func SendMqttPopInitMessagesToServer(ctx sdk.Context, challenge types.Challenge) {
@@ -79,13 +83,6 @@ func sendMqttPopInitMessages(challenge types.Challenge) (err error) {
 
 	MQTTClient.Disconnect(1000)
 	return
-}
-
-var mqttMachineByAddressAvailabilityMapping map[string]bool
-var rwMu sync.RWMutex
-
-func init() {
-	mqttMachineByAddressAvailabilityMapping = make(map[string]bool)
 }
 
 func GetMqttStatusOfParticipant(address string) (isAvailable bool, err error) {
