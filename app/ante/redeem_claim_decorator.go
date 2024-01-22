@@ -25,6 +25,8 @@ func (rcd RedeemClaimDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate 
 		switch sdk.MsgTypeURL(msg) {
 		case "/planetmintgo.dao.MsgCreateRedeemClaim":
 			ctx, err = rcd.handleCreateRedeemClaim(ctx, msg)
+		case "/planetmintgo.dao.MsgUpdateRedeemClaim":
+			ctx, err = rcd.handleUpdateRedeemClaim(ctx, msg)
 		case "/planetmintgo.dao.MsgConfirmRedeemClaim":
 			ctx, err = rcd.handleConfirmRedeemClaim(ctx, msg)
 		default:
@@ -53,6 +55,20 @@ func (rcd RedeemClaimDecorator) handleCreateRedeemClaim(ctx sdk.Context, msg sdk
 
 	if !balance.Amount.GTE(sdk.NewIntFromUint64(createRedeemClaimMsg.Amount)) {
 		return ctx, errorsmod.Wrap(sdkerrors.ErrInsufficientFunds, "error during checkTx or reChec")
+	}
+
+	return ctx, nil
+}
+
+func (rcd RedeemClaimDecorator) handleUpdateRedeemClaim(ctx sdk.Context, msg sdk.Msg) (sdk.Context, error) {
+	updateClaimMsg, ok := msg.(*daotypes.MsgUpdateRedeemClaim)
+	if !ok {
+		return ctx, errorsmod.Wrapf(sdkerrors.ErrLogic, "could not cast to MsgUpdateRedeemClaim")
+	}
+
+	_, found := rcd.dk.GetRedeemClaim(ctx, updateClaimMsg.Beneficiary, updateClaimMsg.Id)
+	if !found {
+		return ctx, errorsmod.Wrapf(sdkerrors.ErrNotFound, "no redeem claim found for beneficiary: %s; id: %d", updateClaimMsg.Beneficiary, updateClaimMsg.Id)
 	}
 
 	return ctx, nil
