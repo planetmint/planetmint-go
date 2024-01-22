@@ -33,16 +33,18 @@ const (
 	MqttCmdPrefix = "cmnd/"
 )
 
-func getClient() MQTTClientI {
-	conf := config.GetConfig()
-	hostPort := net.JoinHostPort(conf.MqttDomain, strconv.FormatInt(int64(conf.MqttPort), 10))
-	uri := fmt.Sprintf("tcp://%s", hostPort)
+func LazyLoadMQTTClient() {
+	if MQTTClient == nil {
+		conf := config.GetConfig()
+		hostPort := net.JoinHostPort(conf.MqttDomain, strconv.FormatInt(int64(conf.MqttPort), 10))
+		uri := fmt.Sprintf("tcp://%s", hostPort)
 
-	opts := mqtt.NewClientOptions().AddBroker(uri)
-	opts.SetClientID(conf.ValidatorAddress)
-	opts.SetUsername(conf.MqttUser)
-	opts.SetPassword(conf.MqttPassword)
-	return mqtt.NewClient(opts)
+		opts := mqtt.NewClientOptions().AddBroker(uri)
+		opts.SetClientID(conf.ValidatorAddress)
+		opts.SetUsername(conf.MqttUser)
+		opts.SetPassword(conf.MqttPassword)
+		MQTTClient = mqtt.NewClient(opts)
+	}
 }
 
 func init() {
@@ -63,9 +65,7 @@ func SendMqttPopInitMessagesToServer(ctx sdk.Context, challenge types.Challenge)
 }
 
 func sendMqttPopInitMessages(challenge types.Challenge) (err error) {
-	if MQTTClient == nil {
-		MQTTClient = getClient()
-	}
+	LazyLoadMQTTClient()
 	if token := MQTTClient.Connect(); token.Wait() && token.Error() != nil {
 		err = token.Error()
 		return
@@ -91,9 +91,7 @@ func sendMqttPopInitMessages(challenge types.Challenge) (err error) {
 }
 
 func GetMqttStatusOfParticipant(address string) (isAvailable bool, err error) {
-	if MQTTClient == nil {
-		MQTTClient = getClient()
-	}
+	LazyLoadMQTTClient()
 	if token := MQTTClient.Connect(); token.Wait() && token.Error() != nil {
 		err = token.Error()
 		return
