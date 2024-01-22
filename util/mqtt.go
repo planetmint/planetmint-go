@@ -34,17 +34,19 @@ const (
 )
 
 func lazyLoadMQTTClient() {
-	if MQTTClient == nil {
-		conf := config.GetConfig()
-		hostPort := net.JoinHostPort(conf.MqttDomain, strconv.FormatInt(int64(conf.MqttPort), 10))
-		uri := fmt.Sprintf("tcp://%s", hostPort)
-
-		opts := mqtt.NewClientOptions().AddBroker(uri)
-		opts.SetClientID(conf.ValidatorAddress)
-		opts.SetUsername(conf.MqttUser)
-		opts.SetPassword(conf.MqttPassword)
-		MQTTClient = mqtt.NewClient(opts)
+	if MQTTClient != nil {
+		return
 	}
+
+	conf := config.GetConfig()
+	hostPort := net.JoinHostPort(conf.MqttDomain, strconv.FormatInt(int64(conf.MqttPort), 10))
+	uri := fmt.Sprintf("tcp://%s", hostPort)
+
+	opts := mqtt.NewClientOptions().AddBroker(uri)
+	opts.SetClientID(conf.ValidatorAddress)
+	opts.SetUsername(conf.MqttUser)
+	opts.SetPassword(conf.MqttPassword)
+	MQTTClient = mqtt.NewClient(opts)
 }
 
 func init() {
