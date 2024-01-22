@@ -16,7 +16,6 @@ func NewCheckMintAddressDecorator(dk DaoKeeper) CheckMintAddressDecorator {
 	}
 }
 
-// TODO: repurpose for all dao param addresses
 func (cmad CheckMintAddressDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (sdk.Context, error) {
 	for _, msg := range tx.GetMsgs() {
 		if sdk.MsgTypeURL(msg) != "/planetmintgo.dao.MsgMintToken" {

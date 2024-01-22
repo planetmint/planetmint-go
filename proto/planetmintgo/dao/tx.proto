@@ -105,7 +105,7 @@ message MsgInitPopResponse {}
 message MsgCreateRedeemClaim {
   string creator      = 1;
   string beneficiary  = 2;
-  string amount       = 4;
+  uint64 amount       = 3;
 }
 
 message MsgCreateRedeemClaimResponse {}

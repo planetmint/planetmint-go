@@ -16,7 +16,7 @@ var _ sdk.Msg = &MsgCreateRedeemClaim{}
 func NewMsgCreateRedeemClaim(
 	creator string,
 	beneficiary string,
-	amount string,
+	amount uint64,
 
 ) *MsgCreateRedeemClaim {
 	return &MsgCreateRedeemClaim{

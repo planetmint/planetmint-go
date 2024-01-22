@@ -20,7 +20,10 @@ func CmdCreateRedeemClaim() *cobra.Command {
 			indexBeneficiary := args[0]
 
 			// Get value arguments
-			argAmount := args[1]
+			argAmount, err := strconv.ParseUint(args[1], 10, 64)
+			if err != nil {
+				return err
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {

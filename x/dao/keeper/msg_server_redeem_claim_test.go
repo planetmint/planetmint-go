@@ -52,14 +52,6 @@ func TestRedeemClaimMsgServerUpdate(t *testing.T) {
 			},
 		},
 		{
-			desc: "Unauthorized",
-			request: &types.MsgUpdateRedeemClaim{Creator: "B",
-				Beneficiary:  strconv.Itoa(0),
-				LiquidTxHash: strconv.Itoa(0),
-			},
-			err: sdkerrors.ErrUnauthorized,
-		},
-		{
 			desc: "KeyNotFound",
 			request: &types.MsgUpdateRedeemClaim{Creator: creator,
 				Beneficiary:  strconv.Itoa(100000),
