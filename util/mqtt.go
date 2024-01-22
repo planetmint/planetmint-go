@@ -33,7 +33,7 @@ const (
 	MqttCmdPrefix = "cmnd/"
 )
 
-func LazyLoadMQTTClient() {
+func lazyLoadMQTTClient() {
 	if MQTTClient == nil {
 		conf := config.GetConfig()
 		hostPort := net.JoinHostPort(conf.MqttDomain, strconv.FormatInt(int64(conf.MqttPort), 10))
@@ -65,7 +65,7 @@ func SendMqttPopInitMessagesToServer(ctx sdk.Context, challenge types.Challenge)
 }
 
 func sendMqttPopInitMessages(challenge types.Challenge) (err error) {
-	LazyLoadMQTTClient()
+	lazyLoadMQTTClient()
 	if token := MQTTClient.Connect(); token.Wait() && token.Error() != nil {
 		err = token.Error()
 		return
@@ -91,7 +91,7 @@ func sendMqttPopInitMessages(challenge types.Challenge) (err error) {
 }
 
 func GetMqttStatusOfParticipant(address string) (isAvailable bool, err error) {
-	LazyLoadMQTTClient()
+	lazyLoadMQTTClient()
 	if token := MQTTClient.Connect(); token.Wait() && token.Error() != nil {
 		err = token.Error()
 		return

@@ -24,6 +24,10 @@ import (
 
 var ErrTypeAssertionFailed = errors.New("type assertion failed")
 
+func init() {
+	GetConfig()
+}
+
 func getAccountNumberAndSequence(clientCtx client.Context) (accountNumber, sequence uint64, err error) {
 	account, err := clientCtx.AccountRetriever.GetAccount(clientCtx, clientCtx.FromAddress)
 	if err != nil {
