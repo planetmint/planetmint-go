@@ -58,3 +58,29 @@ func TestMsgUpdateRedeemClaim_ValidateBasic(t *testing.T) {
 		})
 	}
 }
+
+func TestMsgConfirmRedeemClaim_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name string
+		msg  MsgConfirmRedeemClaim
+		err  error
+	}{
+		{
+			name: "invalid address",
+			msg: MsgConfirmRedeemClaim{
+				Creator: "invalid_address",
+			},
+			err: sdkerrors.ErrInvalidAddress,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.msg.ValidateBasic()
+			if tt.err != nil {
+				require.ErrorIs(t, err, tt.err)
+				return
+			}
+			require.NoError(t, err)
+		})
+	}
+}

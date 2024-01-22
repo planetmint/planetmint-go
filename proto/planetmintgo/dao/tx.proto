@@ -26,6 +26,7 @@ service Msg {
   rpc InitPop             (MsgInitPop            ) returns (MsgInitPopResponse            );
   rpc CreateRedeemClaim   (MsgCreateRedeemClaim  ) returns (MsgCreateRedeemClaimResponse  );
   rpc UpdateRedeemClaim   (MsgUpdateRedeemClaim  ) returns (MsgUpdateRedeemClaimResponse  );
+  rpc ConfirmRedeemClaim  (MsgConfirmRedeemClaim ) returns (MsgConfirmRedeemClaimResponse );
 }
 message MsgReportPopResult {
   string    creator   = 1;
@@ -103,9 +104,9 @@ message MsgInitPop {
 message MsgInitPopResponse {}
 
 message MsgCreateRedeemClaim {
-  string creator      = 1;
-  string beneficiary  = 2;
-  uint64 amount       = 3;
+  string creator     = 1;
+  string beneficiary = 2;
+  uint64 amount      = 3;
 }
 
 message MsgCreateRedeemClaimResponse {}
@@ -118,3 +119,12 @@ message MsgUpdateRedeemClaim {
 }
 
 message MsgUpdateRedeemClaimResponse {}
+
+message MsgConfirmRedeemClaim {
+  string creator     = 1;
+  uint64 id          = 2;
+  string beneficiary = 3;
+}
+
+message MsgConfirmRedeemClaimResponse {}
+

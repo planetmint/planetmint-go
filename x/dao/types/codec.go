@@ -18,6 +18,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgInitPop{}, "dao/InitPop", nil)
 	cdc.RegisterConcrete(&MsgCreateRedeemClaim{}, "dao/CreateRedeemClaim", nil)
 	cdc.RegisterConcrete(&MsgUpdateRedeemClaim{}, "dao/UpdateRedeemClaim", nil)
+	cdc.RegisterConcrete(&MsgConfirmRedeemClaim{}, "dao/ConfirmRedeemClaim", nil)
 	// this line is used by starport scaffolding # 2
 }
 
@@ -41,6 +42,9 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateRedeemClaim{},
 		&MsgUpdateRedeemClaim{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgConfirmRedeemClaim{},
 	)
 	// this line is used by starport scaffolding # 3
 

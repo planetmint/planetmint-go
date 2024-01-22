@@ -47055,6 +47055,8 @@ paths:
                 properties:
                   mint_address:
                     type: string
+                  claim_address:
+                    type: string
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -47227,13 +47229,17 @@ paths:
                 items:
                   type: object
                   properties:
+                    id:
+                      type: string
+                      format: uint64
                     beneficiary:
                       type: string
                     liquidTxHash:
                       type: string
                     amount:
                       type: string
-                    issued:
+                      format: uint64
+                    confirmed:
                       type: boolean
                     creator:
                       type: string
@@ -47342,7 +47348,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /planetmint/planetmint-go/dao/redeem_claim/{beneficiary}/{liquidTxHash}:
+  /planetmint/planetmint-go/dao/redeem_claim/{beneficiary}/{id}:
     get:
       summary: Queries a list of RedeemClaim items.
       operationId: PlanetmintgoDaoRedeemClaim
@@ -47355,13 +47361,17 @@ paths:
               redeemClaim:
                 type: object
                 properties:
+                  id:
+                    type: string
+                    format: uint64
                   beneficiary:
                     type: string
                   liquidTxHash:
                     type: string
                   amount:
                     type: string
-                  issued:
+                    format: uint64
+                  confirmed:
                     type: boolean
                   creator:
                     type: string
@@ -47388,10 +47398,11 @@ paths:
           in: path
           required: true
           type: string
-        - name: liquidTxHash
+        - name: id
           in: path
           required: true
           type: string
+          format: uint64
       tags:
         - Query
   /planetmint/machine/get_liquid_assets_by_machineid/{machineID}:
@@ -76528,9 +76539,9 @@ definitions:
               format: uint64
             liquidTxHash:
               type: string
-  planetmintgo.dao.MsgCreateRedeemClaimResponse:
+  planetmintgo.dao.MsgConfirmRedeemClaimResponse:
     type: object
-  planetmintgo.dao.MsgDeleteRedeemClaimResponse:
+  planetmintgo.dao.MsgCreateRedeemClaimResponse:
     type: object
   planetmintgo.dao.MsgDistributionRequestResponse:
     type: object
@@ -76555,6 +76566,8 @@ definitions:
     properties:
       mint_address:
         type: string
+      claim_address:
+        type: string
     description: Params defines the parameters for the module.
   planetmintgo.dao.QueryAllRedeemClaimResponse:
     type: object
@@ -76564,13 +76577,17 @@ definitions:
         items:
           type: object
           properties:
+            id:
+              type: string
+              format: uint64
             beneficiary:
               type: string
             liquidTxHash:
               type: string
             amount:
               type: string
-            issued:
+              format: uint64
+            confirmed:
               type: boolean
             creator:
               type: string
@@ -76717,13 +76734,17 @@ definitions:
       redeemClaim:
         type: object
         properties:
+          id:
+            type: string
+            format: uint64
           beneficiary:
             type: string
           liquidTxHash:
             type: string
           amount:
             type: string
-          issued:
+            format: uint64
+          confirmed:
             type: boolean
           creator:
             type: string
@@ -76774,6 +76795,8 @@ definitions:
         type: object
         properties:
           mint_address:
+            type: string
+          claim_address:
             type: string
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   planetmintgo.dao.QueryReissuancesResponse:
@@ -76828,13 +76851,17 @@ definitions:
   planetmintgo.dao.RedeemClaim:
     type: object
     properties:
+      id:
+        type: string
+        format: uint64
       beneficiary:
         type: string
       liquidTxHash:
         type: string
       amount:
         type: string
-      issued:
+        format: uint64
+      confirmed:
         type: boolean
       creator:
         type: string
