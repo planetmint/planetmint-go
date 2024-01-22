@@ -33,7 +33,11 @@ const (
 	MqttCmdPrefix = "cmnd/"
 )
 
-func init() {
+func lazyLoadMQTTClient() {
+	if MQTTClient != nil {
+		return
+	}
+
 	conf := config.GetConfig()
 	hostPort := net.JoinHostPort(conf.MqttDomain, strconv.FormatInt(int64(conf.MqttPort), 10))
 	uri := fmt.Sprintf("tcp://%s", hostPort)
@@ -43,7 +47,9 @@ func init() {
 	opts.SetUsername(conf.MqttUser)
 	opts.SetPassword(conf.MqttPassword)
 	MQTTClient = mqtt.NewClient(opts)
+}
 
+func init() {
 	mqttMachineByAddressAvailabilityMapping = make(map[string]bool)
 }
 
@@ -61,6 +67,7 @@ func SendMqttPopInitMessagesToServer(ctx sdk.Context, challenge types.Challenge)
 }
 
 func sendMqttPopInitMessages(challenge types.Challenge) (err error) {
+	lazyLoadMQTTClient()
 	if token := MQTTClient.Connect(); token.Wait() && token.Error() != nil {
 		err = token.Error()
 		return
@@ -86,6 +93,7 @@ func sendMqttPopInitMessages(challenge types.Challenge) (err error) {
 }
 
 func GetMqttStatusOfParticipant(address string) (isAvailable bool, err error) {
+	lazyLoadMQTTClient()
 	if token := MQTTClient.Connect(); token.Wait() && token.Error() != nil {
 		err = token.Error()
 		return
