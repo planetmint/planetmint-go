@@ -26,4 +26,5 @@ var (
 	ErrReissuanceTxIDMissing    = errorsmod.Register(ModuleName, 17, "reissuance has no transaction id")
 	ErrRestrictedMsg            = errorsmod.Register(ModuleName, 18, "restricted validator msg")
 	ErrDistributionWrongHeight  = errorsmod.Register(ModuleName, 19, "distribution wrong height")
+	ErrInvalidClaimAddress      = errorsmod.Register(ModuleName, 20, "invalid claim address")
 )

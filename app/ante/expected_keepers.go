@@ -39,7 +39,9 @@ type BankKeeper interface {
 type DaoKeeper interface {
 	GetMintRequestByHash(ctx sdk.Context, hash string) (val daotypes.MintRequest, found bool)
 	GetMintAddress(ctx sdk.Context) (mintAddress string)
+	GetClaimAddress(ctx sdk.Context) (claimAddress string)
 	IsValidReissuanceProposal(ctx sdk.Context, msg *daotypes.MsgReissueRDDLProposal) (isValid bool)
+	GetRedeemClaim(ctx sdk.Context, benficiary string, id uint64) (val daotypes.RedeemClaim, found bool)
 }
 
 type StakingKeeper interface {

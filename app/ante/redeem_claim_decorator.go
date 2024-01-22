@@ -58,7 +58,19 @@ func (rcd RedeemClaimDecorator) handleCreateRedeemClaim(ctx sdk.Context, msg sdk
 	return ctx, nil
 }
 
-// TODO: check for daokeeper param
 func (rcd RedeemClaimDecorator) handleConfirmRedeemClaim(ctx sdk.Context, msg sdk.Msg) (sdk.Context, error) {
+	confirmClaimMsg, ok := msg.(*daotypes.MsgConfirmRedeemClaim)
+	if !ok {
+		return ctx, errorsmod.Wrapf(sdkerrors.ErrLogic, "could not cast to MsgConfirmRedeemClaim")
+	}
+
+	if confirmClaimMsg.Creator != rcd.dk.GetClaimAddress(ctx) {
+		return ctx, errorsmod.Wrapf(daotypes.ErrInvalidClaimAddress, "expected: %s; got: %s", rcd.dk.GetClaimAddress(ctx), confirmClaimMsg.Creator)
+	}
+	_, found := rcd.dk.GetRedeemClaim(ctx, confirmClaimMsg.Beneficiary, confirmClaimMsg.Id)
+	if !found {
+		return ctx, errorsmod.Wrapf(sdkerrors.ErrNotFound, "no redeem claim found for beneficiary: %s; id: %d", confirmClaimMsg.Beneficiary, confirmClaimMsg.Id)
+	}
+
 	return ctx, nil
 }
