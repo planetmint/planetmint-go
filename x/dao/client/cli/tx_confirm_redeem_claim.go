@@ -19,7 +19,7 @@ func CmdConfirmRedeemClaim() *cobra.Command {
 		Short: "Broadcast message confirm-redeem-claim",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argId, err := cast.ToUint64E(args[0])
+			argID, err := cast.ToUint64E(args[0])
 			if err != nil {
 				return err
 			}
@@ -32,7 +32,7 @@ func CmdConfirmRedeemClaim() *cobra.Command {
 
 			msg := types.NewMsgConfirmRedeemClaim(
 				clientCtx.GetFromAddress().String(),
-				argId,
+				argID,
 				argBeneficiary,
 			)
 			if err := msg.ValidateBasic(); err != nil {

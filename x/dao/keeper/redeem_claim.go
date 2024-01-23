@@ -42,7 +42,7 @@ func (k Keeper) SetRedeemClaim(ctx sdk.Context, redeemClaim types.RedeemClaim) {
 	), b)
 }
 
-// CreateRedeemClaim creates a specific redeemClaim in the store from its index
+// CreateNewRedeemClaim creates a specific redeemClaim in the store from its index
 func (k Keeper) CreateNewRedeemClaim(ctx sdk.Context, redeemClaim types.RedeemClaim) uint64 {
 	count := k.GetBeneficiaryRedeemClaimCount(ctx, redeemClaim.Beneficiary)
 

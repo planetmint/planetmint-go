@@ -60,14 +60,14 @@ func CmdShowRedeemClaim() *cobra.Command {
 			queryClient := types.NewQueryClient(clientCtx)
 
 			argBeneficiary := args[0]
-			argId, err := strconv.ParseUint(args[1], 10, 64)
+			argID, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
 				return err
 			}
 
 			params := &types.QueryGetRedeemClaimRequest{
 				Beneficiary: argBeneficiary,
-				Id:          argId,
+				Id:          argID,
 			}
 
 			res, err := queryClient.RedeemClaim(cmd.Context(), params)

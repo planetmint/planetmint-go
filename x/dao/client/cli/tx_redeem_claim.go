@@ -55,7 +55,7 @@ func CmdUpdateRedeemClaim() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			// Get indexes
 			indexBeneficiary := args[0]
-			indexId, err := strconv.ParseUint(args[1], 10, 64)
+			indexID, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
 				return err
 			}
@@ -72,7 +72,7 @@ func CmdUpdateRedeemClaim() *cobra.Command {
 				clientCtx.GetFromAddress().String(),
 				indexBeneficiary,
 				argLiquidTxHash,
-				indexId,
+				indexID,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
