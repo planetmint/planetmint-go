@@ -8,6 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/lib"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	"github.com/planetmint/planetmint-go/testutil/network"
@@ -28,6 +29,7 @@ func CreateAccount(network *network.Network, name string, mnemonic string) (acco
 }
 
 func FundAccount(network *network.Network, account *keyring.Record) (err error) {
+	cfg := config.GetConfig()
 	val := network.Validators[0]
 
 	addr, err := account.GetAddress()
@@ -36,7 +38,7 @@ func FundAccount(network *network.Network, account *keyring.Record) (err error) 
 	}
 
 	// sending funds to account to initialize account on chain
-	coin := sdk.NewCoins(sdk.NewInt64Coin("stake", 1000)) // TODO: make denom dependent on cfg
+	coin := sdk.NewCoins(sdk.NewInt64Coin(cfg.FeeDenom, 1000)) // TODO: make denom dependent on cfg
 	msg := banktypes.NewMsgSend(val.Address, addr, coin)
 	out, err := lib.BroadcastTxWithFileLock(val.Address, msg)
 	if err != nil {
