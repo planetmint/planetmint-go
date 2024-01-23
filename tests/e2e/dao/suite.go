@@ -408,10 +408,14 @@ func (s *E2ETestSuite) TestRedeemClaim() {
 	// WaitForBlock => Validator should implicitely send UpdateRedeemClaim
 	s.Require().NoError(s.network.WaitForNextBlock())
 
-	// Alice sends ConfirmRedeemClaim => rejected not claim address
+	// Addr sends ConfirmRedeemClaim => rejected not claim address
 	confirmMsg := daotypes.NewMsgConfirmRedeemClaim(addr.String(), 0, "liquidAddress")
-	_, err = lib.BroadcastTxWithFileLock(addr, confirmMsg)
+	out, err = lib.BroadcastTxWithFileLock(addr, confirmMsg)
 	s.Require().NoError(err)
+
+	txResponse, err = lib.GetTxResponseFromOut(out)
+	s.Require().NoError(err)
+	s.Require().Equal(int(20), int(txResponse.Code))
 
 	// Validator with Claim Address sends ConfirmRedeemClaim => accepted
 	valConfirmMsg := daotypes.NewMsgConfirmRedeemClaim(val.Address.String(), 0, "liquidAddress")
