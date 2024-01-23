@@ -39,6 +39,8 @@ func GetQueryCmd(_ string) *cobra.Command {
 
 	cmd.AddCommand(CmdListRedeemClaim())
 	cmd.AddCommand(CmdShowRedeemClaim())
+	cmd.AddCommand(CmdRedeemClaimByLiquidTxHash())
+
 	// this line is used by starport scaffolding # 1
 
 	return cmd

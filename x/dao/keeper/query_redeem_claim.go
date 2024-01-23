@@ -56,3 +56,16 @@ func (k Keeper) RedeemClaim(goCtx context.Context, req *types.QueryGetRedeemClai
 
 	return &types.QueryGetRedeemClaimResponse{RedeemClaim: val}, nil
 }
+
+func (k Keeper) RedeemClaimByLiquidTxHash(goCtx context.Context, req *types.QueryRedeemClaimByLiquidTxHashRequest) (*types.QueryRedeemClaimByLiquidTxHashResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// TODO: Process the query
+	_ = ctx
+
+	return &types.QueryRedeemClaimByLiquidTxHashResponse{}, nil
+}

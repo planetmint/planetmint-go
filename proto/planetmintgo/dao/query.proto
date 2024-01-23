@@ -76,6 +76,12 @@ service Query {
     option (google.api.http).get = "/planetmint/planetmint-go/dao/redeem_claim";
   
   }
+  
+  // Queries a list of RedeemClaimByLiquidTxHash items.
+  rpc RedeemClaimByLiquidTxHash (QueryRedeemClaimByLiquidTxHashRequest) returns (QueryRedeemClaimByLiquidTxHashResponse) {
+    option (google.api.http).get = "/planetmint/planetmint-go/dao/redeem_claim_by_liquid_tx_hash/{liquidTxHash}";
+  
+  }
 }
 // QueryParamsRequest is request type for the Query/Params RPC method.
 message QueryParamsRequest {}
@@ -146,8 +152,8 @@ message QueryGetDistributionResponse {
 }
 
 message QueryGetRedeemClaimRequest {
-  string beneficiary  = 1;
-  uint64 id = 2;
+  string beneficiary = 1;
+  uint64 id          = 2;
 }
 
 message QueryGetRedeemClaimResponse {
@@ -161,5 +167,13 @@ message QueryAllRedeemClaimRequest {
 message QueryAllRedeemClaimResponse {
   repeated RedeemClaim                            redeemClaim = 1 [(gogoproto.nullable) = false];
            cosmos.base.query.v1beta1.PageResponse pagination  = 2;
+}
+
+message QueryRedeemClaimByLiquidTxHashRequest {
+  string liquidTxHash = 1;
+}
+
+message QueryRedeemClaimByLiquidTxHashResponse {
+  RedeemClaim redeemClaim = 1;
 }
 
