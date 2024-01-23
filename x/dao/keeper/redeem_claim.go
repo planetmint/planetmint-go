@@ -36,10 +36,35 @@ func (k Keeper) SetBeneficiaryRedeemClaimCount(ctx sdk.Context, beneficiary stri
 func (k Keeper) SetRedeemClaim(ctx sdk.Context, redeemClaim types.RedeemClaim) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RedeemClaimKeyPrefix))
 	b := k.cdc.MustMarshal(&redeemClaim)
+
+	if redeemClaim.LiquidTxHash != "" {
+		k.SetRedeemClaimByLiquidTXHash(ctx, redeemClaim)
+	}
+
 	store.Set(types.RedeemClaimKey(
 		redeemClaim.Beneficiary,
 		redeemClaim.Id,
 	), b)
+}
+
+// SetRedeemClaimByLiquidTXHash set a specific redeemClaim in the store from its index
+func (k Keeper) SetRedeemClaimByLiquidTXHash(ctx sdk.Context, redeemClaim types.RedeemClaim) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RedeemClaimLiquidTXKeyPrefix))
+	b := k.cdc.MustMarshal(&redeemClaim)
+	byteKey := types.KeyPrefix(redeemClaim.LiquidTxHash)
+	store.Set(byteKey, b)
+}
+
+// GetRedeemClaimByLiquidTXHash returns a redeemClaim from its index
+func (k Keeper) GetRedeemClaimByLiquidTXHash(ctx sdk.Context, liquidTXHash string) (val types.RedeemClaim, found bool) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RedeemClaimLiquidTXKeyPrefix))
+	b := store.Get(types.KeyPrefix(liquidTXHash))
+	if b == nil {
+		return val, false
+	}
+
+	k.cdc.MustUnmarshal(b, &val)
+	return val, true
 }
 
 // CreateNewRedeemClaim creates a specific redeemClaim in the store from its index

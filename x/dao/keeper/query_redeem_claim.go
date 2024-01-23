@@ -64,8 +64,13 @@ func (k Keeper) RedeemClaimByLiquidTxHash(goCtx context.Context, req *types.Quer
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Process the query
-	_ = ctx
+	val, found := k.GetRedeemClaimByLiquidTXHash(
+		ctx,
+		req.LiquidTxHash,
+	)
+	if !found {
+		return nil, status.Error(codes.NotFound, "not found")
+	}
 
-	return &types.QueryRedeemClaimByLiquidTxHashResponse{}, nil
+	return &types.QueryRedeemClaimByLiquidTxHashResponse{RedeemClaim: &val}, nil
 }

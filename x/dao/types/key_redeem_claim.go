@@ -10,6 +10,7 @@ const (
 	// RedeemClaimKeyPrefix is the prefix to retrieve all RedeemClaim
 	RedeemClaimKeyPrefix                 = "RedeemClaim/value/"
 	RedeemClaimBeneficiaryCountKeyPrefix = "RedeemClaim/beneficiary/count/"
+	RedeemClaimLiquidTXKeyPrefix         = "RedeemClaim/liquidTX/value/"
 )
 
 // RedeemClaimKey returns the store key to retrieve a RedeemClaim from the index fields

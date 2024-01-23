@@ -49,3 +49,15 @@ func TestRedeemClaimGetAll(t *testing.T) {
 		nullify.Fill(keeper.GetAllRedeemClaim(ctx)),
 	)
 }
+
+func TestRedeemClaimByLiquidTXHash(t *testing.T) {
+	keeper, ctx := keepertest.DaoKeeper(t)
+	items := createNRedeemClaim(keeper, ctx, 10)
+	for i, item := range items {
+		item.LiquidTxHash = strconv.Itoa(i)
+		keeper.SetRedeemClaimByLiquidTXHash(ctx, item)
+		rc, found := keeper.GetRedeemClaimByLiquidTXHash(ctx, strconv.Itoa(i))
+		require.True(t, found)
+		require.Equal(t, item, rc)
+	}
+}
