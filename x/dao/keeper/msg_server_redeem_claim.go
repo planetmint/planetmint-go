@@ -31,7 +31,7 @@ func (k msgServer) CreateRedeemClaim(goCtx context.Context, msg *types.MsgCreate
 
 	if util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress) {
 		util.GetAppLogger().Info(ctx, fmt.Sprintf("Issuing RDDL claim: %s/%d", msg.Beneficiary, id))
-		txID, err := util.DistributeAsset(msg.Beneficiary, "TODO: convert uint to str")
+		txID, err := util.DistributeAsset(msg.Beneficiary, util.UintValueToRDDLTokenString(msg.Amount))
 		if err != nil {
 			util.GetAppLogger().Error(ctx, createRedeemClaimTag+"could not issue claim to beneficiary: "+msg.GetBeneficiary())
 		}
