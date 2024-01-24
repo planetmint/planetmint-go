@@ -1099,11 +1099,11 @@ var (
 
 	pattern_Query_GetDistribution_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"planetmint", "dao", "get_distribution", "height"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_RedeemClaim_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"planetmint", "planetmint-go", "dao", "redeem_claim", "beneficiary", "id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RedeemClaim_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"planetmint", "dao", "redeem_claim", "beneficiary", "id"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_RedeemClaimAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"planetmint", "planetmint-go", "dao", "redeem_claim"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RedeemClaimAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"planetmint", "dao", "redeem_claim"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_RedeemClaimByLiquidTxHash_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"planetmint", "planetmint-go", "dao", "redeem_claim_by_liquid_tx_hash", "liquidTxHash"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RedeemClaimByLiquidTxHash_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"planetmint", "dao", "redeem_claim_by_liquid_tx_hash", "liquidTxHash"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (

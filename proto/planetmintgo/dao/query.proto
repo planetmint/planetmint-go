@@ -69,17 +69,17 @@ service Query {
   
   // Queries a list of RedeemClaim items.
   rpc RedeemClaim    (QueryGetRedeemClaimRequest) returns (QueryGetRedeemClaimResponse) {
-    option (google.api.http).get = "/planetmint/planetmint-go/dao/redeem_claim/{beneficiary}/{id}";
+    option (google.api.http).get = "/planetmint/dao/redeem_claim/{beneficiary}/{id}";
   
   }
   rpc RedeemClaimAll (QueryAllRedeemClaimRequest) returns (QueryAllRedeemClaimResponse) {
-    option (google.api.http).get = "/planetmint/planetmint-go/dao/redeem_claim";
+    option (google.api.http).get = "/planetmint/dao/redeem_claim";
   
   }
   
   // Queries a list of RedeemClaimByLiquidTxHash items.
   rpc RedeemClaimByLiquidTxHash (QueryRedeemClaimByLiquidTxHashRequest) returns (QueryRedeemClaimByLiquidTxHashResponse) {
-    option (google.api.http).get = "/planetmint/planetmint-go/dao/redeem_claim_by_liquid_tx_hash/{liquidTxHash}";
+    option (google.api.http).get = "/planetmint/dao/redeem_claim_by_liquid_tx_hash/{liquidTxHash}";
   
   }
 }
