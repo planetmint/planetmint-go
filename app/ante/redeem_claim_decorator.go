@@ -54,7 +54,7 @@ func (rcd RedeemClaimDecorator) handleCreateRedeemClaim(ctx sdk.Context, msg sdk
 	balance := rcd.bk.GetBalance(ctx, addr, cfg.ClaimDenom)
 
 	if !balance.Amount.GTE(sdk.NewIntFromUint64(createRedeemClaimMsg.Amount)) {
-		return ctx, errorsmod.Wrap(sdkerrors.ErrInsufficientFunds, "error during checkTx or reChec")
+		return ctx, errorsmod.Wrap(sdkerrors.ErrInsufficientFunds, "error during checkTx or reCheckTx")
 	}
 
 	return ctx, nil
