@@ -38,7 +38,7 @@ func FundAccount(network *network.Network, account *keyring.Record) (err error) 
 	}
 
 	// sending funds to account to initialize account on chain
-	coin := sdk.NewCoins(sdk.NewInt64Coin(cfg.FeeDenom, 1000)) // TODO: make denom dependent on cfg
+	coin := sdk.NewCoins(sdk.NewInt64Coin(cfg.FeeDenom, 1000))
 	msg := banktypes.NewMsgSend(val.Address, addr, coin)
 	out, err := lib.BroadcastTxWithFileLock(val.Address, msg)
 	if err != nil {
