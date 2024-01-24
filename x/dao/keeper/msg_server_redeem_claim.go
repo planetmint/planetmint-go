@@ -25,7 +25,10 @@ func (k msgServer) CreateRedeemClaim(goCtx context.Context, msg *types.MsgCreate
 		Amount:      msg.Amount,
 	}
 
-	k.burnClaimAmount(ctx, sdk.MustAccAddressFromBech32(msg.Creator), msg.Amount)
+	err := k.burnClaimAmount(ctx, sdk.MustAccAddressFromBech32(msg.Creator), msg.Amount)
+	if err != nil {
+		util.GetAppLogger().Error(ctx, createRedeemClaimTag+"could not burn claim")
+	}
 
 	id := k.CreateNewRedeemClaim(
 		ctx,
