@@ -71,7 +71,3 @@ func isDistributionHeight(height int64) bool {
 	// e.g. 484200 % 17280 = 360
 	return height%int64(conf.ReissuanceEpochs) == int64(conf.DistributionOffset)
 }
-
-func EndBlocker(ctx sdk.Context, _ abci.RequestEndBlock, k keeper.Keeper) {
-	k.DistributeCollectedFees(ctx)
-}
