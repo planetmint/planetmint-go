@@ -7,6 +7,7 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
@@ -23,6 +24,8 @@ func (k msgServer) CreateRedeemClaim(goCtx context.Context, msg *types.MsgCreate
 		Beneficiary: msg.Beneficiary,
 		Amount:      msg.Amount,
 	}
+
+	k.burnClaimAmount(ctx, sdk.MustAccAddressFromBech32(msg.Creator), msg.Amount)
 
 	id := k.CreateNewRedeemClaim(
 		ctx,
@@ -90,4 +93,18 @@ func (k msgServer) ConfirmRedeemClaim(goCtx context.Context, msg *types.MsgConfi
 	k.SetRedeemClaim(ctx, redeemClaim)
 
 	return &types.MsgConfirmRedeemClaimResponse{}, nil
+}
+
+func (k msgServer) burnClaimAmount(ctx sdk.Context, addr sdk.AccAddress, amount uint64) (err error) {
+	conf := config.GetConfig()
+	burnCoins := sdk.NewCoins(sdk.NewCoin(conf.ClaimDenom, sdk.NewIntFromUint64(amount)))
+	err = k.bankKeeper.SendCoinsFromAccountToModule(ctx, addr, types.ModuleName, burnCoins)
+	if err != nil {
+		return err
+	}
+	err = k.bankKeeper.BurnCoins(ctx, types.ModuleName, burnCoins)
+	if err != nil {
+		return err
+	}
+	return
 }

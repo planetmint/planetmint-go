@@ -383,6 +383,7 @@ func (s *E2ETestSuite) TestPoPResult() {
 }
 
 func (s *E2ETestSuite) TestRedeemClaim() {
+	conf := config.GetConfig()
 	val := s.network.Validators[0]
 
 	k, err := val.ClientCtx.Keyring.Key(sample.Name)
@@ -400,6 +401,14 @@ func (s *E2ETestSuite) TestRedeemClaim() {
 
 	// WaitForBlock => Validator should implicitly send UpdateRedeemClaim
 	s.Require().NoError(s.network.WaitForNextBlock())
+
+	// Claim burned on CreateRedeemClaim
+	balanceOut, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
+		addr.String(),
+		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.ClaimDenom),
+	})
+	s.Require().NoError(err)
+	assert.Equal(s.T(), "amount: \"5993140682\"\ndenom: crddl\n", balanceOut.String()) // 3 * 1997716894 - 10000 = 5993140682
 
 	// Addr sends ConfirmRedeemClaim => rejected not claim address
 	confirmMsg := daotypes.NewMsgConfirmRedeemClaim(addr.String(), 0, "liquidAddress")
