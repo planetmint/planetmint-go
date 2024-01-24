@@ -22,25 +22,25 @@ service Query {
   
   // Queries a list of GetMachineByPublicKey items.
   rpc GetMachineByPublicKey (QueryGetMachineByPublicKeyRequest) returns (QueryGetMachineByPublicKeyResponse) {
-    option (google.api.http).get = "/planetmint/machine/get_machine_by_public_key/{publicKey}";
+    option (google.api.http).get = "/planetmint/machine/public_key/{publicKey}";
   
   }
   
   // Queries a list of GetTrustAnchorStatus items.
   rpc GetTrustAnchorStatus (QueryGetTrustAnchorStatusRequest) returns (QueryGetTrustAnchorStatusResponse) {
-    option (google.api.http).get = "/planetmint/machine/get_trust_anchor_status/{machineid}";
+    option (google.api.http).get = "/planetmint/machine/trust_anchor/status/{machineid}";
   
   }
   
   // Queries a list of GetMachineByAddress items.
   rpc GetMachineByAddress (QueryGetMachineByAddressRequest) returns (QueryGetMachineByAddressResponse) {
-    option (google.api.http).get = "/planetmint/machine/get_machine_by_address/{address}";
+    option (google.api.http).get = "/planetmint/machine/address/{address}";
   
   }
   
   // Queries a list of GetLiquidAssetsByMachineid items.
   rpc GetLiquidAssetsByMachineid (QueryGetLiquidAssetsByMachineidRequest) returns (QueryGetLiquidAssetsByMachineidResponse) {
-    option (google.api.http).get = "/planetmint/machine/get_liquid_assets_by_machineid/{machineID}";
+    option (google.api.http).get = "/planetmint/machine/liquid_assets/{machineID}";
   
   }
 }

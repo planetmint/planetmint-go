@@ -27,19 +27,19 @@ service Query {
   
   // Queries a list of GetMintRequestsByHash items.
   rpc GetMintRequestsByHash (QueryGetMintRequestsByHashRequest) returns (QueryGetMintRequestsByHashResponse) {
-    option (google.api.http).get = "/planetmint/dao/get_mint_requests_by_hash/{hash}";
+    option (google.api.http).get = "/planetmint/dao/mint_requests/hash/{hash}";
   
   }
   
   // Queries a list of MintRequestsByAddress items.
   rpc MintRequestsByAddress (QueryMintRequestsByAddressRequest) returns (QueryMintRequestsByAddressResponse) {
-    option (google.api.http).get = "/planetmint/dao/mint_requests_by_address/{address}";
+    option (google.api.http).get = "/planetmint/dao/mint_requests/address/{address}";
   
   }
   
   // Queries a list of GetReissuance items.
   rpc GetReissuance (QueryGetReissuanceRequest) returns (QueryGetReissuanceResponse) {
-    option (google.api.http).get = "/planetmint/dao/get_reissuance/{blockHeight}";
+    option (google.api.http).get = "/planetmint/dao/reissuance/{blockHeight}";
   
   }
   
@@ -51,7 +51,7 @@ service Query {
   
   // Queries a list of GetChallenge items.
   rpc GetChallenge (QueryGetChallengeRequest) returns (QueryGetChallengeResponse) {
-    option (google.api.http).get = "/planetmint/dao/get_challenge/{height}";
+    option (google.api.http).get = "/planetmint/dao/challenge/{height}";
   
   }
   
@@ -63,7 +63,7 @@ service Query {
   
   // Queries a list of GetDistribution items.
   rpc GetDistribution (QueryGetDistributionRequest) returns (QueryGetDistributionResponse) {
-    option (google.api.http).get = "/planetmint/dao/get_distribution/{height}";
+    option (google.api.http).get = "/planetmint/dao/distribution/{height}";
   
   }
   

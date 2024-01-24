@@ -1,9 +1,11 @@
 package dao
 
 import (
+	"math"
 	"strconv"
 
 	"github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/testutil"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
 	"github.com/planetmint/planetmint-go/testutil/network"
@@ -49,11 +51,8 @@ func (s *PopSelectionE2ETestSuite) SetupSuite() {
 
 	s.network = network.New(s.T(), s.cfg)
 
-	// create 2 machines accounts
-	for i, machine := range machines {
-		err := e2etestutil.AttestMachine(s.network, machine.name, machine.mnemonic, i)
-		s.Require().NoError(err)
-	}
+	// trigger one participant selection per test
+	conf.PopEpochs = 10
 }
 
 // TearDownSuite clean up after testing
@@ -61,24 +60,52 @@ func (s *PopSelectionE2ETestSuite) TearDownSuite() {
 	s.T().Log("tearing down e2e test suite")
 }
 
-func (s *PopSelectionE2ETestSuite) TestPopSelection() {
+func (s *PopSelectionE2ETestSuite) perpareLocalTest() testutil.BufferWriter {
 	val := s.network.Validators[0]
-
-	// set PopEpochs to 1 in Order to trigger some participant selections
 	conf := config.GetConfig()
-	conf.PopEpochs = 1
 
-	// wait for some blocks so challenges get stored
-	s.Require().NoError(s.network.WaitForNextBlock())
-	s.Require().NoError(s.network.WaitForNextBlock())
+	latestHeight, err := s.network.LatestHeight()
+	s.Require().NoError(err)
 
-	// check if machines are selected as challanger/challengee
-	height, _ := s.network.LatestHeight()
-	queryHeight := height - 1
+	wait := int(math.Ceil(float64(conf.PopEpochs) / 2.0))
+	for {
+		latestHeight, err = s.network.WaitForHeight(latestHeight + 1)
+		s.Require().NoError(err)
+
+		if latestHeight%int64(conf.PopEpochs) == int64(wait) {
+			break
+		}
+	}
+
 	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetChallenge(), []string{
-		strconv.FormatInt(queryHeight, 10),
+		strconv.Itoa(int(latestHeight) - wait),
 	})
 	s.Require().NoError(err)
+	return out
+}
+
+func (s *PopSelectionE2ETestSuite) TestPopSelectionNoActors() {
+	out := s.perpareLocalTest()
+
+	assert.NotContains(s.T(), out.String(), machines[0].address)
+	assert.NotContains(s.T(), out.String(), machines[1].address)
+}
+
+func (s *PopSelectionE2ETestSuite) TestPopSelectionOneActors() {
+	err := e2etestutil.AttestMachine(s.network, machines[0].name, machines[0].mnemonic, 0)
+	s.Require().NoError(err)
+
+	out := s.perpareLocalTest()
+
+	assert.NotContains(s.T(), out.String(), machines[0].address)
+	assert.NotContains(s.T(), out.String(), machines[1].address)
+}
+
+func (s *PopSelectionE2ETestSuite) TestPopSelectionTwoActors() {
+	err := e2etestutil.AttestMachine(s.network, machines[1].name, machines[1].mnemonic, 1)
+	s.Require().NoError(err)
+
+	out := s.perpareLocalTest()
 
 	assert.Contains(s.T(), out.String(), machines[0].address)
 	assert.Contains(s.T(), out.String(), machines[1].address)

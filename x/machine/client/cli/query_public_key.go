@@ -11,13 +11,13 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdGetLiquidAssetsByMachineid() *cobra.Command {
+func CmdGetMachineByPublicKey() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get-liquid-assets-by-machineid [machine-id]",
-		Short: "Query get_liquid_assets_by_machineid",
+		Use:   "public-key [public-key]",
+		Short: "Query for machines by public key",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			reqMachineID := args[0]
+			reqPublicKey := args[0]
 
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -26,12 +26,12 @@ func CmdGetLiquidAssetsByMachineid() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryGetLiquidAssetsByMachineidRequest{
+			params := &types.QueryGetMachineByPublicKeyRequest{
 
-				MachineID: reqMachineID,
+				PublicKey: reqPublicKey,
 			}
 
-			res, err := queryClient.GetLiquidAssetsByMachineid(cmd.Context(), params)
+			res, err := queryClient.GetMachineByPublicKey(cmd.Context(), params)
 			if err != nil {
 				return err
 			}

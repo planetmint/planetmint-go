@@ -5,23 +5,19 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/planetmint/planetmint-go/x/dao/types"
-	"github.com/spf13/cast"
+	"github.com/planetmint/planetmint-go/x/machine/types"
 	"github.com/spf13/cobra"
 )
 
 var _ = strconv.Itoa(0)
 
-func CmdGetChallenge() *cobra.Command {
+func CmdGetMachineByAddress() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get-challenge [height]",
-		Short: "Query get_challenge",
+		Use:   "address [address]",
+		Short: "Query for machines by address",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			reqHeight, err := cast.ToInt64E(args[0])
-			if err != nil {
-				return err
-			}
+			reqAddress := args[0]
 
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -30,12 +26,12 @@ func CmdGetChallenge() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryGetChallengeRequest{
+			params := &types.QueryGetMachineByAddressRequest{
 
-				Height: reqHeight,
+				Address: reqAddress,
 			}
 
-			res, err := queryClient.GetChallenge(cmd.Context(), params)
+			res, err := queryClient.GetMachineByAddress(cmd.Context(), params)
 			if err != nil {
 				return err
 			}

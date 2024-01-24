@@ -46437,7 +46437,7 @@ paths:
                         }
       tags:
         - Query
-  /planetmint/asset/get_cids_by_address/{address}/{lookupPeriodInMin}:
+  /planetmint/asset/address/{address}/{lookupPeriodInMin}:
     get:
       summary: Queries a list of GetCIDsByAddress items.
       operationId: PlanetmintgoAssetGetCIDsByAddress
@@ -46565,7 +46565,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /planetmint/asset/get_notarized_asset/{cid}:
+  /planetmint/asset/cid/{cid}:
     get:
       summary: Queries a list of GetNotarizedAsset items.
       operationId: PlanetmintgoAssetGetNotarizedAsset
@@ -46638,6 +46638,58 @@ paths:
                     '@type':
                       type: string
                   additionalProperties: {}
+      tags:
+        - Query
+  /planetmint/dao/challenge/{height}:
+    get:
+      summary: Queries a list of GetChallenge items.
+      operationId: PlanetmintgoDaoGetChallenge
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              challenge:
+                type: object
+                properties:
+                  initiator:
+                    type: string
+                  challenger:
+                    type: string
+                  challengee:
+                    type: string
+                  height:
+                    type: string
+                    format: int64
+                  success:
+                    type: boolean
+                  finished:
+                    type: boolean
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: height
+          in: path
+          required: true
+          type: string
+          format: int64
       tags:
         - Query
   /planetmint/dao/challenges:
@@ -46773,59 +46825,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /planetmint/dao/get_challenge/{height}:
-    get:
-      summary: Queries a list of GetChallenge items.
-      operationId: PlanetmintgoDaoGetChallenge
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              challenge:
-                type: object
-                properties:
-                  initiator:
-                    type: string
-                  challenger:
-                    type: string
-                  challengee:
-                    type: string
-                  height:
-                    type: string
-                    format: int64
-                  success:
-                    type: boolean
-                  finished:
-                    type: boolean
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: height
-          in: path
-          required: true
-          type: string
-          format: int64
-      tags:
-        - Query
-  /planetmint/dao/get_distribution/{height}:
+  /planetmint/dao/distribution/{height}:
     get:
       summary: Queries a list of GetDistribution items.
       operationId: PlanetmintgoDaoGetDistribution
@@ -46890,106 +46890,7 @@ paths:
           format: int64
       tags:
         - Query
-  /planetmint/dao/get_mint_requests_by_hash/{hash}:
-    get:
-      summary: Queries a list of GetMintRequestsByHash items.
-      operationId: PlanetmintgoDaoGetMintRequestsByHash
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              mintRequest:
-                type: object
-                properties:
-                  beneficiary:
-                    type: string
-                  amount:
-                    type: string
-                    format: uint64
-                  liquidTxHash:
-                    type: string
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: hash
-          in: path
-          required: true
-          type: string
-      tags:
-        - Query
-  /planetmint/dao/get_reissuance/{blockHeight}:
-    get:
-      summary: Queries a list of GetReissuance items.
-      operationId: PlanetmintgoDaoGetReissuance
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              reissuance:
-                type: object
-                properties:
-                  proposer:
-                    type: string
-                  command:
-                    type: string
-                  txID:
-                    type: string
-                  blockHeight:
-                    type: string
-                    format: int64
-                  firstIncludedPop:
-                    type: string
-                    format: int64
-                  lastIncludedPop:
-                    type: string
-                    format: int64
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: blockHeight
-          in: path
-          required: true
-          type: string
-          format: int64
-      tags:
-        - Query
-  /planetmint/dao/mint_requests_by_address/{address}:
+  /planetmint/dao/mint_requests/address/{address}:
     get:
       summary: Queries a list of MintRequestsByAddress items.
       operationId: PlanetmintgoDaoMintRequestsByAddress
@@ -47034,6 +46935,51 @@ paths:
                   additionalProperties: {}
       parameters:
         - name: address
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /planetmint/dao/mint_requests/hash/{hash}:
+    get:
+      summary: Queries a list of GetMintRequestsByHash items.
+      operationId: PlanetmintgoDaoGetMintRequestsByHash
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              mintRequest:
+                type: object
+                properties:
+                  beneficiary:
+                    type: string
+                  amount:
+                    type: string
+                    format: uint64
+                  liquidTxHash:
+                    type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: hash
           in: path
           required: true
           type: string
@@ -47322,6 +47268,60 @@ paths:
           type: string
       tags:
         - Query
+  /planetmint/dao/reissuance/{blockHeight}:
+    get:
+      summary: Queries a list of GetReissuance items.
+      operationId: PlanetmintgoDaoGetReissuance
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              reissuance:
+                type: object
+                properties:
+                  proposer:
+                    type: string
+                  command:
+                    type: string
+                  txID:
+                    type: string
+                  blockHeight:
+                    type: string
+                    format: int64
+                  firstIncludedPop:
+                    type: string
+                    format: int64
+                  lastIncludedPop:
+                    type: string
+                    format: int64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: blockHeight
+          in: path
+          required: true
+          type: string
+          format: int64
+      tags:
+        - Query
   /planetmint/dao/reissuances:
     get:
       summary: Queries a list of Reissuances items.
@@ -47457,53 +47457,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /planetmint/machine/get_liquid_assets_by_machineid/{machineID}:
-    get:
-      summary: Queries a list of GetLiquidAssetsByMachineid items.
-      operationId: PlanetmintgoMachineGetLiquidAssetsByMachineid
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              liquidAssetEntry:
-                type: object
-                properties:
-                  machineID:
-                    type: string
-                  machineAddress:
-                    type: string
-                  assetID:
-                    type: string
-                  registered:
-                    type: boolean
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: machineID
-          in: path
-          required: true
-          type: string
-      tags:
-        - Query
-  /planetmint/machine/get_machine_by_address/{address}:
+  /planetmint/machine/address/{address}:
     get:
       summary: Queries a list of GetMachineByAddress items.
       operationId: PlanetmintgoMachineGetMachineByAddress
@@ -47579,7 +47533,89 @@ paths:
           type: string
       tags:
         - Query
-  /planetmint/machine/get_machine_by_public_key/{publicKey}:
+  /planetmint/machine/liquid_assets/{machineID}:
+    get:
+      summary: Queries a list of GetLiquidAssetsByMachineid items.
+      operationId: PlanetmintgoMachineGetLiquidAssetsByMachineid
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              liquidAssetEntry:
+                type: object
+                properties:
+                  machineID:
+                    type: string
+                  machineAddress:
+                    type: string
+                  assetID:
+                    type: string
+                  registered:
+                    type: boolean
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: machineID
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /planetmint/machine/params:
+    get:
+      summary: Parameters queries the parameters of the module.
+      operationId: PlanetmintgoMachineParams
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params holds all the parameters of this module.
+                type: object
+            description: >-
+              QueryParamsResponse is response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /planetmint/machine/public_key/{publicKey}:
     get:
       summary: Queries a list of GetMachineByPublicKey items.
       operationId: PlanetmintgoMachineGetMachineByPublicKey
@@ -47655,7 +47691,7 @@ paths:
           type: string
       tags:
         - Query
-  /planetmint/machine/get_trust_anchor_status/{machineid}:
+  /planetmint/machine/trust_anchor/status/{machineid}:
     get:
       summary: Queries a list of GetTrustAnchorStatus items.
       operationId: PlanetmintgoMachineGetTrustAnchorStatus
@@ -47692,42 +47728,6 @@ paths:
           in: path
           required: true
           type: string
-      tags:
-        - Query
-  /planetmint/machine/params:
-    get:
-      summary: Parameters queries the parameters of the module.
-      operationId: PlanetmintgoMachineParams
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              params:
-                description: params holds all the parameters of this module.
-                type: object
-            description: >-
-              QueryParamsResponse is response type for the Query/Params RPC
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
       tags:
         - Query
 definitions:

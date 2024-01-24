@@ -14,8 +14,8 @@ var _ = strconv.Itoa(0)
 
 func CmdGetReissuance() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get-reissuance [block-height]",
-		Short: "Query get_reissuance",
+		Use:   "reissuance [height]",
+		Short: "Query for reissuance by height",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			reqBlockHeight, err := cast.ToInt64E(args[0])

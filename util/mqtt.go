@@ -24,14 +24,20 @@ type MQTTClientI interface {
 }
 
 var (
-	MQTTClient MQTTClientI
+	MQTTClient                              MQTTClientI
+	mqttMachineByAddressAvailabilityMapping map[string]bool
+	rwMu                                    sync.RWMutex
 )
 
 const (
 	MqttCmdPrefix = "cmnd/"
 )
 
-func init() {
+func lazyLoadMQTTClient() {
+	if MQTTClient != nil {
+		return
+	}
+
 	conf := config.GetConfig()
 	hostPort := net.JoinHostPort(conf.MqttDomain, strconv.FormatInt(int64(conf.MqttPort), 10))
 	uri := fmt.Sprintf("tcp://%s", hostPort)
@@ -43,7 +49,15 @@ func init() {
 	MQTTClient = mqtt.NewClient(opts)
 }
 
+func init() {
+	mqttMachineByAddressAvailabilityMapping = make(map[string]bool)
+}
+
 func SendMqttPopInitMessagesToServer(ctx sdk.Context, challenge types.Challenge) {
+	// PoP can only be executed if at least two actors are available.
+	if challenge.Challenger == "" || challenge.Challengee == "" {
+		return
+	}
 	err := sendMqttPopInitMessages(challenge)
 	if err != nil {
 		GetAppLogger().Error(ctx, "MQTT error: "+err.Error())
@@ -53,6 +67,7 @@ func SendMqttPopInitMessagesToServer(ctx sdk.Context, challenge types.Challenge)
 }
 
 func sendMqttPopInitMessages(challenge types.Challenge) (err error) {
+	lazyLoadMQTTClient()
 	if token := MQTTClient.Connect(); token.Wait() && token.Error() != nil {
 		err = token.Error()
 		return
@@ -77,14 +92,8 @@ func sendMqttPopInitMessages(challenge types.Challenge) (err error) {
 	return
 }
 
-var mqttMachineByAddressAvailabilityMapping map[string]bool
-var rwMu sync.RWMutex
-
-func init() {
-	mqttMachineByAddressAvailabilityMapping = make(map[string]bool)
-}
-
 func GetMqttStatusOfParticipant(address string) (isAvailable bool, err error) {
+	lazyLoadMQTTClient()
 	if token := MQTTClient.Connect(); token.Wait() && token.Error() != nil {
 		err = token.Error()
 		return

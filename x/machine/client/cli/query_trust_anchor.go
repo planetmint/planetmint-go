@@ -11,10 +11,25 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdGetTrustAnchorStatus() *cobra.Command {
+func CmdGetTrustAnchor() *cobra.Command {
+	// Group trust-anchor queries under a subcommand
 	cmd := &cobra.Command{
-		Use:   "get-trust-anchor-status [machineid]",
-		Short: "Query get_trust_anchor_status",
+		Use:                        "trust-anchor",
+		Short:                      "Query for trust anchor subcommand",
+		DisableFlagParsing:         true,
+		SuggestionsMinimumDistance: 2,
+		RunE:                       client.ValidateCmd,
+	}
+
+	cmd.AddCommand(CmdGetStatus())
+
+	return cmd
+}
+
+func CmdGetStatus() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "status [machine-id]",
+		Short: "Query for trust anchor status by machine ID",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			reqMachineid := args[0]

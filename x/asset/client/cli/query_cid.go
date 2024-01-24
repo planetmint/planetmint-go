@@ -5,19 +5,19 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/planetmint/planetmint-go/x/dao/types"
+	"github.com/planetmint/planetmint-go/x/asset/types"
 	"github.com/spf13/cobra"
 )
 
 var _ = strconv.Itoa(0)
 
-func CmdGetMintRequestsByHash() *cobra.Command {
+func CmdGetByCID() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get-mint-requests-by-hash [hash]",
-		Short: "Query get-mint-requests-by-hash",
+		Use:   "cid [cid]",
+		Short: "Query for assets by CID",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			reqHash := args[0]
+			reqCid := args[0]
 
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -26,12 +26,12 @@ func CmdGetMintRequestsByHash() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryGetMintRequestsByHashRequest{
+			params := &types.QueryGetNotarizedAssetRequest{
 
-				Hash: reqHash,
+				Cid: reqCid,
 			}
 
-			res, err := queryClient.GetMintRequestsByHash(cmd.Context(), params)
+			res, err := queryClient.GetNotarizedAsset(cmd.Context(), params)
 			if err != nil {
 				return err
 			}
