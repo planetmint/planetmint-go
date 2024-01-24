@@ -167,10 +167,6 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 			weightMsgDeleteRedeemClaim = defaultWeightMsgDeleteRedeemClaim
 		},
 	)
-	operations = append(operations, simulation.NewWeightedOperation(
-		weightMsgDeleteRedeemClaim,
-		daosimulation.SimulateMsgDeleteRedeemClaim(am.accountKeeper, am.bankKeeper, am.keeper),
-	))
 
 	var weightMsgConfirmRedeemClaim int
 	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgConfirmRedeemClaim, &weightMsgConfirmRedeemClaim, nil,
@@ -236,14 +232,6 @@ func (am AppModule) ProposalMsgs(_ module.SimulationState) []simtypes.WeightedPr
 			defaultWeightMsgUpdateRedeemClaim,
 			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
 				daosimulation.SimulateMsgUpdateRedeemClaim(am.accountKeeper, am.bankKeeper, am.keeper)
-				return nil
-			},
-		),
-		simulation.NewWeightedProposalMsg(
-			opWeightMsgDeleteRedeemClaim,
-			defaultWeightMsgDeleteRedeemClaim,
-			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
-				daosimulation.SimulateMsgDeleteRedeemClaim(am.accountKeeper, am.bankKeeper, am.keeper)
 				return nil
 			},
 		),
