@@ -23,6 +23,7 @@ func TestMsgCreateRedeemClaim_ValidateBasic(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			err := tt.msg.ValidateBasic()
@@ -51,6 +52,7 @@ func TestMsgUpdateRedeemClaim_ValidateBasic(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			err := tt.msg.ValidateBasic()
@@ -79,6 +81,7 @@ func TestMsgConfirmRedeemClaim_ValidateBasic(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			err := tt.msg.ValidateBasic()
