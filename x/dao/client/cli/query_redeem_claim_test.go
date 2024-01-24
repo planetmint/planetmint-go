@@ -40,6 +40,7 @@ func networkWithRedeemClaimObjects(t *testing.T, n int) (*network.Network, []typ
 }
 
 func TestShowRedeemClaim(t *testing.T) {
+	t.Parallel()
 	net, objs := networkWithRedeemClaimObjects(t, 2)
 
 	ctx := net.Validators[0].ClientCtx
@@ -74,6 +75,7 @@ func TestShowRedeemClaim(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.desc, func(t *testing.T) {
+			t.Parallel()
 			args := []string{
 				tc.idBeneficiary,
 				tc.idLiquidTxHash,
@@ -99,6 +101,7 @@ func TestShowRedeemClaim(t *testing.T) {
 }
 
 func TestListRedeemClaim(t *testing.T) {
+	t.Parallel()
 	net, objs := networkWithRedeemClaimObjects(t, 5)
 
 	ctx := net.Validators[0].ClientCtx
@@ -118,6 +121,7 @@ func TestListRedeemClaim(t *testing.T) {
 		return args
 	}
 	t.Run("ByOffset", func(t *testing.T) {
+		t.Parallel()
 		step := 2
 		for i := 0; i < len(objs); i += step {
 			args := request(nil, uint64(i), uint64(step), false)
@@ -133,6 +137,7 @@ func TestListRedeemClaim(t *testing.T) {
 		}
 	})
 	t.Run("ByKey", func(t *testing.T) {
+		t.Parallel()
 		step := 2
 		var next []byte
 		for i := 0; i < len(objs); i += step {
@@ -150,6 +155,7 @@ func TestListRedeemClaim(t *testing.T) {
 		}
 	})
 	t.Run("Total", func(t *testing.T) {
+		t.Parallel()
 		args := request(nil, 0, uint64(len(objs)), true)
 		out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdListRedeemClaim(), args)
 		require.NoError(t, err)

@@ -17,6 +17,7 @@ import (
 var _ = strconv.IntSize
 
 func TestRedeemClaimMsgServerCreate(t *testing.T) {
+	t.Parallel()
 	k, ctx := keepertest.DaoKeeper(t)
 	srv := keeper.NewMsgServerImpl(*k)
 	wctx := sdk.WrapSDKContext(ctx)
@@ -37,6 +38,7 @@ func TestRedeemClaimMsgServerCreate(t *testing.T) {
 }
 
 func TestRedeemClaimMsgServerUpdate(t *testing.T) {
+	t.Parallel()
 	creator := "A"
 
 	tests := []struct {
@@ -62,6 +64,7 @@ func TestRedeemClaimMsgServerUpdate(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.desc, func(t *testing.T) {
+			t.Parallel()
 			k, ctx := keepertest.DaoKeeper(t)
 			srv := keeper.NewMsgServerImpl(*k)
 			wctx := sdk.WrapSDKContext(ctx)

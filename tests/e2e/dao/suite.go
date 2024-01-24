@@ -405,7 +405,7 @@ func (s *E2ETestSuite) TestRedeemClaim() {
 	s.Require().NoError(err)
 	s.Require().Equal(int(0), int(txResponse.Code))
 
-	// WaitForBlock => Validator should implicitely send UpdateRedeemClaim
+	// WaitForBlock => Validator should implicitly send UpdateRedeemClaim
 	s.Require().NoError(s.network.WaitForNextBlock())
 
 	// Addr sends ConfirmRedeemClaim => rejected not claim address

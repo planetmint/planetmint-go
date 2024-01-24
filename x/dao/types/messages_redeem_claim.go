@@ -136,7 +136,7 @@ func (msg *MsgConfirmRedeemClaim) GetSignBytes() []byte {
 func (msg *MsgConfirmRedeemClaim) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+		return errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 	return nil
 }

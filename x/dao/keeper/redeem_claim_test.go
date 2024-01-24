@@ -26,6 +26,7 @@ func createNRedeemClaim(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.R
 }
 
 func TestRedeemClaimGet(t *testing.T) {
+	t.Parallel()
 	keeper, ctx := keepertest.DaoKeeper(t)
 	items := createNRedeemClaim(keeper, ctx, 10)
 	for _, item := range items {
@@ -42,6 +43,7 @@ func TestRedeemClaimGet(t *testing.T) {
 }
 
 func TestRedeemClaimGetAll(t *testing.T) {
+	t.Parallel()
 	keeper, ctx := keepertest.DaoKeeper(t)
 	items := createNRedeemClaim(keeper, ctx, 10)
 	require.ElementsMatch(t,
@@ -51,6 +53,7 @@ func TestRedeemClaimGetAll(t *testing.T) {
 }
 
 func TestRedeemClaimByLiquidTXHash(t *testing.T) {
+	t.Parallel()
 	keeper, ctx := keepertest.DaoKeeper(t)
 	items := createNRedeemClaim(keeper, ctx, 10)
 	for i, item := range items {

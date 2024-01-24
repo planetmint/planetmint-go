@@ -8,6 +8,7 @@ import (
 )
 
 func TestMsgCreateRedeemClaim_ValidateBasic(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name string
 		msg  MsgCreateRedeemClaim
@@ -23,6 +24,7 @@ func TestMsgCreateRedeemClaim_ValidateBasic(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			err := tt.msg.ValidateBasic()
 			if tt.err != nil {
 				require.ErrorIs(t, err, tt.err)
@@ -34,6 +36,7 @@ func TestMsgCreateRedeemClaim_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgUpdateRedeemClaim_ValidateBasic(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name string
 		msg  MsgUpdateRedeemClaim
@@ -49,6 +52,7 @@ func TestMsgUpdateRedeemClaim_ValidateBasic(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			err := tt.msg.ValidateBasic()
 			if tt.err != nil {
 				require.ErrorIs(t, err, tt.err)
@@ -60,6 +64,7 @@ func TestMsgUpdateRedeemClaim_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgConfirmRedeemClaim_ValidateBasic(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name string
 		msg  MsgConfirmRedeemClaim
@@ -75,6 +80,7 @@ func TestMsgConfirmRedeemClaim_ValidateBasic(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			err := tt.msg.ValidateBasic()
 			if tt.err != nil {
 				require.ErrorIs(t, err, tt.err)
