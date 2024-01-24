@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
+	"github.com/planetmint/planetmint-go/testutil/sample"
 	"github.com/planetmint/planetmint-go/x/dao/keeper"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
@@ -21,7 +22,7 @@ func TestRedeemClaimMsgServerCreate(t *testing.T) {
 	k, ctx := keepertest.DaoKeeper(t)
 	srv := keeper.NewMsgServerImpl(*k)
 	wctx := sdk.WrapSDKContext(ctx)
-	creator := "A"
+	creator := sample.ConstBech32Addr
 	for i := 0; i < 5; i++ {
 		expected := &types.MsgCreateRedeemClaim{Creator: creator,
 			Beneficiary: strconv.Itoa(i),
@@ -39,7 +40,7 @@ func TestRedeemClaimMsgServerCreate(t *testing.T) {
 
 func TestRedeemClaimMsgServerUpdate(t *testing.T) {
 	t.Parallel()
-	creator := "A"
+	creator := sample.ConstBech32Addr
 
 	tests := []struct {
 		desc    string
