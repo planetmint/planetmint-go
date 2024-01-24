@@ -10,7 +10,6 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	disttypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/planetmint/planetmint-go/config"
@@ -75,11 +74,6 @@ func NewKeeper(
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
-}
-
-// Send coins from the module to the account
-func (k Keeper) sendCoinsFromModuleToAccount(ctx sdk.Context, accAddress sdk.AccAddress, coinClaim sdk.Coin) error {
-	return k.bankKeeper.SendCoinsFromModuleToAccount(ctx, disttypes.ModuleName, accAddress, sdk.NewCoins(coinClaim))
 }
 
 func (k Keeper) SelectPopParticipants(ctx sdk.Context) (challenger string, challengee string) {

@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"strings"
 
 	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
@@ -80,12 +79,10 @@ func (s *E2ETestSuite) SetupSuite() {
 
 	bbalances := sdk.NewCoins(
 		sdk.NewCoin(conf.TokenDenom, math.NewInt(10000)),
-		sdk.NewCoin(conf.StakeDenom, math.NewInt(10000)),
 	)
 
 	abalances := sdk.NewCoins(
 		sdk.NewCoin(conf.TokenDenom, math.NewInt(10000)),
-		sdk.NewCoin(conf.StakeDenom, math.NewInt(5000)),
 	)
 
 	accountBalances := []banktypes.Balance{
@@ -115,43 +112,6 @@ func (s *E2ETestSuite) SetupSuite() {
 // TearDownSuite clean up after testing
 func (s *E2ETestSuite) TearDownSuite() {
 	s.T().Log("tearing down e2e test suite")
-}
-
-func (s *E2ETestSuite) TestDistributeCollectedFees() {
-	val := s.network.Validators[0]
-
-	// sending funds to alice and pay some fees to be distributed
-	coin := sdk.NewCoins(sdk.NewInt64Coin("stake", 1000))
-	msg := banktypes.NewMsgSend(val.Address, aliceAddr, coin)
-
-	_, err := e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg)
-	s.Require().NoError(err)
-
-	err = s.network.WaitForNextBlock()
-	s.Require().NoError(err)
-
-	_, err = e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg)
-	s.Require().NoError(err)
-
-	err = s.network.WaitForNextBlock()
-	s.Require().NoError(err)
-
-	err = s.network.WaitForNextBlock()
-	s.Require().NoError(err)
-
-	// assert that alice has 0 of 20 paid fee tokens based on 5000 stake of 15000 total stake
-	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
-		aliceAddr.String(),
-	})
-	assert.False(s.T(), strings.Contains(out.String(), "node0token"))
-	s.Require().NoError(err)
-
-	// assert that bob has 1 of 20 paid fee tokens based on 10000 stake of 15000 total stake
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
-		bobAddr.String(),
-	})
-	assert.Contains(s.T(), out.String(), "amount: \"1\"\n  denom: node0token")
-	s.Require().NoError(err)
 }
 
 func (s *E2ETestSuite) TestMintToken() {
