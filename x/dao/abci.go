@@ -27,7 +27,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 		challenger, challengee := k.SelectPopParticipants(ctx)
 
 		// Init PoP - independent from challenger and challengee
-		// The keeper will send MQTT the initializing message to challenger && challengee
+		// The keeper will send the MQTT initializing message to challenger && challengee
 		util.SendInitPoP(ctx, hexProposerAddress, challenger, challengee, currentBlockHeight)
 	}
 
