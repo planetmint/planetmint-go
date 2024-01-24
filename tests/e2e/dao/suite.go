@@ -249,7 +249,7 @@ func (s *E2ETestSuite) TestReissuance() {
 		// 1:  block 26: sending the reissuance result broadcast tx succeeded
 		// 2:  block 27: confirmation
 		wait = 2
-		if latestHeight%int64(conf.ReissuanceEpochs+wait) == 0 {
+		if latestHeight%int64(conf.ReissuanceEpochs) == int64(wait) {
 			break
 		}
 	}
