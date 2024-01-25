@@ -155,62 +155,32 @@ func (s *PopSelectionE2ETestSuite) TestPopSelectionTwoActors() {
 	s.sendPoPResult(out.Bytes(), true)
 }
 
-func (s *PopSelectionE2ETestSuite) VerifyCRDDL() {
+func (s *PopSelectionE2ETestSuite) VerifyTokens(token string) {
 	val := s.network.Validators[0]
 	conf := config.GetConfig()
 	// check balance for crddl
 	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetCmdQueryTotalSupply(), []string{
-		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.ClaimDenom),
+		fmt.Sprintf("--%s=%s", bank.FlagDenom, token),
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), conf.ClaimDenom)
-	assert.Equal(s.T(), "amount: \"17979452050\"\ndenom: crddl\n", out.String()) // Total supply 2 * 7990867578 (total supply) + 1 * 1997716894 (challenger) = 17979452050
+	assert.Equal(s.T(), "amount: \"17979452050\"\ndenom: "+token+"\n", out.String()) // Total supply 2 * 7990867578 (total supply) + 1 * 1997716894 (challenger) = 17979452050
 
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		machines[0].address,
-		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.ClaimDenom),
+		fmt.Sprintf("--%s=%s", bank.FlagDenom, token),
 	})
 	s.Require().NoError(err)
-	assert.Contains(s.T(), out.String(), conf.ClaimDenom)
-	assert.Equal(s.T(), "amount: \"5993150682\"\ndenom: crddl\n", out.String()) // 3 * 1997716894 = 5993150682
+	assert.Contains(s.T(), out.String(), token)
+	assert.Equal(s.T(), "amount: \"5993150682\"\ndenom: "+token+"\n", out.String()) // 3 * 1997716894 = 5993150682
 
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		machines[1].address,
-		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.ClaimDenom),
+		fmt.Sprintf("--%s=%s", bank.FlagDenom, token),
 	})
 	s.Require().NoError(err)
-	assert.Contains(s.T(), out.String(), conf.ClaimDenom)
-	assert.Equal(s.T(), "amount: \"11986301368\"\ndenom: crddl\n", out.String()) // 2 * 5993150684 = 11986301368
-}
-
-func (s *PopSelectionE2ETestSuite) VerifyStagedCRDDL() {
-	val := s.network.Validators[0]
-	conf := config.GetConfig()
-
-	// check balance for stagedcrddl
-	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetCmdQueryTotalSupply(), []string{
-		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.StagedDenom),
-	})
-
-	assert.Contains(s.T(), out.String(), conf.StagedDenom)
-	assert.Equal(s.T(), "amount: \"17979452050\"\ndenom: stagedcrddl\n", out.String()) // Total supply 2 * 7990867578 (total supply) + 1 * 1997716894 (challenger) = 17979452050
-
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
-		machines[0].address,
-		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.StagedDenom),
-	})
-	s.Require().NoError(err)
-	assert.Contains(s.T(), out.String(), conf.StagedDenom)
-	assert.Equal(s.T(), "amount: \"5993150682\"\ndenom: stagedcrddl\n", out.String()) // 5 * 1997716894 = 9988584470
-
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
-		machines[1].address,
-		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.StagedDenom),
-	})
-	s.Require().NoError(err)
-	assert.Contains(s.T(), out.String(), conf.StagedDenom)
-	assert.Equal(s.T(), "amount: \"11986301368\"\ndenom: stagedcrddl\n", out.String()) // 2 * 5993150684 = 11986301368
-
+	assert.Contains(s.T(), out.String(), token)
+	assert.Equal(s.T(), "amount: \"11986301368\"\ndenom: "+token+"\n", out.String()) // 2 * 5993150684 = 11986301368
 }
 
 func (s *PopSelectionE2ETestSuite) TestTokenDistribution1() {
@@ -229,16 +199,12 @@ func (s *PopSelectionE2ETestSuite) TestTokenDistribution1() {
 	s.sendPoPResult(out.Bytes(), true)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
-
-	latestHeight, err := s.network.LatestHeight()
-
 	s.Require().NoError(s.network.WaitForNextBlock())
 
-	s.VerifyStagedCRDDL()
-	// send DistributionResult implicitly
+	s.VerifyTokens(conf.StagedDenom)
 
-	latestHeight, err = s.network.LatestHeight()
-
+	// send Reissuance and DistributionResult implicitly
+	latestHeight, err := s.network.LatestHeight()
 	s.Require().NoError(err)
 	for {
 		latestHeight, err := s.network.WaitForHeight(latestHeight + 1)
@@ -252,5 +218,5 @@ func (s *PopSelectionE2ETestSuite) TestTokenDistribution1() {
 	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
 
-	s.VerifyCRDDL()
+	s.VerifyTokens(conf.ClaimDenom)
 }
