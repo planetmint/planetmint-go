@@ -1,9 +1,12 @@
 package dao
 
 import (
+	"fmt"
+	"log"
 	"math"
 	"strconv"
 
+	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/testutil"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
@@ -11,8 +14,10 @@ import (
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
+	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+	"gopkg.in/yaml.v2"
 )
 
 var machines = []struct {
@@ -53,6 +58,8 @@ func (s *PopSelectionE2ETestSuite) SetupSuite() {
 
 	// trigger one participant selection per test
 	conf.PopEpochs = 10
+	conf.ReissuanceEpochs = 60
+	conf.DistributionOffset = 2
 }
 
 // TearDownSuite clean up after testing
@@ -84,11 +91,46 @@ func (s *PopSelectionE2ETestSuite) perpareLocalTest() testutil.BufferWriter {
 	return out
 }
 
+type yamlChallenge struct {
+	Initiator  string `yaml:"initiator"`
+	Challenger string `yaml:"challenger"`
+	Challengee string `yaml:"challengee"`
+	Height     string `yaml:"height"`
+	Success    bool   `yaml:"success"`
+	Finished   bool   `yaml:"finished"`
+}
+
+func (s *PopSelectionE2ETestSuite) sendPoPResult(storedChallenge []byte, success bool) {
+	val := s.network.Validators[0]
+	var wrapper struct {
+		Challenge yamlChallenge `yaml:"challenge"`
+	}
+
+	err := yaml.Unmarshal(storedChallenge, &wrapper)
+	if err != nil {
+		log.Fatalf("error: %v", err)
+	}
+	tmpChallenge := wrapper.Challenge
+	var challenge daotypes.Challenge
+	challenge.Challengee = tmpChallenge.Challengee
+	challenge.Challenger = tmpChallenge.Challenger
+	challenge.Initiator = tmpChallenge.Initiator
+	challenge.Height, err = strconv.ParseInt(tmpChallenge.Height, 10, 64)
+	s.Require().NoError(err)
+	challenge.Finished = true
+	challenge.Success = success
+
+	msg := daotypes.NewMsgReportPopResult(val.Address.String(), &challenge)
+	_, err = e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg)
+	s.Require().NoError(err)
+}
+
 func (s *PopSelectionE2ETestSuite) TestPopSelectionNoActors() {
 	out := s.perpareLocalTest()
 
 	assert.NotContains(s.T(), out.String(), machines[0].address)
 	assert.NotContains(s.T(), out.String(), machines[1].address)
+	s.sendPoPResult(out.Bytes(), true)
 }
 
 func (s *PopSelectionE2ETestSuite) TestPopSelectionOneActors() {
@@ -99,6 +141,7 @@ func (s *PopSelectionE2ETestSuite) TestPopSelectionOneActors() {
 
 	assert.NotContains(s.T(), out.String(), machines[0].address)
 	assert.NotContains(s.T(), out.String(), machines[1].address)
+	s.sendPoPResult(out.Bytes(), true)
 }
 
 func (s *PopSelectionE2ETestSuite) TestPopSelectionTwoActors() {
@@ -109,4 +152,71 @@ func (s *PopSelectionE2ETestSuite) TestPopSelectionTwoActors() {
 
 	assert.Contains(s.T(), out.String(), machines[0].address)
 	assert.Contains(s.T(), out.String(), machines[1].address)
+	s.sendPoPResult(out.Bytes(), true)
+}
+
+func (s *PopSelectionE2ETestSuite) VerifyTokens(token string) {
+	val := s.network.Validators[0]
+	conf := config.GetConfig()
+	// check balance for crddl
+	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetCmdQueryTotalSupply(), []string{
+		fmt.Sprintf("--%s=%s", bank.FlagDenom, token),
+	})
+	s.Require().NoError(err)
+	assert.Contains(s.T(), out.String(), conf.ClaimDenom)
+	assert.Equal(s.T(), "amount: \"17979452050\"\ndenom: "+token+"\n", out.String()) // Total supply 2 * 7990867578 (total supply) + 1 * 1997716894 (challenger) = 17979452050
+
+	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
+		machines[0].address,
+		fmt.Sprintf("--%s=%s", bank.FlagDenom, token),
+	})
+	s.Require().NoError(err)
+	assert.Contains(s.T(), out.String(), token)
+	assert.Equal(s.T(), "amount: \"5993150682\"\ndenom: "+token+"\n", out.String()) // 3 * 1997716894 = 5993150682
+
+	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
+		machines[1].address,
+		fmt.Sprintf("--%s=%s", bank.FlagDenom, token),
+	})
+	s.Require().NoError(err)
+	assert.Contains(s.T(), out.String(), token)
+	assert.Equal(s.T(), "amount: \"11986301368\"\ndenom: "+token+"\n", out.String()) // 2 * 5993150684 = 11986301368
+}
+
+func (s *PopSelectionE2ETestSuite) TestTokenDistribution1() {
+	conf := config.GetConfig()
+
+	out := s.perpareLocalTest()
+
+	assert.Contains(s.T(), out.String(), machines[0].address)
+	assert.Contains(s.T(), out.String(), machines[1].address)
+	s.sendPoPResult(out.Bytes(), false)
+
+	out = s.perpareLocalTest()
+
+	assert.Contains(s.T(), out.String(), machines[0].address)
+	assert.Contains(s.T(), out.String(), machines[1].address)
+	s.sendPoPResult(out.Bytes(), true)
+
+	s.Require().NoError(s.network.WaitForNextBlock())
+	s.Require().NoError(s.network.WaitForNextBlock())
+
+	s.VerifyTokens(conf.StagedDenom)
+
+	// send Reissuance and DistributionResult implicitly
+	latestHeight, err := s.network.LatestHeight()
+	s.Require().NoError(err)
+	for {
+		latestHeight, err := s.network.WaitForHeight(latestHeight + 1)
+		s.Require().NoError(err)
+		// s.Require().NoError(s.network.WaitForNextBlock())
+		if latestHeight%int64(conf.ReissuanceEpochs) == int64(conf.DistributionOffset) {
+			break
+		}
+	}
+	s.Require().NoError(s.network.WaitForNextBlock())
+	s.Require().NoError(s.network.WaitForNextBlock())
+	s.Require().NoError(s.network.WaitForNextBlock())
+
+	s.VerifyTokens(conf.ClaimDenom)
 }

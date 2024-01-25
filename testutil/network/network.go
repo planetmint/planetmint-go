@@ -59,6 +59,7 @@ func New(t *testing.T, configs ...Config) *Network {
 	conf.SetRoot(validatorTmpDir + "/node0/simd")
 
 	net, err := network.New(t, validatorTmpDir, cfg)
+	require.NoError(t, err)
 
 	conf.ValidatorAddress = net.Validators[0].Address.String()
 	// set missing validator client context values for sending txs

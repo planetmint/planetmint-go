@@ -17,7 +17,6 @@ asset-registry-scheme = "{{ .PlmntConfig.AssetRegistryScheme}}"
 asset-registry-domain = "{{ .PlmntConfig.AssetRegistryDomain }}"
 asset-registry-path = "{{ .PlmntConfig.AssetRegistryPath }}"
 token-denom = "{{ .PlmntConfig.TokenDenom }}"
-stake-denom = "{{ .PlmntConfig.StakeDenom }}"
 fee-denom = "{{ .PlmntConfig.FeeDenom }}"
 staged-denom = "{{ .PlmntConfig.StagedDenom }}"
 claim-denom = "{{ .PlmntConfig.ClaimDenom }}"
@@ -48,7 +47,6 @@ type Config struct {
 	AssetRegistryDomain string `json:"asset-registry-domain" mapstructure:"asset-registry-domain"`
 	AssetRegistryPath   string `json:"asset-registry-path"   mapstructure:"asset-registry-path"`
 	TokenDenom          string `json:"token-denom"           mapstructure:"token-denom"`
-	StakeDenom          string `json:"stake-denom"           mapstructure:"stake-denom"`
 	FeeDenom            string `json:"fee-denom"             mapstructure:"fee-denom"`
 	StagedDenom         string `json:"staged-denom"          mapstructure:"staged-denom"`
 	ClaimDenom          string `json:"claim-denom"           mapstructure:"claim-denom"`
@@ -87,7 +85,6 @@ func DefaultConfig() *Config {
 		AssetRegistryDomain: "testnet-assets.rddl.io",
 		AssetRegistryPath:   "register_asset",
 		TokenDenom:          "plmnt",
-		StakeDenom:          "plmntstake",
 		FeeDenom:            "plmnt",
 		StagedDenom:         "stagedcrddl",
 		ClaimDenom:          "crddl",
