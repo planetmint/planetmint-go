@@ -59,10 +59,14 @@ func TestTokenDistribution(t *testing.T) {
 	amount1, err1 := strconv.ParseFloat(distribution.DaoAmount, 64)
 	amount2, err2 := strconv.ParseFloat(distribution.InvestorAmount, 64)
 	amount3, err3 := strconv.ParseFloat(distribution.PopAmount, 64)
+	amount4, err4 := strconv.ParseFloat(distribution.EarlyInvestorAmount, 64)
+	amount5, err5 := strconv.ParseFloat(distribution.StrategicAmount, 64)
 	assert.Nil(t, err1)
 	assert.Nil(t, err2)
 	assert.Nil(t, err3)
-	sum := amount1 + amount2 + amount3
+	assert.Nil(t, err4)
+	assert.Nil(t, err5)
+	sum := amount1 + amount2 + amount3 + amount4 + amount5
 	expSum := reissuanceValue * Amount1stBatch // add the [0] of the
 	assert.True(t, expSum-sum < 0.000001)
 
@@ -74,10 +78,14 @@ func TestTokenDistribution(t *testing.T) {
 	amount1, err1 = strconv.ParseFloat(lastDistribution.DaoAmount, 64)
 	amount2, err2 = strconv.ParseFloat(lastDistribution.InvestorAmount, 64)
 	amount3, err3 = strconv.ParseFloat(lastDistribution.PopAmount, 64)
+	amount4, err4 = strconv.ParseFloat(lastDistribution.EarlyInvestorAmount, 64)
+	amount5, err5 = strconv.ParseFloat(lastDistribution.StrategicAmount, 64)
 	assert.Nil(t, err1)
 	assert.Nil(t, err2)
 	assert.Nil(t, err3)
-	sum = amount1 + amount2 + amount3
+	assert.Nil(t, err4)
+	assert.Nil(t, err5)
+	sum = amount1 + amount2 + amount3 + amount4 + amount5
 	expSum = reissuanceValue * Amount2ndBatch // add the [0] of the
 	assert.True(t, expSum-sum < 0.000001)
 	assert.Equal(t, float64(reissuances), Amount1stBatch+Amount2ndBatch)
