@@ -59,11 +59,13 @@ message MsgReissueRDDLResult {
 message MsgReissueRDDLResultResponse {}
 
 message MsgDistributionResult {
-  string creator      = 1;
-  int64  lastPop      = 2;
-  string daoTxID      = 3;
-  string investorTxID = 4;
-  string popTxID      = 5;
+  string creator           = 1;
+  int64  lastPop           = 2;
+  string daoTxID           = 3;
+  string investorTxID      = 4;
+  string popTxID           = 5;
+  string earlyInvestorTxID = 6;
+  string strategicTxID     = 7;
 }
 
 message MsgDistributionResultResponse {}
