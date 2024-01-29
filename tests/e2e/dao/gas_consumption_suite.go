@@ -3,12 +3,12 @@ package dao
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/lib"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
+	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -26,8 +26,12 @@ func NewGasConsumptionE2ETestSuite(cfg network.Config) *GasConsumptionE2ETestSui
 
 func (s *GasConsumptionE2ETestSuite) SetupSuite() {
 	s.T().Log("setting up e2e test suite")
-	conf := config.GetConfig()
-	conf.FeeDenom = sample.FeeDenom
+
+	var daoGenState daotypes.GenesisState
+	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[daotypes.ModuleName], &daoGenState)
+	daoGenState.Params.FeeDenom = sample.FeeDenom
+	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
+
 	s.network = network.New(s.T(), s.cfg)
 	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
 	s.Require().NoError(err)

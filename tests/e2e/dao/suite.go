@@ -10,7 +10,6 @@ import (
 	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
-	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/lib"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
@@ -45,11 +44,7 @@ func NewE2ETestSuite(cfg network.Config) *E2ETestSuite {
 
 // SetupSuite initializes dao E2ETestSuite
 func (s *E2ETestSuite) SetupSuite() {
-	// set FeeDenom to node0token because the sending account is initialized with no plmnt tokens
-	conf := config.GetConfig()
-	conf.FeeDenom = "node0token"
 	// set epochs: make sure to start after initial height of 7
-	conf.SetPlanetmintConfig(conf)
 	s.reissuanceEpochs = 25
 	s.distributionOffset = 5
 
@@ -100,13 +95,15 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.cfg.Mnemonics = []string{sample.Mnemonic}
 
 	// set MintAddress in GenesisState
+	// set FeeDenom to node0token because the sending account is initialized with no plmnt tokens
 
+	daoGenState.Params.FeeDenom = "node0token"
 	daoGenState.Params.DistributionOffset = s.distributionOffset
 	daoGenState.Params.ReissuanceEpochs = s.reissuanceEpochs
 	daoGenState.Params.MintAddress = valAddr.String()
 	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
 
-	s.cfg.MinGasPrices = fmt.Sprintf("0.000006%s", conf.FeeDenom)
+	s.cfg.MinGasPrices = fmt.Sprintf("0.000006%s", daoGenState.Params.FeeDenom)
 	s.network = network.New(s.T(), s.cfg)
 }
 

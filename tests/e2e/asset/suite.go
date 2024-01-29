@@ -1,7 +1,6 @@
 package asset
 
 import (
-	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/lib"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
@@ -11,6 +10,7 @@ import (
 	assetcli "github.com/planetmint/planetmint-go/x/asset/client/cli"
 	assettypes "github.com/planetmint/planetmint-go/x/asset/types"
 
+	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -30,8 +30,10 @@ func NewE2ETestSuite(cfg network.Config) *E2ETestSuite {
 
 // SetupSuite initializes asset E2ETestSuite
 func (s *E2ETestSuite) SetupSuite() {
-	conf := config.GetConfig()
-	conf.FeeDenom = "stake"
+	var daoGenState daotypes.GenesisState
+	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[daotypes.ModuleName], &daoGenState)
+	daoGenState.Params.FeeDenom = sample.FeeDenom
+	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
 
 	s.T().Log("setting up e2e test suite")
 

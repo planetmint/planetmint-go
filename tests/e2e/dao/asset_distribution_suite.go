@@ -5,7 +5,6 @@ import (
 	"math"
 	"strconv"
 
-	"github.com/planetmint/planetmint-go/config"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
@@ -35,14 +34,11 @@ func (s *AssetDistributionE2ETestSuite) SetupSuite() {
 	s.distributionOffset = 5
 	s.reissaunceEpochs = 10
 
-	// set fee denomination
-	conf := config.GetConfig()
-	conf.FeeDenom = sample.FeeDenom
-
 	var daoGenState daotypes.GenesisState
 	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[daotypes.ModuleName], &daoGenState)
 	daoGenState.Params.DistributionOffset = s.distributionOffset
 	daoGenState.Params.ReissuanceEpochs = s.reissaunceEpochs
+	daoGenState.Params.FeeDenom = sample.FeeDenom
 	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
 
 	s.network = network.New(s.T(), s.cfg)

@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
-	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/testutil"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
@@ -53,8 +52,6 @@ func NewPopSelectionE2ETestSuite(cfg network.Config) *PopSelectionE2ETestSuite {
 
 func (s *PopSelectionE2ETestSuite) SetupSuite() {
 	s.T().Log("setting up e2e test suite")
-	conf := config.GetConfig()
-	conf.FeeDenom = sample.FeeDenom
 
 	s.popEpochs = 10
 	s.reissuanceEpochs = 60
@@ -66,6 +63,7 @@ func (s *PopSelectionE2ETestSuite) SetupSuite() {
 	daoGenState.Params.ReissuanceEpochs = s.reissuanceEpochs
 	daoGenState.Params.DistributionOffset = s.distributionOffset
 	daoGenState.Params.MqttResponseTimeout = 200
+	daoGenState.Params.FeeDenom = sample.FeeDenom
 	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
 
 	s.network = network.New(s.T(), s.cfg)

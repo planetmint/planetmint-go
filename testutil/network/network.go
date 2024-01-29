@@ -25,6 +25,7 @@ import (
 	"github.com/planetmint/planetmint-go/lib"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/util/mocks"
+	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 )
 
 type (
@@ -71,9 +72,12 @@ func New(t *testing.T, configs ...Config) *Network {
 	net.Validators[0].ClientCtx.Output = &output
 	net.Validators[0].ClientCtx.SkipConfirm = true
 
+	var daoGenState daotypes.GenesisState
+	cfg.Codec.MustUnmarshalJSON(cfg.GenesisState[daotypes.ModuleName], &daoGenState)
+
 	libConfig := lib.GetConfig()
 	libConfig.SetClientCtx(net.Validators[0].ClientCtx)
-	libConfig.SetFeeDenom(conf.FeeDenom)
+	libConfig.SetFeeDenom(daoGenState.Params.FeeDenom)
 	libConfig.SetRoot(validatorTmpDir + "/node0/simd")
 
 	require.NoError(t, err)
