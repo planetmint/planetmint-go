@@ -14,20 +14,25 @@ func (k msgServer) DistributionResult(goCtx context.Context, msg *types.MsgDistr
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	distribution, found := k.LookupDistributionOrder(ctx, msg.GetLastPop())
-	if found {
-		distribution.DaoTxID = msg.DaoTxID
-		distribution.PopTxID = msg.PopTxID
-		distribution.InvestorTxID = msg.InvestorTxID
-		err := k.resolveStagedClaims(ctx, distribution.FirstPop, distribution.LastPop)
-		if err != nil {
-			util.GetAppLogger().Error(ctx, "%s for provided PoP heights: %d %d", types.ErrResolvingStagedClaims.Error(), distribution.FirstPop, distribution.LastPop)
-			return nil, errorsmod.Wrap(types.ErrConvertClaims, err.Error())
-		}
-		util.GetAppLogger().Info(ctx, "staged claims successfully for provided PoP heights: %d %d", distribution.FirstPop, distribution.LastPop)
-		k.StoreDistributionOrder(ctx, distribution)
-	} else {
-		util.GetAppLogger().Error(ctx, "%s for provided block height %s", types.ErrDistributionNotFound.Error(), strconv.FormatInt(msg.GetLastPop(), 10))
+	if !found {
+		errorMessage := types.ErrDistributionNotFound.Error() + " for provided block height " + strconv.FormatInt(msg.GetLastPop(), 10)
+		util.GetAppLogger().Error(ctx, errorMessage)
+		return nil, errorsmod.Wrap(types.ErrDistributionNotFound, errorMessage)
 	}
+
+	distribution.DaoTxID = msg.DaoTxID
+	distribution.PopTxID = msg.PopTxID
+	distribution.InvestorTxID = msg.InvestorTxID
+	distribution.EarlyInvAddr = msg.EarlyInvestorTxID
+	distribution.StrategicTxID = msg.StrategicTxID
+
+	err := k.resolveStagedClaims(ctx, distribution.FirstPop, distribution.LastPop)
+	if err != nil {
+		util.GetAppLogger().Error(ctx, "%s for provided PoP heights: %d %d", types.ErrResolvingStagedClaims.Error(), distribution.FirstPop, distribution.LastPop)
+		return nil, errorsmod.Wrap(types.ErrConvertClaims, err.Error())
+	}
+	util.GetAppLogger().Info(ctx, "staged claims successfully for provided PoP heights: %d %d", distribution.FirstPop, distribution.LastPop)
+	k.StoreDistributionOrder(ctx, distribution)
 
 	return &types.MsgDistributionResultResponse{}, nil
 }

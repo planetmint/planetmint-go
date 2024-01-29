@@ -46864,6 +46864,18 @@ paths:
                     format: int64
                   proposer:
                     type: string
+                  earlyInvAddr:
+                    type: string
+                  earlyInvAmount:
+                    type: string
+                  earlyInvTxID:
+                    type: string
+                  strategicAddr:
+                    type: string
+                  strategicAmount:
+                    type: string
+                  strategicTxID:
+                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -76361,6 +76373,18 @@ definitions:
         format: int64
       proposer:
         type: string
+      earlyInvAddr:
+        type: string
+      earlyInvAmount:
+        type: string
+      earlyInvTxID:
+        type: string
+      strategicAddr:
+        type: string
+      strategicAmount:
+        type: string
+      strategicTxID:
+        type: string
   planetmintgo.dao.MintRequest:
     type: object
     properties:
@@ -76537,6 +76561,18 @@ definitions:
             type: string
             format: int64
           proposer:
+            type: string
+          earlyInvAddr:
+            type: string
+          earlyInvAmount:
+            type: string
+          earlyInvTxID:
+            type: string
+          strategicAddr:
+            type: string
+          strategicAmount:
+            type: string
+          strategicTxID:
             type: string
   planetmintgo.dao.QueryGetMintRequestsByHashResponse:
     type: object

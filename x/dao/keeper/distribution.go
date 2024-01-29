@@ -62,11 +62,15 @@ func (k Keeper) ComputeDistribution(ctx sdk.Context, lastReissuance int64, block
 	distribution.LastPop = blockHeight
 
 	distribution.DaoAddr = k.GetParams(ctx).DistributionAddressDao
+	distribution.EarlyInvAddr = k.GetParams(ctx).DistributionAddressEarlyInv
 	distribution.InvestorAddr = k.GetParams(ctx).DistributionAddressInvestor
+	distribution.StrategicAddr = k.GetParams(ctx).DistributionAddressStrategic
 	distribution.PopAddr = k.GetParams(ctx).DistributionAddressPop
 
 	distribution.DaoAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentageDao))
+	distribution.EarlyInvAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentageEarlyInvestor))
 	distribution.InvestorAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentageInvestor))
+	distribution.StrategicAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentageStrategic))
 	distribution.PopAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentagePop))
 
 	return distribution

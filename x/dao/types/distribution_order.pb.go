@@ -23,18 +23,24 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type DistributionOrder struct {
-	DaoAddr        string `protobuf:"bytes,1,opt,name=daoAddr,proto3" json:"daoAddr,omitempty"`
-	DaoAmount      string `protobuf:"bytes,2,opt,name=daoAmount,proto3" json:"daoAmount,omitempty"`
-	DaoTxID        string `protobuf:"bytes,3,opt,name=daoTxID,proto3" json:"daoTxID,omitempty"`
-	InvestorAddr   string `protobuf:"bytes,4,opt,name=investorAddr,proto3" json:"investorAddr,omitempty"`
-	InvestorAmount string `protobuf:"bytes,5,opt,name=investorAmount,proto3" json:"investorAmount,omitempty"`
-	InvestorTxID   string `protobuf:"bytes,6,opt,name=investorTxID,proto3" json:"investorTxID,omitempty"`
-	PopAddr        string `protobuf:"bytes,7,opt,name=popAddr,proto3" json:"popAddr,omitempty"`
-	PopAmount      string `protobuf:"bytes,8,opt,name=popAmount,proto3" json:"popAmount,omitempty"`
-	PopTxID        string `protobuf:"bytes,9,opt,name=popTxID,proto3" json:"popTxID,omitempty"`
-	FirstPop       int64  `protobuf:"varint,10,opt,name=firstPop,proto3" json:"firstPop,omitempty"`
-	LastPop        int64  `protobuf:"varint,11,opt,name=lastPop,proto3" json:"lastPop,omitempty"`
-	Proposer       string `protobuf:"bytes,12,opt,name=proposer,proto3" json:"proposer,omitempty"`
+	DaoAddr         string `protobuf:"bytes,1,opt,name=daoAddr,proto3" json:"daoAddr,omitempty"`
+	DaoAmount       string `protobuf:"bytes,2,opt,name=daoAmount,proto3" json:"daoAmount,omitempty"`
+	DaoTxID         string `protobuf:"bytes,3,opt,name=daoTxID,proto3" json:"daoTxID,omitempty"`
+	InvestorAddr    string `protobuf:"bytes,4,opt,name=investorAddr,proto3" json:"investorAddr,omitempty"`
+	InvestorAmount  string `protobuf:"bytes,5,opt,name=investorAmount,proto3" json:"investorAmount,omitempty"`
+	InvestorTxID    string `protobuf:"bytes,6,opt,name=investorTxID,proto3" json:"investorTxID,omitempty"`
+	PopAddr         string `protobuf:"bytes,7,opt,name=popAddr,proto3" json:"popAddr,omitempty"`
+	PopAmount       string `protobuf:"bytes,8,opt,name=popAmount,proto3" json:"popAmount,omitempty"`
+	PopTxID         string `protobuf:"bytes,9,opt,name=popTxID,proto3" json:"popTxID,omitempty"`
+	FirstPop        int64  `protobuf:"varint,10,opt,name=firstPop,proto3" json:"firstPop,omitempty"`
+	LastPop         int64  `protobuf:"varint,11,opt,name=lastPop,proto3" json:"lastPop,omitempty"`
+	Proposer        string `protobuf:"bytes,12,opt,name=proposer,proto3" json:"proposer,omitempty"`
+	EarlyInvAddr    string `protobuf:"bytes,13,opt,name=earlyInvAddr,proto3" json:"earlyInvAddr,omitempty"`
+	EarlyInvAmount  string `protobuf:"bytes,14,opt,name=earlyInvAmount,proto3" json:"earlyInvAmount,omitempty"`
+	EarlyInvTxID    string `protobuf:"bytes,15,opt,name=earlyInvTxID,proto3" json:"earlyInvTxID,omitempty"`
+	StrategicAddr   string `protobuf:"bytes,16,opt,name=strategicAddr,proto3" json:"strategicAddr,omitempty"`
+	StrategicAmount string `protobuf:"bytes,17,opt,name=strategicAmount,proto3" json:"strategicAmount,omitempty"`
+	StrategicTxID   string `protobuf:"bytes,18,opt,name=strategicTxID,proto3" json:"strategicTxID,omitempty"`
 }
 
 func (m *DistributionOrder) Reset()         { *m = DistributionOrder{} }
@@ -154,6 +160,48 @@ func (m *DistributionOrder) GetProposer() string {
 	return ""
 }
 
+func (m *DistributionOrder) GetEarlyInvAddr() string {
+	if m != nil {
+		return m.EarlyInvAddr
+	}
+	return ""
+}
+
+func (m *DistributionOrder) GetEarlyInvAmount() string {
+	if m != nil {
+		return m.EarlyInvAmount
+	}
+	return ""
+}
+
+func (m *DistributionOrder) GetEarlyInvTxID() string {
+	if m != nil {
+		return m.EarlyInvTxID
+	}
+	return ""
+}
+
+func (m *DistributionOrder) GetStrategicAddr() string {
+	if m != nil {
+		return m.StrategicAddr
+	}
+	return ""
+}
+
+func (m *DistributionOrder) GetStrategicAmount() string {
+	if m != nil {
+		return m.StrategicAmount
+	}
+	return ""
+}
+
+func (m *DistributionOrder) GetStrategicTxID() string {
+	if m != nil {
+		return m.StrategicTxID
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*DistributionOrder)(nil), "planetmintgo.dao.DistributionOrder")
 }
@@ -163,27 +211,31 @@ func init() {
 }
 
 var fileDescriptor_2bd326325e0d716d = []byte{
-	// 309 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x5c, 0x51, 0xbf, 0x4e, 0xf3, 0x30,
-	0x10, 0xaf, 0xdb, 0xef, 0x6b, 0x1b, 0x53, 0x21, 0xc8, 0x64, 0x21, 0x64, 0x55, 0x1d, 0x50, 0x19,
-	0x48, 0x06, 0x9e, 0x00, 0xd4, 0xa5, 0x13, 0xa8, 0x62, 0x62, 0x41, 0x09, 0x0e, 0xc1, 0x52, 0x93,
-	0xb3, 0x1c, 0x07, 0x95, 0xb7, 0xe0, 0xb1, 0x18, 0x3b, 0x32, 0xa2, 0xe4, 0x29, 0xd8, 0x90, 0x2f,
-	0xa9, 0x9b, 0xb2, 0xdd, 0xef, 0x7e, 0xff, 0x6c, 0x1d, 0xbd, 0x54, 0xeb, 0x28, 0x4f, 0x4c, 0x26,
-	0x73, 0x93, 0x42, 0x28, 0x22, 0x08, 0x85, 0x2c, 0x8c, 0x96, 0x71, 0x69, 0x24, 0xe4, 0x4f, 0xa0,
-	0x45, 0xa2, 0x03, 0xa5, 0xc1, 0x80, 0x7f, 0xd2, 0x95, 0x06, 0x22, 0x82, 0xd9, 0x4f, 0x9f, 0x9e,
-	0x2e, 0x3a, 0xf2, 0x3b, 0xab, 0xf6, 0x19, 0x1d, 0x89, 0x08, 0x6e, 0x84, 0xd0, 0x8c, 0x4c, 0xc9,
-	0xdc, 0x5b, 0xed, 0xa0, 0x7f, 0x4e, 0x3d, 0x3b, 0x66, 0x50, 0xe6, 0x86, 0xf5, 0x91, 0xdb, 0x2f,
-	0x5a, 0xdf, 0xc3, 0x66, 0xb9, 0x60, 0x03, 0xe7, 0xb3, 0xd0, 0x9f, 0xd1, 0x89, 0xcc, 0xdf, 0x92,
-	0xc2, 0x80, 0xc6, 0xd8, 0x7f, 0x48, 0x1f, 0xec, 0xfc, 0x0b, 0x7a, 0xec, 0x70, 0x53, 0xf0, 0x1f,
-	0x55, 0x7f, 0xb6, 0xdd, 0x2c, 0xac, 0x1a, 0x1e, 0x66, 0x61, 0x1f, 0xa3, 0x23, 0x05, 0x0a, 0xab,
-	0x46, 0xcd, 0x4b, 0x5a, 0x68, 0x7f, 0x60, 0xc7, 0xa6, 0x60, 0xdc, 0xfc, 0xc0, 0x2d, 0x5a, 0x1f,
-	0xc6, 0x7a, 0xce, 0x87, 0x89, 0x67, 0x74, 0xfc, 0x22, 0x75, 0x61, 0xee, 0x41, 0x31, 0x3a, 0x25,
-	0xf3, 0xc1, 0xca, 0x61, 0xeb, 0x5a, 0x47, 0x0d, 0x75, 0x84, 0xd4, 0x0e, 0x5a, 0x97, 0xd2, 0xa0,
-	0xa0, 0x48, 0x34, 0x9b, 0x60, 0xa0, 0xc3, 0xb7, 0xcb, 0xcf, 0x8a, 0x93, 0x6d, 0xc5, 0xc9, 0x77,
-	0xc5, 0xc9, 0x47, 0xcd, 0x7b, 0xdb, 0x9a, 0xf7, 0xbe, 0x6a, 0xde, 0x7b, 0x0c, 0x53, 0x69, 0x5e,
-	0xcb, 0x38, 0x78, 0x86, 0x2c, 0xdc, 0x9f, 0xac, 0x33, 0x5e, 0xa5, 0x10, 0x6e, 0xf0, 0xd6, 0xe6,
-	0x5d, 0x25, 0x45, 0x3c, 0xc4, 0xfb, 0x5e, 0xff, 0x06, 0x00, 0x00, 0xff, 0xff, 0x44, 0x71, 0x90,
-	0x55, 0x0c, 0x02, 0x00, 0x00,
+	// 378 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x5c, 0x52, 0x3d, 0x6f, 0x22, 0x31,
+	0x10, 0x65, 0x0f, 0x8e, 0x0f, 0x1f, 0x9f, 0x5b, 0x59, 0xa7, 0xd3, 0x0a, 0xa1, 0x53, 0x44, 0x8a,
+	0xb0, 0x45, 0x7e, 0x41, 0x22, 0x1a, 0xaa, 0x44, 0x28, 0x55, 0x9a, 0xc8, 0x60, 0x67, 0x63, 0x09,
+	0x76, 0x2c, 0xaf, 0x41, 0xf0, 0x2f, 0xf2, 0xb3, 0x52, 0x52, 0xa6, 0x4b, 0x04, 0x7f, 0x24, 0xf2,
+	0x18, 0xcc, 0x2e, 0x9d, 0xdf, 0x9b, 0x79, 0xef, 0xcd, 0x58, 0x43, 0xae, 0xd5, 0x82, 0xa5, 0xc2,
+	0x2c, 0x65, 0x6a, 0x12, 0x88, 0x39, 0x83, 0x98, 0xcb, 0xcc, 0x68, 0x39, 0x5b, 0x19, 0x09, 0xe9,
+	0x0b, 0x68, 0x2e, 0xf4, 0x48, 0x69, 0x30, 0x10, 0x76, 0xf3, 0xad, 0x23, 0xce, 0x60, 0xf0, 0x55,
+	0x21, 0xbd, 0x71, 0xae, 0xfd, 0xc1, 0x76, 0x87, 0x94, 0xd4, 0x38, 0x83, 0x3b, 0xce, 0x35, 0x0d,
+	0xfa, 0xc1, 0xb0, 0x31, 0x3d, 0xc1, 0xf0, 0x1f, 0x69, 0xd8, 0xe7, 0x12, 0x56, 0xa9, 0xa1, 0xbf,
+	0xb0, 0x76, 0x26, 0x8e, 0xba, 0xa7, 0xcd, 0x64, 0x4c, 0xcb, 0x5e, 0x67, 0x61, 0x38, 0x20, 0x4d,
+	0x99, 0xae, 0x45, 0x66, 0x40, 0xa3, 0x6d, 0x05, 0xcb, 0x05, 0x2e, 0xbc, 0x22, 0x6d, 0x8f, 0x5d,
+	0xc0, 0x6f, 0xec, 0xba, 0x60, 0xf3, 0x5e, 0x18, 0x55, 0x2d, 0x7a, 0x61, 0x1e, 0x25, 0x35, 0x05,
+	0x0a, 0xa3, 0x6a, 0x6e, 0x92, 0x23, 0xb4, 0x1b, 0xd8, 0xa7, 0x0b, 0xa8, 0xbb, 0x0d, 0x3c, 0x71,
+	0xd4, 0xa1, 0x6d, 0xc3, 0xeb, 0xd0, 0xf1, 0x2f, 0xa9, 0xbf, 0x4a, 0x9d, 0x99, 0x47, 0x50, 0x94,
+	0xf4, 0x83, 0x61, 0x79, 0xea, 0xb1, 0x55, 0x2d, 0x98, 0x2b, 0xfd, 0xc1, 0xd2, 0x09, 0x5a, 0x95,
+	0xd2, 0xa0, 0x20, 0x13, 0x9a, 0x36, 0xd1, 0xd0, 0x63, 0xbb, 0x87, 0x60, 0x7a, 0xb1, 0x9d, 0xa4,
+	0x6b, 0x1c, 0xb4, 0xe5, 0xf6, 0xc8, 0x73, 0xf6, 0x4f, 0x3c, 0x76, 0x23, 0xb7, 0xdd, 0x9f, 0x14,
+	0xd9, 0xbc, 0x17, 0x0e, 0xdf, 0x29, 0x7a, 0xe1, 0x06, 0xff, 0x49, 0x2b, 0x33, 0x9a, 0x19, 0x91,
+	0xc8, 0x39, 0x06, 0x76, 0xb1, 0xa9, 0x48, 0x86, 0x43, 0xd2, 0x39, 0x13, 0x2e, 0xb2, 0x87, 0x7d,
+	0x97, 0x74, 0xc1, 0x0f, 0x43, 0xc3, 0x0b, 0x3f, 0x4b, 0xde, 0x4f, 0x3e, 0xf6, 0x51, 0xb0, 0xdb,
+	0x47, 0xc1, 0xf7, 0x3e, 0x0a, 0xde, 0x0f, 0x51, 0x69, 0x77, 0x88, 0x4a, 0x9f, 0x87, 0xa8, 0xf4,
+	0x1c, 0x27, 0xd2, 0xbc, 0xad, 0x66, 0xa3, 0x39, 0x2c, 0xe3, 0xf3, 0x61, 0xe6, 0x9e, 0x37, 0x09,
+	0xc4, 0x1b, 0xbc, 0x68, 0xb3, 0x55, 0x22, 0x9b, 0x55, 0xf1, 0x8a, 0x6f, 0x7f, 0x02, 0x00, 0x00,
+	0xff, 0xff, 0x61, 0x1c, 0x03, 0x11, 0xf2, 0x02, 0x00, 0x00,
 }
 
 func (m *DistributionOrder) Marshal() (dAtA []byte, err error) {
@@ -206,6 +258,54 @@ func (m *DistributionOrder) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.StrategicTxID) > 0 {
+		i -= len(m.StrategicTxID)
+		copy(dAtA[i:], m.StrategicTxID)
+		i = encodeVarintDistributionOrder(dAtA, i, uint64(len(m.StrategicTxID)))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x92
+	}
+	if len(m.StrategicAmount) > 0 {
+		i -= len(m.StrategicAmount)
+		copy(dAtA[i:], m.StrategicAmount)
+		i = encodeVarintDistributionOrder(dAtA, i, uint64(len(m.StrategicAmount)))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x8a
+	}
+	if len(m.StrategicAddr) > 0 {
+		i -= len(m.StrategicAddr)
+		copy(dAtA[i:], m.StrategicAddr)
+		i = encodeVarintDistributionOrder(dAtA, i, uint64(len(m.StrategicAddr)))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x82
+	}
+	if len(m.EarlyInvTxID) > 0 {
+		i -= len(m.EarlyInvTxID)
+		copy(dAtA[i:], m.EarlyInvTxID)
+		i = encodeVarintDistributionOrder(dAtA, i, uint64(len(m.EarlyInvTxID)))
+		i--
+		dAtA[i] = 0x7a
+	}
+	if len(m.EarlyInvAmount) > 0 {
+		i -= len(m.EarlyInvAmount)
+		copy(dAtA[i:], m.EarlyInvAmount)
+		i = encodeVarintDistributionOrder(dAtA, i, uint64(len(m.EarlyInvAmount)))
+		i--
+		dAtA[i] = 0x72
+	}
+	if len(m.EarlyInvAddr) > 0 {
+		i -= len(m.EarlyInvAddr)
+		copy(dAtA[i:], m.EarlyInvAddr)
+		i = encodeVarintDistributionOrder(dAtA, i, uint64(len(m.EarlyInvAddr)))
+		i--
+		dAtA[i] = 0x6a
+	}
 	if len(m.Proposer) > 0 {
 		i -= len(m.Proposer)
 		copy(dAtA[i:], m.Proposer)
@@ -351,6 +451,30 @@ func (m *DistributionOrder) Size() (n int) {
 	l = len(m.Proposer)
 	if l > 0 {
 		n += 1 + l + sovDistributionOrder(uint64(l))
+	}
+	l = len(m.EarlyInvAddr)
+	if l > 0 {
+		n += 1 + l + sovDistributionOrder(uint64(l))
+	}
+	l = len(m.EarlyInvAmount)
+	if l > 0 {
+		n += 1 + l + sovDistributionOrder(uint64(l))
+	}
+	l = len(m.EarlyInvTxID)
+	if l > 0 {
+		n += 1 + l + sovDistributionOrder(uint64(l))
+	}
+	l = len(m.StrategicAddr)
+	if l > 0 {
+		n += 2 + l + sovDistributionOrder(uint64(l))
+	}
+	l = len(m.StrategicAmount)
+	if l > 0 {
+		n += 2 + l + sovDistributionOrder(uint64(l))
+	}
+	l = len(m.StrategicTxID)
+	if l > 0 {
+		n += 2 + l + sovDistributionOrder(uint64(l))
 	}
 	return n
 }
@@ -747,6 +871,198 @@ func (m *DistributionOrder) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Proposer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 13:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EarlyInvAddr", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDistributionOrder
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDistributionOrder
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDistributionOrder
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.EarlyInvAddr = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 14:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EarlyInvAmount", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDistributionOrder
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDistributionOrder
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDistributionOrder
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.EarlyInvAmount = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 15:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EarlyInvTxID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDistributionOrder
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDistributionOrder
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDistributionOrder
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.EarlyInvTxID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 16:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field StrategicAddr", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDistributionOrder
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDistributionOrder
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDistributionOrder
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.StrategicAddr = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 17:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field StrategicAmount", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDistributionOrder
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDistributionOrder
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDistributionOrder
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.StrategicAmount = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 18:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field StrategicTxID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDistributionOrder
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDistributionOrder
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDistributionOrder
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.StrategicTxID = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
