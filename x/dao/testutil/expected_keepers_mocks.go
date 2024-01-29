@@ -13,7 +13,7 @@ import (
 	types1 "github.com/planetmint/planetmint-go/x/machine/types"
 )
 
-func GetPopEpochs() int64{
+func GetPopEpochs() int64 {
 	return 24
 }
 
