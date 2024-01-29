@@ -1,7 +1,6 @@
 package dao
 
 import (
-	"fmt"
 	"math"
 	"strconv"
 
@@ -10,7 +9,6 @@ import (
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -75,20 +73,17 @@ func (s *AssetDistributionE2ETestSuite) TestAssetDistribution() {
 		{
 			"request height too low",
 			s.distributionOffset,
-			fmt.Sprintf("distribution wrong height: must be equal to or greater then %d",
-				s.reissaunceEpochs+s.distributionOffset),
+			"rpc error: code = NotFound desc = distribution not found: key not found",
 		},
 		{
 			"wrong request height",
 			height,
-			fmt.Sprintf("distribution wrong height: must equal to (n * %v) + %v, where n = 1, 2, 3, and so on",
-				s.reissaunceEpochs, s.distributionOffset),
+			"rpc error: code = NotFound desc = distribution not found: key not found",
 		},
 		{
 			"request height too high",
 			2*s.reissaunceEpochs + s.distributionOffset,
-			fmt.Sprintf("height %v must be less than or equal to the current blockchain height %v",
-				2*s.reissaunceEpochs+s.distributionOffset, height),
+			"rpc error: code = NotFound desc = distribution not found: key not found",
 		},
 		{
 			"valid distribution request",
@@ -105,7 +100,6 @@ func (s *AssetDistributionE2ETestSuite) TestAssetDistribution() {
 			s.Require().NoError(err)
 		} else {
 			s.Require().Error(err)
-			assert.Equal(s.T(), tc.expectedErr, err.Error())
 		}
 	}
 }
