@@ -46864,11 +46864,11 @@ paths:
                     format: int64
                   proposer:
                     type: string
-                  earlyInvestorAddr:
+                  earlyInvAddr:
                     type: string
-                  earlyInvestorAmount:
+                  earlyInvAmount:
                     type: string
-                  earlyInvestorTxID:
+                  earlyInvTxID:
                     type: string
                   strategicAddr:
                     type: string
@@ -76334,11 +76334,11 @@ definitions:
         format: int64
       proposer:
         type: string
-      earlyInvestorAddr:
+      earlyInvAddr:
         type: string
-      earlyInvestorAmount:
+      earlyInvAmount:
         type: string
-      earlyInvestorTxID:
+      earlyInvTxID:
         type: string
       strategicAddr:
         type: string
@@ -76491,11 +76491,11 @@ definitions:
             format: int64
           proposer:
             type: string
-          earlyInvestorAddr:
+          earlyInvAddr:
             type: string
-          earlyInvestorAmount:
+          earlyInvAmount:
             type: string
-          earlyInvestorTxID:
+          earlyInvTxID:
             type: string
           strategicAddr:
             type: string

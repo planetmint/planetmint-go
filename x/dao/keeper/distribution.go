@@ -64,13 +64,13 @@ func ComputeDistribution(lastReissuance int64, blockHeight int64, amount uint64)
 	distribution.LastPop = blockHeight
 
 	distribution.DaoAddr = conf.DistributionAddrDAO
-	distribution.EarlyInvestorAddr = conf.DistributionAddrEarlyInv
+	distribution.EarlyInvAddr = conf.DistributionAddrEarlyInv
 	distribution.InvestorAddr = conf.DistributionAddrInvestor
 	distribution.StrategicAddr = conf.DistributionAddrStrategic
 	distribution.PopAddr = conf.DistributionAddrPop
 
 	distribution.DaoAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentageDao))
-	distribution.EarlyInvestorAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentageEarlyInvestor))
+	distribution.EarlyInvAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentageEarlyInvestor))
 	distribution.InvestorAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentageInvestor))
 	distribution.StrategicAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentageStrategic))
 	distribution.PopAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentagePop))

@@ -24,7 +24,7 @@ func (k msgServer) DistributionResult(goCtx context.Context, msg *types.MsgDistr
 	distribution.DaoTxID = msg.DaoTxID
 	distribution.PopTxID = msg.PopTxID
 	distribution.InvestorTxID = msg.InvestorTxID
-	distribution.EarlyInvestorAddr = msg.EarlyInvestorTxID
+	distribution.EarlyInvAddr = msg.EarlyInvestorTxID
 	distribution.StrategicTxID = msg.StrategicTxID
 
 	err := k.resolveStagedClaims(ctx, distribution.FirstPop, distribution.LastPop)

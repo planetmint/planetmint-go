@@ -16,9 +16,9 @@ message DistributionOrder {
   int64 firstPop = 10; 
   int64 lastPop = 11;
   string proposer = 12;
-  string earlyInvestorAddr = 13; 
-  string earlyInvestorAmount = 14; 
-  string earlyInvestorTxID = 15;
+  string earlyInvAddr = 13; 
+  string earlyInvAmount = 14; 
+  string earlyInvTxID = 15;
   string strategicAddr = 16; 
   string strategicAmount = 17; 
   string strategicTxID = 18;

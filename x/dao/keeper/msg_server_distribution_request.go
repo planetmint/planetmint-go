@@ -37,7 +37,7 @@ func (k msgServer) DistributionRequest(goCtx context.Context, msg *types.MsgDist
 
 	util.GetAppLogger().Info(ctx, distributionRequestTag+"entering asset distribution mode")
 	// issue 5 distributions:
-	earlyInvestorTx, err := util.DistributeAsset(msg.Distribution.EarlyInvestorAddr, msg.Distribution.EarlyInvestorAmount)
+	earlyInvestorTx, err := util.DistributeAsset(msg.Distribution.EarlyInvAddr, msg.Distribution.EarlyInvAmount)
 	if err != nil {
 		util.GetAppLogger().Error(ctx, distributionRequestTag+"could not distribute asset to early investors: "+err.Error())
 	}
