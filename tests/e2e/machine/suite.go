@@ -40,7 +40,7 @@ func (s *E2ETestSuite) SetupSuite() {
 
 	s.T().Log("setting up e2e test suite")
 
-	s.network = network.New(s.T())
+	s.network = network.New(s.T(), s.cfg)
 	// create machine account for attestation
 	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
 	s.Require().NoError(err)
