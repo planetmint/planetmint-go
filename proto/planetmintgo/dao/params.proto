@@ -18,7 +18,7 @@ message Params {
   int64 reissuance_epochs=7;
   int64 pop_epochs =8;
   int64 distribution_offset =9;
-  string distribution_address_early_investor = 10;
+  string distribution_address_early_inv = 10;
   string distribution_address_investor = 11;
   string distribution_address_strategic = 12;
   string distribution_address_dao = 13;

@@ -47032,7 +47032,7 @@ paths:
                   distribution_offset:
                     type: string
                     format: int64
-                  distribution_address_early_investor:
+                  distribution_address_early_inv:
                     type: string
                   distribution_address_investor:
                     type: string
@@ -76450,7 +76450,7 @@ definitions:
       distribution_offset:
         type: string
         format: int64
-      distribution_address_early_investor:
+      distribution_address_early_inv:
         type: string
       distribution_address_investor:
         type: string
@@ -76654,7 +76654,7 @@ definitions:
           distribution_offset:
             type: string
             format: int64
-          distribution_address_early_investor:
+          distribution_address_early_inv:
             type: string
           distribution_address_investor:
             type: string
