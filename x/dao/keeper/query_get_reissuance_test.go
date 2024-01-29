@@ -14,7 +14,7 @@ import (
 func TestQueryGetReissuance(t *testing.T) {
 	keeper, ctx := keepertest.DaoKeeper(t)
 	wctx := sdk.WrapSDKContext(ctx)
-	items := createNReissuances(keeper, ctx, 1)
+	items := createNReissuances(keeper, ctx, 1, types.DefaultGenesis().GetParams().PopEpochs)
 
 	for _, tc := range []struct {
 		desc     string

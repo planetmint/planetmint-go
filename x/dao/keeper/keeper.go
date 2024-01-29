@@ -12,7 +12,6 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
-	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
@@ -77,10 +76,8 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 }
 
 func (k Keeper) SelectPopParticipants(ctx sdk.Context) (challenger string, challengee string) {
-	conf := config.GetConfig()
-
 	var startAccountNumber uint64
-	lastPopHeight := ctx.BlockHeight() - int64(conf.PopEpochs)
+	lastPopHeight := ctx.BlockHeight() - k.GetParams(ctx).PopEpochs
 	lastPop, found := k.LookupChallenge(ctx, lastPopHeight)
 	if lastPopHeight > 0 && found && lastPop.Challengee != "" {
 		lastAccountAddr := sdk.MustAccAddressFromBech32(lastPop.Challengee)
@@ -120,7 +117,7 @@ func (k Keeper) iterateAccountsForMachines(ctx sdk.Context, start uint64, partic
 		participant := sdk.AccAddress(iterator.Value())
 		_, found := k.machineKeeper.GetMachineIndexByAddress(ctx, participant.String())
 		if found {
-			available, err := util.GetMqttStatusOfParticipant(participant.String())
+			available, err := util.GetMqttStatusOfParticipant(participant.String(), k.GetParams(ctx).MqttResponseTimeout)
 			if err == nil && available {
 				*participants = append(*participants, participant)
 			}

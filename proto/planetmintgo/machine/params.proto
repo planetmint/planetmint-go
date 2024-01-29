@@ -8,5 +8,7 @@ option go_package = "github.com/planetmint/planetmint-go/x/machine/types";
 // Params defines the parameters for the module.
 message Params {
   option (gogoproto.goproto_stringer) = false;
-  
+  string asset_registry_scheme =1;
+  string asset_registry_domain =2;
+  string asset_registry_path =3;
 }

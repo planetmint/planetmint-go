@@ -92,7 +92,7 @@ func sendMqttPopInitMessages(challenge types.Challenge) (err error) {
 	return
 }
 
-func GetMqttStatusOfParticipant(address string) (isAvailable bool, err error) {
+func GetMqttStatusOfParticipant(address string, responseTimeoutInMs int64) (isAvailable bool, err error) {
 	lazyLoadMQTTClient()
 	if token := MQTTClient.Connect(); token.Wait() && token.Error() != nil {
 		err = token.Error()
@@ -127,7 +127,7 @@ func GetMqttStatusOfParticipant(address string) (isAvailable bool, err error) {
 	if token := MQTTClient.Publish(publishingTopic, 0, false, ""); token.Wait() && token.Error() != nil {
 		err = token.Error()
 	} else {
-		duration := int64(config.GetConfig().MqttResponseTimeout)
+		duration := responseTimeoutInMs
 		time.Sleep(time.Millisecond * time.Duration(duration))
 	}
 

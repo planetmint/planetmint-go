@@ -13,6 +13,10 @@ import (
 	types1 "github.com/planetmint/planetmint-go/x/machine/types"
 )
 
+func GetPopEpochs() int64{
+	return 24
+}
+
 // MockAccountKeeper is a mock of AccountKeeper interface.
 type MockAccountKeeper struct {
 	ctrl     *gomock.Controller

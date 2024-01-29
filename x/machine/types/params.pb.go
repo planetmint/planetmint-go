@@ -25,6 +25,9 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Params defines the parameters for the module.
 type Params struct {
+	AssetRegistryScheme string `protobuf:"bytes,1,opt,name=asset_registry_scheme,json=assetRegistryScheme,proto3" json:"asset_registry_scheme,omitempty"`
+	AssetRegistryDomain string `protobuf:"bytes,2,opt,name=asset_registry_domain,json=assetRegistryDomain,proto3" json:"asset_registry_domain,omitempty"`
+	AssetRegistryPath   string `protobuf:"bytes,3,opt,name=asset_registry_path,json=assetRegistryPath,proto3" json:"asset_registry_path,omitempty"`
 }
 
 func (m *Params) Reset()      { *m = Params{} }
@@ -59,6 +62,27 @@ func (m *Params) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Params proto.InternalMessageInfo
 
+func (m *Params) GetAssetRegistryScheme() string {
+	if m != nil {
+		return m.AssetRegistryScheme
+	}
+	return ""
+}
+
+func (m *Params) GetAssetRegistryDomain() string {
+	if m != nil {
+		return m.AssetRegistryDomain
+	}
+	return ""
+}
+
+func (m *Params) GetAssetRegistryPath() string {
+	if m != nil {
+		return m.AssetRegistryPath
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*Params)(nil), "planetmintgo.machine.Params")
 }
@@ -66,17 +90,22 @@ func init() {
 func init() { proto.RegisterFile("planetmintgo/machine/params.proto", fileDescriptor_84cd778d65e6639c) }
 
 var fileDescriptor_84cd778d65e6639c = []byte{
-	// 154 bytes of a gzipped FileDescriptorProto
+	// 233 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x52, 0x2c, 0xc8, 0x49, 0xcc,
 	0x4b, 0x2d, 0xc9, 0xcd, 0xcc, 0x2b, 0x49, 0xcf, 0xd7, 0xcf, 0x4d, 0x4c, 0xce, 0xc8, 0xcc, 0x4b,
 	0xd5, 0x2f, 0x48, 0x2c, 0x4a, 0xcc, 0x2d, 0xd6, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x12, 0x41,
 	0x56, 0xa2, 0x07, 0x55, 0x22, 0x25, 0x92, 0x9e, 0x9f, 0x9e, 0x0f, 0x56, 0xa0, 0x0f, 0x62, 0x41,
-	0xd4, 0x2a, 0xf1, 0x71, 0xb1, 0x05, 0x80, 0xf5, 0x5a, 0xb1, 0xcc, 0x58, 0x20, 0xcf, 0xe0, 0xe4,
-	0x7b, 0xe2, 0x91, 0x1c, 0xe3, 0x85, 0x47, 0x72, 0x8c, 0x0f, 0x1e, 0xc9, 0x31, 0x4e, 0x78, 0x2c,
-	0xc7, 0x70, 0xe1, 0xb1, 0x1c, 0xc3, 0x8d, 0xc7, 0x72, 0x0c, 0x51, 0xc6, 0xe9, 0x99, 0x25, 0x19,
-	0xa5, 0x49, 0x7a, 0xc9, 0xf9, 0xb9, 0xfa, 0x08, 0x0b, 0x90, 0x98, 0xba, 0xe9, 0xf9, 0xfa, 0x15,
-	0x70, 0x17, 0x95, 0x54, 0x16, 0xa4, 0x16, 0x27, 0xb1, 0x81, 0x6d, 0x31, 0x06, 0x04, 0x00, 0x00,
-	0xff, 0xff, 0x96, 0x1b, 0x82, 0xfc, 0xb6, 0x00, 0x00, 0x00,
+	0xd4, 0x2a, 0x2d, 0x63, 0xe4, 0x62, 0x0b, 0x00, 0x6b, 0x16, 0x32, 0xe2, 0x12, 0x4d, 0x2c, 0x2e,
+	0x4e, 0x2d, 0x89, 0x2f, 0x4a, 0x4d, 0xcf, 0x2c, 0x2e, 0x29, 0xaa, 0x8c, 0x2f, 0x4e, 0xce, 0x48,
+	0xcd, 0x4d, 0x95, 0x60, 0x54, 0x60, 0xd4, 0xe0, 0x0c, 0x12, 0x06, 0x4b, 0x06, 0x41, 0xe5, 0x82,
+	0xc1, 0x52, 0x58, 0xf4, 0xa4, 0xe4, 0xe7, 0x26, 0x66, 0xe6, 0x49, 0x30, 0x61, 0xd1, 0xe3, 0x02,
+	0x96, 0x12, 0xd2, 0xe3, 0x12, 0x46, 0xd3, 0x53, 0x90, 0x58, 0x92, 0x21, 0xc1, 0x0c, 0xd6, 0x21,
+	0x88, 0xa2, 0x23, 0x20, 0xb1, 0x24, 0xc3, 0x8a, 0x65, 0xc6, 0x02, 0x79, 0x06, 0x27, 0xdf, 0x13,
+	0x8f, 0xe4, 0x18, 0x2f, 0x3c, 0x92, 0x63, 0x7c, 0xf0, 0x48, 0x8e, 0x71, 0xc2, 0x63, 0x39, 0x86,
+	0x0b, 0x8f, 0xe5, 0x18, 0x6e, 0x3c, 0x96, 0x63, 0x88, 0x32, 0x4e, 0xcf, 0x2c, 0xc9, 0x28, 0x4d,
+	0xd2, 0x4b, 0xce, 0xcf, 0xd5, 0x47, 0xf8, 0x1c, 0x89, 0xa9, 0x9b, 0x9e, 0xaf, 0x5f, 0x01, 0x0f,
+	0xaa, 0x92, 0xca, 0x82, 0xd4, 0xe2, 0x24, 0x36, 0xb0, 0xf7, 0x8d, 0x01, 0x01, 0x00, 0x00, 0xff,
+	0xff, 0x50, 0x39, 0xf4, 0xa3, 0x4f, 0x01, 0x00, 0x00,
 }
 
 func (m *Params) Marshal() (dAtA []byte, err error) {
@@ -99,6 +128,27 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.AssetRegistryPath) > 0 {
+		i -= len(m.AssetRegistryPath)
+		copy(dAtA[i:], m.AssetRegistryPath)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.AssetRegistryPath)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.AssetRegistryDomain) > 0 {
+		i -= len(m.AssetRegistryDomain)
+		copy(dAtA[i:], m.AssetRegistryDomain)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.AssetRegistryDomain)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.AssetRegistryScheme) > 0 {
+		i -= len(m.AssetRegistryScheme)
+		copy(dAtA[i:], m.AssetRegistryScheme)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.AssetRegistryScheme)))
+		i--
+		dAtA[i] = 0xa
+	}
 	return len(dAtA) - i, nil
 }
 
@@ -119,6 +169,18 @@ func (m *Params) Size() (n int) {
 	}
 	var l int
 	_ = l
+	l = len(m.AssetRegistryScheme)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
+	l = len(m.AssetRegistryDomain)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
+	l = len(m.AssetRegistryPath)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
 	return n
 }
 
@@ -157,6 +219,102 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 			return fmt.Errorf("proto: Params: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AssetRegistryScheme", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AssetRegistryScheme = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AssetRegistryDomain", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AssetRegistryDomain = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AssetRegistryPath", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AssetRegistryPath = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipParams(dAtA[iNdEx:])

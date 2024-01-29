@@ -5,13 +5,11 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
 func (k msgServer) MintToken(goCtx context.Context, msg *types.MsgMintToken) (*types.MsgMintTokenResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	conf := config.GetConfig()
 
 	_, found := k.GetMintRequestByHash(ctx, msg.GetMintRequest().GetLiquidTxHash())
 	if found {
@@ -24,8 +22,7 @@ func (k msgServer) MintToken(goCtx context.Context, msg *types.MsgMintToken) (*t
 	if err != nil {
 		return nil, errorsmod.Wrapf(types.ErrInvalidAddress, "for provided address %s", beneficiary)
 	}
-
-	coin := sdk.NewCoin(conf.TokenDenom, sdk.NewIntFromUint64(amt))
+	coin := sdk.NewCoin(k.GetParams(ctx).TokenDenom, sdk.NewIntFromUint64(amt))
 	coins := sdk.NewCoins(coin)
 	err = k.bankKeeper.MintCoins(ctx, types.ModuleName, coins)
 	if err != nil {

@@ -3,21 +3,17 @@ package dao
 import (
 	"testing"
 
-	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/testutil/network"
 
 	"github.com/stretchr/testify/suite"
 )
 
 func resetConfig() {
-	conf := config.GetConfig()
-	conf.PopEpochs = config.DefaultConfig().PopEpochs
 }
 
 func TestE2ETestSuite(t *testing.T) {
 	cfg := network.DefaultConfig()
 	suite.Run(t, NewE2ETestSuite(cfg))
-	resetConfig()
 }
 
 func TestPopE2ETestSuite(t *testing.T) {

@@ -30,17 +30,18 @@ func (k msgServer) DistributionRequest(goCtx context.Context, msg *types.MsgDist
 
 	validatorIdentity, validResult := util.GetValidatorCometBFTIdentity(ctx)
 	if validResult && msg.Distribution.GetProposer() == validatorIdentity {
+		reissuanceAsset := k.GetParams(ctx).ReissuanceAsset
 		util.GetAppLogger().Info(ctx, distributionRequestTag+"entering asset distribution mode")
 		// issue three distributions:
-		investorTx, err := util.DistributeAsset(msg.Distribution.InvestorAddr, msg.Distribution.InvestorAmount)
+		investorTx, err := util.DistributeAsset(msg.Distribution.InvestorAddr, msg.Distribution.InvestorAmount, reissuanceAsset)
 		if err != nil {
 			util.GetAppLogger().Error(ctx, distributionRequestTag+"could not distribute asset to investors: "+err.Error())
 		}
-		popTx, err := util.DistributeAsset(msg.Distribution.PopAddr, msg.Distribution.PopAmount)
+		popTx, err := util.DistributeAsset(msg.Distribution.PopAddr, msg.Distribution.PopAmount, reissuanceAsset)
 		if err != nil {
 			util.GetAppLogger().Error(ctx, distributionRequestTag+"could not distribute asset to PoP: "+err.Error())
 		}
-		daoTx, err := util.DistributeAsset(msg.Distribution.DaoAddr, msg.Distribution.DaoAmount)
+		daoTx, err := util.DistributeAsset(msg.Distribution.DaoAddr, msg.Distribution.DaoAmount, reissuanceAsset)
 		if err != nil {
 			util.GetAppLogger().Error(ctx, distributionRequestTag+"could not distribute asset to DAO: "+err.Error())
 		}

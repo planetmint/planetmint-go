@@ -20,7 +20,7 @@ func ReissueAsset(reissueTx string) (txID string, err error) {
 	return
 }
 
-func DistributeAsset(address string, amount string) (txID string, err error) {
+func DistributeAsset(address string, amount string, reissuanceAsset string) (txID string, err error) {
 	conf := config.GetConfig()
 	url := conf.GetRPCURL()
 
@@ -34,7 +34,7 @@ func DistributeAsset(address string, amount string) (txID string, err error) {
 		"null",
 		`"unset"`,
 		"false",
-		`"` + conf.ReissuanceAsset + `"`,
+		`"` + reissuanceAsset + `"`,
 	})
 	return
 }

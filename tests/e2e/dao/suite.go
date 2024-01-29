@@ -26,17 +26,16 @@ import (
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 )
 
-var (
-	bobAddr   sdk.AccAddress
-	aliceAddr sdk.AccAddress
-)
-
 // E2ETestSuite struct definition of dao suite
 type E2ETestSuite struct {
 	suite.Suite
 
-	cfg     network.Config
-	network *network.Network
+	cfg                network.Config
+	network            *network.Network
+	reissuanceEpochs   int64
+	distributionOffset int64
+	bobAddr            sdk.AccAddress
+	aliceAddr          sdk.AccAddress
 }
 
 // NewE2ETestSuite returns configured dao E2ETestSuite
@@ -50,9 +49,9 @@ func (s *E2ETestSuite) SetupSuite() {
 	conf := config.GetConfig()
 	conf.FeeDenom = "node0token"
 	// set epochs: make sure to start after initial height of 7
-	conf.DistributionOffset = 5
-	conf.ReissuanceEpochs = 25
 	conf.SetPlanetmintConfig(conf)
+	s.reissuanceEpochs = 25
+	s.distributionOffset = 5
 
 	s.T().Log("setting up e2e test suite")
 
@@ -60,11 +59,11 @@ func (s *E2ETestSuite) SetupSuite() {
 	var authGenState authtypes.GenesisState
 	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[authtypes.ModuleName], &authGenState)
 
-	bobAddr = sample.Secp256k1AccAddress()
-	aliceAddr = sample.Secp256k1AccAddress()
+	s.bobAddr = sample.Secp256k1AccAddress()
+	s.aliceAddr = sample.Secp256k1AccAddress()
 
-	bob := authtypes.NewBaseAccount(bobAddr, nil, 0, 0)
-	alice := authtypes.NewBaseAccount(aliceAddr, nil, 0, 0)
+	bob := authtypes.NewBaseAccount(s.bobAddr, nil, 0, 0)
+	alice := authtypes.NewBaseAccount(s.aliceAddr, nil, 0, 0)
 
 	accounts, err := authtypes.PackAccounts(authtypes.GenesisAccounts{bob, alice})
 	s.Require().NoError(err)
@@ -76,17 +75,22 @@ func (s *E2ETestSuite) SetupSuite() {
 	var bankGenState banktypes.GenesisState
 	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[banktypes.ModuleName], &bankGenState)
 
+	valAddr, err := s.createValAccount(s.cfg)
+	s.Require().NoError(err)
+
+	var daoGenState daotypes.GenesisState
+	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[daotypes.ModuleName], &daoGenState)
 	bbalances := sdk.NewCoins(
-		sdk.NewCoin(conf.TokenDenom, math.NewInt(10000)),
+		sdk.NewCoin(daoGenState.Params.TokenDenom, math.NewInt(10000)),
 	)
 
 	abalances := sdk.NewCoins(
-		sdk.NewCoin(conf.TokenDenom, math.NewInt(10000)),
+		sdk.NewCoin(daoGenState.Params.TokenDenom, math.NewInt(10000)),
 	)
 
 	accountBalances := []banktypes.Balance{
-		{Address: bobAddr.String(), Coins: bbalances.Sort()},
-		{Address: aliceAddr.String(), Coins: abalances.Sort()},
+		{Address: s.bobAddr.String(), Coins: bbalances.Sort()},
+		{Address: s.aliceAddr.String(), Coins: abalances.Sort()},
 	}
 	bankGenState.Balances = append(bankGenState.Balances, accountBalances...)
 	s.cfg.GenesisState[banktypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&bankGenState)
@@ -96,11 +100,9 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.cfg.Mnemonics = []string{sample.Mnemonic}
 
 	// set MintAddress in GenesisState
-	var daoGenState daotypes.GenesisState
-	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[daotypes.ModuleName], &daoGenState)
-	valAddr, err := s.createValAccount(s.cfg)
-	s.Require().NoError(err)
 
+	daoGenState.Params.DistributionOffset = s.distributionOffset
+	daoGenState.Params.ReissuanceEpochs = s.reissuanceEpochs
 	daoGenState.Params.MintAddress = valAddr.String()
 	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
 
@@ -116,7 +118,7 @@ func (s *E2ETestSuite) TearDownSuite() {
 func (s *E2ETestSuite) TestMintToken() {
 	val := s.network.Validators[0]
 
-	mintRequest := sample.MintRequest(aliceAddr.String(), 1000, "hash")
+	mintRequest := sample.MintRequest(s.aliceAddr.String(), 1000, "hash")
 	msg1 := daotypes.NewMsgMintToken(val.Address.String(), &mintRequest)
 	out, err := e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg1)
 	s.Require().NoError(err)
@@ -129,7 +131,7 @@ func (s *E2ETestSuite) TestMintToken() {
 
 	// assert that alice has actually received the minted tokens 10000 (initial supply) + 1000 (minted) = 11000 (total)
 	output, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
-		aliceAddr.String(),
+		s.aliceAddr.String(),
 	})
 	out, ok := output.(*bytes.Buffer)
 	if !ok {
@@ -186,14 +188,13 @@ func (s *E2ETestSuite) createValAccount(cfg network.Config) (address sdk.AccAddr
 }
 
 func (s *E2ETestSuite) TestReissuance() {
-	conf := config.GetConfig()
 	val := s.network.Validators[0]
 
 	var err error
 	latestHeight, err := s.network.LatestHeight()
 	s.Require().NoError(err)
 
-	var wait int
+	var wait int64
 	for {
 		latestHeight, err = s.network.WaitForHeight(latestHeight + 1)
 		s.Require().NoError(err)
@@ -203,13 +204,13 @@ func (s *E2ETestSuite) TestReissuance() {
 		// 1:  block 26: sending the reissuance result broadcast tx succeeded
 		// 2:  block 27: confirmation
 		wait = 2
-		if latestHeight%int64(conf.ReissuanceEpochs+wait) == 0 {
+		if latestHeight%s.reissuanceEpochs+wait == 0 {
 			break
 		}
 	}
 
 	// - because we waited on the reissuance result, see above
-	intValue := strconv.FormatInt(latestHeight-int64(wait), 10)
+	intValue := strconv.FormatInt(latestHeight-wait, 10)
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetReissuance(), []string{intValue})
 	s.Require().NoError(err)
 }

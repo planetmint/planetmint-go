@@ -6,7 +6,6 @@ import (
 	errorsmod "cosmossdk.io/errors"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
@@ -36,10 +35,9 @@ func (k msgServer) ReportPopResult(goCtx context.Context, msg *types.MsgReportPo
 }
 
 func (k msgServer) issuePoPRewards(ctx sdk.Context, challenge types.Challenge) (err error) {
-	conf := config.GetConfig()
-	total, challengerAmt, _ := util.GetPopReward(challenge.Height)
+	total, challengerAmt, _ := util.GetPopReward(challenge.Height, k.GetParams(ctx).PopEpochs)
 
-	stagedCRDDL := sdk.NewCoin(conf.StagedDenom, sdk.ZeroInt())
+	stagedCRDDL := sdk.NewCoin(k.GetParams(ctx).StagedDenom, sdk.ZeroInt())
 	if challenge.GetSuccess() {
 		stagedCRDDL = stagedCRDDL.AddAmount(sdk.NewIntFromUint64(total))
 	} else {
@@ -55,7 +53,7 @@ func (k msgServer) issuePoPRewards(ctx sdk.Context, challenge types.Challenge) (
 }
 
 func (k msgServer) handlePoP(ctx sdk.Context, challenge types.Challenge) (err error) {
-	_, challengerAmt, challengeeAmt := util.GetPopReward(challenge.Height)
+	_, challengerAmt, challengeeAmt := util.GetPopReward(challenge.Height, k.GetParams(ctx).PopEpochs)
 
 	err = k.sendRewards(ctx, challenge.GetChallenger(), challengerAmt)
 	if err != nil {
@@ -70,8 +68,7 @@ func (k msgServer) handlePoP(ctx sdk.Context, challenge types.Challenge) (err er
 }
 
 func (k msgServer) sendRewards(ctx sdk.Context, receiver string, amt uint64) (err error) {
-	conf := config.GetConfig()
-	coins := sdk.NewCoins(sdk.NewCoin(conf.StagedDenom, sdk.NewIntFromUint64(amt)))
+	coins := sdk.NewCoins(sdk.NewCoin(k.GetParams(ctx).StagedDenom, sdk.NewIntFromUint64(amt)))
 	receiverAddr, err := sdk.AccAddressFromBech32(receiver)
 	if err != nil {
 		return err

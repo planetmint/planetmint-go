@@ -5,7 +5,6 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
@@ -58,14 +57,13 @@ func (k Keeper) GetLastDistributionOrder(ctx sdk.Context) (val types.Distributio
 // 	return distribution_orders
 // }
 
-func ComputeDistribution(lastReissuance int64, blockHeight int64, amount uint64) (distribution types.DistributionOrder) {
-	conf := config.GetConfig()
+func (k Keeper) ComputeDistribution(ctx sdk.Context, lastReissuance int64, blockHeight int64, amount uint64) (distribution types.DistributionOrder) {
 	distribution.FirstPop = lastReissuance
 	distribution.LastPop = blockHeight
 
-	distribution.DaoAddr = conf.DistributionAddrDAO
-	distribution.InvestorAddr = conf.DistributionAddrInv
-	distribution.PopAddr = conf.DistributionAddrPop
+	distribution.DaoAddr = k.GetParams(ctx).DistributionAddressDao
+	distribution.InvestorAddr = k.GetParams(ctx).DistributionAddressInvestor
+	distribution.PopAddr = k.GetParams(ctx).DistributionAddressPop
 
 	distribution.DaoAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentageDao))
 	distribution.InvestorAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentageInvestor))
@@ -108,6 +106,6 @@ func (k Keeper) GetDistributionForReissuedTokens(ctx sdk.Context, blockHeight in
 			ctx.Logger().Info("%u %u %u", lastPoP, obj.BlockHeight, blockHeight)
 		}
 	}
-	distribution = ComputeDistribution(lastPoP, blockHeight, overallAmount)
+	distribution = k.ComputeDistribution(ctx, lastPoP, blockHeight, overallAmount)
 	return distribution, err
 }
