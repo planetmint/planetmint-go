@@ -50,6 +50,12 @@ func (s *E2ETestSuite) SetupSuite() {
 
 	s.T().Log("setting up e2e test suite")
 
+	// Setup MintAddress parameter in genesis state
+	// use sample.Mnemonic to make mint address deterministic for test
+	s.cfg.Mnemonics = []string{sample.Mnemonic}
+	valAddr, err := s.createValAccount(s.cfg)
+	s.Require().NoError(err)
+
 	// set accounts for alice and bob in genesis state
 	var authGenState authtypes.GenesisState
 	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[authtypes.ModuleName], &authGenState)
@@ -66,15 +72,16 @@ func (s *E2ETestSuite) SetupSuite() {
 	authGenState.Accounts = append(authGenState.Accounts, accounts...)
 	s.cfg.GenesisState[authtypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&authGenState)
 
-	// set the balances in genesis state
-	var bankGenState banktypes.GenesisState
-	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[banktypes.ModuleName], &bankGenState)
-
-	valAddr, err := s.createValAccount(s.cfg)
-	s.Require().NoError(err)
-
 	var daoGenState daotypes.GenesisState
 	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[daotypes.ModuleName], &daoGenState)
+	// set MintAddress in GenesisState
+	// set FeeDenom to node0token because the sending account is initialized with no plmnt tokens
+	daoGenState.Params.FeeDenom = "node0token"
+	daoGenState.Params.DistributionOffset = s.distributionOffset
+	daoGenState.Params.ReissuanceEpochs = s.reissuanceEpochs
+	daoGenState.Params.MintAddress = valAddr.String()
+	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
+
 	bbalances := sdk.NewCoins(
 		sdk.NewCoin(daoGenState.Params.TokenDenom, math.NewInt(10000)),
 	)
@@ -87,21 +94,11 @@ func (s *E2ETestSuite) SetupSuite() {
 		{Address: s.bobAddr.String(), Coins: bbalances.Sort()},
 		{Address: s.aliceAddr.String(), Coins: abalances.Sort()},
 	}
+	// set the balances in genesis state
+	var bankGenState banktypes.GenesisState
+	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[banktypes.ModuleName], &bankGenState)
 	bankGenState.Balances = append(bankGenState.Balances, accountBalances...)
 	s.cfg.GenesisState[banktypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&bankGenState)
-
-	// Setup MintAddress parameter in genesis state
-	// use sample.Mnemonic to make mint address deterministic for test
-	s.cfg.Mnemonics = []string{sample.Mnemonic}
-
-	// set MintAddress in GenesisState
-	// set FeeDenom to node0token because the sending account is initialized with no plmnt tokens
-
-	daoGenState.Params.FeeDenom = "node0token"
-	daoGenState.Params.DistributionOffset = s.distributionOffset
-	daoGenState.Params.ReissuanceEpochs = s.reissuanceEpochs
-	daoGenState.Params.MintAddress = valAddr.String()
-	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
 
 	s.cfg.MinGasPrices = fmt.Sprintf("0.000006%s", daoGenState.Params.FeeDenom)
 	s.network = network.New(s.T(), s.cfg)
@@ -201,7 +198,7 @@ func (s *E2ETestSuite) TestReissuance() {
 		// 1:  block 26: sending the reissuance result broadcast tx succeeded
 		// 2:  block 27: confirmation
 		wait = 2
-		if latestHeight%s.reissuanceEpochs+wait == 0 {
+		if latestHeight%(s.reissuanceEpochs+wait) == 0 {
 			break
 		}
 	}
