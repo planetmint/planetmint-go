@@ -25,7 +25,21 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Params defines the parameters for the module.
 type Params struct {
-	MintAddress string `protobuf:"bytes,1,opt,name=mint_address,json=mintAddress,proto3" json:"mint_address,omitempty"`
+	MintAddress                  string `protobuf:"bytes,1,opt,name=mint_address,json=mintAddress,proto3" json:"mint_address,omitempty"`
+	TokenDenom                   string `protobuf:"bytes,2,opt,name=token_denom,json=tokenDenom,proto3" json:"token_denom,omitempty"`
+	FeeDenom                     string `protobuf:"bytes,3,opt,name=fee_denom,json=feeDenom,proto3" json:"fee_denom,omitempty"`
+	StagedDenom                  string `protobuf:"bytes,4,opt,name=staged_denom,json=stagedDenom,proto3" json:"staged_denom,omitempty"`
+	ClaimDenom                   string `protobuf:"bytes,5,opt,name=claim_denom,json=claimDenom,proto3" json:"claim_denom,omitempty"`
+	ReissuanceAsset              string `protobuf:"bytes,6,opt,name=reissuance_asset,json=reissuanceAsset,proto3" json:"reissuance_asset,omitempty"`
+	ReissuanceEpochs             int64  `protobuf:"varint,7,opt,name=reissuance_epochs,json=reissuanceEpochs,proto3" json:"reissuance_epochs,omitempty"`
+	PopEpochs                    int64  `protobuf:"varint,8,opt,name=pop_epochs,json=popEpochs,proto3" json:"pop_epochs,omitempty"`
+	DistributionOffset           int64  `protobuf:"varint,9,opt,name=distribution_offset,json=distributionOffset,proto3" json:"distribution_offset,omitempty"`
+	DistributionAddressEarlyInv  string `protobuf:"bytes,10,opt,name=distribution_address_early_inv,json=distributionAddressEarlyInv,proto3" json:"distribution_address_early_inv,omitempty"`
+	DistributionAddressInvestor  string `protobuf:"bytes,11,opt,name=distribution_address_investor,json=distributionAddressInvestor,proto3" json:"distribution_address_investor,omitempty"`
+	DistributionAddressStrategic string `protobuf:"bytes,12,opt,name=distribution_address_strategic,json=distributionAddressStrategic,proto3" json:"distribution_address_strategic,omitempty"`
+	DistributionAddressDao       string `protobuf:"bytes,13,opt,name=distribution_address_dao,json=distributionAddressDao,proto3" json:"distribution_address_dao,omitempty"`
+	DistributionAddressPop       string `protobuf:"bytes,14,opt,name=distribution_address_pop,json=distributionAddressPop,proto3" json:"distribution_address_pop,omitempty"`
+	MqttResponseTimeout          int64  `protobuf:"varint,15,opt,name=mqtt_response_timeout,json=mqttResponseTimeout,proto3" json:"mqtt_response_timeout,omitempty"`
 }
 
 func (m *Params) Reset()      { *m = Params{} }
@@ -67,6 +81,104 @@ func (m *Params) GetMintAddress() string {
 	return ""
 }
 
+func (m *Params) GetTokenDenom() string {
+	if m != nil {
+		return m.TokenDenom
+	}
+	return ""
+}
+
+func (m *Params) GetFeeDenom() string {
+	if m != nil {
+		return m.FeeDenom
+	}
+	return ""
+}
+
+func (m *Params) GetStagedDenom() string {
+	if m != nil {
+		return m.StagedDenom
+	}
+	return ""
+}
+
+func (m *Params) GetClaimDenom() string {
+	if m != nil {
+		return m.ClaimDenom
+	}
+	return ""
+}
+
+func (m *Params) GetReissuanceAsset() string {
+	if m != nil {
+		return m.ReissuanceAsset
+	}
+	return ""
+}
+
+func (m *Params) GetReissuanceEpochs() int64 {
+	if m != nil {
+		return m.ReissuanceEpochs
+	}
+	return 0
+}
+
+func (m *Params) GetPopEpochs() int64 {
+	if m != nil {
+		return m.PopEpochs
+	}
+	return 0
+}
+
+func (m *Params) GetDistributionOffset() int64 {
+	if m != nil {
+		return m.DistributionOffset
+	}
+	return 0
+}
+
+func (m *Params) GetDistributionAddressEarlyInv() string {
+	if m != nil {
+		return m.DistributionAddressEarlyInv
+	}
+	return ""
+}
+
+func (m *Params) GetDistributionAddressInvestor() string {
+	if m != nil {
+		return m.DistributionAddressInvestor
+	}
+	return ""
+}
+
+func (m *Params) GetDistributionAddressStrategic() string {
+	if m != nil {
+		return m.DistributionAddressStrategic
+	}
+	return ""
+}
+
+func (m *Params) GetDistributionAddressDao() string {
+	if m != nil {
+		return m.DistributionAddressDao
+	}
+	return ""
+}
+
+func (m *Params) GetDistributionAddressPop() string {
+	if m != nil {
+		return m.DistributionAddressPop
+	}
+	return ""
+}
+
+func (m *Params) GetMqttResponseTimeout() int64 {
+	if m != nil {
+		return m.MqttResponseTimeout
+	}
+	return 0
+}
+
 func init() {
 	proto.RegisterType((*Params)(nil), "planetmintgo.dao.Params")
 }
@@ -74,18 +186,36 @@ func init() {
 func init() { proto.RegisterFile("planetmintgo/dao/params.proto", fileDescriptor_a58575036b3ad531) }
 
 var fileDescriptor_a58575036b3ad531 = []byte{
-	// 178 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0x2d, 0xc8, 0x49, 0xcc,
-	0x4b, 0x2d, 0xc9, 0xcd, 0xcc, 0x2b, 0x49, 0xcf, 0xd7, 0x4f, 0x49, 0xcc, 0xd7, 0x2f, 0x48, 0x2c,
-	0x4a, 0xcc, 0x2d, 0xd6, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x12, 0x40, 0x96, 0xd6, 0x4b, 0x49,
-	0xcc, 0x97, 0x12, 0x49, 0xcf, 0x4f, 0xcf, 0x07, 0x4b, 0xea, 0x83, 0x58, 0x10, 0x75, 0x4a, 0x86,
-	0x5c, 0x6c, 0x01, 0x60, 0x7d, 0x42, 0x8a, 0x5c, 0x3c, 0x20, 0xd5, 0xf1, 0x89, 0x29, 0x29, 0x45,
-	0xa9, 0xc5, 0xc5, 0x12, 0x8c, 0x0a, 0x8c, 0x1a, 0x9c, 0x41, 0xdc, 0x20, 0x31, 0x47, 0x88, 0x90,
-	0x15, 0xcb, 0x8c, 0x05, 0xf2, 0x0c, 0x4e, 0x9e, 0x27, 0x1e, 0xc9, 0x31, 0x5e, 0x78, 0x24, 0xc7,
-	0xf8, 0xe0, 0x91, 0x1c, 0xe3, 0x84, 0xc7, 0x72, 0x0c, 0x17, 0x1e, 0xcb, 0x31, 0xdc, 0x78, 0x2c,
-	0xc7, 0x10, 0xa5, 0x9f, 0x9e, 0x59, 0x92, 0x51, 0x9a, 0xa4, 0x97, 0x9c, 0x9f, 0xab, 0x8f, 0xb0,
-	0x1f, 0x89, 0xa9, 0x9b, 0x9e, 0xaf, 0x5f, 0x01, 0x76, 0x6c, 0x49, 0x65, 0x41, 0x6a, 0x71, 0x12,
-	0x1b, 0xd8, 0x11, 0xc6, 0x80, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x31, 0x13, 0x64, 0xcd, 0x00,
+	// 466 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x93, 0x31, 0x6f, 0x13, 0x31,
+	0x14, 0xc7, 0x73, 0xb4, 0x0d, 0xcd, 0x4b, 0xa0, 0xc5, 0x05, 0x64, 0x51, 0x72, 0x69, 0x99, 0x8a,
+	0x10, 0x39, 0x09, 0x16, 0xc4, 0xd6, 0x92, 0x0e, 0x99, 0xa8, 0x02, 0x13, 0xcb, 0xc9, 0xc9, 0xbd,
+	0x5c, 0x2d, 0x72, 0x7e, 0xc6, 0x76, 0x22, 0xfa, 0x2d, 0x18, 0x19, 0xf9, 0x38, 0x8c, 0x15, 0x13,
+	0x23, 0x4a, 0xbe, 0x08, 0x3a, 0xfb, 0xaa, 0x5e, 0xa5, 0x64, 0xb3, 0xfe, 0xbf, 0xdf, 0xfb, 0xdb,
+	0xb2, 0xf4, 0xa0, 0xab, 0x67, 0x42, 0xa1, 0x2b, 0xa4, 0x72, 0x39, 0x25, 0x99, 0xa0, 0x44, 0x0b,
+	0x23, 0x0a, 0xdb, 0xd7, 0x86, 0x1c, 0xb1, 0xfd, 0x3a, 0xee, 0x67, 0x82, 0x9e, 0x3d, 0xce, 0x29,
+	0x27, 0x0f, 0x93, 0xf2, 0x14, 0xbc, 0x17, 0x7f, 0x76, 0xa0, 0x79, 0xe1, 0x07, 0xd9, 0x31, 0x74,
+	0x4a, 0x3d, 0x15, 0x59, 0x66, 0xd0, 0x5a, 0x1e, 0x1d, 0x45, 0x27, 0xad, 0x51, 0xbb, 0xcc, 0x4e,
+	0x43, 0xc4, 0x7a, 0xd0, 0x76, 0xf4, 0x15, 0x55, 0x9a, 0xa1, 0xa2, 0x82, 0xdf, 0xf3, 0x06, 0xf8,
+	0x68, 0x50, 0x26, 0xec, 0x10, 0x5a, 0x53, 0xc4, 0x0a, 0x6f, 0x79, 0xbc, 0x3b, 0x45, 0x0c, 0xf0,
+	0x18, 0x3a, 0xd6, 0x89, 0x1c, 0xb3, 0x8a, 0x6f, 0x87, 0x0b, 0x42, 0x16, 0x94, 0x1e, 0xb4, 0x27,
+	0x33, 0x21, 0x8b, 0xca, 0xd8, 0x09, 0x17, 0xf8, 0x28, 0x08, 0x2f, 0x61, 0xdf, 0xa0, 0xb4, 0x76,
+	0x2e, 0xd4, 0x04, 0x53, 0x61, 0x2d, 0x3a, 0xde, 0xf4, 0xd6, 0xde, 0x6d, 0x7e, 0x5a, 0xc6, 0xec,
+	0x15, 0x3c, 0xaa, 0xa9, 0xa8, 0x69, 0x72, 0x69, 0xf9, 0xfd, 0xa3, 0xe8, 0x64, 0x6b, 0x54, 0xeb,
+	0x38, 0xf7, 0x39, 0xeb, 0x02, 0x68, 0xd2, 0x37, 0xd6, 0xae, 0xb7, 0x5a, 0x9a, 0x74, 0x85, 0x13,
+	0x38, 0xc8, 0xa4, 0x75, 0x46, 0x8e, 0xe7, 0x4e, 0x92, 0x4a, 0x69, 0x3a, 0x2d, 0x6f, 0x6e, 0x79,
+	0x8f, 0xd5, 0xd1, 0x47, 0x4f, 0xd8, 0x07, 0x88, 0xef, 0x0c, 0x54, 0x9f, 0x9a, 0xa2, 0x30, 0xb3,
+	0xab, 0x54, 0xaa, 0x05, 0x07, 0xff, 0xea, 0xc3, 0xba, 0x55, 0x7d, 0xf3, 0x79, 0xe9, 0x0c, 0xd5,
+	0x82, 0x9d, 0x41, 0x77, 0x6d, 0x89, 0x54, 0x0b, 0xb4, 0x8e, 0x0c, 0x6f, 0x6f, 0xec, 0x18, 0x56,
+	0x0a, 0x1b, 0x6c, 0x78, 0x88, 0x75, 0x46, 0x38, 0xcc, 0xe5, 0x84, 0x77, 0x7c, 0xc9, 0xf3, 0x35,
+	0x25, 0x9f, 0x6e, 0x1c, 0xf6, 0x0e, 0xf8, 0xda, 0x96, 0x4c, 0x10, 0x7f, 0xe0, 0xe7, 0x9f, 0xae,
+	0x99, 0x1f, 0x08, 0xda, 0x38, 0xa9, 0x49, 0xf3, 0x87, 0x1b, 0x27, 0x2f, 0x48, 0xb3, 0x37, 0xf0,
+	0xa4, 0xf8, 0xe6, 0x5c, 0x6a, 0xd0, 0x6a, 0x52, 0x16, 0x53, 0x27, 0x0b, 0xa4, 0xb9, 0xe3, 0x7b,
+	0xfe, 0xd7, 0x0f, 0x4a, 0x38, 0xaa, 0xd8, 0xe7, 0x80, 0xde, 0x6f, 0xff, 0xfc, 0xd5, 0x6b, 0x9c,
+	0x0d, 0x7f, 0x2f, 0xe3, 0xe8, 0x7a, 0x19, 0x47, 0xff, 0x96, 0x71, 0xf4, 0x63, 0x15, 0x37, 0xae,
+	0x57, 0x71, 0xe3, 0xef, 0x2a, 0x6e, 0x7c, 0x49, 0x72, 0xe9, 0x2e, 0xe7, 0xe3, 0xfe, 0x84, 0x8a,
+	0xe4, 0x76, 0x43, 0x6a, 0xc7, 0xd7, 0x39, 0x25, 0xdf, 0xfd, 0x3a, 0xb9, 0x2b, 0x8d, 0x76, 0xdc,
+	0xf4, 0x6b, 0xf2, 0xf6, 0x7f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x69, 0x6a, 0x2e, 0x26, 0x6f, 0x03,
 	0x00, 0x00,
 }
 
@@ -109,6 +239,96 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.MqttResponseTimeout != 0 {
+		i = encodeVarintParams(dAtA, i, uint64(m.MqttResponseTimeout))
+		i--
+		dAtA[i] = 0x78
+	}
+	if len(m.DistributionAddressPop) > 0 {
+		i -= len(m.DistributionAddressPop)
+		copy(dAtA[i:], m.DistributionAddressPop)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.DistributionAddressPop)))
+		i--
+		dAtA[i] = 0x72
+	}
+	if len(m.DistributionAddressDao) > 0 {
+		i -= len(m.DistributionAddressDao)
+		copy(dAtA[i:], m.DistributionAddressDao)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.DistributionAddressDao)))
+		i--
+		dAtA[i] = 0x6a
+	}
+	if len(m.DistributionAddressStrategic) > 0 {
+		i -= len(m.DistributionAddressStrategic)
+		copy(dAtA[i:], m.DistributionAddressStrategic)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.DistributionAddressStrategic)))
+		i--
+		dAtA[i] = 0x62
+	}
+	if len(m.DistributionAddressInvestor) > 0 {
+		i -= len(m.DistributionAddressInvestor)
+		copy(dAtA[i:], m.DistributionAddressInvestor)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.DistributionAddressInvestor)))
+		i--
+		dAtA[i] = 0x5a
+	}
+	if len(m.DistributionAddressEarlyInv) > 0 {
+		i -= len(m.DistributionAddressEarlyInv)
+		copy(dAtA[i:], m.DistributionAddressEarlyInv)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.DistributionAddressEarlyInv)))
+		i--
+		dAtA[i] = 0x52
+	}
+	if m.DistributionOffset != 0 {
+		i = encodeVarintParams(dAtA, i, uint64(m.DistributionOffset))
+		i--
+		dAtA[i] = 0x48
+	}
+	if m.PopEpochs != 0 {
+		i = encodeVarintParams(dAtA, i, uint64(m.PopEpochs))
+		i--
+		dAtA[i] = 0x40
+	}
+	if m.ReissuanceEpochs != 0 {
+		i = encodeVarintParams(dAtA, i, uint64(m.ReissuanceEpochs))
+		i--
+		dAtA[i] = 0x38
+	}
+	if len(m.ReissuanceAsset) > 0 {
+		i -= len(m.ReissuanceAsset)
+		copy(dAtA[i:], m.ReissuanceAsset)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.ReissuanceAsset)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.ClaimDenom) > 0 {
+		i -= len(m.ClaimDenom)
+		copy(dAtA[i:], m.ClaimDenom)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.ClaimDenom)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.StagedDenom) > 0 {
+		i -= len(m.StagedDenom)
+		copy(dAtA[i:], m.StagedDenom)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.StagedDenom)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.FeeDenom) > 0 {
+		i -= len(m.FeeDenom)
+		copy(dAtA[i:], m.FeeDenom)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.FeeDenom)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.TokenDenom) > 0 {
+		i -= len(m.TokenDenom)
+		copy(dAtA[i:], m.TokenDenom)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.TokenDenom)))
+		i--
+		dAtA[i] = 0x12
+	}
 	if len(m.MintAddress) > 0 {
 		i -= len(m.MintAddress)
 		copy(dAtA[i:], m.MintAddress)
@@ -139,6 +359,58 @@ func (m *Params) Size() (n int) {
 	l = len(m.MintAddress)
 	if l > 0 {
 		n += 1 + l + sovParams(uint64(l))
+	}
+	l = len(m.TokenDenom)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
+	l = len(m.FeeDenom)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
+	l = len(m.StagedDenom)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
+	l = len(m.ClaimDenom)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
+	l = len(m.ReissuanceAsset)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
+	if m.ReissuanceEpochs != 0 {
+		n += 1 + sovParams(uint64(m.ReissuanceEpochs))
+	}
+	if m.PopEpochs != 0 {
+		n += 1 + sovParams(uint64(m.PopEpochs))
+	}
+	if m.DistributionOffset != 0 {
+		n += 1 + sovParams(uint64(m.DistributionOffset))
+	}
+	l = len(m.DistributionAddressEarlyInv)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
+	l = len(m.DistributionAddressInvestor)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
+	l = len(m.DistributionAddressStrategic)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
+	l = len(m.DistributionAddressDao)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
+	l = len(m.DistributionAddressPop)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
+	if m.MqttResponseTimeout != 0 {
+		n += 1 + sovParams(uint64(m.MqttResponseTimeout))
 	}
 	return n
 }
@@ -210,6 +482,402 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 			}
 			m.MintAddress = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TokenDenom", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.TokenDenom = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FeeDenom", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.FeeDenom = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field StagedDenom", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.StagedDenom = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ClaimDenom", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ClaimDenom = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ReissuanceAsset", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ReissuanceAsset = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ReissuanceEpochs", wireType)
+			}
+			m.ReissuanceEpochs = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ReissuanceEpochs |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PopEpochs", wireType)
+			}
+			m.PopEpochs = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PopEpochs |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 9:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DistributionOffset", wireType)
+			}
+			m.DistributionOffset = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.DistributionOffset |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 10:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DistributionAddressEarlyInv", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DistributionAddressEarlyInv = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 11:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DistributionAddressInvestor", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DistributionAddressInvestor = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 12:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DistributionAddressStrategic", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DistributionAddressStrategic = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 13:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DistributionAddressDao", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DistributionAddressDao = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 14:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DistributionAddressPop", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DistributionAddressPop = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 15:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MqttResponseTimeout", wireType)
+			}
+			m.MqttResponseTimeout = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.MqttResponseTimeout |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipParams(dAtA[iNdEx:])

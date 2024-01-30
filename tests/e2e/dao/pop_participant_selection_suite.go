@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
-	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/testutil"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
@@ -40,8 +39,11 @@ var machines = []struct {
 type PopSelectionE2ETestSuite struct {
 	suite.Suite
 
-	cfg     network.Config
-	network *network.Network
+	cfg                network.Config
+	network            *network.Network
+	popEpochs          int64
+	reissuanceEpochs   int64
+	distributionOffset int64
 }
 
 func NewPopSelectionE2ETestSuite(cfg network.Config) *PopSelectionE2ETestSuite {
@@ -50,16 +52,21 @@ func NewPopSelectionE2ETestSuite(cfg network.Config) *PopSelectionE2ETestSuite {
 
 func (s *PopSelectionE2ETestSuite) SetupSuite() {
 	s.T().Log("setting up e2e test suite")
-	conf := config.GetConfig()
-	conf.FeeDenom = sample.FeeDenom
-	conf.MqttResponseTimeout = 200
+
+	s.popEpochs = 10
+	s.reissuanceEpochs = 60
+	s.distributionOffset = 2
+
+	var daoGenState daotypes.GenesisState
+	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[daotypes.ModuleName], &daoGenState)
+	daoGenState.Params.PopEpochs = s.popEpochs
+	daoGenState.Params.ReissuanceEpochs = s.reissuanceEpochs
+	daoGenState.Params.DistributionOffset = s.distributionOffset
+	daoGenState.Params.MqttResponseTimeout = 200
+	daoGenState.Params.FeeDenom = sample.FeeDenom
+	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
 
 	s.network = network.New(s.T(), s.cfg)
-
-	// trigger one participant selection per test
-	conf.PopEpochs = 10
-	conf.ReissuanceEpochs = 60
-	conf.DistributionOffset = 2
 }
 
 // TearDownSuite clean up after testing
@@ -69,23 +76,22 @@ func (s *PopSelectionE2ETestSuite) TearDownSuite() {
 
 func (s *PopSelectionE2ETestSuite) perpareLocalTest() testutil.BufferWriter {
 	val := s.network.Validators[0]
-	conf := config.GetConfig()
 
 	latestHeight, err := s.network.LatestHeight()
 	s.Require().NoError(err)
 
-	wait := int(math.Ceil(float64(conf.PopEpochs) / 2.0))
+	wait := int64(math.Ceil(float64(s.popEpochs) / 2.0))
 	for {
 		latestHeight, err = s.network.WaitForHeight(latestHeight + 1)
 		s.Require().NoError(err)
 
-		if latestHeight%int64(conf.PopEpochs) == int64(wait) {
+		if latestHeight%s.popEpochs == wait {
 			break
 		}
 	}
 
 	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetChallenge(), []string{
-		strconv.Itoa(int(latestHeight) - wait),
+		strconv.FormatInt(latestHeight-wait, 10),
 	})
 	s.Require().NoError(err)
 	return out
@@ -157,13 +163,12 @@ func (s *PopSelectionE2ETestSuite) TestPopSelectionTwoActors() {
 
 func (s *PopSelectionE2ETestSuite) VerifyTokens(token string) {
 	val := s.network.Validators[0]
-	conf := config.GetConfig()
 	// check balance for crddl
 	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetCmdQueryTotalSupply(), []string{
 		fmt.Sprintf("--%s=%s", bank.FlagDenom, token),
 	})
 	s.Require().NoError(err)
-	assert.Contains(s.T(), out.String(), conf.ClaimDenom)
+	assert.Contains(s.T(), out.String(), token)
 	assert.Equal(s.T(), "amount: \"17979452050\"\ndenom: "+token+"\n", out.String()) // Total supply 2 * 7990867578 (total supply) + 1 * 1997716894 (challenger) = 17979452050
 
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
@@ -184,8 +189,6 @@ func (s *PopSelectionE2ETestSuite) VerifyTokens(token string) {
 }
 
 func (s *PopSelectionE2ETestSuite) TestTokenDistribution1() {
-	conf := config.GetConfig()
-
 	out := s.perpareLocalTest()
 
 	assert.Contains(s.T(), out.String(), machines[0].address)
@@ -201,7 +204,10 @@ func (s *PopSelectionE2ETestSuite) TestTokenDistribution1() {
 	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
 
-	s.VerifyTokens(conf.StagedDenom)
+	var daoGenState daotypes.GenesisState
+	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[daotypes.ModuleName], &daoGenState)
+
+	s.VerifyTokens(daoGenState.Params.StagedDenom)
 
 	// send Reissuance and DistributionResult implicitly
 	latestHeight, err := s.network.LatestHeight()
@@ -210,7 +216,7 @@ func (s *PopSelectionE2ETestSuite) TestTokenDistribution1() {
 		latestHeight, err := s.network.WaitForHeight(latestHeight + 1)
 		s.Require().NoError(err)
 		// s.Require().NoError(s.network.WaitForNextBlock())
-		if latestHeight%int64(conf.ReissuanceEpochs) == int64(conf.DistributionOffset) {
+		if latestHeight%s.reissuanceEpochs == s.distributionOffset {
 			break
 		}
 	}
@@ -218,5 +224,5 @@ func (s *PopSelectionE2ETestSuite) TestTokenDistribution1() {
 	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
 
-	s.VerifyTokens(conf.ClaimDenom)
+	s.VerifyTokens(daoGenState.Params.ClaimDenom)
 }

@@ -10,4 +10,18 @@ message Params {
   option (gogoproto.goproto_stringer) = false;
   
   string mint_address = 1;
+  string token_denom =2;
+  string fee_denom =3;
+  string staged_denom =4;
+  string claim_denom =5;
+  string reissuance_asset =6;
+  int64 reissuance_epochs=7;
+  int64 pop_epochs =8;
+  int64 distribution_offset =9;
+  string distribution_address_early_inv = 10;
+  string distribution_address_investor = 11;
+  string distribution_address_strategic = 12;
+  string distribution_address_dao = 13;
+  string distribution_address_pop = 14;
+  int64 mqtt_response_timeout = 15;
 }

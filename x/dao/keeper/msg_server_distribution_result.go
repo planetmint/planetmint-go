@@ -6,7 +6,6 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
@@ -52,7 +51,7 @@ func (k msgServer) resolveStagedClaims(ctx sdk.Context, start int64, end int64) 
 		if !challenge.GetFinished() {
 			continue
 		}
-		_, challengerAmt, challengeeAmt := util.GetPopReward(challenge.Height)
+		_, challengerAmt, challengeeAmt := util.GetPopReward(challenge.Height, k.GetParams(ctx).PopEpochs)
 		popParticipants[challenge.Challenger] += challengerAmt
 		if challenge.GetSuccess() {
 			popParticipants[challenge.Challengee] += challengeeAmt
@@ -76,16 +75,15 @@ func (k msgServer) resolveStagedClaims(ctx sdk.Context, start int64, end int64) 
 
 // convert per account
 func (k msgServer) convertAccountClaim(ctx sdk.Context, participant string, amount uint64) (err error) {
-	conf := config.GetConfig()
 	accAddr, err := sdk.AccAddressFromBech32(participant)
 	if err != nil {
 		return err
 	}
 
-	accStagedClaim := k.bankKeeper.GetBalance(ctx, accAddr, conf.StagedDenom)
+	accStagedClaim := k.bankKeeper.GetBalance(ctx, accAddr, k.GetParams(ctx).StagedDenom)
 
 	if accStagedClaim.Amount.GTE(sdk.NewIntFromUint64(amount)) {
-		burnCoins, mintCoins := getConvertCoins(amount)
+		burnCoins, mintCoins := k.getConvertCoins(ctx, amount)
 		err = k.bankKeeper.SendCoinsFromAccountToModule(ctx, accAddr, types.ModuleName, burnCoins)
 		if err != nil {
 			return err
@@ -113,9 +111,8 @@ func (k msgServer) convertCoins(ctx sdk.Context, burnCoins sdk.Coins, mintCoins 
 	return k.bankKeeper.MintCoins(ctx, types.ModuleName, mintCoins)
 }
 
-func getConvertCoins(amount uint64) (burnCoins sdk.Coins, mintCoins sdk.Coins) {
-	conf := config.GetConfig()
-	burnCoins = sdk.NewCoins(sdk.NewCoin(conf.StagedDenom, sdk.NewIntFromUint64(amount)))
-	mintCoins = sdk.NewCoins(sdk.NewCoin(conf.ClaimDenom, sdk.NewIntFromUint64(amount)))
+func (k msgServer) getConvertCoins(ctx sdk.Context, amount uint64) (burnCoins sdk.Coins, mintCoins sdk.Coins) {
+	burnCoins = sdk.NewCoins(sdk.NewCoin(k.GetParams(ctx).StagedDenom, sdk.NewIntFromUint64(amount)))
+	mintCoins = sdk.NewCoins(sdk.NewCoin(k.GetParams(ctx).ClaimDenom, sdk.NewIntFromUint64(amount)))
 	return
 }

@@ -49,10 +49,11 @@ func TestTokenDistribution(t *testing.T) {
 	t.Parallel()
 	k, ctx := keepertest.DaoKeeper(t)
 	reissuanceValue := 998.85844748
-	reissuances := 1000
+	var reissuances int64 = 1000
 	Amount1stBatch := 781.0
 	Amount2ndBatch := 219.0
-	_ = createNReissuances(k, ctx, reissuances)
+
+	_ = createNReissuances(k, ctx, reissuances, types.DefaultGenesis().GetParams().PopEpochs)
 	distribution, err := k.GetDistributionForReissuedTokens(ctx, 780)
 	assert.Nil(t, err)
 

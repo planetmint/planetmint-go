@@ -3,7 +3,6 @@ package dao
 import (
 	"encoding/hex"
 
-	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/keeper"
 
@@ -22,7 +21,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	currentBlockHeight := req.Header.GetHeight()
 
 	hexProposerAddress := hex.EncodeToString(proposerAddress)
-	if isPopHeight(currentBlockHeight) {
+	if isPopHeight(ctx, k, currentBlockHeight) {
 		// select PoP participants
 		challenger, challengee := k.SelectPopParticipants(ctx)
 
@@ -31,7 +30,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 		util.SendInitPoP(ctx, hexProposerAddress, challenger, challengee, currentBlockHeight)
 	}
 
-	if isReissuanceHeight(currentBlockHeight) {
+	if isReissuanceHeight(ctx, k, currentBlockHeight) {
 		reissuance, err := k.CreateNextReissuanceObject(ctx, currentBlockHeight)
 		if err == nil {
 			util.SendInitReissuance(ctx, hexProposerAddress, reissuance.GetCommand(), currentBlockHeight,
@@ -41,7 +40,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 		}
 	}
 
-	if isDistributionHeight(currentBlockHeight) {
+	if isDistributionHeight(ctx, k, currentBlockHeight) {
 		distribution, err := k.GetDistributionForReissuedTokens(ctx, currentBlockHeight)
 		if err != nil {
 			util.GetAppLogger().Error(ctx, "error while computing the RDDL distribution ", err)
@@ -51,25 +50,22 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	}
 }
 
-func isPopHeight(height int64) bool {
-	conf := config.GetConfig()
-	return height%int64(conf.PopEpochs) == 0
+func isPopHeight(ctx sdk.Context, k keeper.Keeper, height int64) bool {
+	return height%k.GetParams(ctx).PopEpochs == 0
 }
 
-func isReissuanceHeight(height int64) bool {
-	conf := config.GetConfig()
+func isReissuanceHeight(ctx sdk.Context, k keeper.Keeper, height int64) bool {
 	// e.g. 483840 % 17280 = 0
-	return height%int64(conf.ReissuanceEpochs) == 0
+	return height%k.GetParams(ctx).ReissuanceEpochs == 0
 }
 
-func isDistributionHeight(height int64) bool {
-	conf := config.GetConfig()
+func isDistributionHeight(ctx sdk.Context, k keeper.Keeper, height int64) bool {
 	// e.g. 360 % 17280 = 360
-	if height <= int64(conf.ReissuanceEpochs) {
+	if height <= k.GetParams(ctx).ReissuanceEpochs {
 		return false
 	}
 	// e.g. 484200 % 17280 = 360
-	return height%int64(conf.ReissuanceEpochs) == int64(conf.DistributionOffset)
+	return height%k.GetParams(ctx).ReissuanceEpochs == k.GetParams(ctx).DistributionOffset
 }
 
 func EndBlocker(_ sdk.Context, _ abci.RequestEndBlock, _ keeper.Keeper) {

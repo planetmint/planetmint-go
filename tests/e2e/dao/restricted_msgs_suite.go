@@ -2,7 +2,6 @@ package dao
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/lib"
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
 	"github.com/planetmint/planetmint-go/testutil/network"
@@ -35,8 +34,11 @@ func NewRestrictedMsgsE2ESuite(cfg network.Config) *RestrictedMsgsE2ESuite {
 
 func (s *RestrictedMsgsE2ESuite) SetupSuite() {
 	s.T().Log("setting up e2e test suite")
-	conf := config.GetConfig()
-	conf.FeeDenom = sample.FeeDenom
+
+	var daoGenState daotypes.GenesisState
+	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[daotypes.ModuleName], &daoGenState)
+	daoGenState.Params.FeeDenom = sample.FeeDenom
+	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
 
 	s.network = network.New(s.T(), s.cfg)
 	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
