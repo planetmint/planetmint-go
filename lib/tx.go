@@ -1,7 +1,6 @@
 package lib
 
 import (
-	"bufio"
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -168,42 +167,6 @@ func broadcastTx(clientCtx client.Context, txf tx.Factory, msgs ...sdk.Msg) (out
 	// This is still copying references: *out = *output
 	// Make a real copy: https://stackoverflow.com/a/69758157
 	out.Write(output.Bytes())
-	return
-}
-
-func getSequenceFromFile(seqFile *os.File) (sequence uint64, err error) {
-	var sequenceString string
-	lineCount := int64(0)
-	scanner := bufio.NewScanner(seqFile)
-	for scanner.Scan() {
-		sequenceString = scanner.Text()
-		lineCount++
-	}
-	err = scanner.Err()
-	if err != nil {
-		return
-	}
-	if lineCount == 0 {
-		err = errors.New("Sequence file empty " + seqFile.Name() + ": no lines")
-		return
-	} else if lineCount != 1 {
-		err = errors.New("Malformed " + seqFile.Name() + ": wrong number of lines")
-		return
-	}
-	sequence, err = strconv.ParseUint(sequenceString, 10, 64)
-	if err != nil {
-		return
-	}
-	return
-}
-
-func getSequenceFromChain(clientCtx client.Context) (sequence uint64, err error) {
-	// Get sequence number from chain.
-	account, err := clientCtx.AccountRetriever.GetAccount(clientCtx, clientCtx.FromAddress)
-	if err != nil {
-		return
-	}
-	sequence = account.GetSequence()
 	return
 }
 
