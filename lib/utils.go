@@ -54,22 +54,34 @@ func getSequenceFromChain(clientCtx client.Context) (sequence uint64, err error)
 	return
 }
 
-func openSequenceFile(fromAddress sdk.AccAddress) (file *os.File, err error) {
+func createSequenceDirectory() (path string, err error) {
 	usr, err := user.Current()
 	if err != nil {
 		return
 	}
 	homeDir := usr.HomeDir
+	path = filepath.Join(GetConfig().RootDir, "sequence")
+	// expand tilde to user's home directory
+	if strings.HasPrefix(path, "~/") {
+		path = filepath.Join(homeDir, path[2:])
+	}
+	_, err = os.Stat(path)
+	// directory already exists
+	if !os.IsNotExist(err) {
+		return
+	}
+	err = os.Mkdir(path, os.ModePerm)
+	return
+}
+
+func openSequenceFile(fromAddress sdk.AccAddress) (file *os.File, err error) {
+	path, err := createSequenceDirectory()
+	if err != nil {
+		return
+	}
 
 	addrHex := hex.EncodeToString(fromAddress)
-	filename := filepath.Join(GetConfig().RootDir, addrHex+".sequence")
-
-	// Expand tilde to user's home directory.
-	if filename == "~" {
-		filename = homeDir
-	} else if strings.HasPrefix(filename, "~/") {
-		filename = filepath.Join(homeDir, filename[2:])
-	}
+	filename := filepath.Join(path, addrHex)
 
 	file, err = os.OpenFile(filename, os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
