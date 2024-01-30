@@ -3,15 +3,11 @@ package lib
 import (
 	"bufio"
 	"bytes"
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"io"
 	"os"
-	"os/user"
-	"path/filepath"
 	"strconv"
-	"strings"
 	"syscall"
 
 	comethttp "github.com/cometbft/cometbft/rpc/client/http"
@@ -175,7 +171,7 @@ func broadcastTx(clientCtx client.Context, txf tx.Factory, msgs ...sdk.Msg) (out
 	return
 }
 
-func getSequenceFromFile(seqFile *os.File, filename string) (sequence uint64, err error) {
+func getSequenceFromFile(seqFile *os.File) (sequence uint64, err error) {
 	var sequenceString string
 	lineCount := int64(0)
 	scanner := bufio.NewScanner(seqFile)
@@ -188,10 +184,10 @@ func getSequenceFromFile(seqFile *os.File, filename string) (sequence uint64, er
 		return
 	}
 	if lineCount == 0 {
-		err = errors.New("Sequence file empty " + filename + ": no lines")
+		err = errors.New("Sequence file empty " + seqFile.Name() + ": no lines")
 		return
 	} else if lineCount != 1 {
-		err = errors.New("Malformed " + filename + ": wrong number of lines")
+		err = errors.New("Malformed " + seqFile.Name() + ": wrong number of lines")
 		return
 	}
 	sequence, err = strconv.ParseUint(sequenceString, 10, 64)
@@ -214,23 +210,7 @@ func getSequenceFromChain(clientCtx client.Context) (sequence uint64, err error)
 // BroadcastTxWithFileLock broadcasts a transaction via gRPC and synchronises requests via a file lock.
 func BroadcastTxWithFileLock(fromAddress sdk.AccAddress, msgs ...sdk.Msg) (out *bytes.Buffer, err error) {
 	// open and lock file, if it exists
-	usr, err := user.Current()
-	if err != nil {
-		return
-	}
-	homeDir := usr.HomeDir
-
-	addrHex := hex.EncodeToString(fromAddress)
-	filename := filepath.Join(GetConfig().RootDir, addrHex+".sequence")
-
-	// Expand tilde to user's home directory.
-	if filename == "~" {
-		filename = homeDir
-	} else if strings.HasPrefix(filename, "~/") {
-		filename = filepath.Join(homeDir, filename[2:])
-	}
-
-	file, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE, 0644)
+	file, err := openSequenceFile(fromAddress)
 	if err != nil {
 		return
 	}
@@ -253,7 +233,7 @@ func BroadcastTxWithFileLock(fromAddress sdk.AccAddress, msgs ...sdk.Msg) (out *
 		return
 	}
 
-	sequenceFromFile, errFile := getSequenceFromFile(file, filename)
+	sequenceFromFile, errFile := getSequenceFromFile(file)
 	sequenceFromChain, errChain := getSequenceFromChain(clientCtx)
 
 	var sequence uint64

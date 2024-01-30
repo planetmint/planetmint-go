@@ -2,12 +2,41 @@ package lib
 
 import (
 	"bytes"
+	"encoding/hex"
 	"encoding/json"
+	"os"
+	"os/user"
+	"path/filepath"
 	"regexp"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"sigs.k8s.io/yaml"
 )
+
+func openSequenceFile(fromAddress sdk.AccAddress) (file *os.File, err error) {
+	usr, err := user.Current()
+	if err != nil {
+		return
+	}
+	homeDir := usr.HomeDir
+
+	addrHex := hex.EncodeToString(fromAddress)
+	filename := filepath.Join(GetConfig().RootDir, addrHex+".sequence")
+
+	// Expand tilde to user's home directory.
+	if filename == "~" {
+		filename = homeDir
+	} else if strings.HasPrefix(filename, "~/") {
+		filename = filepath.Join(homeDir, filename[2:])
+	}
+
+	file, err = os.OpenFile(filename, os.O_RDWR|os.O_CREATE, 0644)
+	if err != nil {
+		return
+	}
+	return
+}
 
 // GetTxResponseFromOut converts strings to numbers and unmarshalles out into TxResponse struct
 func GetTxResponseFromOut(out *bytes.Buffer) (txResponse sdk.TxResponse, err error) {
