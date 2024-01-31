@@ -15,7 +15,6 @@ import (
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
-	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
@@ -207,4 +206,23 @@ func (s *E2ETestSuite) TestReissuance() {
 	intValue := strconv.FormatInt(latestHeight-wait, 10)
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetReissuance(), []string{intValue})
 	s.Require().NoError(err)
+}
+
+func (s *E2ETestSuite) TestNetworkBasedTxGasLimit() {
+	val := s.network.Validators[0]
+	libConfig := lib.GetConfig()
+	libConfig.SetTxGas(200000000)
+	var msgs []sdk.Msg
+
+	for i := 0; i < 1000; i++ {
+		mintRequest := sample.MintRequest(s.aliceAddr.String(), 1000, "hash"+strconv.Itoa(i))
+		msg := daotypes.NewMsgMintToken(val.Address.String(), &mintRequest)
+		msgs = append(msgs, msg)
+	}
+
+	_, err := e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msgs...)
+	s.Require().Error(err)
+	s.Assert().Equal("out of gas in location: txSize; gasWanted: 200000000, gasUsed: 1432553: out of gas", err.Error())
+
+	s.Require().NoError(s.network.WaitForNextBlock())
 }

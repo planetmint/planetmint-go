@@ -16,6 +16,7 @@ type Config struct {
 	FeeDenom       string                `json:"fee-denom"       mapstructure:"fee-denom"`
 	RootDir        string                `json:"root-dir"        mapstructure:"root-dir"`
 	RPCEndpoint    string                `json:"rpc-endpoint"    mapstructure:"rpc-endpoint"`
+	TxGas          uint64                `json:"tx-gas"          mapstructure:"tx-gas"`
 }
 
 // lib wide global singleton
@@ -34,6 +35,7 @@ func DefaultConfig() *Config {
 		FeeDenom:       "plmnt",
 		RootDir:        "~/.planetmint-go/",
 		RPCEndpoint:    "http://127.0.0.1:26657",
+		TxGas:          200000,
 	}
 }
 
@@ -89,5 +91,11 @@ func (config *Config) SetRoot(root string) *Config {
 // SetRPCEndpoint sets the RPC endpoint to send requests to.
 func (config *Config) SetRPCEndpoint(rpcEndpoint string) *Config {
 	config.RPCEndpoint = rpcEndpoint
+	return config
+}
+
+// SetRPCEndpoint sets the amount of Gas for the TX to send requests to.
+func (config *Config) SetTxGas(txGas uint64) *Config {
+	config.TxGas = txGas
 	return config
 }
