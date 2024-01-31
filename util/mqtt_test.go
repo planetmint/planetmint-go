@@ -27,7 +27,7 @@ func TestSendMqttPopInitMessages(t *testing.T) {
 func TestGetMqttStatusOfParticipantMocked(t *testing.T) {
 	t.Parallel()
 	participant := "plmnt15gdanx0nm2lwsx30a6wft7429p32dhzaq37c06"
-	isAvailable, err := GetMqttStatusOfParticipant(participant)
+	isAvailable, err := GetMqttStatusOfParticipant(participant, 200)
 	assert.NoError(t, err)
 	assert.True(t, isAvailable)
 }

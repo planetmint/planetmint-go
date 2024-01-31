@@ -70,9 +70,10 @@ func SendDistributionRequest(goCtx context.Context, distribution daotypes.Distri
 	buildSignBroadcastTx(goCtx, loggingContext, sendingValidatorAddress, msg)
 }
 
-func SendDistributionResult(goCtx context.Context, lastPoP int64, daoTxID string, invTxID string, popTxID string) {
+func SendDistributionResult(goCtx context.Context, lastPoP int64, daoTxID string, invTxID string,
+	popTxID string, earlyInvestorTxID string, strategicTxID string) {
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
-	msg := daotypes.NewMsgDistributionResult(sendingValidatorAddress, lastPoP, daoTxID, invTxID, popTxID)
+	msg := daotypes.NewMsgDistributionResult(sendingValidatorAddress, lastPoP, daoTxID, invTxID, popTxID, earlyInvestorTxID, strategicTxID)
 	loggingContext := "distribution result"
 	buildSignBroadcastTx(goCtx, loggingContext, sendingValidatorAddress, msg)
 }

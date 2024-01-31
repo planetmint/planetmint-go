@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/planetmint/planetmint-go/config"
 	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/stretchr/testify/assert"
@@ -14,15 +13,16 @@ import (
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
-func createNReissuances(k *daokeeper.Keeper, ctx sdk.Context, n int) []types.Reissuance {
+func createNReissuances(k *daokeeper.Keeper, ctx sdk.Context, n int64, popsPerEpoch int64) []types.Reissuance {
 	items := make([]types.Reissuance, n)
-	for i := range items {
-		items[i].BlockHeight = int64(i)
+	for j := range items {
+		i := int64(j)
+		items[i].BlockHeight = i
 		items[i].Proposer = fmt.Sprintf("proposer_%v", i)
-		items[i].Command = daokeeper.GetReissuanceCommand("asset_id", int64(i))
+		items[i].Command = daokeeper.GetReissuanceCommand("asset_id", i, popsPerEpoch)
 		items[i].TxID = ""
-		items[i].FirstIncludedPop = int64(i)
-		items[i].LastIncludedPop = int64(i)
+		items[i].FirstIncludedPop = i
+		items[i].LastIncludedPop = i
 		k.StoreReissuance(ctx, items[i])
 	}
 	return items
@@ -33,8 +33,8 @@ func TestReissuanceComputation(t *testing.T) {
 	k, ctx := keepertest.DaoKeeper(t)
 	var reissuanceValue uint64 = 99885844748
 	numChallenges := 1000
-	popepoch := int64(config.GetConfig().PopEpochs)
-	_ = createNChallenge(k, ctx, numChallenges)
+	popepoch := types.DefaultGenesis().GetParams().PopEpochs
+	_ = createNChallenge(k, ctx, numChallenges, popepoch)
 
 	reissuanceValue1, firstIncludedPop, lastIncludedPop, err := k.ComputeReissuanceValue(ctx, 0, 780*popepoch)
 	assert.Nil(t, err)
@@ -52,7 +52,7 @@ func TestReissuanceComputation(t *testing.T) {
 	lastReissuance.FirstIncludedPop = firstIncludedPop
 	lastReissuance.LastIncludedPop = lastIncludedPop
 	k.StoreReissuance(ctx, lastReissuance)
-	lastReissuanceValue2nd, firstIncludedPop, lastIncludedPop, err0 := k.ComputeReissuanceValue(ctx, lastIncludedPop, 1000*int64(config.GetConfig().PopEpochs))
+	lastReissuanceValue2nd, firstIncludedPop, lastIncludedPop, err0 := k.ComputeReissuanceValue(ctx, lastIncludedPop, 1000*types.DefaultGenesis().GetParams().PopEpochs)
 	assert.Nil(t, err0)
 	indexFirst2nd := firstIncludedPop / popepoch
 	indexLast2nd := lastIncludedPop / popepoch
@@ -68,7 +68,8 @@ func TestReissuanceComputation(t *testing.T) {
 func TestGetReissuances(t *testing.T) {
 	t.Parallel()
 	keeper, ctx := keepertest.DaoKeeper(t)
-	items := createNReissuances(keeper, ctx, 10)
+	popepoch := types.DefaultGenesis().GetParams().PopEpochs
+	items := createNReissuances(keeper, ctx, 10, popepoch)
 	for _, item := range items {
 		reissuance, found := keeper.LookupReissuance(ctx, item.BlockHeight)
 		assert.True(t, found)
@@ -78,11 +79,11 @@ func TestGetReissuances(t *testing.T) {
 
 func TestReissuanceValueComputation(t *testing.T) {
 	t.Parallel()
-	popsPerEpoch := float64(config.GetConfig().PopEpochs)
-	assert.Equal(t, "998.85844748", daokeeper.GetReissuanceAsStringValue(1))
-	assert.Equal(t, "499.42922374", daokeeper.GetReissuanceAsStringValue(int64(util.PopsPerCycle*popsPerEpoch*1+1)))
-	assert.Equal(t, "249.71461187", daokeeper.GetReissuanceAsStringValue(int64(util.PopsPerCycle*popsPerEpoch*2+1)))
-	assert.Equal(t, "124.85730593", daokeeper.GetReissuanceAsStringValue(int64(util.PopsPerCycle*popsPerEpoch*3+1)))
-	assert.Equal(t, "62.42865296", daokeeper.GetReissuanceAsStringValue(int64(util.PopsPerCycle*popsPerEpoch*4+1)))
-	assert.Equal(t, "0.0", daokeeper.GetReissuanceAsStringValue(int64(util.PopsPerCycle*popsPerEpoch*5+1)))
+	popsPerEpochFlt := float64(types.DefaultGenesis().GetParams().PopEpochs)
+	assert.Equal(t, "998.85844748", daokeeper.GetReissuanceAsStringValue(1, types.DefaultGenesis().GetParams().PopEpochs))
+	assert.Equal(t, "499.42922374", daokeeper.GetReissuanceAsStringValue(int64(util.PopsPerCycle*popsPerEpochFlt*1+1), types.DefaultGenesis().GetParams().PopEpochs))
+	assert.Equal(t, "249.71461187", daokeeper.GetReissuanceAsStringValue(int64(util.PopsPerCycle*popsPerEpochFlt*2+1), types.DefaultGenesis().GetParams().PopEpochs))
+	assert.Equal(t, "124.85730593", daokeeper.GetReissuanceAsStringValue(int64(util.PopsPerCycle*popsPerEpochFlt*3+1), types.DefaultGenesis().GetParams().PopEpochs))
+	assert.Equal(t, "62.42865296", daokeeper.GetReissuanceAsStringValue(int64(util.PopsPerCycle*popsPerEpochFlt*4+1), types.DefaultGenesis().GetParams().PopEpochs))
+	assert.Equal(t, "0.0", daokeeper.GetReissuanceAsStringValue(int64(util.PopsPerCycle*popsPerEpochFlt*5+1), types.DefaultGenesis().GetParams().PopEpochs))
 }

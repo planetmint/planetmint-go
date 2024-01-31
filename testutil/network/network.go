@@ -1,8 +1,10 @@
 package network
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
+	"os"
 	"testing"
 	"time"
 
@@ -19,12 +21,14 @@ import (
 	elements "github.com/rddl-network/elements-rpc"
 	elementsmocks "github.com/rddl-network/elements-rpc/utils/mocks"
 	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 
 	"github.com/planetmint/planetmint-go/app"
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/lib"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/util/mocks"
+	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 )
 
 type (
@@ -59,6 +63,7 @@ func New(t *testing.T, configs ...Config) *Network {
 	conf.SetRoot(validatorTmpDir + "/node0/simd")
 
 	net, err := network.New(t, validatorTmpDir, cfg)
+	require.NoError(t, err)
 
 	conf.ValidatorAddress = net.Validators[0].Address.String()
 	// set missing validator client context values for sending txs
@@ -70,9 +75,12 @@ func New(t *testing.T, configs ...Config) *Network {
 	net.Validators[0].ClientCtx.Output = &output
 	net.Validators[0].ClientCtx.SkipConfirm = true
 
+	var daoGenState daotypes.GenesisState
+	cfg.Codec.MustUnmarshalJSON(cfg.GenesisState[daotypes.ModuleName], &daoGenState)
+
 	libConfig := lib.GetConfig()
 	libConfig.SetClientCtx(net.Validators[0].ClientCtx)
-	libConfig.SetFeeDenom(conf.FeeDenom)
+	libConfig.SetFeeDenom(daoGenState.Params.FeeDenom)
 	libConfig.SetRoot(validatorTmpDir + "/node0/simd")
 
 	require.NoError(t, err)
@@ -125,4 +133,33 @@ func DefaultConfig() network.Config {
 		SigningAlgo:     string(hd.Secp256k1Type),
 		KeyringOptions:  []keyring.Option{},
 	}
+}
+
+func CreateValAccount(s suite.Suite, cfg network.Config) (address sdk.AccAddress, err error) {
+	buf := bufio.NewReader(os.Stdin)
+
+	kb, err := keyring.New(sdk.KeyringServiceName(), keyring.BackendTest, s.T().TempDir(), buf, cfg.Codec, cfg.KeyringOptions...)
+	if err != nil {
+		return nil, err
+	}
+
+	keyringAlgos, _ := kb.SupportedAlgorithms()
+	algo, err := keyring.NewSigningAlgoFromString(cfg.SigningAlgo, keyringAlgos)
+	if err != nil {
+		return nil, err
+	}
+
+	mnemonic := cfg.Mnemonics[0]
+
+	record, err := kb.NewAccount("node0", mnemonic, keyring.DefaultBIP39Passphrase, sdk.GetConfig().GetFullBIP44Path(), algo)
+	if err != nil {
+		return nil, err
+	}
+
+	addr, err := record.GetAddress()
+	if err != nil {
+		return nil, err
+	}
+
+	return addr, nil
 }

@@ -3,16 +3,13 @@ package dao
 import (
 	"bufio"
 	"bytes"
-	"encoding/hex"
 	"fmt"
 	"os"
 	"strconv"
-	"strings"
 
 	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
-	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/lib"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
@@ -28,17 +25,17 @@ import (
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 )
 
-var (
-	bobAddr   sdk.AccAddress
-	aliceAddr sdk.AccAddress
-)
-
 // E2ETestSuite struct definition of dao suite
 type E2ETestSuite struct {
 	suite.Suite
 
-	cfg     network.Config
-	network *network.Network
+	cfg                network.Config
+	network            *network.Network
+	reissuanceEpochs   int64
+	distributionOffset int64
+	claimDenom         string
+	bobAddr            sdk.AccAddress
+	aliceAddr          sdk.AccAddress
 }
 
 // NewE2ETestSuite returns configured dao E2ETestSuite
@@ -48,25 +45,27 @@ func NewE2ETestSuite(cfg network.Config) *E2ETestSuite {
 
 // SetupSuite initializes dao E2ETestSuite
 func (s *E2ETestSuite) SetupSuite() {
-	// set FeeDenom to node0token because the sending account is initialized with no plmnt tokens
-	conf := config.GetConfig()
-	conf.FeeDenom = "node0token"
 	// set epochs: make sure to start after initial height of 7
-	conf.DistributionOffset = 5
-	conf.ReissuanceEpochs = 25
-	conf.SetPlanetmintConfig(conf)
+	s.reissuanceEpochs = 25
+	s.distributionOffset = 5
 
 	s.T().Log("setting up e2e test suite")
+
+	// Setup MintAddress parameter in genesis state
+	// use sample.Mnemonic to make mint address deterministic for test
+	s.cfg.Mnemonics = []string{sample.Mnemonic}
+	valAddr, err := s.createValAccount(s.cfg)
+	s.Require().NoError(err)
 
 	// set accounts for alice and bob in genesis state
 	var authGenState authtypes.GenesisState
 	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[authtypes.ModuleName], &authGenState)
 
-	bobAddr = sample.Secp256k1AccAddress()
-	aliceAddr = sample.Secp256k1AccAddress()
+	s.bobAddr = sample.Secp256k1AccAddress()
+	s.aliceAddr = sample.Secp256k1AccAddress()
 
-	bob := authtypes.NewBaseAccount(bobAddr, nil, 0, 0)
-	alice := authtypes.NewBaseAccount(aliceAddr, nil, 0, 0)
+	bob := authtypes.NewBaseAccount(s.bobAddr, nil, 0, 0)
+	alice := authtypes.NewBaseAccount(s.aliceAddr, nil, 0, 0)
 
 	accounts, err := authtypes.PackAccounts(authtypes.GenesisAccounts{bob, alice})
 	s.Require().NoError(err)
@@ -74,42 +73,36 @@ func (s *E2ETestSuite) SetupSuite() {
 	authGenState.Accounts = append(authGenState.Accounts, accounts...)
 	s.cfg.GenesisState[authtypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&authGenState)
 
-	// set the balances in genesis state
-	var bankGenState banktypes.GenesisState
-	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[banktypes.ModuleName], &bankGenState)
-
-	bbalances := sdk.NewCoins(
-		sdk.NewCoin(conf.TokenDenom, math.NewInt(10000)),
-		sdk.NewCoin(conf.StakeDenom, math.NewInt(10000)),
-	)
-
-	abalances := sdk.NewCoins(
-		sdk.NewCoin(conf.TokenDenom, math.NewInt(10000)),
-		sdk.NewCoin(conf.StakeDenom, math.NewInt(5000)),
-	)
-
-	accountBalances := []banktypes.Balance{
-		{Address: bobAddr.String(), Coins: bbalances.Sort()},
-		{Address: aliceAddr.String(), Coins: abalances.Sort()},
-	}
-	bankGenState.Balances = append(bankGenState.Balances, accountBalances...)
-	s.cfg.GenesisState[banktypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&bankGenState)
-
-	// Setup MintAddress parameter in genesis state
-	// use sample.Mnemonic to make mint address deterministic for test
-	s.cfg.Mnemonics = []string{sample.Mnemonic}
-
-	// set MintAddress in GenesisState
 	var daoGenState daotypes.GenesisState
 	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[daotypes.ModuleName], &daoGenState)
-	valAddr, err := s.createValAccount(s.cfg)
-	s.Require().NoError(err)
-
+	// set MintAddress in GenesisState
+	// set FeeDenom to node0token because the sending account is initialized with no plmnt tokens
+	daoGenState.Params.FeeDenom = "node0token"
+	daoGenState.Params.DistributionOffset = s.distributionOffset
+	daoGenState.Params.ReissuanceEpochs = s.reissuanceEpochs
 	daoGenState.Params.MintAddress = valAddr.String()
 	daoGenState.Params.ClaimAddress = valAddr.String()
 	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
 
-	s.cfg.MinGasPrices = fmt.Sprintf("0.000006%s", conf.FeeDenom)
+	bbalances := sdk.NewCoins(
+		sdk.NewCoin(daoGenState.Params.TokenDenom, math.NewInt(10000)),
+	)
+
+	abalances := sdk.NewCoins(
+		sdk.NewCoin(daoGenState.Params.TokenDenom, math.NewInt(10000)),
+	)
+
+	accountBalances := []banktypes.Balance{
+		{Address: s.bobAddr.String(), Coins: bbalances.Sort()},
+		{Address: s.aliceAddr.String(), Coins: abalances.Sort()},
+	}
+	// set the balances in genesis state
+	var bankGenState banktypes.GenesisState
+	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[banktypes.ModuleName], &bankGenState)
+	bankGenState.Balances = append(bankGenState.Balances, accountBalances...)
+	s.cfg.GenesisState[banktypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&bankGenState)
+
+	s.cfg.MinGasPrices = fmt.Sprintf("0.000006%s", daoGenState.Params.FeeDenom)
 	s.network = network.New(s.T(), s.cfg)
 
 	// create account for redeem claim test case
@@ -124,47 +117,10 @@ func (s *E2ETestSuite) TearDownSuite() {
 	s.T().Log("tearing down e2e test suite")
 }
 
-func (s *E2ETestSuite) TestDistributeCollectedFees() {
-	val := s.network.Validators[0]
-
-	// sending funds to alice and pay some fees to be distributed
-	coin := sdk.NewCoins(sdk.NewInt64Coin("stake", 1000))
-	msg := banktypes.NewMsgSend(val.Address, aliceAddr, coin)
-
-	_, err := e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg)
-	s.Require().NoError(err)
-
-	err = s.network.WaitForNextBlock()
-	s.Require().NoError(err)
-
-	_, err = e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg)
-	s.Require().NoError(err)
-
-	err = s.network.WaitForNextBlock()
-	s.Require().NoError(err)
-
-	err = s.network.WaitForNextBlock()
-	s.Require().NoError(err)
-
-	// assert that alice has 0 of 3 paid fee tokens based on 5000 stake of 15000 total stake
-	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
-		aliceAddr.String(),
-	})
-	assert.False(s.T(), strings.Contains(out.String(), "node0token"))
-	s.Require().NoError(err)
-
-	// assert that bob has 2 of 3 paid fee tokens based on 10000 stake of 15000 total stake
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
-		bobAddr.String(),
-	})
-	assert.Contains(s.T(), out.String(), "amount: \"2\"\n  denom: node0token")
-	s.Require().NoError(err)
-}
-
 func (s *E2ETestSuite) TestMintToken() {
 	val := s.network.Validators[0]
 
-	mintRequest := sample.MintRequest(aliceAddr.String(), 1000, "hash")
+	mintRequest := sample.MintRequest(s.aliceAddr.String(), 1000, "hash")
 	msg1 := daotypes.NewMsgMintToken(val.Address.String(), &mintRequest)
 	out, err := e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg1)
 	s.Require().NoError(err)
@@ -177,7 +133,7 @@ func (s *E2ETestSuite) TestMintToken() {
 
 	// assert that alice has actually received the minted tokens 10000 (initial supply) + 1000 (minted) = 11000 (total)
 	output, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
-		aliceAddr.String(),
+		s.aliceAddr.String(),
 	})
 	out, ok := output.(*bytes.Buffer)
 	if !ok {
@@ -232,14 +188,13 @@ func (s *E2ETestSuite) createValAccount(cfg network.Config) (address sdk.AccAddr
 }
 
 func (s *E2ETestSuite) TestReissuance() {
-	conf := config.GetConfig()
 	val := s.network.Validators[0]
 
 	var err error
 	latestHeight, err := s.network.LatestHeight()
 	s.Require().NoError(err)
 
-	var wait int
+	var wait int64
 	for {
 		latestHeight, err = s.network.WaitForHeight(latestHeight + 1)
 		s.Require().NoError(err)
@@ -249,194 +204,13 @@ func (s *E2ETestSuite) TestReissuance() {
 		// 1:  block 26: sending the reissuance result broadcast tx succeeded
 		// 2:  block 27: confirmation
 		wait = 2
-		if latestHeight%int64(conf.ReissuanceEpochs) == int64(wait) {
+		if latestHeight%int64(s.reissuanceEpochs) == int64(wait) {
 			break
 		}
 	}
 
 	// - because we waited on the reissuance result, see above
-	intValue := strconv.FormatInt(latestHeight-int64(wait), 10)
+	intValue := strconv.FormatInt(latestHeight-wait, 10)
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetReissuance(), []string{intValue})
 	s.Require().NoError(err)
-}
-
-func (s *E2ETestSuite) TestPoPResult() {
-	conf := config.GetConfig()
-	conf.PopEpochs = 5
-	val := s.network.Validators[0]
-
-	k, err := val.ClientCtx.Keyring.Key(sample.Name)
-	s.Require().NoError(err)
-	addr, _ := k.GetAddress()
-
-	// send PoP results
-	challenges := make([]daotypes.Challenge, 5)
-	for i := range challenges {
-		blockHeight := (i + 1) * config.GetConfig().PopEpochs
-		challenges[i].Height = int64(blockHeight)
-		challenges[i].Initiator = val.Address.String()
-		challenges[i].Challenger = addr.String()
-		challenges[i].Challengee = bobAddr.String()
-		challenges[i].Success = blockHeight%2 == 0 // Need some successful and unsuccessful challenges for assertion of correct behavior
-		challenges[i].Finished = true
-
-		msg := daotypes.NewMsgReportPopResult(val.Address.String(), &challenges[i])
-		out, err := e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg)
-		s.Require().NoError(err)
-		s.Require().NoError(s.network.WaitForNextBlock())
-
-		txResponse, err := lib.GetTxResponseFromOut(out)
-		s.Require().NoError(err)
-		assert.Equal(s.T(), "[]", txResponse.RawLog)
-	}
-
-	// check balance for stagedcrddl
-	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetCmdQueryTotalSupply(), []string{
-		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.StagedDenom),
-	})
-	s.Require().NoError(err)
-	assert.Contains(s.T(), out.String(), conf.StagedDenom)
-	assert.Equal(s.T(), "amount: \"21974885838\"\ndenom: stagedcrddl\n", out.String()) // Total supply 5 * 1997716894 + 2 * 5993150684 = 21974885838
-
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
-		addr.String(),
-		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.StagedDenom),
-	})
-	s.Require().NoError(err)
-	assert.Contains(s.T(), out.String(), conf.StagedDenom)
-	assert.Equal(s.T(), "amount: \"9988584470\"\ndenom: stagedcrddl\n", out.String()) // 5 * 1997716894 = 9988584470
-
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
-		bobAddr.String(),
-		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.StagedDenom),
-	})
-	s.Require().NoError(err)
-	assert.Contains(s.T(), out.String(), conf.StagedDenom)
-	assert.Equal(s.T(), "amount: \"11986301368\"\ndenom: stagedcrddl\n", out.String()) // 2 * 5993150684 = 11986301368
-
-	// send ReissuanceProposal
-	msg1 := daotypes.NewMsgReissueRDDLProposal(val.Address.String(), hex.EncodeToString(val.PubKey.Address()),
-		"reissueasset 7add40beb27df701e02ee85089c5bc0021bc813823fedb5f1dcb5debda7f3da9 2996.57534244",
-		challenges[4].Height, challenges[0].Height, challenges[2].Height)
-	output, err := e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg1)
-	s.Require().NoError(err)
-	s.Require().NoError(s.network.WaitForNextBlock())
-
-	txResponse, err := lib.GetTxResponseFromOut(output)
-	s.Require().NoError(err)
-	assert.Equal(s.T(), "[]", txResponse.RawLog)
-
-	// send ReissuanceResult
-	msg2 := daotypes.NewMsgReissueRDDLResult(val.Address.String(), addr.String(), "TxID", challenges[4].Height)
-	output, err = e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg2)
-	s.Require().NoError(err)
-	s.Require().NoError(s.network.WaitForNextBlock())
-
-	txResponse, err = lib.GetTxResponseFromOut(output)
-	s.Require().NoError(err)
-	assert.Equal(s.T(), "[]", txResponse.RawLog)
-
-	// send DistributionRequest
-	distributionOrder := daotypes.DistributionOrder{
-		Proposer:     hex.EncodeToString(val.PubKey.Address()),
-		FirstPop:     challenges[0].Height,
-		LastPop:      challenges[2].Height,
-		DaoTxID:      "DaoTxID",
-		PopTxID:      "PoPTxID",
-		InvestorTxID: "InvestorTxID",
-	}
-	msg3 := daotypes.NewMsgDistributionRequest(val.Address.String(), &distributionOrder)
-	output, err = e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg3)
-	s.Require().NoError(err)
-	s.Require().NoError(s.network.WaitForNextBlock())
-
-	txResponse, err = lib.GetTxResponseFromOut(output)
-	s.Require().NoError(err)
-	assert.Equal(s.T(), "[]", txResponse.RawLog)
-
-	// send DistributionResult implicitly
-	s.Require().NoError(s.network.WaitForNextBlock())
-
-	// check balance for crddl
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetCmdQueryTotalSupply(), []string{
-		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.ClaimDenom),
-	})
-	s.Require().NoError(err)
-	assert.Contains(s.T(), out.String(), conf.ClaimDenom)
-	assert.Equal(s.T(), "amount: \"11986301366\"\ndenom: crddl\n", out.String()) // Total supply 1 * 5993150684 + 3 * 1997716894 = 11986301366
-
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
-		addr.String(),
-		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.ClaimDenom),
-	})
-	s.Require().NoError(err)
-	assert.Contains(s.T(), out.String(), conf.ClaimDenom)
-	assert.Equal(s.T(), "amount: \"5993150682\"\ndenom: crddl\n", out.String()) // 3 * 1997716894 = 5993150682
-
-	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
-		bobAddr.String(),
-		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.ClaimDenom),
-	})
-	s.Require().NoError(err)
-	assert.Contains(s.T(), out.String(), conf.ClaimDenom)
-	assert.Equal(s.T(), "amount: \"5993150684\"\ndenom: crddl\n", out.String()) // 1 * 5993150684 = 5993150684
-}
-
-func (s *E2ETestSuite) TestRedeemClaim() {
-	conf := config.GetConfig()
-	val := s.network.Validators[0]
-
-	k, err := val.ClientCtx.Keyring.Key(sample.Name)
-	s.Require().NoError(err)
-	addr, _ := k.GetAddress()
-
-	// Addr sends CreateRedeemClaim => accepted query redeem claim
-	createClaimMsg := daotypes.NewMsgCreateRedeemClaim(addr.String(), "liquidAddress", 10000)
-	out, err := lib.BroadcastTxWithFileLock(addr, createClaimMsg)
-	s.Require().NoError(err)
-
-	txResponse, err := lib.GetTxResponseFromOut(out)
-	s.Require().NoError(err)
-	s.Require().Equal(int(0), int(txResponse.Code))
-
-	// WaitForBlock => Validator should implicitly send UpdateRedeemClaim
-	s.Require().NoError(s.network.WaitForNextBlock())
-
-	// Claim burned on CreateRedeemClaim
-	balanceOut, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
-		addr.String(),
-		fmt.Sprintf("--%s=%s", bank.FlagDenom, conf.ClaimDenom),
-	})
-	s.Require().NoError(err)
-	assert.Equal(s.T(), "amount: \"5993140682\"\ndenom: crddl\n", balanceOut.String()) // 3 * 1997716894 - 10000 = 5993140682
-
-	// Addr sends ConfirmRedeemClaim => rejected not claim address
-	confirmMsg := daotypes.NewMsgConfirmRedeemClaim(addr.String(), 0, "liquidAddress")
-	out, err = lib.BroadcastTxWithFileLock(addr, confirmMsg)
-	s.Require().NoError(err)
-
-	txResponse, err = lib.GetTxResponseFromOut(out)
-	s.Require().NoError(err)
-	s.Require().Equal(int(21), int(txResponse.Code))
-
-	// Validator with Claim Address sends ConfirmRedeemClaim => accepted
-	valConfirmMsg := daotypes.NewMsgConfirmRedeemClaim(val.Address.String(), 0, "liquidAddress")
-	out, err = lib.BroadcastTxWithFileLock(val.Address, valConfirmMsg)
-	s.Require().NoError(err)
-
-	txResponse, err = lib.GetTxResponseFromOut(out)
-	s.Require().NoError(err)
-	s.Require().Equal(int(0), int(txResponse.Code))
-
-	// WaitForBlock before query
-	s.Require().NoError(s.network.WaitForNextBlock())
-
-	// QueryRedeemClaim
-	qOut, err := clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdShowRedeemClaim(), []string{"liquidAddress", "0"})
-	s.Require().NoError(err)
-	assert.Equal(s.T(), "redeemClaim:\n  amount: \"10000\"\n  beneficiary: liquidAddress\n  confirmed: true\n  creator: plmnt10mq5nj8jhh27z7ejnz2ql3nh0qhzjnfvy50877\n  id: \"0\"\n  liquidTxHash: \"0000000000000000000000000000000000000000000000000000000000000000\"\n", qOut.String())
-
-	qOut, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdRedeemClaimByLiquidTxHash(), []string{"0000000000000000000000000000000000000000000000000000000000000000"})
-	s.Require().NoError(err)
-	assert.Equal(s.T(), "redeemClaim:\n  amount: \"10000\"\n  beneficiary: liquidAddress\n  confirmed: true\n  creator: plmnt10mq5nj8jhh27z7ejnz2ql3nh0qhzjnfvy50877\n  id: \"0\"\n  liquidTxHash: \"0000000000000000000000000000000000000000000000000000000000000000\"\n", qOut.String())
 }

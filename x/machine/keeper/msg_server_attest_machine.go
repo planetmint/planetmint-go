@@ -106,7 +106,7 @@ func (k msgServer) issueNFTAsset(goCtx context.Context, name string, machineAddr
 
 	c := types.Contract{
 		Entity: types.Entity{
-			Domain: conf.AssetRegistryDomain,
+			Domain: k.GetParams(ctx).AssetRegistryDomain,
 		},
 		IssuerPubkey: addressInfo.Pubkey,
 		MachineAddr:  machineAddress,
@@ -197,7 +197,7 @@ func (k msgServer) issueMachineNFT(goCtx context.Context, machine *types.Machine
 }
 
 func (k msgServer) registerAsset(goCtx context.Context, assetID string, contract string) error {
-	conf := config.GetConfig()
+	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	var contractMap map[string]interface{}
 	err := json.Unmarshal([]byte(contract), &contractMap)
@@ -215,7 +215,7 @@ func (k msgServer) registerAsset(goCtx context.Context, assetID string, contract
 		return errorsmod.Wrap(types.ErrAssetRegistryReqFailure, "Marshall "+err.Error())
 	}
 
-	assetRegistryEndpoint := fmt.Sprintf("%s://%s/%s", conf.AssetRegistryScheme, conf.AssetRegistryDomain, conf.AssetRegistryPath)
+	assetRegistryEndpoint := fmt.Sprintf("%s://%s/%s", k.GetParams(ctx).AssetRegistryScheme, k.GetParams(ctx).AssetRegistryDomain, k.GetParams(ctx).AssetRegistryPath)
 	req, err := http.NewRequestWithContext(goCtx, http.MethodPost, assetRegistryEndpoint, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return errorsmod.Wrap(types.ErrAssetRegistryReqFailure, "Request creation: "+err.Error())

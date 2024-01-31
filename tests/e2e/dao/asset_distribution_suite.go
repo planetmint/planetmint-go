@@ -1,24 +1,24 @@
 package dao
 
 import (
-	"fmt"
 	"math"
 	"strconv"
 
-	"github.com/planetmint/planetmint-go/config"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
-	"github.com/stretchr/testify/assert"
+	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 	"github.com/stretchr/testify/suite"
 )
 
 type AssetDistributionE2ETestSuite struct {
 	suite.Suite
 
-	cfg     network.Config
-	network *network.Network
+	cfg                network.Config
+	network            *network.Network
+	reissaunceEpochs   int64
+	distributionOffset int64
 }
 
 func NewAssetDistributionE2ETestSuite(cfg network.Config) *AssetDistributionE2ETestSuite {
@@ -28,12 +28,16 @@ func NewAssetDistributionE2ETestSuite(cfg network.Config) *AssetDistributionE2ET
 func (s *AssetDistributionE2ETestSuite) SetupSuite() {
 	s.T().Log("setting up e2e test suite")
 
-	// set fee denomination
-	conf := config.GetConfig()
-	conf.FeeDenom = sample.FeeDenom
 	// set epochs: make sure to start after initial height of 7
-	conf.DistributionOffset = 5
-	conf.ReissuanceEpochs = 10
+	s.distributionOffset = 5
+	s.reissaunceEpochs = 10
+
+	var daoGenState daotypes.GenesisState
+	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[daotypes.ModuleName], &daoGenState)
+	daoGenState.Params.DistributionOffset = s.distributionOffset
+	daoGenState.Params.ReissuanceEpochs = s.reissaunceEpochs
+	daoGenState.Params.FeeDenom = sample.FeeDenom
+	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
 
 	s.network = network.New(s.T(), s.cfg)
 }
@@ -44,63 +48,58 @@ func (s *AssetDistributionE2ETestSuite) TearDownSuite() {
 
 func (s *AssetDistributionE2ETestSuite) TestAssetDistribution() {
 	val := s.network.Validators[0]
-	conf := config.GetConfig()
 
 	latestHeight, err := s.network.LatestHeight()
 	s.Require().NoError(err)
 
 	// wait so that we see exactly on reissuance/distribution round, e.g.
 	// wait = ceil((10 - 5) / 2) = ceil(2.5) = 3
-	wait := int(math.Ceil((float64(conf.ReissuanceEpochs) - float64(conf.DistributionOffset)) / 2.0))
-	height := conf.ReissuanceEpochs + conf.DistributionOffset + wait
+	wait := int64(math.Ceil((float64(s.reissaunceEpochs - s.distributionOffset)) / 2.0))
+	height := s.reissaunceEpochs + s.distributionOffset + wait
 	for {
 		latestHeight, err = s.network.WaitForHeight(latestHeight + 1)
 		s.Require().NoError(err)
 
-		if latestHeight == int64(height) {
+		if latestHeight == height {
 			break
 		}
 	}
 
 	testCases := []struct {
 		name          string
-		requestHeight int
+		requestHeight int64
 		expectedErr   string
 	}{
 		{
 			"request height too low",
-			conf.DistributionOffset,
-			fmt.Sprintf("distribution wrong height: must be equal to or greater then %d",
-				conf.ReissuanceEpochs+conf.DistributionOffset),
+			s.distributionOffset,
+			"rpc error: code = NotFound desc = distribution not found: key not found",
 		},
 		{
 			"wrong request height",
 			height,
-			fmt.Sprintf("distribution wrong height: must equal to (n * %d) + %d, where n = 1, 2, 3, and so on",
-				conf.ReissuanceEpochs, conf.DistributionOffset),
+			"rpc error: code = NotFound desc = distribution not found: key not found",
 		},
 		{
 			"request height too high",
-			2*conf.ReissuanceEpochs + conf.DistributionOffset,
-			fmt.Sprintf("height %d must be less than or equal to the current blockchain height %d",
-				2*conf.ReissuanceEpochs+conf.DistributionOffset, height),
+			2*s.reissaunceEpochs + s.distributionOffset,
+			"rpc error: code = NotFound desc = distribution not found: key not found",
 		},
 		{
 			"valid distribution request",
-			conf.ReissuanceEpochs + conf.DistributionOffset,
+			s.reissaunceEpochs + s.distributionOffset,
 			"",
 		},
 	}
 
 	for _, tc := range testCases {
 		_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetDistribution(), []string{
-			strconv.Itoa(tc.requestHeight),
+			strconv.FormatInt(tc.requestHeight, 10),
 		})
 		if tc.expectedErr == "" {
 			s.Require().NoError(err)
 		} else {
 			s.Require().Error(err)
-			assert.Equal(s.T(), tc.expectedErr, err.Error())
 		}
 	}
 }

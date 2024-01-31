@@ -5,7 +5,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
-	"github.com/planetmint/planetmint-go/config"
 	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
@@ -15,7 +14,8 @@ import (
 func TestQueryChallenges(t *testing.T) {
 	keeper, ctx := keepertest.DaoKeeper(t)
 	wctx := sdk.WrapSDKContext(ctx)
-	challenges := createNChallenge(keeper, ctx, 20)
+	var popEpochs int64 = 24
+	challenges := createNChallenge(keeper, ctx, 20, popEpochs)
 	for _, tc := range []struct {
 		desc               string
 		request            *types.QueryChallengesRequest
@@ -52,7 +52,7 @@ func TestQueryChallenges(t *testing.T) {
 			desc: "query 5*PopEpochs key 0 offset 10 limit",
 			request: &types.QueryChallengesRequest{
 				Pagination: &query.PageRequest{
-					Key:        util.SerializeInt64(int64(config.GetConfig().PopEpochs * 5)),
+					Key:        util.SerializeInt64(popEpochs * 5),
 					Offset:     0,
 					Limit:      10,
 					CountTotal: true,
@@ -65,7 +65,7 @@ func TestQueryChallenges(t *testing.T) {
 			desc: "query 2*PopEpochs-5 key 0 offset 10 limit",
 			request: &types.QueryChallengesRequest{
 				Pagination: &query.PageRequest{
-					Key:        util.SerializeInt64(int64(config.GetConfig().PopEpochs*2 - 5)),
+					Key:        util.SerializeInt64(popEpochs*2 - 5),
 					Offset:     0,
 					Limit:      10,
 					CountTotal: true,

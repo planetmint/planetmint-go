@@ -4,8 +4,6 @@ package planetmintgo.dao;
 option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
 
 message DistributionOrder {
-  
-
   string daoAddr = 1; 
   string daoAmount = 2; 
   string daoTxID = 3;
@@ -18,4 +16,10 @@ message DistributionOrder {
   int64 firstPop = 10; 
   int64 lastPop = 11;
   string proposer = 12;
+  string earlyInvAddr = 13; 
+  string earlyInvAmount = 14; 
+  string earlyInvTxID = 15;
+  string strategicAddr = 16; 
+  string strategicAmount = 17; 
+  string strategicTxID = 18;
 }

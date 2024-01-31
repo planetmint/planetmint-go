@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/planetmint/planetmint-go/config"
 	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
 	"github.com/stretchr/testify/assert"
 
@@ -15,11 +14,11 @@ import (
 
 // this method returns a range of challenges, each with a blockheight * PopEpochs.
 // be aware: the first element start with 1 instead of 0
-func createNChallenge(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Challenge {
+func createNChallenge(keeper *keeper.Keeper, ctx sdk.Context, n int, popEpochs int64) []types.Challenge {
 	items := make([]types.Challenge, n)
 	for i := range items {
-		blockHeight := (i + 1) * config.GetConfig().PopEpochs
-		items[i].Height = int64(blockHeight)
+		blockHeight := int64(i+1) * popEpochs
+		items[i].Height = blockHeight
 		items[i].Initiator = fmt.Sprintf("initiator%v", blockHeight)
 		items[i].Challenger = fmt.Sprintf("challenger%v", blockHeight)
 		items[i].Challengee = fmt.Sprintf("challengee%v", blockHeight)
@@ -32,8 +31,10 @@ func createNChallenge(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Cha
 
 func TestGetChallenge(t *testing.T) {
 	t.Parallel()
+
+	popEpochs := types.DefaultGenesis().GetParams().PopEpochs
 	keeper, ctx := keepertest.DaoKeeper(t)
-	items := createNChallenge(keeper, ctx, 10)
+	items := createNChallenge(keeper, ctx, 10, popEpochs)
 	for _, item := range items {
 		challenge, found := keeper.LookupChallenge(ctx, item.Height)
 		assert.True(t, found)
@@ -43,9 +44,10 @@ func TestGetChallenge(t *testing.T) {
 
 func TestGetChallengeRange(t *testing.T) {
 	t.Parallel()
+	popEpochs := types.DefaultGenesis().GetParams().PopEpochs
 	keeper, ctx := keepertest.DaoKeeper(t)
-	createNChallenge(keeper, ctx, 10)
-	challenges, err := keeper.GetChallengeRange(ctx, int64((0+1)*config.GetConfig().PopEpochs), int64((9+1)*config.GetConfig().PopEpochs))
+	createNChallenge(keeper, ctx, 10, popEpochs)
+	challenges, err := keeper.GetChallengeRange(ctx, (0+1)*popEpochs, (9+1)*popEpochs)
 	assert.NoError(t, err)
 	assert.Equal(t, 10, len(challenges))
 }

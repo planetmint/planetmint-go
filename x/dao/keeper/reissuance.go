@@ -6,7 +6,6 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
@@ -17,8 +16,8 @@ func init() {
 	ReissueCommand = "reissueasset"
 }
 
-func GetReissuanceAsStringValue(blockHeight int64) string {
-	PopNumber := util.GetPopNumber(blockHeight)
+func GetReissuanceAsStringValue(blockHeight int64, popEpochs int64) string {
+	PopNumber := util.GetPopNumber(blockHeight, popEpochs)
 	exactCycleID := PopNumber / util.PopsPerCycle
 
 	switch cycleID := math.Floor(exactCycleID); cycleID {
@@ -37,12 +36,12 @@ func GetReissuanceAsStringValue(blockHeight int64) string {
 	}
 }
 
-func GetReissuanceCommand(assetID string, blockHeight int64) string {
-	return ReissueCommand + " " + assetID + " " + GetReissuanceAsStringValue(blockHeight)
+func GetReissuanceCommand(assetID string, blockHeight int64, popsPerEpoch int64) string {
+	return ReissueCommand + " " + assetID + " " + GetReissuanceAsStringValue(blockHeight, popsPerEpoch)
 }
 
-func IsValidReissuanceCommand(reissuanceStr string, assetID string, blockHeight int64) bool {
-	expected := ReissueCommand + " " + assetID + " " + GetReissuanceAsStringValue(blockHeight)
+func IsValidReissuanceCommand(reissuanceStr string, assetID string, blockHeight int64, popsPerEpoch int64) bool {
+	expected := ReissueCommand + " " + assetID + " " + GetReissuanceAsStringValue(blockHeight, popsPerEpoch)
 	return reissuanceStr == expected
 }
 
@@ -61,7 +60,7 @@ func (k Keeper) CreateNextReissuanceObject(ctx sdk.Context, currentBlockHeight i
 		return
 	}
 
-	reissuance.Command = GetReissuanceCommandForValue(config.GetConfig().ReissuanceAsset, reissuanceValue)
+	reissuance.Command = GetReissuanceCommandForValue(k.GetParams(ctx).ReissuanceAsset, reissuanceValue)
 	reissuance.BlockHeight = currentBlockHeight
 	reissuance.FirstIncludedPop = firstIncludedPop
 	reissuance.LastIncludedPop = lastIncludedPop
@@ -134,12 +133,12 @@ func (k Keeper) ComputeReissuanceValue(ctx sdk.Context, startHeight int64, endHe
 		return
 	}
 	var overallAmount uint64
-	popEpochs := int64(config.GetConfig().PopEpochs)
+	popEpochs := k.GetParams(ctx).PopEpochs
 	for _, obj := range challenges {
 		popString := fmt.Sprintf("firstPoP: %d, PoP height: %d, current height %d", startHeight, obj.GetHeight(), endHeight)
 		// if (index == 0 && startHeight == 0 && obj.BlockHeight == 0) || // corner case (beginning of the chain)
 		if startHeight < obj.GetHeight() && obj.GetHeight()+2*popEpochs <= endHeight {
-			popReissuanceString := GetReissuanceAsStringValue(obj.GetHeight())
+			popReissuanceString := GetReissuanceAsStringValue(obj.GetHeight(), k.GetParams(ctx).PopEpochs)
 			amount, err := util.RDDLTokenStringToUint(popReissuanceString)
 			if err != nil {
 				util.GetAppLogger().Error(ctx, "unable to compute PoP reissuance value: "+popString)

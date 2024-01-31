@@ -46864,6 +46864,18 @@ paths:
                     format: int64
                   proposer:
                     type: string
+                  earlyInvAddr:
+                    type: string
+                  earlyInvAmount:
+                    type: string
+                  earlyInvTxID:
+                    type: string
+                  strategicAddr:
+                    type: string
+                  strategicAmount:
+                    type: string
+                  strategicTxID:
+                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -47001,6 +47013,38 @@ paths:
                 properties:
                   mint_address:
                     type: string
+                  token_denom:
+                    type: string
+                  fee_denom:
+                    type: string
+                  staged_denom:
+                    type: string
+                  claim_denom:
+                    type: string
+                  reissuance_asset:
+                    type: string
+                  reissuance_epochs:
+                    type: string
+                    format: int64
+                  pop_epochs:
+                    type: string
+                    format: int64
+                  distribution_offset:
+                    type: string
+                    format: int64
+                  distribution_address_early_inv:
+                    type: string
+                  distribution_address_investor:
+                    type: string
+                  distribution_address_strategic:
+                    type: string
+                  distribution_address_dao:
+                    type: string
+                  distribution_address_pop:
+                    type: string
+                  mqtt_response_timeout:
+                    type: string
+                    format: int64
                   claim_address:
                     type: string
             description: >-
@@ -47592,6 +47636,13 @@ paths:
               params:
                 description: params holds all the parameters of this module.
                 type: object
+                properties:
+                  asset_registry_scheme:
+                    type: string
+                  asset_registry_domain:
+                    type: string
+                  asset_registry_path:
+                    type: string
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -76566,6 +76617,18 @@ definitions:
         format: int64
       proposer:
         type: string
+      earlyInvAddr:
+        type: string
+      earlyInvAmount:
+        type: string
+      earlyInvTxID:
+        type: string
+      strategicAddr:
+        type: string
+      strategicAmount:
+        type: string
+      strategicTxID:
+        type: string
   planetmintgo.dao.MintRequest:
     type: object
     properties:
@@ -76618,6 +76681,38 @@ definitions:
     properties:
       mint_address:
         type: string
+      token_denom:
+        type: string
+      fee_denom:
+        type: string
+      staged_denom:
+        type: string
+      claim_denom:
+        type: string
+      reissuance_asset:
+        type: string
+      reissuance_epochs:
+        type: string
+        format: int64
+      pop_epochs:
+        type: string
+        format: int64
+      distribution_offset:
+        type: string
+        format: int64
+      distribution_address_early_inv:
+        type: string
+      distribution_address_investor:
+        type: string
+      distribution_address_strategic:
+        type: string
+      distribution_address_dao:
+        type: string
+      distribution_address_pop:
+        type: string
+      mqtt_response_timeout:
+        type: string
+        format: int64
       claim_address:
         type: string
     description: Params defines the parameters for the module.
@@ -76767,6 +76862,18 @@ definitions:
             format: int64
           proposer:
             type: string
+          earlyInvAddr:
+            type: string
+          earlyInvAmount:
+            type: string
+          earlyInvTxID:
+            type: string
+          strategicAddr:
+            type: string
+          strategicAmount:
+            type: string
+          strategicTxID:
+            type: string
   planetmintgo.dao.QueryGetMintRequestsByHashResponse:
     type: object
     properties:
@@ -76848,6 +76955,38 @@ definitions:
         properties:
           mint_address:
             type: string
+          token_denom:
+            type: string
+          fee_denom:
+            type: string
+          staged_denom:
+            type: string
+          claim_denom:
+            type: string
+          reissuance_asset:
+            type: string
+          reissuance_epochs:
+            type: string
+            format: int64
+          pop_epochs:
+            type: string
+            format: int64
+          distribution_offset:
+            type: string
+            format: int64
+          distribution_address_early_inv:
+            type: string
+          distribution_address_investor:
+            type: string
+          distribution_address_strategic:
+            type: string
+          distribution_address_dao:
+            type: string
+          distribution_address_pop:
+            type: string
+          mqtt_response_timeout:
+            type: string
+            format: int64
           claim_address:
             type: string
     description: QueryParamsResponse is response type for the Query/Params RPC method.
@@ -77026,6 +77165,13 @@ definitions:
     type: object
   planetmintgo.machine.Params:
     type: object
+    properties:
+      asset_registry_scheme:
+        type: string
+      asset_registry_domain:
+        type: string
+      asset_registry_path:
+        type: string
     description: Params defines the parameters for the module.
   planetmintgo.machine.QueryGetLiquidAssetsByMachineidResponse:
     type: object
@@ -77142,6 +77288,13 @@ definitions:
       params:
         description: params holds all the parameters of this module.
         type: object
+        properties:
+          asset_registry_scheme:
+            type: string
+          asset_registry_domain:
+            type: string
+          asset_registry_path:
+            type: string
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   planetmintgo.machine.TrustAnchor:
     type: object

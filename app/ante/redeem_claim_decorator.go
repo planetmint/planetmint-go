@@ -4,7 +4,6 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/planetmint/planetmint-go/config"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 )
 
@@ -42,8 +41,6 @@ func (rcd RedeemClaimDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate 
 }
 
 func (rcd RedeemClaimDecorator) handleCreateRedeemClaim(ctx sdk.Context, msg sdk.Msg) (sdk.Context, error) {
-	cfg := config.GetConfig()
-
 	createRedeemClaimMsg, ok := msg.(*daotypes.MsgCreateRedeemClaim)
 	if !ok {
 		return ctx, errorsmod.Wrapf(sdkerrors.ErrLogic, "could not cast to MsgCreateRedeemClaim")
@@ -51,7 +48,8 @@ func (rcd RedeemClaimDecorator) handleCreateRedeemClaim(ctx sdk.Context, msg sdk
 
 	addr := sdk.MustAccAddressFromBech32(createRedeemClaimMsg.Creator)
 
-	balance := rcd.bk.GetBalance(ctx, addr, cfg.ClaimDenom)
+	params := rcd.dk.GetParams(ctx)
+	balance := rcd.bk.GetBalance(ctx, addr, params.ClaimDenom)
 
 	if !balance.Amount.GTE(sdk.NewIntFromUint64(createRedeemClaimMsg.Amount)) {
 		return ctx, errorsmod.Wrap(sdkerrors.ErrInsufficientFunds, "error during checkTx or reCheckTx")

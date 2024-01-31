@@ -42,6 +42,7 @@ type DaoKeeper interface {
 	GetClaimAddress(ctx sdk.Context) (claimAddress string)
 	IsValidReissuanceProposal(ctx sdk.Context, msg *daotypes.MsgReissueRDDLProposal) (isValid bool)
 	GetRedeemClaim(ctx sdk.Context, benficiary string, id uint64) (val daotypes.RedeemClaim, found bool)
+	GetParams(ctx sdk.Context) (params daotypes.Params)
 }
 
 type StakingKeeper interface {

@@ -2,8 +2,6 @@ package util
 
 import (
 	"math"
-
-	"github.com/planetmint/planetmint-go/config"
 )
 
 var PopsPerCycle float64
@@ -12,12 +10,12 @@ func init() {
 	PopsPerCycle = 1051200.0
 }
 
-func GetPopNumber(blockHeight int64) float64 {
-	return float64(blockHeight) / float64(config.GetConfig().PopEpochs)
+func GetPopNumber(blockHeight int64, popEpochs int64) float64 {
+	return float64(blockHeight) / float64(popEpochs)
 }
 
-func GetPopReward(blockHeight int64) (total uint64, challenger uint64, challengee uint64) {
-	PopNumber := GetPopNumber(blockHeight)
+func GetPopReward(blockHeight int64, popEpochs int64) (total uint64, challenger uint64, challengee uint64) {
+	PopNumber := GetPopNumber(blockHeight, popEpochs)
 	exactCycleID := PopNumber / PopsPerCycle
 
 	switch cycleID := math.Floor(exactCycleID); cycleID {

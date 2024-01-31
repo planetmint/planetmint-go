@@ -7,7 +7,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/rpc"
-	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
@@ -21,7 +20,6 @@ func CmdGetDistribution() *cobra.Command {
 		Short: "Query for distributions by height",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			conf := config.GetConfig()
 			requestHeight, err := cast.ToInt64E(args[0])
 			if err != nil {
 				return err
@@ -40,16 +38,6 @@ func CmdGetDistribution() *cobra.Command {
 			if requestHeight > latestHeight {
 				err = fmt.Errorf("height %d must be less than or equal to the current blockchain height %d",
 					requestHeight, latestHeight)
-				return err
-			}
-			if requestHeight < (int64(conf.ReissuanceEpochs) + int64(conf.DistributionOffset)) {
-				err = fmt.Errorf("%w: must be equal to or greater then %d",
-					types.ErrDistributionWrongHeight, conf.ReissuanceEpochs+conf.DistributionOffset)
-				return err
-			}
-			if requestHeight%int64(conf.ReissuanceEpochs) != int64(conf.DistributionOffset) {
-				err = fmt.Errorf("%w: must equal to (n * %d) + %d, where n = 1, 2, 3, and so on",
-					types.ErrDistributionWrongHeight, conf.ReissuanceEpochs, conf.DistributionOffset)
 				return err
 			}
 

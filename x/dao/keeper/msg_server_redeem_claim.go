@@ -7,7 +7,6 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
@@ -18,6 +17,7 @@ var (
 
 func (k msgServer) CreateRedeemClaim(goCtx context.Context, msg *types.MsgCreateRedeemClaim) (*types.MsgCreateRedeemClaimResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+	params := k.GetParams(ctx)
 
 	var redeemClaim = types.RedeemClaim{
 		Creator:     msg.Creator,
@@ -37,7 +37,7 @@ func (k msgServer) CreateRedeemClaim(goCtx context.Context, msg *types.MsgCreate
 
 	if util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress) {
 		util.GetAppLogger().Info(ctx, fmt.Sprintf("Issuing RDDL claim: %s/%d", msg.Beneficiary, id))
-		txID, err := util.DistributeAsset(msg.Beneficiary, util.UintValueToRDDLTokenString(msg.Amount))
+		txID, err := util.DistributeAsset(msg.Beneficiary, util.UintValueToRDDLTokenString(msg.Amount), params.ReissuanceAsset)
 		if err != nil {
 			util.GetAppLogger().Error(ctx, createRedeemClaimTag+"could not issue claim to beneficiary: "+msg.GetBeneficiary())
 		}
@@ -99,8 +99,8 @@ func (k msgServer) ConfirmRedeemClaim(goCtx context.Context, msg *types.MsgConfi
 }
 
 func (k msgServer) burnClaimAmount(ctx sdk.Context, addr sdk.AccAddress, amount uint64) (err error) {
-	conf := config.GetConfig()
-	burnCoins := sdk.NewCoins(sdk.NewCoin(conf.ClaimDenom, sdk.NewIntFromUint64(amount)))
+	params := k.GetParams(ctx)
+	burnCoins := sdk.NewCoins(sdk.NewCoin(params.ClaimDenom, sdk.NewIntFromUint64(amount)))
 	err = k.bankKeeper.SendCoinsFromAccountToModule(ctx, addr, types.ModuleName, burnCoins)
 	if err != nil {
 		return err
