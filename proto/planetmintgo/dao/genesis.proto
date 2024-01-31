@@ -10,7 +10,6 @@ option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
 
 // GenesisState defines the dao module's genesis state.
 message GenesisState {
-           Params      params          = 1 [(gogoproto.nullable) = false];
-  repeated RedeemClaim redeemClaimList = 2 [(gogoproto.nullable) = false];
+  Params      params          = 1 [(gogoproto.nullable) = false];
 }
 
