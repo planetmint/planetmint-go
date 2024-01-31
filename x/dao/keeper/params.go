@@ -34,3 +34,7 @@ func (k Keeper) SetParams(ctx sdk.Context, params types.Params) error {
 func (k Keeper) GetMintAddress(ctx sdk.Context) (mintAddress string) {
 	return k.GetParams(ctx).MintAddress
 }
+
+func (k Keeper) GetTxGasLimit(ctx sdk.Context) (txGasLimit uint64) {
+	return k.GetParams(ctx).TxGasLimit
+}

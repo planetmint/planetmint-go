@@ -38,6 +38,7 @@ type BankKeeper interface {
 type DaoKeeper interface {
 	GetMintRequestByHash(ctx sdk.Context, hash string) (val daotypes.MintRequest, found bool)
 	GetMintAddress(ctx sdk.Context) (mintAddress string)
+	GetTxGasLimit(ctx sdk.Context) (txGasLimit uint64)
 	IsValidReissuanceProposal(ctx sdk.Context, msg *daotypes.MsgReissueRDDLProposal) (isValid bool)
 }
 

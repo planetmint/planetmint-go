@@ -47045,6 +47045,9 @@ paths:
                   mqtt_response_timeout:
                     type: string
                     format: int64
+                  tx_gas_limit:
+                    type: string
+                    format: uint64
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -76463,6 +76466,9 @@ definitions:
       mqtt_response_timeout:
         type: string
         format: int64
+      tx_gas_limit:
+        type: string
+        format: uint64
     description: Params defines the parameters for the module.
   planetmintgo.dao.QueryChallengesResponse:
     type: object
@@ -76667,6 +76673,9 @@ definitions:
           mqtt_response_timeout:
             type: string
             format: int64
+          tx_gas_limit:
+            type: string
+            format: uint64
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   planetmintgo.dao.QueryReissuancesResponse:
     type: object

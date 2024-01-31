@@ -24,4 +24,5 @@ message Params {
   string distribution_address_dao = 13;
   string distribution_address_pop = 14;
   int64 mqtt_response_timeout = 15;
+  uint64 tx_gas_limit = 16;
 }
