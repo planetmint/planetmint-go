@@ -33,7 +33,6 @@ type E2ETestSuite struct {
 	network            *network.Network
 	reissuanceEpochs   int64
 	distributionOffset int64
-	claimDenom         string
 	bobAddr            sdk.AccAddress
 	aliceAddr          sdk.AccAddress
 }
@@ -204,7 +203,7 @@ func (s *E2ETestSuite) TestReissuance() {
 		// 1:  block 26: sending the reissuance result broadcast tx succeeded
 		// 2:  block 27: confirmation
 		wait = 2
-		if latestHeight%int64(s.reissuanceEpochs) == int64(wait) {
+		if latestHeight%s.reissuanceEpochs == int64(wait) {
 			break
 		}
 	}
