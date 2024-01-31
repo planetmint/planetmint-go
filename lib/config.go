@@ -94,7 +94,7 @@ func (config *Config) SetRPCEndpoint(rpcEndpoint string) *Config {
 	return config
 }
 
-// SetRPCEndpoint sets the amount of Gas for the TX to send requests to.
+// SetTxGas sets the amount of Gas for the TX that is send to the network
 func (config *Config) SetTxGas(txGas uint64) *Config {
 	config.TxGas = txGas
 	return config
