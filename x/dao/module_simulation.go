@@ -66,18 +66,6 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	}
 	daoGenesis := types.GenesisState{
 		Params: types.DefaultParams(),
-		RedeemClaimList: []types.RedeemClaim{
-			{
-				Creator:      sample.AccAddress(),
-				Beneficiary:  "0",
-				LiquidTxHash: "0",
-			},
-			{
-				Creator:      sample.AccAddress(),
-				Beneficiary:  "1",
-				LiquidTxHash: "1",
-			},
-		},
 		// this line is used by starport scaffolding # simapp/module/genesisState
 	}
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&daoGenesis)
