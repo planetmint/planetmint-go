@@ -25,4 +25,5 @@ message Params {
   string distribution_address_pop = 14;
   int64 mqtt_response_timeout = 15;
   string claim_address = 16;
+  uint64 tx_gas_limit = 17;
 }

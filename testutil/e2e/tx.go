@@ -10,8 +10,8 @@ import (
 )
 
 // BuildSignBroadcastTx builds, signs and broadcasts transaction to the network.
-func BuildSignBroadcastTx(t *testing.T, addr sdk.AccAddress, msg sdk.Msg) (out *bytes.Buffer, err error) {
-	out, err = lib.BroadcastTxWithFileLock(addr, msg)
+func BuildSignBroadcastTx(t *testing.T, addr sdk.AccAddress, msgs ...sdk.Msg) (out *bytes.Buffer, err error) {
+	out, err = lib.BroadcastTxWithFileLock(addr, msgs...)
 	if err != nil {
 		t.Log("broadcast tx failed: " + err.Error())
 		return

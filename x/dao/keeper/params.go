@@ -35,6 +35,10 @@ func (k Keeper) GetMintAddress(ctx sdk.Context) (mintAddress string) {
 	return k.GetParams(ctx).MintAddress
 }
 
+func (k Keeper) GetTxGasLimit(ctx sdk.Context) (txGasLimit uint64) {
+	return k.GetParams(ctx).TxGasLimit
+}
+
 func (k Keeper) GetClaimAddress(ctx sdk.Context) (claimAddress string) {
 	return k.GetParams(ctx).ClaimAddress
 }
