@@ -17,7 +17,7 @@ func NewParams(mintAddress string, tokenDenom string, feeDenom string, stagedDen
 	claimDenom string, reissuanceAsset string, reissuanceEpochs int64, popEpochs int64,
 	distributionOffset int64, distributionAddressEarlyInv string, distributionAddressInvestor string,
 	distributionAddressStrategic string, distributionAddressDao string, distributionAddressPop string,
-	mqttResponseTimeout int64, txGasLimit uint64) Params {
+	mqttResponseTimeout int64, claimAddress string, txGasLimit uint64) Params {
 	return Params{
 		MintAddress:     mintAddress,
 		TokenDenom:      tokenDenom,
@@ -41,6 +41,7 @@ func NewParams(mintAddress string, tokenDenom string, feeDenom string, stagedDen
 		DistributionAddressDao:       distributionAddressDao,
 		DistributionAddressPop:       distributionAddressPop,
 		MqttResponseTimeout:          mqttResponseTimeout,
+		ClaimAddress:                 claimAddress,
 		TxGasLimit:                   txGasLimit,
 	}
 }
@@ -63,6 +64,7 @@ func DefaultParams() Params {
 		"vjU8eMzU3JbUWZEpVANt2ePJuPWSPixgjiSj2jDMvkVVQQi2DDnZuBRVX4Ygt5YGBf5zvTWCr1ntdqYH",
 		"vjTvXCFSReRsZ7grdsAreRR12KuKpDw8idueQJK9Yh1BYS7ggAqgvCxCgwh13KGK6M52y37HUmvr4GdD",
 		2000,
+		"plmnt1dyuhg8ldu3d6nvhrvzzemtc3893dys9v9lvdty",
 		200000)
 }
 

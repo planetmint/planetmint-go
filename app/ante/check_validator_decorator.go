@@ -31,6 +31,8 @@ func (cv CheckValidatorDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulat
 			fallthrough
 		case "/planetmintgo.dao.MsgReissueRDDLResult":
 			fallthrough
+		case "/planetmintgo.dao.MsgUpdateRedeemClaim":
+			fallthrough
 		case "/planetmintgo.machine.MsgNotarizeLiquidAsset":
 			fallthrough
 		case "/planetmintgo.machine.MsgRegisterTrustAnchor":

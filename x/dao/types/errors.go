@@ -27,4 +27,5 @@ var (
 	ErrRestrictedMsg            = errorsmod.Register(ModuleName, 18, "restricted validator msg")
 	ErrDistributionWrongHeight  = errorsmod.Register(ModuleName, 19, "distribution wrong height")
 	ErrConvertClaims            = errorsmod.Register(ModuleName, 20, "convert claim failed")
+	ErrInvalidClaimAddress      = errorsmod.Register(ModuleName, 21, "invalid claim address")
 )

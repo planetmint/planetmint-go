@@ -39,6 +39,22 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgInitPop int = 100
 
+	opWeightMsgCreateRedeemClaim = "op_weight_msg_redeem_claim"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgCreateRedeemClaim int = 100
+
+	opWeightMsgUpdateRedeemClaim = "op_weight_msg_redeem_claim"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgUpdateRedeemClaim int = 100
+
+	opWeightMsgDeleteRedeemClaim = "op_weight_msg_redeem_claim"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgDeleteRedeemClaim int = 100
+
+	opWeightMsgConfirmRedeemClaim = "op_weight_msg_confirm_redeem_claim"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgConfirmRedeemClaim int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -111,6 +127,46 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		daosimulation.SimulateMsgInitPop(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
+	var weightMsgCreateRedeemClaim int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgCreateRedeemClaim, &weightMsgCreateRedeemClaim, nil,
+		func(_ *rand.Rand) {
+			weightMsgCreateRedeemClaim = defaultWeightMsgCreateRedeemClaim
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgCreateRedeemClaim,
+		daosimulation.SimulateMsgCreateRedeemClaim(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgUpdateRedeemClaim int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgUpdateRedeemClaim, &weightMsgUpdateRedeemClaim, nil,
+		func(_ *rand.Rand) {
+			weightMsgUpdateRedeemClaim = defaultWeightMsgUpdateRedeemClaim
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgUpdateRedeemClaim,
+		daosimulation.SimulateMsgUpdateRedeemClaim(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgDeleteRedeemClaim int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgDeleteRedeemClaim, &weightMsgDeleteRedeemClaim, nil,
+		func(_ *rand.Rand) {
+			weightMsgDeleteRedeemClaim = defaultWeightMsgDeleteRedeemClaim
+		},
+	)
+
+	var weightMsgConfirmRedeemClaim int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgConfirmRedeemClaim, &weightMsgConfirmRedeemClaim, nil,
+		func(_ *rand.Rand) {
+			weightMsgConfirmRedeemClaim = defaultWeightMsgConfirmRedeemClaim
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgConfirmRedeemClaim,
+		daosimulation.SimulateMsgConfirmRedeemClaim(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
 	// this line is used by starport scaffolding # simapp/module/operation
 
 	return operations
@@ -148,6 +204,30 @@ func (am AppModule) ProposalMsgs(_ module.SimulationState) []simtypes.WeightedPr
 			defaultWeightMsgInitPop,
 			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
 				daosimulation.SimulateMsgInitPop(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgCreateRedeemClaim,
+			defaultWeightMsgCreateRedeemClaim,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				daosimulation.SimulateMsgCreateRedeemClaim(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgUpdateRedeemClaim,
+			defaultWeightMsgUpdateRedeemClaim,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				daosimulation.SimulateMsgUpdateRedeemClaim(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgConfirmRedeemClaim,
+			defaultWeightMsgConfirmRedeemClaim,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				daosimulation.SimulateMsgConfirmRedeemClaim(am.accountKeeper, am.bankKeeper, am.keeper)
 				return nil
 			},
 		),

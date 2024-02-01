@@ -80,6 +80,7 @@ func (s *E2ETestSuite) SetupSuite() {
 	daoGenState.Params.DistributionOffset = s.distributionOffset
 	daoGenState.Params.ReissuanceEpochs = s.reissuanceEpochs
 	daoGenState.Params.MintAddress = valAddr.String()
+	daoGenState.Params.ClaimAddress = valAddr.String()
 	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
 
 	bbalances := sdk.NewCoins(
@@ -102,6 +103,12 @@ func (s *E2ETestSuite) SetupSuite() {
 
 	s.cfg.MinGasPrices = fmt.Sprintf("0.000006%s", daoGenState.Params.FeeDenom)
 	s.network = network.New(s.T(), s.cfg)
+
+	// create account for redeem claim test case
+	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
+	s.Require().NoError(err)
+	err = e2etestutil.FundAccount(s.network, account)
+	s.Require().NoError(err)
 }
 
 // TearDownSuite clean up after testing
@@ -137,11 +144,9 @@ func (s *E2ETestSuite) TestMintToken() {
 	s.Require().NoError(err)
 
 	// send mint token request from non mint address
-	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
+	k, err := val.ClientCtx.Keyring.Key(sample.Name)
 	s.Require().NoError(err)
-	err = e2etestutil.FundAccount(s.network, account)
-	s.Require().NoError(err)
-	addr, _ := account.GetAddress()
+	addr, _ := k.GetAddress()
 
 	msg1 = daotypes.NewMsgMintToken(addr.String(), &mintRequest)
 	out, err = lib.BroadcastTxWithFileLock(addr, msg1)
@@ -198,7 +203,7 @@ func (s *E2ETestSuite) TestReissuance() {
 		// 1:  block 26: sending the reissuance result broadcast tx succeeded
 		// 2:  block 27: confirmation
 		wait = 2
-		if latestHeight%(s.reissuanceEpochs+wait) == 0 {
+		if latestHeight%s.reissuanceEpochs == wait {
 			break
 		}
 	}

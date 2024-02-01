@@ -746,6 +746,288 @@ func (m *QueryGetDistributionResponse) GetDistribution() *DistributionOrder {
 	return nil
 }
 
+type QueryGetRedeemClaimRequest struct {
+	Beneficiary string `protobuf:"bytes,1,opt,name=beneficiary,proto3" json:"beneficiary,omitempty"`
+	Id          uint64 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (m *QueryGetRedeemClaimRequest) Reset()         { *m = QueryGetRedeemClaimRequest{} }
+func (m *QueryGetRedeemClaimRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetRedeemClaimRequest) ProtoMessage()    {}
+func (*QueryGetRedeemClaimRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_07bad0eeb5b27724, []int{16}
+}
+func (m *QueryGetRedeemClaimRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetRedeemClaimRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetRedeemClaimRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetRedeemClaimRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetRedeemClaimRequest.Merge(m, src)
+}
+func (m *QueryGetRedeemClaimRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetRedeemClaimRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetRedeemClaimRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetRedeemClaimRequest proto.InternalMessageInfo
+
+func (m *QueryGetRedeemClaimRequest) GetBeneficiary() string {
+	if m != nil {
+		return m.Beneficiary
+	}
+	return ""
+}
+
+func (m *QueryGetRedeemClaimRequest) GetId() uint64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+type QueryGetRedeemClaimResponse struct {
+	RedeemClaim RedeemClaim `protobuf:"bytes,1,opt,name=redeemClaim,proto3" json:"redeemClaim"`
+}
+
+func (m *QueryGetRedeemClaimResponse) Reset()         { *m = QueryGetRedeemClaimResponse{} }
+func (m *QueryGetRedeemClaimResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetRedeemClaimResponse) ProtoMessage()    {}
+func (*QueryGetRedeemClaimResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_07bad0eeb5b27724, []int{17}
+}
+func (m *QueryGetRedeemClaimResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetRedeemClaimResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetRedeemClaimResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetRedeemClaimResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetRedeemClaimResponse.Merge(m, src)
+}
+func (m *QueryGetRedeemClaimResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetRedeemClaimResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetRedeemClaimResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetRedeemClaimResponse proto.InternalMessageInfo
+
+func (m *QueryGetRedeemClaimResponse) GetRedeemClaim() RedeemClaim {
+	if m != nil {
+		return m.RedeemClaim
+	}
+	return RedeemClaim{}
+}
+
+type QueryAllRedeemClaimRequest struct {
+	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllRedeemClaimRequest) Reset()         { *m = QueryAllRedeemClaimRequest{} }
+func (m *QueryAllRedeemClaimRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryAllRedeemClaimRequest) ProtoMessage()    {}
+func (*QueryAllRedeemClaimRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_07bad0eeb5b27724, []int{18}
+}
+func (m *QueryAllRedeemClaimRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllRedeemClaimRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllRedeemClaimRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllRedeemClaimRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllRedeemClaimRequest.Merge(m, src)
+}
+func (m *QueryAllRedeemClaimRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllRedeemClaimRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllRedeemClaimRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllRedeemClaimRequest proto.InternalMessageInfo
+
+func (m *QueryAllRedeemClaimRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryAllRedeemClaimResponse struct {
+	RedeemClaim []RedeemClaim       `protobuf:"bytes,1,rep,name=redeemClaim,proto3" json:"redeemClaim"`
+	Pagination  *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllRedeemClaimResponse) Reset()         { *m = QueryAllRedeemClaimResponse{} }
+func (m *QueryAllRedeemClaimResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryAllRedeemClaimResponse) ProtoMessage()    {}
+func (*QueryAllRedeemClaimResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_07bad0eeb5b27724, []int{19}
+}
+func (m *QueryAllRedeemClaimResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllRedeemClaimResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllRedeemClaimResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllRedeemClaimResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllRedeemClaimResponse.Merge(m, src)
+}
+func (m *QueryAllRedeemClaimResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllRedeemClaimResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllRedeemClaimResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllRedeemClaimResponse proto.InternalMessageInfo
+
+func (m *QueryAllRedeemClaimResponse) GetRedeemClaim() []RedeemClaim {
+	if m != nil {
+		return m.RedeemClaim
+	}
+	return nil
+}
+
+func (m *QueryAllRedeemClaimResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryRedeemClaimByLiquidTxHashRequest struct {
+	LiquidTxHash string `protobuf:"bytes,1,opt,name=liquidTxHash,proto3" json:"liquidTxHash,omitempty"`
+}
+
+func (m *QueryRedeemClaimByLiquidTxHashRequest) Reset()         { *m = QueryRedeemClaimByLiquidTxHashRequest{} }
+func (m *QueryRedeemClaimByLiquidTxHashRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryRedeemClaimByLiquidTxHashRequest) ProtoMessage()    {}
+func (*QueryRedeemClaimByLiquidTxHashRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_07bad0eeb5b27724, []int{20}
+}
+func (m *QueryRedeemClaimByLiquidTxHashRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryRedeemClaimByLiquidTxHashRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryRedeemClaimByLiquidTxHashRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryRedeemClaimByLiquidTxHashRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryRedeemClaimByLiquidTxHashRequest.Merge(m, src)
+}
+func (m *QueryRedeemClaimByLiquidTxHashRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryRedeemClaimByLiquidTxHashRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryRedeemClaimByLiquidTxHashRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryRedeemClaimByLiquidTxHashRequest proto.InternalMessageInfo
+
+func (m *QueryRedeemClaimByLiquidTxHashRequest) GetLiquidTxHash() string {
+	if m != nil {
+		return m.LiquidTxHash
+	}
+	return ""
+}
+
+type QueryRedeemClaimByLiquidTxHashResponse struct {
+	RedeemClaim *RedeemClaim `protobuf:"bytes,1,opt,name=redeemClaim,proto3" json:"redeemClaim,omitempty"`
+}
+
+func (m *QueryRedeemClaimByLiquidTxHashResponse) Reset() {
+	*m = QueryRedeemClaimByLiquidTxHashResponse{}
+}
+func (m *QueryRedeemClaimByLiquidTxHashResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryRedeemClaimByLiquidTxHashResponse) ProtoMessage()    {}
+func (*QueryRedeemClaimByLiquidTxHashResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_07bad0eeb5b27724, []int{21}
+}
+func (m *QueryRedeemClaimByLiquidTxHashResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryRedeemClaimByLiquidTxHashResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryRedeemClaimByLiquidTxHashResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryRedeemClaimByLiquidTxHashResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryRedeemClaimByLiquidTxHashResponse.Merge(m, src)
+}
+func (m *QueryRedeemClaimByLiquidTxHashResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryRedeemClaimByLiquidTxHashResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryRedeemClaimByLiquidTxHashResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryRedeemClaimByLiquidTxHashResponse proto.InternalMessageInfo
+
+func (m *QueryRedeemClaimByLiquidTxHashResponse) GetRedeemClaim() *RedeemClaim {
+	if m != nil {
+		return m.RedeemClaim
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*QueryParamsRequest)(nil), "planetmintgo.dao.QueryParamsRequest")
 	proto.RegisterType((*QueryParamsResponse)(nil), "planetmintgo.dao.QueryParamsResponse")
@@ -763,72 +1045,93 @@ func init() {
 	proto.RegisterType((*QueryChallengesResponse)(nil), "planetmintgo.dao.QueryChallengesResponse")
 	proto.RegisterType((*QueryGetDistributionRequest)(nil), "planetmintgo.dao.QueryGetDistributionRequest")
 	proto.RegisterType((*QueryGetDistributionResponse)(nil), "planetmintgo.dao.QueryGetDistributionResponse")
+	proto.RegisterType((*QueryGetRedeemClaimRequest)(nil), "planetmintgo.dao.QueryGetRedeemClaimRequest")
+	proto.RegisterType((*QueryGetRedeemClaimResponse)(nil), "planetmintgo.dao.QueryGetRedeemClaimResponse")
+	proto.RegisterType((*QueryAllRedeemClaimRequest)(nil), "planetmintgo.dao.QueryAllRedeemClaimRequest")
+	proto.RegisterType((*QueryAllRedeemClaimResponse)(nil), "planetmintgo.dao.QueryAllRedeemClaimResponse")
+	proto.RegisterType((*QueryRedeemClaimByLiquidTxHashRequest)(nil), "planetmintgo.dao.QueryRedeemClaimByLiquidTxHashRequest")
+	proto.RegisterType((*QueryRedeemClaimByLiquidTxHashResponse)(nil), "planetmintgo.dao.QueryRedeemClaimByLiquidTxHashResponse")
 }
 
 func init() { proto.RegisterFile("planetmintgo/dao/query.proto", fileDescriptor_07bad0eeb5b27724) }
 
 var fileDescriptor_07bad0eeb5b27724 = []byte{
-	// 954 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x96, 0x41, 0x6f, 0x1b, 0x45,
-	0x14, 0xc7, 0xb3, 0x6d, 0x09, 0xca, 0x73, 0x10, 0x30, 0xb4, 0xc1, 0x6c, 0x1c, 0x93, 0x4e, 0x52,
-	0x9a, 0x38, 0x64, 0x87, 0xa4, 0x40, 0x85, 0x44, 0x85, 0x30, 0xa8, 0x69, 0x0f, 0x15, 0x65, 0x0f,
-	0x1c, 0x7a, 0x29, 0x63, 0x7b, 0xb4, 0xbb, 0xc2, 0xde, 0x71, 0x77, 0xd6, 0x88, 0x28, 0xca, 0x05,
-	0x89, 0x03, 0x37, 0xa4, 0x5e, 0x91, 0xb8, 0x22, 0x0e, 0x88, 0x0b, 0x27, 0xbe, 0x40, 0x8f, 0x95,
-	0xb8, 0x70, 0x02, 0x94, 0x20, 0xf1, 0x35, 0xd0, 0xce, 0xbe, 0xf5, 0x8e, 0xbd, 0xde, 0xb5, 0x91,
-	0x7a, 0xb1, 0x66, 0x77, 0xfe, 0xef, 0xcd, 0xef, 0xbd, 0xd9, 0xf9, 0x8f, 0xa1, 0x31, 0xec, 0xf3,
-	0x50, 0xc4, 0x83, 0x20, 0x8c, 0x3d, 0xc9, 0x7a, 0x5c, 0xb2, 0x47, 0x23, 0x11, 0x1d, 0x3b, 0xc3,
-	0x48, 0xc6, 0x92, 0xbc, 0x64, 0xce, 0x3a, 0x3d, 0x2e, 0xed, 0xcb, 0x9e, 0xf4, 0xa4, 0x9e, 0x64,
-	0xc9, 0x28, 0xd5, 0xd9, 0x0d, 0x4f, 0x4a, 0xaf, 0x2f, 0x18, 0x1f, 0x06, 0x8c, 0x87, 0xa1, 0x8c,
-	0x79, 0x1c, 0xc8, 0x50, 0xe1, 0x6c, 0xab, 0x2b, 0xd5, 0x40, 0x2a, 0xd6, 0xe1, 0x4a, 0xa4, 0xe9,
-	0xd9, 0x97, 0x07, 0x1d, 0x11, 0xf3, 0x03, 0x36, 0xe4, 0x5e, 0x10, 0x6a, 0x31, 0x6a, 0x37, 0x0a,
-	0x3c, 0x43, 0x1e, 0xf1, 0x41, 0x96, 0x6a, 0xab, 0x30, 0x9d, 0x0c, 0x1f, 0x46, 0xe2, 0xd1, 0x48,
-	0xa8, 0x18, 0x45, 0xdb, 0x95, 0xa2, 0x2c, 0xd5, 0xd5, 0x82, 0x2a, 0x12, 0x81, 0x52, 0x23, 0x1e,
-	0x76, 0x05, 0x4a, 0x36, 0x0b, 0x92, 0xae, 0xcf, 0xfb, 0x7d, 0x11, 0x7a, 0x99, 0xe2, 0x65, 0x3e,
-	0x08, 0x42, 0xc9, 0xf4, 0x2f, 0xbe, 0xda, 0x2d, 0x04, 0xf5, 0x02, 0x15, 0x47, 0x41, 0x67, 0x94,
-	0x94, 0xf9, 0x50, 0x46, 0x3d, 0x11, 0xa5, 0x52, 0x7a, 0x19, 0xc8, 0xa7, 0x49, 0x3b, 0xee, 0xeb,
-	0x12, 0xdd, 0x94, 0x8f, 0xde, 0x83, 0x57, 0x26, 0xde, 0xaa, 0xa1, 0x0c, 0x95, 0x20, 0xef, 0xc2,
-	0x72, 0xda, 0x8a, 0xba, 0xb5, 0x69, 0xed, 0xd4, 0x0e, 0xeb, 0xce, 0xf4, 0xe6, 0x38, 0x69, 0x44,
-	0xfb, 0xd2, 0x93, 0x3f, 0x5f, 0x5f, 0x72, 0x51, 0x4d, 0x6f, 0xc2, 0x55, 0x9d, 0xee, 0x48, 0xc4,
-	0xf7, 0x82, 0x30, 0xc6, 0x55, 0x54, 0xfb, 0xf8, 0x0e, 0x57, 0x3e, 0x3e, 0x11, 0x02, 0x97, 0x7c,
-	0xae, 0x7c, 0x9d, 0x7a, 0xc5, 0xd5, 0x63, 0x2a, 0x80, 0x56, 0x05, 0x22, 0xd6, 0x07, 0x50, 0x1b,
-	0xe4, 0xb3, 0xc8, 0xb6, 0x51, 0x64, 0x33, 0x52, 0xb8, 0x66, 0x04, 0xbd, 0x85, 0x7c, 0x93, 0x6b,
-	0x7c, 0xd8, 0xeb, 0x45, 0x42, 0x65, 0x3d, 0x21, 0x75, 0x78, 0x9e, 0xa7, 0x6f, 0x10, 0x31, 0x7b,
-	0xa4, 0x3e, 0x52, 0x96, 0x84, 0x23, 0x65, 0x1b, 0x56, 0x8d, 0x35, 0xb3, 0x16, 0x36, 0x2b, 0x31,
-	0x95, 0x3b, 0x11, 0x43, 0x6f, 0xc1, 0x6b, 0x59, 0x3f, 0xdc, 0xf1, 0x97, 0x92, 0x01, 0x6e, 0x42,
-	0xad, 0xd3, 0x97, 0xdd, 0x2f, 0xee, 0x88, 0xc0, 0xf3, 0xd3, 0x36, 0x5c, 0x74, 0xcd, 0x57, 0xf4,
-	0x01, 0xd8, 0xb3, 0xc2, 0x11, 0xf0, 0x7d, 0x80, 0xfc, 0xf3, 0x43, 0xbc, 0x46, 0x11, 0xcf, 0x88,
-	0x34, 0xf4, 0x94, 0xc3, 0xab, 0x3a, 0x77, 0x3e, 0x3d, 0xee, 0xdc, 0x6d, 0x80, 0xfc, 0x90, 0x61,
-	0xe2, 0x37, 0x9c, 0xf4, 0x44, 0x3a, 0xc9, 0x89, 0x74, 0xd2, 0x03, 0x8f, 0x27, 0xd2, 0xb9, 0xcf,
-	0xbd, 0xac, 0x28, 0xd7, 0x88, 0xa4, 0x3f, 0x5b, 0x50, 0x2f, 0xae, 0x81, 0xf4, 0x77, 0xa1, 0x96,
-	0xd3, 0x24, 0xdd, 0xbd, 0x38, 0x0f, 0xbf, 0xbd, 0x92, 0x7c, 0xa4, 0x3f, 0xfe, 0xfb, 0x4b, 0xcb,
-	0x72, 0xcd, 0x58, 0x72, 0x34, 0xc1, 0x7b, 0x41, 0xf3, 0x5e, 0x9f, 0xcb, 0x9b, 0x72, 0x4c, 0x00,
-	0x1f, 0x22, 0xef, 0x91, 0x88, 0x3f, 0xca, 0x4e, 0x6d, 0xd6, 0x94, 0x35, 0x58, 0xf6, 0xcd, 0x8d,
-	0xc2, 0x27, 0xfa, 0x59, 0xbe, 0xc5, 0x46, 0x0c, 0x16, 0xf9, 0x1e, 0xac, 0x8c, 0x8f, 0x3f, 0x36,
-	0x72, 0xbd, 0x58, 0x62, 0x1e, 0x97, 0xab, 0xe9, 0xe7, 0xb0, 0xa6, 0xf3, 0x8e, 0x27, 0x9f, 0xf9,
-	0xf6, 0xfc, 0x64, 0xe1, 0x27, 0x60, 0x2e, 0x81, 0xe0, 0xb7, 0x01, 0xc6, 0x28, 0xd9, 0xe6, 0x54,
-	0x91, 0x9b, 0x7b, 0x63, 0x44, 0x3e, 0xbb, 0xad, 0x79, 0x07, 0xd6, 0xb3, 0x36, 0x7f, 0x6c, 0x78,
-	0xe3, 0xbc, 0xdd, 0xf1, 0xa0, 0x31, 0x3b, 0x0c, 0xeb, 0x3c, 0x82, 0x55, 0xd3, 0x6a, 0xb1, 0x9b,
-	0x5b, 0xc5, 0x4a, 0xcd, 0xe8, 0x4f, 0x12, 0x3f, 0x76, 0x27, 0x02, 0x0f, 0xff, 0x5a, 0x81, 0xe7,
-	0xf4, 0x4a, 0x64, 0x04, 0xcb, 0xa9, 0xa9, 0x92, 0xed, 0x62, 0x9a, 0xa2, 0x77, 0xdb, 0xd7, 0xe6,
-	0xa8, 0x52, 0x52, 0xda, 0xfc, 0xfa, 0xf7, 0x7f, 0x1e, 0x5f, 0xa8, 0x93, 0x35, 0x96, 0xcb, 0x8d,
-	0xcb, 0x8e, 0xfc, 0x6a, 0xc1, 0x95, 0x99, 0xb6, 0x4b, 0x6e, 0x94, 0x2c, 0x50, 0xe5, 0xee, 0xf6,
-	0xdb, 0xff, 0x2f, 0x08, 0x21, 0x0f, 0x34, 0xe4, 0x1e, 0xd9, 0x9d, 0x86, 0x9c, 0xb8, 0x4d, 0x59,
-	0x72, 0x57, 0xb0, 0x93, 0xe4, 0xf7, 0x94, 0xfc, 0x66, 0xc1, 0x95, 0x99, 0x46, 0x5c, 0xca, 0x5d,
-	0xe5, 0xfa, 0xa5, 0xdc, 0x95, 0x5e, 0x4f, 0x6f, 0x6a, 0xee, 0x03, 0xc2, 0xaa, 0xb9, 0xf1, 0x02,
-	0x61, 0x27, 0x38, 0x38, 0x25, 0xdf, 0x5b, 0xf0, 0xc2, 0x84, 0x3b, 0x93, 0xbd, 0xf2, 0xc6, 0x15,
-	0xae, 0x00, 0xfb, 0xcd, 0xc5, 0xc4, 0x48, 0xf9, 0x96, 0xa6, 0x6c, 0x91, 0x9d, 0x69, 0xca, 0xdc,
-	0x0c, 0xd9, 0x89, 0x71, 0x7f, 0x9c, 0x92, 0x6f, 0x2d, 0xa8, 0x19, 0xe6, 0x4b, 0x76, 0x4b, 0xd6,
-	0x2b, 0x5e, 0x02, 0x76, 0x6b, 0x11, 0x29, 0x82, 0x6d, 0x69, 0xb0, 0x0d, 0xb2, 0x5e, 0x0e, 0xa6,
-	0xc8, 0x63, 0x0b, 0x56, 0x4d, 0x93, 0x24, 0xad, 0xf2, 0xe2, 0xa7, 0xdd, 0xd7, 0xde, 0x5b, 0x48,
-	0x8b, 0x38, 0x2d, 0x8d, 0xb3, 0x4d, 0xe8, 0x34, 0xce, 0xd8, 0x98, 0xd8, 0x89, 0x8f, 0x1d, 0xfa,
-	0xc6, 0x02, 0xc8, 0xfd, 0x8f, 0xec, 0x94, 0xac, 0x53, 0x70, 0x61, 0x7b, 0x77, 0x01, 0x25, 0xf2,
-	0x50, 0xcd, 0xd3, 0x20, 0x76, 0x29, 0x8f, 0x22, 0x3f, 0x58, 0xf0, 0xe2, 0x94, 0x49, 0x91, 0xfd,
-	0xf2, 0xa2, 0x67, 0x78, 0xa0, 0xed, 0x2c, 0x2a, 0x47, 0xac, 0x7d, 0x8d, 0x75, 0x9d, 0x5c, 0x9b,
-	0xc6, 0x32, 0x8d, 0x6d, 0xdc, 0xa9, 0xf6, 0xdd, 0x27, 0x67, 0x4d, 0xeb, 0xe9, 0x59, 0xd3, 0xfa,
-	0xfb, 0xac, 0x69, 0x7d, 0x77, 0xde, 0x5c, 0x7a, 0x7a, 0xde, 0x5c, 0xfa, 0xe3, 0xbc, 0xb9, 0xf4,
-	0x80, 0x79, 0x41, 0xec, 0x8f, 0x3a, 0x4e, 0x57, 0x0e, 0xcc, 0x54, 0xf9, 0x70, 0xdf, 0x93, 0xec,
-	0x2b, 0x9d, 0x3a, 0x3e, 0x1e, 0x0a, 0xd5, 0x59, 0xd6, 0xff, 0x65, 0x6f, 0xfc, 0x17, 0x00, 0x00,
-	0xff, 0xff, 0x93, 0x15, 0x35, 0x23, 0x4a, 0x0c, 0x00, 0x00,
+	// 1198 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x97, 0x4f, 0x6f, 0x1b, 0x45,
+	0x14, 0xc0, 0xb3, 0x69, 0x08, 0xca, 0x4b, 0x5a, 0x60, 0x68, 0x43, 0xba, 0x71, 0x4c, 0x3a, 0x49,
+	0xda, 0xc4, 0x21, 0x5e, 0x92, 0x02, 0x01, 0x89, 0xa8, 0x4a, 0x4a, 0x9b, 0x56, 0x50, 0x28, 0x16,
+	0xe2, 0xd0, 0x8b, 0x19, 0x7b, 0x87, 0xf5, 0x8a, 0xf5, 0xae, 0xb3, 0xbb, 0x46, 0xb1, 0x2c, 0x5f,
+	0x90, 0x38, 0x70, 0x43, 0xea, 0x15, 0x89, 0x03, 0x17, 0x84, 0x04, 0xe2, 0xc2, 0x89, 0x2f, 0xd0,
+	0x63, 0x25, 0x84, 0xc4, 0x09, 0xa1, 0x04, 0x89, 0x0f, 0xc0, 0x17, 0x40, 0x3b, 0xfb, 0xd6, 0x3b,
+	0xeb, 0xf5, 0xae, 0x1d, 0x94, 0x4b, 0xb4, 0x9e, 0x79, 0x7f, 0x7e, 0xef, 0xcd, 0xcc, 0x7b, 0x2f,
+	0x50, 0x68, 0x59, 0xcc, 0xe6, 0x7e, 0xd3, 0xb4, 0x7d, 0xc3, 0xd1, 0x74, 0xe6, 0x68, 0x47, 0x6d,
+	0xee, 0x76, 0xca, 0x2d, 0xd7, 0xf1, 0x1d, 0xf2, 0xbc, 0xbc, 0x5b, 0xd6, 0x99, 0xa3, 0x5e, 0x36,
+	0x1c, 0xc3, 0x11, 0x9b, 0x5a, 0xf0, 0x15, 0xca, 0xa9, 0x05, 0xc3, 0x71, 0x0c, 0x8b, 0x6b, 0xac,
+	0x65, 0x6a, 0xcc, 0xb6, 0x1d, 0x9f, 0xf9, 0xa6, 0x63, 0x7b, 0xb8, 0x5b, 0xaa, 0x3b, 0x5e, 0xd3,
+	0xf1, 0xb4, 0x1a, 0xf3, 0x78, 0x68, 0x5e, 0xfb, 0x7c, 0xbb, 0xc6, 0x7d, 0xb6, 0xad, 0xb5, 0x98,
+	0x61, 0xda, 0x42, 0x18, 0x65, 0x97, 0x52, 0x3c, 0x2d, 0xe6, 0xb2, 0x66, 0x64, 0x6a, 0x25, 0xb5,
+	0x1d, 0x7c, 0x56, 0x5d, 0x7e, 0xd4, 0xe6, 0x9e, 0x8f, 0x42, 0xab, 0xb9, 0x42, 0x91, 0xa9, 0x6b,
+	0x29, 0x29, 0x97, 0x9b, 0x9e, 0xd7, 0x66, 0x76, 0x9d, 0xa3, 0xc8, 0x72, 0x4a, 0xa4, 0xde, 0x60,
+	0x96, 0xc5, 0x6d, 0x23, 0x92, 0x78, 0x81, 0x35, 0x4d, 0xdb, 0xd1, 0xc4, 0x5f, 0x5c, 0xda, 0x48,
+	0x29, 0xe9, 0xa6, 0xe7, 0xbb, 0x66, 0xad, 0x1d, 0x84, 0x59, 0x75, 0x5c, 0x9d, 0xbb, 0x99, 0xd1,
+	0xb8, 0x5c, 0xe7, 0xbc, 0x59, 0xad, 0x5b, 0xcc, 0x6c, 0x86, 0x42, 0xf4, 0x32, 0x90, 0x0f, 0x83,
+	0x9c, 0x3d, 0x14, 0x79, 0xa8, 0x84, 0x41, 0xd0, 0x07, 0xf0, 0x62, 0x62, 0xd5, 0x6b, 0x39, 0xb6,
+	0xc7, 0xc9, 0x1b, 0x30, 0x1d, 0xe6, 0x6b, 0x41, 0x59, 0x56, 0xd6, 0x67, 0x77, 0x16, 0xca, 0x83,
+	0x27, 0x58, 0x0e, 0x35, 0x0e, 0xa6, 0x9e, 0xfc, 0xf9, 0xf2, 0x44, 0x05, 0xa5, 0xe9, 0x2e, 0x5c,
+	0x13, 0xe6, 0x0e, 0xb9, 0xff, 0xc0, 0xb4, 0x7d, 0xf4, 0xe2, 0x1d, 0x74, 0xee, 0x31, 0xaf, 0x81,
+	0xbf, 0x08, 0x81, 0xa9, 0x06, 0xf3, 0x1a, 0xc2, 0xf4, 0x4c, 0x45, 0x7c, 0x53, 0x0e, 0x34, 0x4f,
+	0x11, 0xb1, 0x6e, 0xc1, 0x6c, 0x33, 0xde, 0x45, 0xb6, 0xa5, 0x34, 0x9b, 0x64, 0xa2, 0x22, 0x6b,
+	0xd0, 0x3d, 0xe4, 0x4b, 0xfa, 0xd8, 0xd7, 0x75, 0x97, 0x7b, 0x51, 0x4e, 0xc8, 0x02, 0x3c, 0xcb,
+	0xc2, 0x15, 0x44, 0x8c, 0x7e, 0xd2, 0x06, 0x52, 0x66, 0xa8, 0x23, 0xe5, 0x01, 0xcc, 0x49, 0x3e,
+	0xa3, 0x14, 0x16, 0x73, 0x31, 0xbd, 0x4a, 0x42, 0x87, 0xee, 0xc1, 0xd5, 0x28, 0x1f, 0x95, 0xfe,
+	0x75, 0x8a, 0x00, 0x97, 0x61, 0xb6, 0x66, 0x39, 0xf5, 0xcf, 0xee, 0x71, 0xd3, 0x68, 0x84, 0x69,
+	0xb8, 0x50, 0x91, 0x97, 0xe8, 0x23, 0x50, 0x87, 0xa9, 0x23, 0xe0, 0xdb, 0x00, 0xf1, 0x1d, 0x45,
+	0xbc, 0x42, 0x1a, 0x4f, 0xd2, 0x94, 0xe4, 0x29, 0x83, 0x97, 0x84, 0xed, 0x78, 0xbb, 0x9f, 0xb9,
+	0xbb, 0x00, 0xf1, 0x4b, 0x44, 0xc3, 0xd7, 0xcb, 0xe1, 0xb3, 0x2d, 0x07, 0xcf, 0xb6, 0x1c, 0x56,
+	0x05, 0x7c, 0xb6, 0xe5, 0x87, 0xcc, 0x88, 0x82, 0xaa, 0x48, 0x9a, 0xf4, 0x27, 0x05, 0x16, 0xd2,
+	0x3e, 0x90, 0xfe, 0x3e, 0xcc, 0xc6, 0x34, 0x41, 0x76, 0x2f, 0x8c, 0xc2, 0x3f, 0x98, 0x09, 0x2e,
+	0xe9, 0xf7, 0xff, 0xfc, 0x5c, 0x52, 0x2a, 0xb2, 0x2e, 0x39, 0x4c, 0xf0, 0x4e, 0x0a, 0xde, 0x1b,
+	0x23, 0x79, 0x43, 0x8e, 0x04, 0xf0, 0x0e, 0xf2, 0x1e, 0x72, 0xff, 0x76, 0xf4, 0xb4, 0xa3, 0xa4,
+	0xcc, 0xc3, 0x74, 0x43, 0x3e, 0x28, 0xfc, 0x45, 0x3f, 0x8e, 0x8f, 0x58, 0xd2, 0xc1, 0x20, 0xdf,
+	0x82, 0x99, 0x7e, 0x8d, 0xc0, 0x44, 0x2e, 0xa6, 0x43, 0x8c, 0xf5, 0x62, 0x69, 0xfa, 0x09, 0xcc,
+	0x0b, 0xbb, 0xfd, 0xcd, 0x73, 0x3f, 0x9e, 0x1f, 0x14, 0xbc, 0x02, 0xb2, 0x0b, 0x04, 0xbf, 0x0b,
+	0xd0, 0x47, 0x89, 0x0e, 0x27, 0x8f, 0x5c, 0x3e, 0x1b, 0x49, 0xf3, 0xfc, 0x8e, 0xe6, 0x75, 0x58,
+	0x8c, 0xd2, 0xfc, 0x8e, 0x54, 0x40, 0x47, 0x9d, 0x8e, 0x01, 0x85, 0xe1, 0x6a, 0x18, 0xe7, 0x21,
+	0xcc, 0xc9, 0xf5, 0x18, 0xb3, 0xb9, 0x92, 0x8e, 0x54, 0xd6, 0xfe, 0x20, 0x28, 0xda, 0x95, 0x84,
+	0x22, 0x7d, 0x5f, 0x7e, 0xaa, 0x41, 0xd5, 0xbe, 0x1d, 0x14, 0x6d, 0xf9, 0xa9, 0x73, 0x9b, 0x7f,
+	0x6a, 0xd6, 0x4d, 0xe6, 0x76, 0xb0, 0x1e, 0xc9, 0x4b, 0xe4, 0x12, 0x4c, 0x9a, 0xba, 0x48, 0xd0,
+	0x54, 0x65, 0xd2, 0xd4, 0xa9, 0x1e, 0xc7, 0x9b, 0xb0, 0x87, 0xdc, 0x77, 0x82, 0xd7, 0xd3, 0x5f,
+	0xce, 0x2e, 0xa1, 0x92, 0x2e, 0xd6, 0x78, 0x59, 0x8f, 0xea, 0x48, 0xbd, 0x6f, 0x59, 0x43, 0xa8,
+	0xcf, 0xeb, 0xa2, 0xfd, 0xa8, 0x60, 0x30, 0x83, 0x6e, 0xb2, 0x82, 0xb9, 0xf0, 0x7f, 0x82, 0x39,
+	0xbf, 0xbb, 0xf6, 0x2e, 0xac, 0x61, 0xd9, 0x8a, 0xfd, 0x75, 0xde, 0x33, 0x8f, 0xda, 0xa6, 0xfe,
+	0xd1, 0xb1, 0xdc, 0x02, 0x29, 0xcc, 0x59, 0xd2, 0x32, 0x9e, 0x6b, 0x62, 0x8d, 0x9a, 0x70, 0x7d,
+	0x94, 0xb1, 0xb8, 0x2d, 0x9e, 0xf5, 0x4c, 0x13, 0x09, 0xd8, 0xf9, 0xf7, 0x22, 0x3c, 0x23, 0x7c,
+	0x91, 0x36, 0x4c, 0x87, 0x8d, 0x9d, 0xac, 0xa6, 0xf5, 0xd3, 0xf3, 0x83, 0xba, 0x36, 0x42, 0x2a,
+	0x24, 0xa4, 0xc5, 0x2f, 0x7e, 0xfb, 0xfb, 0xf1, 0xe4, 0x02, 0x99, 0xd7, 0x62, 0x71, 0x69, 0x2a,
+	0x23, 0xbf, 0x28, 0x70, 0x65, 0x68, 0xeb, 0x27, 0x37, 0x33, 0x1c, 0xe4, 0x4d, 0x18, 0xea, 0x6b,
+	0x67, 0x53, 0x42, 0xc8, 0x6d, 0x01, 0xb9, 0x49, 0x36, 0x06, 0x21, 0x13, 0x63, 0x9f, 0x16, 0xcc,
+	0x2b, 0x5a, 0x37, 0xf8, 0xdb, 0x23, 0xbf, 0x2a, 0x70, 0x65, 0xe8, 0x30, 0x90, 0xc9, 0x9d, 0x37,
+	0x79, 0x64, 0x72, 0xe7, 0xce, 0x1b, 0x74, 0x57, 0x70, 0x6f, 0x13, 0x2d, 0x9f, 0x1b, 0x87, 0x18,
+	0xad, 0x8b, 0x1f, 0x3d, 0xf2, 0x8d, 0x02, 0x17, 0x13, 0x13, 0x02, 0xd9, 0xcc, 0x4e, 0x5c, 0x6a,
+	0x0c, 0x51, 0x5f, 0x19, 0x4f, 0x18, 0x29, 0x5f, 0x15, 0x94, 0x25, 0xb2, 0x3e, 0x48, 0x19, 0x37,
+	0x64, 0xad, 0x2b, 0xcd, 0x30, 0x3d, 0xf2, 0x95, 0x02, 0xb3, 0xd2, 0x00, 0x40, 0x36, 0x32, 0xfc,
+	0xa5, 0x07, 0x11, 0xb5, 0x34, 0x8e, 0x28, 0x82, 0xad, 0x08, 0xb0, 0x25, 0xb2, 0x98, 0x0d, 0xe6,
+	0x91, 0xc7, 0x0a, 0xcc, 0xc9, 0x8d, 0x9a, 0x94, 0xb2, 0x83, 0x1f, 0x9c, 0x00, 0xd4, 0xcd, 0xb1,
+	0x64, 0x11, 0xa7, 0x24, 0x70, 0x56, 0x09, 0x1d, 0xc4, 0xe9, 0x37, 0x47, 0xad, 0xdb, 0xc0, 0x0c,
+	0x7d, 0xa9, 0x00, 0xc4, 0x3d, 0x98, 0xac, 0x67, 0xf8, 0x49, 0x4d, 0x02, 0xea, 0xc6, 0x18, 0x92,
+	0xc8, 0x43, 0x05, 0x4f, 0x81, 0xa8, 0x99, 0x3c, 0x1e, 0xf9, 0x56, 0x81, 0xe7, 0x06, 0x1a, 0x25,
+	0xd9, 0xca, 0x0e, 0x7a, 0x48, 0x1f, 0x56, 0xcb, 0xe3, 0x8a, 0x23, 0xd6, 0x96, 0xc0, 0xba, 0x41,
+	0xd6, 0x06, 0xb1, 0xe4, 0xe6, 0x1a, 0x67, 0xea, 0x3b, 0x71, 0x97, 0xe2, 0x92, 0x9f, 0x7b, 0x77,
+	0x07, 0xfb, 0x99, 0xba, 0x35, 0xa6, 0xf4, 0xa8, 0x07, 0x29, 0xff, 0x5b, 0xa6, 0x75, 0xa5, 0x2e,
+	0xde, 0xd3, 0xba, 0xa6, 0xde, 0x0b, 0x6e, 0xd9, 0x25, 0xc9, 0xe0, 0xbe, 0x65, 0x65, 0x82, 0x0e,
+	0x6d, 0xbc, 0x99, 0xa0, 0xc3, 0xfb, 0x27, 0x5d, 0x15, 0xa0, 0x45, 0x52, 0xc8, 0x03, 0x25, 0xbf,
+	0x2b, 0x70, 0x35, 0xb3, 0x09, 0x91, 0xdd, 0xcc, 0xa7, 0x96, 0xdf, 0x03, 0xd5, 0x37, 0xcf, 0xae,
+	0x88, 0xd8, 0x77, 0x04, 0xf6, 0x2d, 0xb2, 0x97, 0x87, 0x5d, 0xad, 0x75, 0xaa, 0x61, 0x3f, 0xad,
+	0xfa, 0xc7, 0xd5, 0xb0, 0x68, 0xcb, 0xfd, 0xb5, 0x77, 0x70, 0xff, 0xc9, 0x49, 0x51, 0x79, 0x7a,
+	0x52, 0x54, 0xfe, 0x3a, 0x29, 0x2a, 0x5f, 0x9f, 0x16, 0x27, 0x9e, 0x9e, 0x16, 0x27, 0xfe, 0x38,
+	0x2d, 0x4e, 0x3c, 0xd2, 0x0c, 0xd3, 0x6f, 0xb4, 0x6b, 0xe5, 0xba, 0xd3, 0x94, 0x5d, 0xc4, 0x9f,
+	0x5b, 0x86, 0xa3, 0x1d, 0x0b, 0x97, 0x7e, 0xa7, 0xc5, 0xbd, 0xda, 0xb4, 0xf8, 0x1f, 0xfb, 0xe6,
+	0x7f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x28, 0x3e, 0x68, 0x3b, 0x07, 0x11, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -859,6 +1162,11 @@ type QueryClient interface {
 	Challenges(ctx context.Context, in *QueryChallengesRequest, opts ...grpc.CallOption) (*QueryChallengesResponse, error)
 	// Queries a list of GetDistribution items.
 	GetDistribution(ctx context.Context, in *QueryGetDistributionRequest, opts ...grpc.CallOption) (*QueryGetDistributionResponse, error)
+	// Queries a list of RedeemClaim items.
+	RedeemClaim(ctx context.Context, in *QueryGetRedeemClaimRequest, opts ...grpc.CallOption) (*QueryGetRedeemClaimResponse, error)
+	RedeemClaimAll(ctx context.Context, in *QueryAllRedeemClaimRequest, opts ...grpc.CallOption) (*QueryAllRedeemClaimResponse, error)
+	// Queries a list of RedeemClaimByLiquidTxHash items.
+	RedeemClaimByLiquidTxHash(ctx context.Context, in *QueryRedeemClaimByLiquidTxHashRequest, opts ...grpc.CallOption) (*QueryRedeemClaimByLiquidTxHashResponse, error)
 }
 
 type queryClient struct {
@@ -941,6 +1249,33 @@ func (c *queryClient) GetDistribution(ctx context.Context, in *QueryGetDistribut
 	return out, nil
 }
 
+func (c *queryClient) RedeemClaim(ctx context.Context, in *QueryGetRedeemClaimRequest, opts ...grpc.CallOption) (*QueryGetRedeemClaimResponse, error) {
+	out := new(QueryGetRedeemClaimResponse)
+	err := c.cc.Invoke(ctx, "/planetmintgo.dao.Query/RedeemClaim", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) RedeemClaimAll(ctx context.Context, in *QueryAllRedeemClaimRequest, opts ...grpc.CallOption) (*QueryAllRedeemClaimResponse, error) {
+	out := new(QueryAllRedeemClaimResponse)
+	err := c.cc.Invoke(ctx, "/planetmintgo.dao.Query/RedeemClaimAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) RedeemClaimByLiquidTxHash(ctx context.Context, in *QueryRedeemClaimByLiquidTxHashRequest, opts ...grpc.CallOption) (*QueryRedeemClaimByLiquidTxHashResponse, error) {
+	out := new(QueryRedeemClaimByLiquidTxHashResponse)
+	err := c.cc.Invoke(ctx, "/planetmintgo.dao.Query/RedeemClaimByLiquidTxHash", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 type QueryServer interface {
 	// Parameters queries the parameters of the module.
@@ -959,6 +1294,11 @@ type QueryServer interface {
 	Challenges(context.Context, *QueryChallengesRequest) (*QueryChallengesResponse, error)
 	// Queries a list of GetDistribution items.
 	GetDistribution(context.Context, *QueryGetDistributionRequest) (*QueryGetDistributionResponse, error)
+	// Queries a list of RedeemClaim items.
+	RedeemClaim(context.Context, *QueryGetRedeemClaimRequest) (*QueryGetRedeemClaimResponse, error)
+	RedeemClaimAll(context.Context, *QueryAllRedeemClaimRequest) (*QueryAllRedeemClaimResponse, error)
+	// Queries a list of RedeemClaimByLiquidTxHash items.
+	RedeemClaimByLiquidTxHash(context.Context, *QueryRedeemClaimByLiquidTxHashRequest) (*QueryRedeemClaimByLiquidTxHashResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
@@ -988,6 +1328,15 @@ func (*UnimplementedQueryServer) Challenges(ctx context.Context, req *QueryChall
 }
 func (*UnimplementedQueryServer) GetDistribution(ctx context.Context, req *QueryGetDistributionRequest) (*QueryGetDistributionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDistribution not implemented")
+}
+func (*UnimplementedQueryServer) RedeemClaim(ctx context.Context, req *QueryGetRedeemClaimRequest) (*QueryGetRedeemClaimResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RedeemClaim not implemented")
+}
+func (*UnimplementedQueryServer) RedeemClaimAll(ctx context.Context, req *QueryAllRedeemClaimRequest) (*QueryAllRedeemClaimResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RedeemClaimAll not implemented")
+}
+func (*UnimplementedQueryServer) RedeemClaimByLiquidTxHash(ctx context.Context, req *QueryRedeemClaimByLiquidTxHashRequest) (*QueryRedeemClaimByLiquidTxHashResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RedeemClaimByLiquidTxHash not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
@@ -1138,6 +1487,60 @@ func _Query_GetDistribution_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_RedeemClaim_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetRedeemClaimRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).RedeemClaim(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/planetmintgo.dao.Query/RedeemClaim",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).RedeemClaim(ctx, req.(*QueryGetRedeemClaimRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_RedeemClaimAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllRedeemClaimRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).RedeemClaimAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/planetmintgo.dao.Query/RedeemClaimAll",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).RedeemClaimAll(ctx, req.(*QueryAllRedeemClaimRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_RedeemClaimByLiquidTxHash_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryRedeemClaimByLiquidTxHashRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).RedeemClaimByLiquidTxHash(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/planetmintgo.dao.Query/RedeemClaimByLiquidTxHash",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).RedeemClaimByLiquidTxHash(ctx, req.(*QueryRedeemClaimByLiquidTxHashRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Query_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "planetmintgo.dao.Query",
 	HandlerType: (*QueryServer)(nil),
@@ -1173,6 +1576,18 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetDistribution",
 			Handler:    _Query_GetDistribution_Handler,
+		},
+		{
+			MethodName: "RedeemClaim",
+			Handler:    _Query_RedeemClaim_Handler,
+		},
+		{
+			MethodName: "RedeemClaimAll",
+			Handler:    _Query_RedeemClaimAll_Handler,
+		},
+		{
+			MethodName: "RedeemClaimByLiquidTxHash",
+			Handler:    _Query_RedeemClaimByLiquidTxHash_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1722,6 +2137,223 @@ func (m *QueryGetDistributionResponse) MarshalToSizedBuffer(dAtA []byte) (int, e
 	return len(dAtA) - i, nil
 }
 
+func (m *QueryGetRedeemClaimRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetRedeemClaimRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetRedeemClaimRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Id != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.Id))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Beneficiary) > 0 {
+		i -= len(m.Beneficiary)
+		copy(dAtA[i:], m.Beneficiary)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Beneficiary)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetRedeemClaimResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetRedeemClaimResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetRedeemClaimResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.RedeemClaim.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllRedeemClaimRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllRedeemClaimRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllRedeemClaimRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllRedeemClaimResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllRedeemClaimResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllRedeemClaimResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.RedeemClaim) > 0 {
+		for iNdEx := len(m.RedeemClaim) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.RedeemClaim[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryRedeemClaimByLiquidTxHashRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryRedeemClaimByLiquidTxHashRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryRedeemClaimByLiquidTxHashRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.LiquidTxHash) > 0 {
+		i -= len(m.LiquidTxHash)
+		copy(dAtA[i:], m.LiquidTxHash)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.LiquidTxHash)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryRedeemClaimByLiquidTxHashResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryRedeemClaimByLiquidTxHashResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryRedeemClaimByLiquidTxHashResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.RedeemClaim != nil {
+		{
+			size, err := m.RedeemClaim.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
 	offset -= sovQuery(v)
 	base := offset
@@ -1939,6 +2571,91 @@ func (m *QueryGetDistributionResponse) Size() (n int) {
 	_ = l
 	if m.Distribution != nil {
 		l = m.Distribution.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetRedeemClaimRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Beneficiary)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	if m.Id != 0 {
+		n += 1 + sovQuery(uint64(m.Id))
+	}
+	return n
+}
+
+func (m *QueryGetRedeemClaimResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.RedeemClaim.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryAllRedeemClaimRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryAllRedeemClaimResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.RedeemClaim) > 0 {
+		for _, e := range m.RedeemClaim {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryRedeemClaimByLiquidTxHashRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.LiquidTxHash)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryRedeemClaimByLiquidTxHashResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.RedeemClaim != nil {
+		l = m.RedeemClaim.Size()
 		n += 1 + l + sovQuery(uint64(l))
 	}
 	return n
@@ -3272,6 +3989,564 @@ func (m *QueryGetDistributionResponse) Unmarshal(dAtA []byte) error {
 				m.Distribution = &DistributionOrder{}
 			}
 			if err := m.Distribution.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetRedeemClaimRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetRedeemClaimRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetRedeemClaimRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Beneficiary", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Beneficiary = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			m.Id = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Id |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetRedeemClaimResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetRedeemClaimResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetRedeemClaimResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RedeemClaim", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RedeemClaim.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllRedeemClaimRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllRedeemClaimRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllRedeemClaimRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllRedeemClaimResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllRedeemClaimResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllRedeemClaimResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RedeemClaim", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RedeemClaim = append(m.RedeemClaim, RedeemClaim{})
+			if err := m.RedeemClaim[len(m.RedeemClaim)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryRedeemClaimByLiquidTxHashRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryRedeemClaimByLiquidTxHashRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryRedeemClaimByLiquidTxHashRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LiquidTxHash", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.LiquidTxHash = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryRedeemClaimByLiquidTxHashResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryRedeemClaimByLiquidTxHashResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryRedeemClaimByLiquidTxHashResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RedeemClaim", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.RedeemClaim == nil {
+				m.RedeemClaim = &RedeemClaim{}
+			}
+			if err := m.RedeemClaim.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

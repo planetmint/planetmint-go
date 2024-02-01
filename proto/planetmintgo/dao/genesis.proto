@@ -1,12 +1,15 @@
 syntax = "proto3";
+
 package planetmintgo.dao;
 
 import "gogoproto/gogo.proto";
 import "planetmintgo/dao/params.proto";
+import "planetmintgo/dao/redeem_claim.proto";
 
 option go_package = "github.com/planetmint/planetmint-go/x/dao/types";
 
 // GenesisState defines the dao module's genesis state.
 message GenesisState {
-  Params params = 1 [(gogoproto.nullable) = false];
+  Params      params          = 1 [(gogoproto.nullable) = false];
 }
+

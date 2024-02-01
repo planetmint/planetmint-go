@@ -55,7 +55,9 @@ func DaoKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	bk := daotestutil.NewMockBankKeeper(ctrl)
 
 	bk.EXPECT().MintCoins(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	bk.EXPECT().BurnCoins(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 	bk.EXPECT().SendCoinsFromModuleToAccount(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	bk.EXPECT().SendCoinsFromAccountToModule(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 
 	k := keeper.NewKeeper(
 		cdc,
