@@ -13,13 +13,17 @@ func ParamKeyTable() paramtypes.KeyTable {
 }
 
 // NewParams creates a new Params instance
-func NewParams() Params {
-	return Params{}
+func NewParams(assetRegistryScheme string, assetRegistryDomain string, assetRegistryPath string) Params {
+	return Params{
+		AssetRegistryScheme: assetRegistryScheme,
+		AssetRegistryDomain: assetRegistryDomain,
+		AssetRegistryPath:   assetRegistryPath,
+	}
 }
 
 // DefaultParams returns a default set of parameters
 func DefaultParams() Params {
-	return NewParams()
+	return NewParams("https", "testnet-assets.rddl.io", "register_asset")
 }
 
 // ParamSetPairs get the params.ParamSet

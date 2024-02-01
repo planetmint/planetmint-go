@@ -26,6 +26,8 @@ const (
 	AddressIndexKey = "Machine/address"
 
 	LiquidAssetKey = "Machine/LiquidAsset/"
+
+	ParamsKey = "Machine/Params"
 )
 
 func KeyPrefix(p string) []byte {
