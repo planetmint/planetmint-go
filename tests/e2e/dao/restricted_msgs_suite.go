@@ -17,6 +17,7 @@ var msgs = []sdk.Msg{
 	&daotypes.MsgDistributionResult{},
 	&daotypes.MsgReissueRDDLProposal{},
 	&daotypes.MsgReissueRDDLResult{},
+	&daotypes.MsgUpdateRedeemClaim{},
 	&machinetypes.MsgRegisterTrustAnchor{},
 	&machinetypes.MsgNotarizeLiquidAsset{},
 }
@@ -106,6 +107,11 @@ func setCreator(msg sdk.Msg, creator string) sdk.Msg {
 		}
 	case "/planetmintgo.dao.MsgReissueRDDLResult":
 		msg, ok := msg.(*daotypes.MsgReissueRDDLResult)
+		if ok {
+			msg.Creator = creator
+		}
+	case "/planetmintgo.dao.MsgUpdateRedeemClaim":
+		msg, ok := msg.(*daotypes.MsgUpdateRedeemClaim)
 		if ok {
 			msg.Creator = creator
 		}

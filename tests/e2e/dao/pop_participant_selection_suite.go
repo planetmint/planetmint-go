@@ -1,12 +1,17 @@
 package dao
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"math"
+	"os"
 	"strconv"
 
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
+	"github.com/planetmint/planetmint-go/lib"
 	"github.com/planetmint/planetmint-go/testutil"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
@@ -44,6 +49,7 @@ type PopSelectionE2ETestSuite struct {
 	popEpochs          int64
 	reissuanceEpochs   int64
 	distributionOffset int64
+	claimDenom         string
 }
 
 func NewPopSelectionE2ETestSuite(cfg network.Config) *PopSelectionE2ETestSuite {
@@ -56,6 +62,11 @@ func (s *PopSelectionE2ETestSuite) SetupSuite() {
 	s.popEpochs = 10
 	s.reissuanceEpochs = 60
 	s.distributionOffset = 2
+	s.claimDenom = "crddl"
+
+	s.cfg.Mnemonics = []string{sample.Mnemonic}
+	valAddr, err := s.createValAccount(s.cfg)
+	s.Require().NoError(err)
 
 	var daoGenState daotypes.GenesisState
 	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[daotypes.ModuleName], &daoGenState)
@@ -64,6 +75,7 @@ func (s *PopSelectionE2ETestSuite) SetupSuite() {
 	daoGenState.Params.DistributionOffset = s.distributionOffset
 	daoGenState.Params.MqttResponseTimeout = 200
 	daoGenState.Params.FeeDenom = sample.FeeDenom
+	daoGenState.Params.ClaimAddress = valAddr.String()
 	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
 
 	s.network = network.New(s.T(), s.cfg)
@@ -225,4 +237,91 @@ func (s *PopSelectionE2ETestSuite) TestTokenDistribution1() {
 	s.Require().NoError(s.network.WaitForNextBlock())
 
 	s.VerifyTokens(daoGenState.Params.ClaimDenom)
+}
+
+func (s *PopSelectionE2ETestSuite) TestTokenRedeemClaim() {
+	val := s.network.Validators[0]
+
+	k, err := val.ClientCtx.Keyring.Key(machines[0].name)
+	s.Require().NoError(err)
+	addr, _ := k.GetAddress()
+
+	// Addr sends CreateRedeemClaim => accepted query redeem claim
+	createClaimMsg := daotypes.NewMsgCreateRedeemClaim(addr.String(), "liquidAddress", 10000)
+	out, err := lib.BroadcastTxWithFileLock(addr, createClaimMsg)
+	s.Require().NoError(err)
+
+	txResponse, err := lib.GetTxResponseFromOut(out)
+	s.Require().NoError(err)
+	s.Require().Equal(int(0), int(txResponse.Code))
+
+	// WaitForBlock => Validator should implicitly send UpdateRedeemClaim
+	s.Require().NoError(s.network.WaitForNextBlock())
+
+	// Claim burned on CreateRedeemClaim
+	balanceOut, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
+		addr.String(),
+		fmt.Sprintf("--%s=%s", bank.FlagDenom, s.claimDenom),
+	})
+	s.Require().NoError(err)
+	assert.Equal(s.T(), "amount: \"5993140682\"\ndenom: crddl\n", balanceOut.String()) // 3 * 1997716894 - 10000 = 5993140682
+
+	// Addr sends ConfirmRedeemClaim => rejected not claim address
+	confirmMsg := daotypes.NewMsgConfirmRedeemClaim(addr.String(), 0, "liquidAddress")
+	out, err = lib.BroadcastTxWithFileLock(addr, confirmMsg)
+	s.Require().NoError(err)
+
+	txResponse, err = lib.GetTxResponseFromOut(out)
+	s.Require().NoError(err)
+	s.Require().Equal(int(21), int(txResponse.Code))
+
+	// Validator with Claim Address sends ConfirmRedeemClaim => accepted
+	valConfirmMsg := daotypes.NewMsgConfirmRedeemClaim(val.Address.String(), 0, "liquidAddress")
+	out, err = lib.BroadcastTxWithFileLock(val.Address, valConfirmMsg)
+	s.Require().NoError(err)
+
+	txResponse, err = lib.GetTxResponseFromOut(out)
+	s.Require().NoError(err)
+	s.Require().Equal(int(0), int(txResponse.Code))
+
+	// WaitForBlock before query
+	s.Require().NoError(s.network.WaitForNextBlock())
+
+	// QueryRedeemClaim
+	qOut, err := clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdShowRedeemClaim(), []string{"liquidAddress", "0"})
+	s.Require().NoError(err)
+	assert.Equal(s.T(), "redeemClaim:\n  amount: \"10000\"\n  beneficiary: liquidAddress\n  confirmed: true\n  creator: plmnt1kp93kns6hs2066d8qw0uz84fw3vlthewt2ck6p\n  id: \"0\"\n  liquidTxHash: \"0000000000000000000000000000000000000000000000000000000000000000\"\n", qOut.String())
+
+	qOut, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdRedeemClaimByLiquidTxHash(), []string{"0000000000000000000000000000000000000000000000000000000000000000"})
+	s.Require().NoError(err)
+	assert.Equal(s.T(), "redeemClaim:\n  amount: \"10000\"\n  beneficiary: liquidAddress\n  confirmed: true\n  creator: plmnt1kp93kns6hs2066d8qw0uz84fw3vlthewt2ck6p\n  id: \"0\"\n  liquidTxHash: \"0000000000000000000000000000000000000000000000000000000000000000\"\n", qOut.String())
+}
+
+func (s *PopSelectionE2ETestSuite) createValAccount(cfg network.Config) (address sdk.AccAddress, err error) {
+	buf := bufio.NewReader(os.Stdin)
+
+	kb, err := keyring.New(sdk.KeyringServiceName(), keyring.BackendTest, s.T().TempDir(), buf, cfg.Codec, cfg.KeyringOptions...)
+	if err != nil {
+		return nil, err
+	}
+
+	keyringAlgos, _ := kb.SupportedAlgorithms()
+	algo, err := keyring.NewSigningAlgoFromString(cfg.SigningAlgo, keyringAlgos)
+	if err != nil {
+		return nil, err
+	}
+
+	mnemonic := cfg.Mnemonics[0]
+
+	record, err := kb.NewAccount("node0", mnemonic, keyring.DefaultBIP39Passphrase, sdk.GetConfig().GetFullBIP44Path(), algo)
+	if err != nil {
+		return nil, err
+	}
+
+	addr, err := record.GetAddress()
+	if err != nil {
+		return nil, err
+	}
+
+	return addr, nil
 }
