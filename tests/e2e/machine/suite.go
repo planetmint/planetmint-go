@@ -22,8 +22,9 @@ import (
 type E2ETestSuite struct {
 	suite.Suite
 
-	cfg     network.Config
-	network *network.Network
+	cfg      network.Config
+	network  *network.Network
+	feeDenom string
 }
 
 // NewE2ETestSuite returns configured machine E2ETestSuite
@@ -33,9 +34,11 @@ func NewE2ETestSuite(cfg network.Config) *E2ETestSuite {
 
 // SetupSuite initializes machine E2ETestSuite
 func (s *E2ETestSuite) SetupSuite() {
+	s.feeDenom = sample.FeeDenom
+
 	var daoGenState daotypes.GenesisState
 	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[daotypes.ModuleName], &daoGenState)
-	daoGenState.Params.FeeDenom = sample.FeeDenom
+	daoGenState.Params.FeeDenom = s.feeDenom
 	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
 
 	s.T().Log("setting up e2e test suite")
@@ -44,7 +47,7 @@ func (s *E2ETestSuite) SetupSuite() {
 	// create machine account for attestation
 	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
 	s.Require().NoError(err)
-	err = e2etestutil.FundAccount(s.network, account, daoGenState.Params.FeeDenom)
+	err = e2etestutil.FundAccount(s.network, account, s.feeDenom)
 	s.Require().NoError(err)
 }
 
@@ -150,7 +153,7 @@ func (s *E2ETestSuite) TestMachineAllowanceAttestation() {
 
 	// create allowance for machine
 	allowedMsgs := []string{"/planetmintgo.machine.MsgAttestMachine"}
-	limit := sdk.NewCoins(sdk.NewInt64Coin("stake", 2))
+	limit := sdk.NewCoins(sdk.NewInt64Coin(s.feeDenom, 2))
 	basic := feegrant.BasicAllowance{
 		SpendLimit: limit,
 	}

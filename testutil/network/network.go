@@ -19,6 +19,7 @@ import (
 	tmrand "github.com/cometbft/cometbft/libs/rand"
 	"github.com/cometbft/cometbft/node"
 	tmclient "github.com/cometbft/cometbft/rpc/client"
+	"github.com/planetmint/planetmint-go/testutil/sample"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 
@@ -106,6 +107,7 @@ type Config struct {
 	APIAddress       string                     // REST API listen address (including port)
 	GRPCAddress      string                     // GRPC server listen address (including port)
 	PrintMnemonic    bool                       // print the mnemonic of first validator as log output for testing
+	AccountDenom     string                     // the denominator of the account tokens
 }
 
 // DefaultConfig returns a sane default configuration suitable for nearly all
@@ -125,7 +127,7 @@ func DefaultConfig(factory TestFixtureFactory) Config {
 		ChainID:           "chain-" + tmrand.Str(6),
 		NumValidators:     4,
 		BondDenom:         sdk.DefaultBondDenom,
-		MinGasPrices:      fmt.Sprintf("0.000006%s", sdk.DefaultBondDenom),
+		MinGasPrices:      fmt.Sprintf("0.000006%s", sample.FeeDenom),
 		AccountTokens:     sdk.TokensFromConsensusPower(1000, sdk.DefaultPowerReduction),
 		StakingTokens:     sdk.TokensFromConsensusPower(500, sdk.DefaultPowerReduction),
 		BondedTokens:      sdk.TokensFromConsensusPower(100, sdk.DefaultPowerReduction),
@@ -134,6 +136,7 @@ func DefaultConfig(factory TestFixtureFactory) Config {
 		SigningAlgo:       string(hd.Secp256k1Type),
 		KeyringOptions:    []keyring.Option{},
 		PrintMnemonic:     false,
+		AccountDenom:      sample.FeeDenom,
 	}
 }
 
@@ -477,7 +480,7 @@ func New(l Logger, baseDir string, cfg Config) (*Network, error) {
 		}
 
 		balances := sdk.NewCoins(
-			sdk.NewCoin(fmt.Sprintf("%stoken", nodeDirName), cfg.AccountTokens),
+			sdk.NewCoin(cfg.AccountDenom, cfg.AccountTokens),
 			sdk.NewCoin(cfg.BondDenom, cfg.StakingTokens),
 		)
 

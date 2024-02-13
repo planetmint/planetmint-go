@@ -33,7 +33,7 @@ const Amount = "1000stake"
 const Fees = "1stake"
 
 // FeeDenom is the fee denomination for e2e test cases
-const FeeDenom = "stake"
+const FeeDenom = "plmnt"
 
 // DefaultDerivationPath is the BIP44Prefix for PLMNT (see https://github.com/satoshilabs/slips/blob/master/slip-0044.md)
 const DefaultDerivationPath = "m/44'/8680'/0'/0/0"

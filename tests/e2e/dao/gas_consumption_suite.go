@@ -25,6 +25,7 @@ type GasConsumptionE2ETestSuite struct {
 	cfg        network.Config
 	network    *network.Network
 	minterAddr sdk.AccAddress
+	feeDenom   string
 }
 
 func NewGasConsumptionE2ETestSuite(cfg network.Config) *GasConsumptionE2ETestSuite {
@@ -63,6 +64,7 @@ func (s *GasConsumptionE2ETestSuite) createValAccount(cfg network.Config) (addre
 func (s *GasConsumptionE2ETestSuite) SetupSuite() {
 	s.T().Log("setting up e2e test suite")
 
+	s.feeDenom = sample.FeeDenom
 	s.cfg.Mnemonics = []string{sample.Mnemonic}
 	addr, err := s.createValAccount(s.cfg)
 	s.Require().NoError(err)
@@ -79,21 +81,14 @@ func (s *GasConsumptionE2ETestSuite) SetupSuite() {
 
 	var daoGenState daotypes.GenesisState
 	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[daotypes.ModuleName], &daoGenState)
-	daoGenState.Params.FeeDenom = sample.FeeDenom
+	daoGenState.Params.FeeDenom = s.feeDenom
 	daoGenState.Params.MintAddress = s.minterAddr.String()
 	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
-
-	// var stkGenState stktypes.GenesisState
-	// s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[stktypes.ModuleName], &stkGenState)
-	// stkGenState.Params.BondDenom = sample.FeeDenom
-	// s.cfg.GenesisState[stktypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&stkGenState)
-	// s.cfg.BondDenom = sample.FeeDenom
-	// s.cfg.MinGasPrices = "0.000003" + sample.FeeDenom
 
 	s.network = network.Load(s.T(), s.cfg)
 	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
 	s.Require().NoError(err)
-	err = e2etestutil.FundAccount(s.network, account, sample.FeeDenom) //daoGenState.Params.FeeDenom)
+	err = e2etestutil.FundAccount(s.network, account, s.feeDenom)
 	s.Require().NoError(err)
 }
 
@@ -109,7 +104,7 @@ func (s *GasConsumptionE2ETestSuite) TestValidatorConsumption() {
 	addr, _ := k.GetAddress()
 
 	// send huge tx but as val and with no gas kv costs
-	msgs := createMsgs(val.Address, addr, 10)
+	msgs := s.createMsgs(val.Address, addr, 10)
 
 	out, err := lib.BroadcastTxWithFileLock(val.Address, msgs...)
 	s.Require().NoError(err)
@@ -125,10 +120,14 @@ func (s *GasConsumptionE2ETestSuite) TestNonValidatorConsumptionOverflow() {
 
 	k, err := val.ClientCtx.Keyring.Key(sample.Name)
 	s.Require().NoError(err)
+
+	err = e2etestutil.FundAccount(s.network, k, s.feeDenom)
+	s.Require().NoError(err)
+
 	addr, _ := k.GetAddress()
 
 	// exceed gas limit with too many msgs as non validator
-	msgs := createMsgs(addr, val.Address, 10)
+	msgs := s.createMsgs(addr, val.Address, 10)
 
 	out, err := lib.BroadcastTxWithFileLock(addr, msgs...)
 	s.Require().NoError(err)
@@ -137,11 +136,11 @@ func (s *GasConsumptionE2ETestSuite) TestNonValidatorConsumptionOverflow() {
 
 	_, err = clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().Error(err)
-	assert.Equal(s.T(), "out of gas in location: Has; gasWanted: 200000, gasUsed: 200701: out of gas", err.Error())
+	assert.Equal(s.T(), "out of gas in location: ReadFlat; gasWanted: 200000, gasUsed: 200316: out of gas", err.Error())
 }
 
-func createMsgs(from sdk.AccAddress, to sdk.AccAddress, n int) (msgs []sdk.Msg) {
-	coins := sdk.NewCoins(sdk.NewInt64Coin("stake", 10))
+func (s *GasConsumptionE2ETestSuite) createMsgs(from sdk.AccAddress, to sdk.AccAddress, n int) (msgs []sdk.Msg) {
+	coins := sdk.NewCoins(sdk.NewInt64Coin(s.feeDenom, 10))
 	for i := 0; i < n; i++ {
 		msg := banktypes.NewMsgSend(from, to, coins)
 		msgs = append(msgs, msg)

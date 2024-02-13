@@ -18,6 +18,7 @@ import (
 	"github.com/planetmint/planetmint-go/app"
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/lib"
+	"github.com/planetmint/planetmint-go/testutil/sample"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/util/mocks"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
@@ -114,13 +115,14 @@ func LoaderDefaultConfig() Config {
 		ChainID:         chainID,
 		NumValidators:   1,
 		BondDenom:       sdk.DefaultBondDenom,
-		MinGasPrices:    fmt.Sprintf("0.000003%s", sdk.DefaultBondDenom),
-		AccountTokens:   sdk.TokensFromConsensusPower(1000, sdk.DefaultPowerReduction),
+		MinGasPrices:    fmt.Sprintf("0.000003%s", sample.FeeDenom),
+		AccountTokens:   sdk.TokensFromConsensusPower(10000, sdk.DefaultPowerReduction),
 		StakingTokens:   sdk.TokensFromConsensusPower(500, sdk.DefaultPowerReduction),
 		BondedTokens:    sdk.TokensFromConsensusPower(100, sdk.DefaultPowerReduction),
 		PruningStrategy: pruningtypes.PruningOptionNothing,
 		CleanupDir:      true,
 		SigningAlgo:     string(hd.Secp256k1Type),
 		KeyringOptions:  []keyring.Option{},
+		AccountDenom:    sample.FeeDenom,
 	}
 }

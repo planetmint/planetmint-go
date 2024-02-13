@@ -76,7 +76,7 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[daotypes.ModuleName], &daoGenState)
 	// set MintAddress in GenesisState
 	// set FeeDenom to node0token because the sending account is initialized with no plmnt tokens
-	daoGenState.Params.FeeDenom = "node0token"
+	daoGenState.Params.FeeDenom = sample.FeeDenom
 	daoGenState.Params.DistributionOffset = s.distributionOffset
 	daoGenState.Params.ReissuanceEpochs = s.reissuanceEpochs
 	daoGenState.Params.MintAddress = valAddr.String()
