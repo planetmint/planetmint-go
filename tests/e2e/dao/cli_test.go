@@ -9,26 +9,26 @@ import (
 )
 
 func TestE2ETestSuite(t *testing.T) {
-	cfg := network.DefaultConfig()
+	cfg := network.LoaderDefaultConfig()
 	suite.Run(t, NewE2ETestSuite(cfg))
 }
 
 func TestPopE2ETestSuite(t *testing.T) {
-	cfg := network.DefaultConfig()
+	cfg := network.LoaderDefaultConfig()
 	suite.Run(t, NewPopSelectionE2ETestSuite(cfg))
 }
 
 func TestGasConsumptionE2ETestSuite(t *testing.T) {
-	cfg := network.DefaultConfig()
+	cfg := network.LoaderDefaultConfig()
 	suite.Run(t, NewGasConsumptionE2ETestSuite(cfg))
 }
 
 func TestRestrictedMsgsE2ETestSuite(t *testing.T) {
-	cfg := network.DefaultConfig()
+	cfg := network.LoaderDefaultConfig()
 	suite.Run(t, NewRestrictedMsgsE2ESuite(cfg))
 }
 
 func TestAssetDistributionE2ETestSuite(t *testing.T) {
-	cfg := network.DefaultConfig()
+	cfg := network.LoaderDefaultConfig()
 	suite.Run(t, NewAssetDistributionE2ETestSuite(cfg))
 }

@@ -12,25 +12,18 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	pruningtypes "github.com/cosmos/cosmos-sdk/store/pruning/types"
-	"github.com/cosmos/cosmos-sdk/testutil/network"
 	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	elements "github.com/rddl-network/elements-rpc"
-	elementsmocks "github.com/rddl-network/elements-rpc/utils/mocks"
-	"github.com/stretchr/testify/require"
-
 	"github.com/planetmint/planetmint-go/app"
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/lib"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/util/mocks"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
-)
-
-type (
-	Network = network.Network
-	Config  = network.Config
+	elements "github.com/rddl-network/elements-rpc"
+	elementsmocks "github.com/rddl-network/elements-rpc/utils/mocks"
+	"github.com/stretchr/testify/require"
 )
 
 // Load creates instance with fully configured cosmos network.
@@ -39,9 +32,9 @@ func Load(t *testing.T, configs ...Config) *Network {
 	if len(configs) > 1 {
 		panic("at most one config should be provided")
 	}
-	var cfg network.Config
+	var cfg Config
 	if len(configs) == 0 {
-		cfg = DefaultConfig()
+		cfg = LoaderDefaultConfig()
 	} else {
 		cfg = configs[0]
 	}
@@ -59,7 +52,7 @@ func Load(t *testing.T, configs ...Config) *Network {
 	conf := config.GetConfig()
 	conf.SetRoot(validatorTmpDir + "/node0/simd")
 
-	net, err := network.New(t, validatorTmpDir, cfg)
+	net, err := New(t, validatorTmpDir, cfg)
 	require.NoError(t, err)
 
 	conf.ValidatorAddress = net.Validators[0].Address.String()
@@ -89,18 +82,18 @@ func Load(t *testing.T, configs ...Config) *Network {
 
 // DefaultConfig will initialize config for the network with custom application,
 // genesis and single validator. All other parameters are inherited from cosmos-sdk/testutil/network.DefaultConfig
-func DefaultConfig() network.Config {
+func LoaderDefaultConfig() Config {
 	var (
 		encoding = app.MakeEncodingConfig()
 		chainID  = "chain-foobarbaz"
 	)
-	return network.Config{
+	return Config{
 		Codec:             encoding.Marshaler,
 		TxConfig:          encoding.TxConfig,
 		LegacyAmino:       encoding.Amino,
 		InterfaceRegistry: encoding.InterfaceRegistry,
 		AccountRetriever:  authtypes.AccountRetriever{},
-		AppConstructor: func(val network.ValidatorI) servertypes.Application {
+		AppConstructor: func(val ValidatorI) servertypes.Application {
 			return app.New(
 				val.GetCtx().Logger,
 				tmdb.NewMemDB(),
