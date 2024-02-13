@@ -122,7 +122,7 @@ func DefaultConfig(factory TestFixtureFactory) Config {
 		ChainID:           "chain-" + tmrand.Str(6),
 		NumValidators:     4,
 		BondDenom:         sdk.DefaultBondDenom,
-		MinGasPrices:      fmt.Sprintf("0.000006%s", sample.FeeDenom),
+		MinGasPrices:      "0.000006" + sample.FeeDenom,
 		AccountTokens:     sdk.TokensFromConsensusPower(1000, sdk.DefaultPowerReduction),
 		StakingTokens:     sdk.TokensFromConsensusPower(500, sdk.DefaultPowerReduction),
 		BondedTokens:      sdk.TokensFromConsensusPower(100, sdk.DefaultPowerReduction),
@@ -377,7 +377,7 @@ func New(l Logger, baseDir string, cfg Config) (*Network, error) {
 				if err != nil {
 					return nil, err
 				}
-				appCfg.GRPC.Address = fmt.Sprintf("0.0.0.0:%s", grpcPort)
+				appCfg.GRPC.Address = "0.0.0.0:" + grpcPort
 			}
 			appCfg.GRPC.Enable = true
 
@@ -385,7 +385,7 @@ func New(l Logger, baseDir string, cfg Config) (*Network, error) {
 			if err != nil {
 				return nil, err
 			}
-			appCfg.GRPCWeb.Address = fmt.Sprintf("0.0.0.0:%s", grpcWebPort)
+			appCfg.GRPCWeb.Address = "0.0.0.0:" + grpcWebPort
 			appCfg.GRPCWeb.Enable = true
 		}
 
@@ -509,7 +509,7 @@ func New(l Logger, baseDir string, cfg Config) (*Network, error) {
 		}
 
 		memo := fmt.Sprintf("%s@%s:%s", nodeIDs[i], p2pURL.Hostname(), p2pURL.Port())
-		fee := sdk.NewCoins(sdk.NewCoin(fmt.Sprintf("%stoken", nodeDirName), sdk.NewInt(0)))
+		fee := sdk.NewCoins(sdk.NewCoin(cfg.AccountDenom, sdk.NewInt(0)))
 		txBuilder := cfg.TxConfig.NewTxBuilder()
 		err = txBuilder.SetMsgs(createValMsg)
 		if err != nil {

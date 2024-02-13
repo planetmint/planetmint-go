@@ -2,7 +2,6 @@ package network
 
 import (
 	"bytes"
-	"fmt"
 	"testing"
 	"time"
 
@@ -114,7 +113,7 @@ func LoaderDefaultConfig() Config {
 		ChainID:         chainID,
 		NumValidators:   1,
 		BondDenom:       sdk.DefaultBondDenom,
-		MinGasPrices:    fmt.Sprintf("0.000003%s", sample.FeeDenom),
+		MinGasPrices:    "0.000003" + sample.FeeDenom,
 		AccountTokens:   sdk.TokensFromConsensusPower(10000, sdk.DefaultPowerReduction),
 		StakingTokens:   sdk.TokensFromConsensusPower(500, sdk.DefaultPowerReduction),
 		BondedTokens:    sdk.TokensFromConsensusPower(100, sdk.DefaultPowerReduction),

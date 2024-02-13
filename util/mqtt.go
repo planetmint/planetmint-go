@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"net"
 	"strconv"
 	"strings"
@@ -40,7 +39,7 @@ func lazyLoadMQTTClient() {
 
 	conf := config.GetConfig()
 	hostPort := net.JoinHostPort(conf.MqttDomain, strconv.FormatInt(int64(conf.MqttPort), 10))
-	uri := fmt.Sprintf("tcp://%s", hostPort)
+	uri := "tcp://%s" + hostPort
 
 	opts := mqtt.NewClientOptions().AddBroker(uri)
 	opts.SetClientID(conf.ValidatorAddress)
@@ -104,7 +103,7 @@ func GetMqttStatusOfParticipant(address string, responseTimeoutInMs int64) (isAv
 	if ok {
 		return
 	}
-	var messageHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
+	var messageHandler mqtt.MessageHandler = func(_ mqtt.Client, msg mqtt.Message) {
 		topicParts := strings.Split(msg.Topic(), "/")
 		if len(topicParts) == 3 && topicParts[1] == address {
 			rwMu.Lock() // Lock for writing
