@@ -102,7 +102,7 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.cfg.GenesisState[banktypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&bankGenState)
 
 	s.cfg.MinGasPrices = fmt.Sprintf("0.000006%s", daoGenState.Params.FeeDenom)
-	s.network = network.New(s.T(), s.cfg)
+	s.network = network.Load(s.T(), s.cfg)
 
 	// create account for redeem claim test case
 	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)

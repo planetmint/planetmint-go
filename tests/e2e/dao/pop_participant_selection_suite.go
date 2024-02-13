@@ -79,7 +79,7 @@ func (s *PopSelectionE2ETestSuite) SetupSuite() {
 	daoGenState.Params.ClaimAddress = valAddr.String()
 	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
 
-	s.network = network.New(s.T(), s.cfg)
+	s.network = network.Load(s.T(), s.cfg)
 }
 
 // TearDownSuite clean up after testing

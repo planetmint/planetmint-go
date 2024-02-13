@@ -39,7 +39,7 @@ func (s *AssetDistributionE2ETestSuite) SetupSuite() {
 	daoGenState.Params.FeeDenom = sample.FeeDenom
 	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
 
-	s.network = network.New(s.T(), s.cfg)
+	s.network = network.Load(s.T(), s.cfg)
 }
 
 func (s *AssetDistributionE2ETestSuite) TearDownSuite() {

@@ -83,10 +83,17 @@ func (s *GasConsumptionE2ETestSuite) SetupSuite() {
 	daoGenState.Params.MintAddress = s.minterAddr.String()
 	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
 
-	s.network = network.New(s.T(), s.cfg)
+	// var stkGenState stktypes.GenesisState
+	// s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[stktypes.ModuleName], &stkGenState)
+	// stkGenState.Params.BondDenom = sample.FeeDenom
+	// s.cfg.GenesisState[stktypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&stkGenState)
+	// s.cfg.BondDenom = sample.FeeDenom
+	// s.cfg.MinGasPrices = "0.000003" + sample.FeeDenom
+
+	s.network = network.Load(s.T(), s.cfg)
 	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
 	s.Require().NoError(err)
-	err = e2etestutil.FundAccount(s.network, account, daoGenState.Params.FeeDenom)
+	err = e2etestutil.FundAccount(s.network, account, sample.FeeDenom) //daoGenState.Params.FeeDenom)
 	s.Require().NoError(err)
 }
 
