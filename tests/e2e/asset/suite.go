@@ -38,7 +38,7 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.T().Log("setting up e2e test suite")
 
 	s.network = network.New(s.T(), s.cfg)
-	err := e2etestutil.AttestMachine(s.network, sample.Name, sample.Mnemonic, 0)
+	err := e2etestutil.AttestMachine(s.network, sample.Name, sample.Mnemonic, 0, daoGenState.Params.FeeDenom)
 	s.Require().NoError(err)
 }
 

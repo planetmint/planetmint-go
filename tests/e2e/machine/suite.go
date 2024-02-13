@@ -44,7 +44,7 @@ func (s *E2ETestSuite) SetupSuite() {
 	// create machine account for attestation
 	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
 	s.Require().NoError(err)
-	err = e2etestutil.FundAccount(s.network, account)
+	err = e2etestutil.FundAccount(s.network, account, daoGenState.Params.FeeDenom)
 	s.Require().NoError(err)
 }
 

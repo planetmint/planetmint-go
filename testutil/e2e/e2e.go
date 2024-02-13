@@ -27,7 +27,7 @@ func CreateAccount(network *network.Network, name string, mnemonic string) (acco
 	return account, nil
 }
 
-func FundAccount(network *network.Network, account *keyring.Record) (err error) {
+func FundAccount(network *network.Network, account *keyring.Record, tokenDenom string) (err error) {
 	val := network.Validators[0]
 
 	addr, err := account.GetAddress()
@@ -36,7 +36,7 @@ func FundAccount(network *network.Network, account *keyring.Record) (err error) 
 	}
 
 	// sending funds to account to initialize account on chain
-	coin := sdk.NewCoins(sdk.NewInt64Coin("stake", 10000)) // TODO: make denom dependent on cfg
+	coin := sdk.NewCoins(sdk.NewInt64Coin(tokenDenom, 10000))
 	msg := banktypes.NewMsgSend(val.Address, addr, coin)
 	out, err := lib.BroadcastTxWithFileLock(val.Address, msg)
 	if err != nil {
@@ -60,7 +60,7 @@ func FundAccount(network *network.Network, account *keyring.Record) (err error) 
 	return
 }
 
-func AttestMachine(network *network.Network, name string, mnemonic string, num int) (err error) {
+func AttestMachine(network *network.Network, name string, mnemonic string, num int, tokenDenom string) (err error) {
 	val := network.Validators[0]
 
 	account, err := CreateAccount(network, name, mnemonic)
@@ -68,7 +68,7 @@ func AttestMachine(network *network.Network, name string, mnemonic string, num i
 		return err
 	}
 
-	err = FundAccount(network, account)
+	err = FundAccount(network, account, tokenDenom)
 	if err != nil {
 		return err
 	}
