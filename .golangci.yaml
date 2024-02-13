@@ -106,3 +106,9 @@ issues:
     - path: tests/.*/*\.go
       linters:
         - paralleltest
+    - path: testutil/network/network.go
+      linters:
+        - gocognit
+        - gocyclo
+        - wastedassign
+        - nestif

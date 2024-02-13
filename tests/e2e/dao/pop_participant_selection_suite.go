@@ -75,7 +75,6 @@ func (s *PopSelectionE2ETestSuite) SetupSuite() {
 	daoGenState.Params.ReissuanceEpochs = s.reissuanceEpochs
 	daoGenState.Params.DistributionOffset = s.distributionOffset
 	daoGenState.Params.MqttResponseTimeout = 200
-	daoGenState.Params.FeeDenom = s.feeDenom
 	daoGenState.Params.ClaimAddress = valAddr.String()
 	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
 

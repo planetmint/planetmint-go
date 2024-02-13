@@ -36,15 +36,10 @@ func NewRestrictedMsgsE2ESuite(cfg network.Config) *RestrictedMsgsE2ESuite {
 func (s *RestrictedMsgsE2ESuite) SetupSuite() {
 	s.T().Log("setting up e2e test suite")
 
-	var daoGenState daotypes.GenesisState
-	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[daotypes.ModuleName], &daoGenState)
-	daoGenState.Params.FeeDenom = sample.FeeDenom
-	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
-
 	s.network = network.Load(s.T(), s.cfg)
 	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
 	s.Require().NoError(err)
-	err = e2etestutil.FundAccount(s.network, account, daoGenState.Params.FeeDenom)
+	err = e2etestutil.FundAccount(s.network, account, sample.FeeDenom)
 	s.Require().NoError(err)
 }
 

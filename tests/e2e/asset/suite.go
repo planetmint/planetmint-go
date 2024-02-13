@@ -10,7 +10,6 @@ import (
 	assetcli "github.com/planetmint/planetmint-go/x/asset/client/cli"
 	assettypes "github.com/planetmint/planetmint-go/x/asset/types"
 
-	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -30,15 +29,10 @@ func NewE2ETestSuite(cfg network.Config) *E2ETestSuite {
 
 // SetupSuite initializes asset E2ETestSuite
 func (s *E2ETestSuite) SetupSuite() {
-	var daoGenState daotypes.GenesisState
-	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[daotypes.ModuleName], &daoGenState)
-	daoGenState.Params.FeeDenom = sample.FeeDenom
-	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
-
 	s.T().Log("setting up e2e test suite")
 
 	s.network = network.Load(s.T(), s.cfg)
-	err := e2etestutil.AttestMachine(s.network, sample.Name, sample.Mnemonic, 0, daoGenState.Params.FeeDenom)
+	err := e2etestutil.AttestMachine(s.network, sample.Name, sample.Mnemonic, 0, sample.FeeDenom)
 	s.Require().NoError(err)
 }
 

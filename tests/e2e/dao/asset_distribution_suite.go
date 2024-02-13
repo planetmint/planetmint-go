@@ -6,7 +6,6 @@ import (
 
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	"github.com/planetmint/planetmint-go/testutil/network"
-	"github.com/planetmint/planetmint-go/testutil/sample"
 	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 	"github.com/stretchr/testify/suite"
@@ -36,7 +35,6 @@ func (s *AssetDistributionE2ETestSuite) SetupSuite() {
 	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[daotypes.ModuleName], &daoGenState)
 	daoGenState.Params.DistributionOffset = s.distributionOffset
 	daoGenState.Params.ReissuanceEpochs = s.reissaunceEpochs
-	daoGenState.Params.FeeDenom = sample.FeeDenom
 	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
 
 	s.network = network.Load(s.T(), s.cfg)

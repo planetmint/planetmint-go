@@ -81,7 +81,6 @@ func (s *GasConsumptionE2ETestSuite) SetupSuite() {
 
 	var daoGenState daotypes.GenesisState
 	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[daotypes.ModuleName], &daoGenState)
-	daoGenState.Params.FeeDenom = s.feeDenom
 	daoGenState.Params.MintAddress = s.minterAddr.String()
 	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
 

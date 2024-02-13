@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -50,15 +51,9 @@ import (
 	pruningtypes "github.com/cosmos/cosmos-sdk/store/pruning/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
-	_ "github.com/cosmos/cosmos-sdk/x/auth"
-	_ "github.com/cosmos/cosmos-sdk/x/auth/tx/config"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	_ "github.com/cosmos/cosmos-sdk/x/bank"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	_ "github.com/cosmos/cosmos-sdk/x/consensus"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
-	_ "github.com/cosmos/cosmos-sdk/x/params"
-	_ "github.com/cosmos/cosmos-sdk/x/staking"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
@@ -360,9 +355,12 @@ func New(l Logger, baseDir string, cfg Config) (*Network, error) {
 			if err != nil {
 				return nil, err
 			}
-			apiAddr = fmt.Sprintf("http://%s:%s", apiURL.Hostname(), apiURL.Port())
+			apiAddr = net.JoinHostPort("http://"+apiURL.Hostname(), apiURL.Port())
 
 			if cfg.RPCAddress != "" {
+				// The above code is likely declaring a variable or constant named "tmCfg" in the Go programming
+				// language. However, without more context or code, it is difficult to determine the exact purpose
+				// or functionality of this code.
 				tmCfg.RPC.ListenAddress = cfg.RPCAddress
 			} else {
 				rpcAddr, _, err := server.FreeTCPAddr()
@@ -681,8 +679,12 @@ func (n *Network) WaitForHeightWithTimeout(h int64, t time.Duration) (int64, err
 // blocks has been reached.
 func (n *Network) RetryForBlocks(retryFunc func() error, blocks int) error {
 	for i := 0; i < blocks; i++ {
-		n.WaitForNextBlock()
-		err := retryFunc()
+		err := n.WaitForNextBlock()
+		if err == nil {
+			return nil
+		}
+
+		err = retryFunc()
 		if err == nil {
 			return nil
 		}

@@ -3,7 +3,6 @@ package dao
 import (
 	"bufio"
 	"bytes"
-	"fmt"
 	"os"
 	"strconv"
 
@@ -74,9 +73,6 @@ func (s *E2ETestSuite) SetupSuite() {
 
 	var daoGenState daotypes.GenesisState
 	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[daotypes.ModuleName], &daoGenState)
-	// set MintAddress in GenesisState
-	// set FeeDenom to node0token because the sending account is initialized with no plmnt tokens
-	daoGenState.Params.FeeDenom = sample.FeeDenom
 	daoGenState.Params.DistributionOffset = s.distributionOffset
 	daoGenState.Params.ReissuanceEpochs = s.reissuanceEpochs
 	daoGenState.Params.MintAddress = valAddr.String()
@@ -101,13 +97,12 @@ func (s *E2ETestSuite) SetupSuite() {
 	bankGenState.Balances = append(bankGenState.Balances, accountBalances...)
 	s.cfg.GenesisState[banktypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&bankGenState)
 
-	s.cfg.MinGasPrices = fmt.Sprintf("0.000006%s", daoGenState.Params.FeeDenom)
 	s.network = network.Load(s.T(), s.cfg)
 
 	// create account for redeem claim test case
 	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
 	s.Require().NoError(err)
-	err = e2etestutil.FundAccount(s.network, account, daoGenState.Params.FeeDenom)
+	err = e2etestutil.FundAccount(s.network, account, sample.FeeDenom)
 	s.Require().NoError(err)
 }
 

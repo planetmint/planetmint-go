@@ -13,7 +13,7 @@ func ParamKeyTable() paramtypes.KeyTable {
 }
 
 // NewParams creates a new Params instance
-func NewParams(mintAddress string, tokenDenom string, feeDenom string, stagedDenom string,
+func NewParams(mintAddress string, tokenDenom string, stagedDenom string,
 	claimDenom string, reissuanceAsset string, reissuanceEpochs int64, popEpochs int64,
 	distributionOffset int64, distributionAddressEarlyInv string, distributionAddressInvestor string,
 	distributionAddressStrategic string, distributionAddressDao string, distributionAddressPop string,
@@ -21,7 +21,6 @@ func NewParams(mintAddress string, tokenDenom string, feeDenom string, stagedDen
 	return Params{
 		MintAddress:     mintAddress,
 		TokenDenom:      tokenDenom,
-		FeeDenom:        feeDenom,
 		StagedDenom:     stagedDenom,
 		ClaimDenom:      claimDenom,
 		ReissuanceAsset: reissuanceAsset,
@@ -50,7 +49,6 @@ func NewParams(mintAddress string, tokenDenom string, feeDenom string, stagedDen
 func DefaultParams() Params {
 	return NewParams(
 		"plmnt1dyuhg8ldu3d6nvhrvzzemtc3893dys9v9lvdty",
-		"plmnt",
 		"plmnt",
 		"stagedcrddl",
 		"crddl",

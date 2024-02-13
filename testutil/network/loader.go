@@ -71,7 +71,6 @@ func Load(t *testing.T, configs ...Config) *Network {
 
 	libConfig := lib.GetConfig()
 	libConfig.SetClientCtx(net.Validators[0].ClientCtx)
-	libConfig.SetFeeDenom(daoGenState.Params.FeeDenom)
 	libConfig.SetRoot(validatorTmpDir + "/node0/simd")
 
 	require.NoError(t, err)
@@ -81,7 +80,7 @@ func Load(t *testing.T, configs ...Config) *Network {
 	return net
 }
 
-// DefaultConfig will initialize config for the network with custom application,
+// LoaderDefaultConfig will initialize config for the network with custom application,
 // genesis and single validator. All other parameters are inherited from cosmos-sdk/testutil/network.DefaultConfig
 func LoaderDefaultConfig() Config {
 	var (
