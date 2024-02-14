@@ -26,14 +26,8 @@ const PubKey = "021cd2a59c6f9402ce09effba89b3deb6bb5863733e625f22c06204918061db4
 // Name is the name of the sample machine to use in tests
 const Name = "machine"
 
-// Amount is the amount to transfer to the machine account
-const Amount = "1000stake"
-
-// Fees is the amount of fees to use in tests
-const Fees = "1stake"
-
 // FeeDenom is the fee denomination for e2e test cases
-const FeeDenom = "stake"
+const FeeDenom = "plmnt"
 
 // DefaultDerivationPath is the BIP44Prefix for PLMNT (see https://github.com/satoshilabs/slips/blob/master/slip-0044.md)
 const DefaultDerivationPath = "m/44'/8680'/0'/0/0"

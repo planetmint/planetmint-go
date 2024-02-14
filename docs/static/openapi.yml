@@ -47015,8 +47015,6 @@ paths:
                     type: string
                   token_denom:
                     type: string
-                  fee_denom:
-                    type: string
                   staged_denom:
                     type: string
                   claim_denom:
@@ -76686,8 +76684,6 @@ definitions:
         type: string
       token_denom:
         type: string
-      fee_denom:
-        type: string
       staged_denom:
         type: string
       claim_denom:
@@ -76962,8 +76958,6 @@ definitions:
           mint_address:
             type: string
           token_denom:
-            type: string
-          fee_denom:
             type: string
           staged_denom:
             type: string

@@ -22,7 +22,8 @@ func (k Keeper) RedeemClaimAll(goCtx context.Context, req *types.QueryAllRedeemC
 	store := ctx.KVStore(k.storeKey)
 	redeemClaimStore := prefix.NewStore(store, types.KeyPrefix(types.RedeemClaimKeyPrefix))
 
-	pageRes, err := query.Paginate(redeemClaimStore, req.Pagination, func(key []byte, value []byte) error {
+	// revive linter: from func(key []byte, value []byte)  to func(_ []byte, value []byte)
+	pageRes, err := query.Paginate(redeemClaimStore, req.Pagination, func(_ []byte, value []byte) error {
 		var redeemClaim types.RedeemClaim
 		if err := k.cdc.Unmarshal(value, &redeemClaim); err != nil {
 			return err

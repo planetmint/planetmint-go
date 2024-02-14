@@ -13,7 +13,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
-	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -22,8 +21,9 @@ import (
 type E2ETestSuite struct {
 	suite.Suite
 
-	cfg     network.Config
-	network *network.Network
+	cfg      network.Config
+	network  *network.Network
+	feeDenom string
 }
 
 // NewE2ETestSuite returns configured machine E2ETestSuite
@@ -33,18 +33,15 @@ func NewE2ETestSuite(cfg network.Config) *E2ETestSuite {
 
 // SetupSuite initializes machine E2ETestSuite
 func (s *E2ETestSuite) SetupSuite() {
-	var daoGenState daotypes.GenesisState
-	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[daotypes.ModuleName], &daoGenState)
-	daoGenState.Params.FeeDenom = sample.FeeDenom
-	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
-
 	s.T().Log("setting up e2e test suite")
 
-	s.network = network.New(s.T(), s.cfg)
+	s.feeDenom = sample.FeeDenom
+	s.network = network.Load(s.T(), s.cfg)
+
 	// create machine account for attestation
 	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
 	s.Require().NoError(err)
-	err = e2etestutil.FundAccount(s.network, account)
+	err = e2etestutil.FundAccount(s.network, account, s.feeDenom)
 	s.Require().NoError(err)
 }
 
@@ -150,7 +147,7 @@ func (s *E2ETestSuite) TestMachineAllowanceAttestation() {
 
 	// create allowance for machine
 	allowedMsgs := []string{"/planetmintgo.machine.MsgAttestMachine"}
-	limit := sdk.NewCoins(sdk.NewInt64Coin("stake", 2))
+	limit := sdk.NewCoins(sdk.NewInt64Coin(s.feeDenom, 2))
 	basic := feegrant.BasicAllowance{
 		SpendLimit: limit,
 	}

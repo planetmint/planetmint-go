@@ -96,6 +96,9 @@ issues:
     - path: x/dao/client/cli/tx_reissue_rddl.*\.go
       linters:
         - dupl
+    - path: x/dao/client/cli/*\.go
+      linters:
+        - revive
     - path: testutil/nullify/nullify\.go
       linters:
         - exhaustive
@@ -106,3 +109,24 @@ issues:
     - path: tests/.*/*\.go
       linters:
         - paralleltest
+    - path: testutil/network/network.go
+      linters:
+        - gocognit
+        - gocyclo
+        - wastedassign
+        - nestif
+    - path: x/.*/simulation/.*\.go
+      linters:
+        - revive
+    - path: x/.*/module_simulation\.go
+      linters:
+        - revive
+    - path: x/.*/client/cli/query_params\.go
+      linters:
+        - revive
+    - path: x/.*/.*/cli/query_.*\.go
+      linters:
+        - revive
+    - path: docs/docs\.go
+      linters:
+        - revive

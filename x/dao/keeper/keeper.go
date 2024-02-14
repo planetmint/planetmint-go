@@ -1,8 +1,6 @@
 package keeper
 
 import (
-	"fmt"
-
 	db "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -72,7 +70,7 @@ func NewKeeper(
 }
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
-	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
+	return ctx.Logger().With("module", "x/"+types.ModuleName)
 }
 
 func (k Keeper) SelectPopParticipants(ctx sdk.Context) (challenger string, challengee string) {

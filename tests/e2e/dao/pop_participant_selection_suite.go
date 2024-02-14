@@ -50,6 +50,7 @@ type PopSelectionE2ETestSuite struct {
 	reissuanceEpochs   int64
 	distributionOffset int64
 	claimDenom         string
+	feeDenom           string
 }
 
 func NewPopSelectionE2ETestSuite(cfg network.Config) *PopSelectionE2ETestSuite {
@@ -63,7 +64,7 @@ func (s *PopSelectionE2ETestSuite) SetupSuite() {
 	s.reissuanceEpochs = 60
 	s.distributionOffset = 2
 	s.claimDenom = "crddl"
-
+	s.feeDenom = sample.FeeDenom
 	s.cfg.Mnemonics = []string{sample.Mnemonic}
 	valAddr, err := s.createValAccount(s.cfg)
 	s.Require().NoError(err)
@@ -74,11 +75,10 @@ func (s *PopSelectionE2ETestSuite) SetupSuite() {
 	daoGenState.Params.ReissuanceEpochs = s.reissuanceEpochs
 	daoGenState.Params.DistributionOffset = s.distributionOffset
 	daoGenState.Params.MqttResponseTimeout = 200
-	daoGenState.Params.FeeDenom = sample.FeeDenom
 	daoGenState.Params.ClaimAddress = valAddr.String()
 	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
 
-	s.network = network.New(s.T(), s.cfg)
+	s.network = network.Load(s.T(), s.cfg)
 }
 
 // TearDownSuite clean up after testing
@@ -152,7 +152,7 @@ func (s *PopSelectionE2ETestSuite) TestPopSelectionNoActors() {
 }
 
 func (s *PopSelectionE2ETestSuite) TestPopSelectionOneActors() {
-	err := e2etestutil.AttestMachine(s.network, machines[0].name, machines[0].mnemonic, 0)
+	err := e2etestutil.AttestMachine(s.network, machines[0].name, machines[0].mnemonic, 0, s.feeDenom)
 	s.Require().NoError(err)
 
 	out := s.perpareLocalTest()
@@ -163,7 +163,7 @@ func (s *PopSelectionE2ETestSuite) TestPopSelectionOneActors() {
 }
 
 func (s *PopSelectionE2ETestSuite) TestPopSelectionTwoActors() {
-	err := e2etestutil.AttestMachine(s.network, machines[1].name, machines[1].mnemonic, 1)
+	err := e2etestutil.AttestMachine(s.network, machines[1].name, machines[1].mnemonic, 1, s.feeDenom)
 	s.Require().NoError(err)
 
 	out := s.perpareLocalTest()
