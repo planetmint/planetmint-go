@@ -22,8 +22,6 @@ ignite chain build
 ## Learn more
 
 - [Planetmint docs](https://docs.rddl.io)
-- [Ignite CLI](https://ignite.com/cli)
-- [Tutorials](https://docs.ignite.com/guide)
 - [Ignite CLI docs](https://docs.ignite.com)
 - [Cosmos SDK docs](https://docs.cosmos.network)
-- [Developer Chat](https://discord.gg/ignite)
+- [Developer Chat](https://discord.gg/uy4CA2Xw54)
