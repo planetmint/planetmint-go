@@ -10,6 +10,26 @@ import (
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
+func (k msgServer) updateChallenge(ctx sdk.Context, msg *types.MsgReportPopResult) (err error) {
+	challenge, found := k.LookupChallenge(ctx, msg.GetChallenge().GetHeight())
+	if !found {
+		err = errorsmod.Wrapf(types.ErrInvalidChallenge, "no challenge found for PoP report")
+		return
+	}
+	if challenge.Challengee != msg.GetChallenge().Challengee ||
+		challenge.Challenger != msg.GetChallenge().Challenger ||
+		challenge.Initiator != msg.GetChallenge().Initiator ||
+		challenge.Height != msg.GetChallenge().Height {
+		err = errorsmod.Wrapf(types.ErrInvalidChallenge, "PoP report data does not match challenge")
+		return
+	}
+	challenge.Success = msg.GetChallenge().GetSuccess()
+	challenge.Finished = true
+
+	k.StoreChallenge(ctx, challenge)
+	return
+}
+
 func (k msgServer) ReportPopResult(goCtx context.Context, msg *types.MsgReportPopResult) (*types.MsgReportPopResultResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -17,8 +37,18 @@ func (k msgServer) ReportPopResult(goCtx context.Context, msg *types.MsgReportPo
 	if err != nil {
 		return nil, errorsmod.Wrapf(types.ErrInvalidChallenge, err.Error())
 	}
-	// ensure the challenge is stored even without the token reward minting
-	k.StoreChallenge(ctx, *msg.Challenge)
+
+	// verify that the report origin is the challenger
+	if msg.GetCreator() != msg.GetChallenge().GetChallenger() {
+		err = errorsmod.Wrapf(types.ErrInvalidPopReporter, "PoP reporter is not the challenger")
+		return nil, err
+	}
+
+	// update valid PoP Result reports
+	err = k.updateChallenge(ctx, msg)
+	if err != nil {
+		return nil, err
+	}
 
 	if msg.Challenge.GetSuccess() {
 		util.GetAppLogger().Info(ctx, "PoP at height %v was successful", msg.Challenge.GetHeight())
