@@ -138,8 +138,16 @@ func (s *PopSelectionE2ETestSuite) sendPoPResult(storedChallenge []byte, success
 	challenge.Finished = true
 	challenge.Success = success
 
-	msg := daotypes.NewMsgReportPopResult(val.Address.String(), &challenge)
-	_, err = e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg)
+	machineName := machines[0].name
+	if challenge.Challenger != machines[0].address {
+		machineName = machines[1].name
+	}
+	k, err := val.ClientCtx.Keyring.Key(machineName)
+	s.Require().NoError(err)
+	challengerAccAddress, _ := k.GetAddress()
+
+	msg := daotypes.NewMsgReportPopResult(challengerAccAddress.String(), &challenge)
+	_, err = e2etestutil.BuildSignBroadcastTx(s.T(), challengerAccAddress, msg)
 	s.Require().NoError(err)
 }
 
@@ -148,7 +156,6 @@ func (s *PopSelectionE2ETestSuite) TestPopSelectionNoActors() {
 
 	assert.NotContains(s.T(), out.String(), machines[0].address)
 	assert.NotContains(s.T(), out.String(), machines[1].address)
-	s.sendPoPResult(out.Bytes(), true)
 }
 
 func (s *PopSelectionE2ETestSuite) TestPopSelectionOneActors() {
@@ -159,7 +166,6 @@ func (s *PopSelectionE2ETestSuite) TestPopSelectionOneActors() {
 
 	assert.NotContains(s.T(), out.String(), machines[0].address)
 	assert.NotContains(s.T(), out.String(), machines[1].address)
-	s.sendPoPResult(out.Bytes(), true)
 }
 
 func (s *PopSelectionE2ETestSuite) TestPopSelectionTwoActors() {
