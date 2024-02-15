@@ -14,14 +14,14 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func setupMsgServer(t testing.TB) (types.MsgServer, context.Context) {
+func setupMsgServer(t testing.TB) (types.MsgServer, context.Context, *keeper.Keeper) {
 	k, ctx := keepertest.DaoKeeper(t)
-	return keeper.NewMsgServerImpl(*k), sdk.WrapSDKContext(ctx)
+	return keeper.NewMsgServerImpl(*k), sdk.WrapSDKContext(ctx), k
 }
 
 func TestMsgServer(t *testing.T) {
 	t.Parallel()
-	ms, ctx := setupMsgServer(t)
+	ms, ctx, _ := setupMsgServer(t)
 	require.NotNil(t, ms)
 	require.NotNil(t, ctx)
 }
@@ -60,7 +60,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 					Initiator:  initiator.String(),
 					Challenger: challenger.String(),
 					Challengee: challengee.String(),
-					Height:     1,
+					Height:     2,
 					Finished:   true,
 				},
 			},
@@ -73,16 +73,87 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 				Challenge: &types.Challenge{
 					Challenger: challenger.String(),
 					Challengee: challengee.String(),
-					Height:     1,
+					Height:     3,
 					Success:    true,
 					Finished:   true,
 				},
 			},
 			"Initiator is not set: invalid challenge",
 		},
+		{
+			"Invalid pop data",
+			types.MsgReportPopResult{
+				Creator: challenger.String(),
+				Challenge: &types.Challenge{
+					Initiator:  initiator.String(),
+					Challenger: challenger.String(),
+					Challengee: challengee.String(),
+					Height:     4,
+					Success:    true,
+					Finished:   true,
+				},
+			},
+			"PoP report data does not match challenge: invalid challenge",
+		},
+		{
+			"Invalid pop data",
+			types.MsgReportPopResult{
+				Creator: challenger.String(),
+				Challenge: &types.Challenge{
+					Initiator:  initiator.String(),
+					Challenger: challenger.String(),
+					Challengee: challengee.String(),
+					Height:     5,
+					Success:    false,
+					Finished:   false,
+				},
+			},
+			"PoP reporter is not the challenger: invalid PoP reporter",
+		},
+		{
+			"Invalid pop data",
+			types.MsgReportPopResult{
+				Creator: challenger.String(),
+				Challenge: &types.Challenge{
+					Initiator:  initiator.String(),
+					Challenger: challenger.String(),
+					Challengee: challengee.String(),
+					Height:     6,
+					Success:    true,
+					Finished:   true,
+				},
+			},
+			"PoP report data does not match challenge: invalid challenge",
+		},
+		{
+			"Non-Existing PoP",
+			types.MsgReportPopResult{
+				Creator: challenger.String(),
+				Challenge: &types.Challenge{
+					Initiator:  initiator.String(),
+					Challenger: challenger.String(),
+					Challengee: challengee.String(),
+					Height:     7,
+					Success:    true,
+					Finished:   true,
+				},
+			},
+			"no challenge found for PoP report: invalid challenge",
+		},
 	}
 
-	msgServer, ctx := setupMsgServer(t)
+	msgServer, ctx, k := setupMsgServer(t)
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	// set up the challenges, do not store the last challenge (special test case)
+	for i := 0; i < 6; i++ {
+		msg := testCases[i].msg
+		challenge := msg.GetChallenge()
+		k.StoreChallenge(sdkCtx, *challenge)
+	}
+	// adjust challenge 4 to satisfy the test case
+	testCases[3].msg.Challenge.Challengee = testCases[3].msg.Challenge.Challenger
+	testCases[4].msg.Challenge.Challenger = testCases[4].msg.Challenge.Challengee
+	testCases[5].msg.Challenge.Initiator = testCases[5].msg.Challenge.Challenger
 
 	for _, tc := range testCases {
 		res, err := msgServer.ReportPopResult(ctx, &tc.msg)
@@ -101,7 +172,7 @@ func TestMsgServerMintToken(t *testing.T) {
 	mintRequest := sample.MintRequest(beneficiary, 1000, "hash")
 
 	msg := types.NewMsgMintToken(minter, &mintRequest)
-	msgServer, ctx := setupMsgServer(t)
+	msgServer, ctx, _ := setupMsgServer(t)
 	res, err := msgServer.MintToken(ctx, msg)
 	if assert.NoError(t, err) {
 		assert.Equal(t, &types.MsgMintTokenResponse{}, res)
@@ -121,7 +192,7 @@ func TestMsgServerMintTokenInvalidAddress(t *testing.T) {
 	mintRequest := sample.MintRequest(beneficiary, 1000, "hash")
 
 	msg := types.NewMsgMintToken(minter, &mintRequest)
-	msgServer, ctx := setupMsgServer(t)
+	msgServer, ctx, _ := setupMsgServer(t)
 	_, err := msgServer.MintToken(ctx, msg)
 	if assert.Error(t, err) {
 		assert.EqualError(t, err, fmt.Sprintf("for provided address %s: invalid address", beneficiary))
