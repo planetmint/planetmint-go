@@ -147,7 +147,7 @@ func (s *PopSelectionE2ETestSuite) sendPoPResult(storedChallenge []byte, success
 	challengerAccAddress, _ := k.GetAddress()
 
 	msg := daotypes.NewMsgReportPopResult(challengerAccAddress.String(), &challenge)
-	_, err := e2etestutil.BuildSignBroadcastTx(s.T(), challengerAccAddress, msg)
+	_, err = e2etestutil.BuildSignBroadcastTx(s.T(), challengerAccAddress, msg)
 	s.Require().NoError(err)
 }
 
