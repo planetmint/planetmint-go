@@ -4,6 +4,7 @@ import (
 	"math"
 	"strconv"
 
+	"github.com/planetmint/planetmint-go/config"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
@@ -36,6 +37,10 @@ func (s *AssetDistributionE2ETestSuite) SetupSuite() {
 	daoGenState.Params.DistributionOffset = s.distributionOffset
 	daoGenState.Params.ReissuanceEpochs = s.reissaunceEpochs
 	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
+
+	conf := config.GetConfig()
+	conf.DistributionOffset = int(s.distributionOffset)
+	conf.ReissuanceEpochs = int(s.reissaunceEpochs)
 
 	s.network = network.Load(s.T(), s.cfg)
 }
