@@ -40,7 +40,7 @@ func NewDeductFeeDecorator(ak AccountKeeper, bk authtypes.BankKeeper, fk Feegran
 func checkTxFee(ctx sdk.Context, tx sdk.Tx) (sdk.Coins, error) {
 	feeTx, ok := tx.(sdk.FeeTx)
 	if !ok {
-		return nil, errorsmod.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
+		return nil, errorsmod.Wrap(sdkerrors.ErrTxDecode, ErrorTxFeeTx)
 	}
 
 	feeCoins := feeTx.GetFee()
@@ -74,7 +74,7 @@ func checkTxFee(ctx sdk.Context, tx sdk.Tx) (sdk.Coins, error) {
 func (dfd DeductFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (sdk.Context, error) {
 	feeTx, ok := tx.(sdk.FeeTx)
 	if !ok {
-		return ctx, errorsmod.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
+		return ctx, errorsmod.Wrap(sdkerrors.ErrTxDecode, ErrorTxFeeTx)
 	}
 
 	if !simulate && ctx.BlockHeight() > 0 && feeTx.GetGas() == 0 {
@@ -102,7 +102,7 @@ func (dfd DeductFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bo
 func (dfd DeductFeeDecorator) checkDeductFee(ctx sdk.Context, sdkTx sdk.Tx, fee sdk.Coins) error {
 	feeTx, ok := sdkTx.(sdk.FeeTx)
 	if !ok {
-		return errorsmod.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
+		return errorsmod.Wrap(sdkerrors.ErrTxDecode, ErrorTxFeeTx)
 	}
 
 	if addr := dfd.accountKeeper.GetModuleAddress(authtypes.FeeCollectorName); addr == nil {

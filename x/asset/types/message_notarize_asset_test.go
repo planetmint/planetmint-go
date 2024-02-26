@@ -19,7 +19,7 @@ func TestMsgNotarizeAssetValidateBasic(t *testing.T) {
 		{
 			name: "invalid address",
 			msg: MsgNotarizeAsset{
-				Creator: "invalid_address",
+				Creator: sample.ErrorInvalidAddress,
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
