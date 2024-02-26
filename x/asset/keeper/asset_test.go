@@ -28,17 +28,7 @@ func createNAsset(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.MsgNota
 	return items
 }
 
-func TestGetAsset(t *testing.T) {
-	t.Parallel()
-	keeper, ctx := keepertest.AssetKeeper(t)
-	items := createNAsset(keeper, ctx, 10)
-	for _, item := range items {
-		asset, found := keeper.GetAsset(ctx, item.Cid)
-		assert.True(t, found)
-		assert.Equal(t, item, asset)
-	}
-}
-func TestGetCids(t *testing.T) {
+func TestGetAssetbyCid(t *testing.T) {
 	t.Parallel()
 	keeper, ctx := keepertest.AssetKeeper(t)
 	items := createNAsset(keeper, ctx, 10)
