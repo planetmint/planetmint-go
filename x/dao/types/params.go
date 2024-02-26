@@ -53,16 +53,16 @@ func DefaultParams() Params {
 		"stagedcrddl",
 		"crddl",
 		"7add40beb27df701e02ee85089c5bc0021bc813823fedb5f1dcb5debda7f3da9",
-		17280,
-		24,
-		360,
+		3600,
+		5,
+		75,
 		"vjTyRN2G42Yq3T5TJBecHj1dF1xdhKF89hKV4HJN3uXxUbaVGVR76hAfVRQqQCovWaEpar7G5qBBprFG",
 		"vjTyRN2G42Yq3T5TJBecHj1dF1xdhKF89hKV4HJN3uXxUbaVGVR76hAfVRQqQCovWaEpar7G5qBBprFG",
 		"vjTyRN2G42Yq3T5TJBecHj1dF1xdhKF89hKV4HJN3uXxUbaVGVR76hAfVRQqQCovWaEpar7G5qBBprFG",
 		"vjU8eMzU3JbUWZEpVANt2ePJuPWSPixgjiSj2jDMvkVVQQi2DDnZuBRVX4Ygt5YGBf5zvTWCr1ntdqYH",
 		"vjTvXCFSReRsZ7grdsAreRR12KuKpDw8idueQJK9Yh1BYS7ggAqgvCxCgwh13KGK6M52y37HUmvr4GdD",
 		2000,
-		"plmnt1dyuhg8ldu3d6nvhrvzzemtc3893dys9v9lvdty",
+		"plmnt1m5apfematgm7uueazhk482026ert95x2l2dx78",
 		200000)
 }
 
