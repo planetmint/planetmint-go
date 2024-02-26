@@ -31,6 +31,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 	initiator := sample.Secp256k1AccAddress()
 	challenger := sample.Secp256k1AccAddress()
 	challengee := sample.Secp256k1AccAddress()
+	errInvalidPopData := "Invalid pop data"
 
 	testCases := []struct {
 		name   string
@@ -81,7 +82,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			"Initiator is not set: invalid challenge",
 		},
 		{
-			"Invalid pop data",
+			errInvalidPopData,
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
@@ -96,7 +97,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			"PoP report data does not match challenge: invalid challenge",
 		},
 		{
-			"Invalid pop data",
+			errInvalidPopData,
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
@@ -111,7 +112,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			"PoP reporter is not the challenger: invalid PoP reporter",
 		},
 		{
-			"Invalid pop data",
+			errInvalidPopData,
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
