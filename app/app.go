@@ -791,6 +791,8 @@ func New(
 	app.SetBeginBlocker(app.BeginBlocker)
 	app.SetEndBlocker(app.EndBlocker)
 
+	app.setupUpgradeHandlers()
+
 	if loadLatest {
 		if err := app.LoadLatestVersion(); err != nil {
 			tmos.Exit(err.Error())
@@ -981,4 +983,14 @@ func (app *App) SimulationManager() *module.SimulationManager {
 // ModuleManager returns the app ModuleManager
 func (app *App) ModuleManager() *module.Manager {
 	return app.mm
+}
+
+func (app *App) setupUpgradeHandlers() {
+	app.UpgradeKeeper.SetUpgradeHandler("v0.8.0", func(ctx sdk.Context, _ upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+		// Set versions to the latest ConsensusVersion in the VersionMap.
+		// This will skip running InitGenesis on Dao
+		fromVM[daomoduletypes.ModuleName] = daomodule.AppModule{}.ConsensusVersion()
+		fromVM[machinemoduletypes.ModuleName] = machinemodule.AppModule{}.ConsensusVersion()
+		return app.mm.RunMigrations(ctx, app.configurator, fromVM)
+	})
 }
