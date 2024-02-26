@@ -77166,6 +77166,8 @@ definitions:
     type: object
   planetmintgo.machine.MsgRegisterTrustAnchorResponse:
     type: object
+  planetmintgo.machine.MsgUpdateParamsResponse:
+    type: object
   planetmintgo.machine.Params:
     type: object
     properties:
