@@ -10,6 +10,7 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/planetmint/planetmint-go/lib"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
+	moduleobjects "github.com/planetmint/planetmint-go/testutil/moduleobject"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
@@ -75,8 +76,7 @@ func AttestMachine(network *network.Network, name string, mnemonic string, num i
 
 	// register Ta
 	prvKey, pubKey := sample.KeyPair(num)
-
-	ta := sample.TrustAnchor(pubKey)
+	ta := moduleobjects.TrustAnchor(pubKey)
 	registerMsg := machinetypes.NewMsgRegisterTrustAnchor(val.Address.String(), &ta)
 	_, err = lib.BroadcastTxWithFileLock(val.Address, registerMsg)
 	if err != nil {
@@ -92,7 +92,7 @@ func AttestMachine(network *network.Network, name string, mnemonic string, num i
 		return err
 	}
 
-	machine := sample.Machine(name, pubKey, prvKey, addr.String())
+	machine := moduleobjects.Machine(name, pubKey, prvKey, addr.String())
 	attestMsg := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
 	_, err = lib.BroadcastTxWithFileLock(addr, attestMsg)
 	if err != nil {

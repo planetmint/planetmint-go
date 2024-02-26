@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
+	"github.com/planetmint/planetmint-go/testutil/moduleobject"
 	"github.com/planetmint/planetmint-go/x/machine/keeper"
 	"github.com/planetmint/planetmint-go/x/machine/types"
 
@@ -30,9 +31,9 @@ func TestMsgServer(t *testing.T) {
 func TestMsgServerAttestMachine(t *testing.T) {
 	t.Parallel()
 	sk, pk := sample.KeyPair()
-	ta := sample.TrustAnchor(pk)
+	ta := moduleobject.TrustAnchor(pk)
 	taMsg := types.NewMsgRegisterTrustAnchor(pk, &ta)
-	machine := sample.Machine(pk, pk, sk, "")
+	machine := moduleobject.Machine(pk, pk, sk, "")
 	msg := types.NewMsgAttestMachine(pk, &machine)
 	msgServer, ctx := setupMsgServer(t)
 	_, err := msgServer.RegisterTrustAnchor(ctx, taMsg)
@@ -46,9 +47,9 @@ func TestMsgServerAttestMachine(t *testing.T) {
 func TestMsgServerAttestMachineInvalidLiquidKey(t *testing.T) {
 	t.Parallel()
 	sk, pk := sample.KeyPair()
-	ta := sample.TrustAnchor(pk)
+	ta := moduleobject.TrustAnchor(pk)
 	taMsg := types.NewMsgRegisterTrustAnchor(pk, &ta)
-	machine := sample.Machine(pk, pk, sk, "")
+	machine := moduleobject.Machine(pk, pk, sk, "")
 	machine.IssuerLiquid = "invalidkey"
 	msg := types.NewMsgAttestMachine(pk, &machine)
 	msgServer, ctx := setupMsgServer(t)
@@ -61,7 +62,7 @@ func TestMsgServerAttestMachineInvalidLiquidKey(t *testing.T) {
 func TestMsgServerRegisterTrustAnchor(t *testing.T) {
 	t.Parallel()
 	_, pk := sample.KeyPair()
-	ta := sample.TrustAnchor(pk)
+	ta := moduleobject.TrustAnchor(pk)
 	msg := types.NewMsgRegisterTrustAnchor(pk, &ta)
 	msgServer, ctx := setupMsgServer(t)
 	res, err := msgServer.RegisterTrustAnchor(ctx, msg)
@@ -73,7 +74,7 @@ func TestMsgServerRegisterTrustAnchor(t *testing.T) {
 func TestMsgServerRegisterTrustAnchorTwice(t *testing.T) {
 	t.Parallel()
 	_, pk := sample.KeyPair()
-	ta := sample.TrustAnchor(pk)
+	ta := moduleobject.TrustAnchor(pk)
 	msg := types.NewMsgRegisterTrustAnchor(pk, &ta)
 	msgServer, ctx := setupMsgServer(t)
 	res, err := msgServer.RegisterTrustAnchor(ctx, msg)

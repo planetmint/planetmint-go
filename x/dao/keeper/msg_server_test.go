@@ -7,6 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
+	"github.com/planetmint/planetmint-go/testutil/moduleobject"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	"github.com/planetmint/planetmint-go/x/dao/keeper"
 	"github.com/planetmint/planetmint-go/x/dao/types"
@@ -170,7 +171,7 @@ func TestMsgServerMintToken(t *testing.T) {
 	t.Parallel()
 	minter := sample.AccAddress()
 	beneficiary := sample.ConstBech32Addr
-	mintRequest := sample.MintRequest(beneficiary, 1000, "hash")
+	mintRequest := moduleobject.MintRequest(beneficiary, 1000, "hash")
 
 	msg := types.NewMsgMintToken(minter, &mintRequest)
 	msgServer, ctx, _ := setupMsgServer(t)
@@ -190,7 +191,7 @@ func TestMsgServerMintTokenInvalidAddress(t *testing.T) {
 	t.Parallel()
 	minter := sample.AccAddress()
 	beneficiary := "invalid address"
-	mintRequest := sample.MintRequest(beneficiary, 1000, "hash")
+	mintRequest := moduleobject.MintRequest(beneficiary, 1000, "hash")
 
 	msg := types.NewMsgMintToken(minter, &mintRequest)
 	msgServer, ctx, _ := setupMsgServer(t)

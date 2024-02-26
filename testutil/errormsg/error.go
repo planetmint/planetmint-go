@@ -1,4 +1,4 @@
-package sample
+package errormsg
 
 var (
 	ErrorInvalidAddress = "invalid_address"

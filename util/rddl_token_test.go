@@ -6,7 +6,9 @@ import (
 	"gotest.tools/assert"
 )
 
-var rddlTokenAmount string = "998.85844748"
+const (
+	rddlTokenAmount string = "998.85844748"
+)
 
 func Test2FloatConvertion(t *testing.T) {
 	t.Parallel()
