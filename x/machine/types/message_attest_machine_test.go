@@ -16,7 +16,7 @@ func TestMsgAttestMachineValidateBasic(t *testing.T) {
 		err  error
 	}{
 		{
-			name: "invalid address",
+			name: sdkerrors.ErrInvalidAddress.Error(),
 			msg: MsgAttestMachine{
 				Creator: errormsg.ErrorInvalidAddress,
 			},

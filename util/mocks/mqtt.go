@@ -24,6 +24,7 @@ func GetConnectFunc() mqtt.Token {
 
 // GetDisconnectFunc fetches the mock client's `Disconnect` func
 func GetDisconnectFunc(_ uint) {
+	// not implemented at this point in time
 }
 
 // GetPublishFunc fetches the mock client's `Publish` func

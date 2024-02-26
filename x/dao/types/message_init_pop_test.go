@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestMsgInitPop_ValidateBasic(t *testing.T) {
+func TestMsgInitPopValidateBasic(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
 		name string
@@ -16,7 +16,7 @@ func TestMsgInitPop_ValidateBasic(t *testing.T) {
 		err  error
 	}{
 		{
-			name: "invalid address",
+			name: sdkerrors.ErrInvalidAddress.Error(),
 			msg: MsgInitPop{
 				Creator: errormsg.ErrorInvalidAddress,
 			},
