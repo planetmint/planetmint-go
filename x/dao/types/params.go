@@ -62,7 +62,7 @@ func DefaultParams() Params {
 		"vjU8eMzU3JbUWZEpVANt2ePJuPWSPixgjiSj2jDMvkVVQQi2DDnZuBRVX4Ygt5YGBf5zvTWCr1ntdqYH",
 		"vjTvXCFSReRsZ7grdsAreRR12KuKpDw8idueQJK9Yh1BYS7ggAqgvCxCgwh13KGK6M52y37HUmvr4GdD",
 		2000,
-		"plmnt1w5dww335zhh98pzv783hqre355ck3u4w4hjxcx",
+		"plmnt1dyuhg8ldu3d6nvhrvzzemtc3893dys9v9lvdty",
 		200000)
 }
 

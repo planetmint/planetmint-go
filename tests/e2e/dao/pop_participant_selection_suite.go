@@ -11,7 +11,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
-	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/lib"
 	"github.com/planetmint/planetmint-go/testutil"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
@@ -78,13 +77,6 @@ func (s *PopSelectionE2ETestSuite) SetupSuite() {
 	daoGenState.Params.MqttResponseTimeout = 200
 	daoGenState.Params.ClaimAddress = valAddr.String()
 	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
-
-	conf := config.GetConfig()
-	conf.PopEpochs = int(s.popEpochs)
-	conf.ReissuanceEpochs = int(s.reissuanceEpochs)
-	conf.DistributionOffset = int(s.distributionOffset)
-	conf.MqttResponseTimeout = 200
-	conf.ClaimAddress = valAddr.String()
 
 	s.network = network.Load(s.T(), s.cfg)
 }
