@@ -6,6 +6,8 @@ import (
 	"gotest.tools/assert"
 )
 
+var rddlTokenAmount string = "998.85844748"
+
 func Test2FloatConvertion(t *testing.T) {
 	t.Parallel()
 	var expectedValue uint64 = 99885844748
@@ -23,7 +25,7 @@ func Test2UintConvertion(t *testing.T) {
 func TestStringToFloat(t *testing.T) {
 	t.Parallel()
 	expectedValue := 998.85844748
-	value, err := RDDLTokenStringToFloat("998.85844748")
+	value, err := RDDLTokenStringToFloat(rddlTokenAmount)
 	assert.Equal(t, expectedValue, value)
 	assert.Equal(t, nil, err)
 }
@@ -31,7 +33,7 @@ func TestStringToFloat(t *testing.T) {
 func TestStringToUint(t *testing.T) {
 	t.Parallel()
 	var expectedValue uint64 = 99885844748
-	value, err := RDDLTokenStringToUint("998.85844748")
+	value, err := RDDLTokenStringToUint(rddlTokenAmount)
 	assert.Equal(t, expectedValue, value)
 	assert.Equal(t, nil, err)
 }
@@ -40,7 +42,7 @@ func TestAddPrecisionLongerThan8(t *testing.T) {
 	t.Parallel()
 
 	var input uint64 = 99885844748
-	expectedValue := "998.85844748"
+	expectedValue := rddlTokenAmount
 	rddlTokenString := UintValueToRDDLTokenString(input)
 	assert.Equal(t, expectedValue, rddlTokenString)
 }

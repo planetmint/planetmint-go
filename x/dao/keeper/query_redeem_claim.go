@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	"github.com/planetmint/planetmint-go/errormsg"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -13,7 +14,7 @@ import (
 
 func (k Keeper) RedeemClaimAll(goCtx context.Context, req *types.QueryAllRedeemClaimRequest) (*types.QueryAllRedeemClaimResponse, error) {
 	if req == nil {
-		return nil, status.Error(codes.InvalidArgument, "invalid request")
+		return nil, status.Error(codes.InvalidArgument, errormsg.InvalidRequest)
 	}
 
 	var redeemClaims []types.RedeemClaim
@@ -42,7 +43,7 @@ func (k Keeper) RedeemClaimAll(goCtx context.Context, req *types.QueryAllRedeemC
 
 func (k Keeper) RedeemClaim(goCtx context.Context, req *types.QueryGetRedeemClaimRequest) (*types.QueryGetRedeemClaimResponse, error) {
 	if req == nil {
-		return nil, status.Error(codes.InvalidArgument, "invalid request")
+		return nil, status.Error(codes.InvalidArgument, errormsg.InvalidRequest)
 	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -60,7 +61,7 @@ func (k Keeper) RedeemClaim(goCtx context.Context, req *types.QueryGetRedeemClai
 
 func (k Keeper) RedeemClaimByLiquidTxHash(goCtx context.Context, req *types.QueryRedeemClaimByLiquidTxHashRequest) (*types.QueryRedeemClaimByLiquidTxHashResponse, error) {
 	if req == nil {
-		return nil, status.Error(codes.InvalidArgument, "invalid request")
+		return nil, status.Error(codes.InvalidArgument, errormsg.InvalidRequest)
 	}
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
