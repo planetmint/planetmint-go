@@ -67,7 +67,7 @@ func (s *AssetDistributionE2ETestSuite) TestAssetDistribution() {
 			break
 		}
 	}
-
+	errmsg := "rpc error: code = NotFound desc = distribution not found: key not found"
 	testCases := []struct {
 		name          string
 		requestHeight int64
@@ -76,17 +76,17 @@ func (s *AssetDistributionE2ETestSuite) TestAssetDistribution() {
 		{
 			"request height too low",
 			s.distributionOffset,
-			"rpc error: code = NotFound desc = distribution not found: key not found",
+			errmsg,
 		},
 		{
 			"wrong request height",
 			height,
-			"rpc error: code = NotFound desc = distribution not found: key not found",
+			errmsg,
 		},
 		{
 			"request height too high",
 			2*s.reissaunceEpochs + s.distributionOffset,
-			"rpc error: code = NotFound desc = distribution not found: key not found",
+			errmsg,
 		},
 		{
 			"valid distribution request",

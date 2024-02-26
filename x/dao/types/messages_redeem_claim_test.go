@@ -16,7 +16,7 @@ func TestMsgCreateRedeemClaim_ValidateBasic(t *testing.T) {
 		err  error
 	}{
 		{
-			name: "invalid address",
+			name: sdkerrors.ErrInvalidAddress.Error(),
 			msg: MsgCreateRedeemClaim{
 				Creator: errormsg.ErrorInvalidAddress,
 			},
@@ -45,7 +45,7 @@ func TestMsgUpdateRedeemClaim_ValidateBasic(t *testing.T) {
 		err  error
 	}{
 		{
-			name: "invalid address",
+			name: sdkerrors.ErrInvalidAddress.Error(),
 			msg: MsgUpdateRedeemClaim{
 				Creator: errormsg.ErrorInvalidAddress,
 			},
@@ -74,7 +74,7 @@ func TestMsgConfirmRedeemClaim_ValidateBasic(t *testing.T) {
 		err  error
 	}{
 		{
-			name: "invalid address",
+			name: sdkerrors.ErrInvalidAddress.Error(),
 			msg: MsgConfirmRedeemClaim{
 				Creator: errormsg.ErrorInvalidAddress,
 			},

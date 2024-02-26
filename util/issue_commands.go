@@ -48,7 +48,6 @@ func buildSignBroadcastTx(goCtx context.Context, loggingContext string, sendingV
 
 func SendInitReissuance(goCtx context.Context, proposerAddress string, txUnsigned string, blockHeight int64,
 	firstIncludedPop int64, lastIncludedPop int64) {
-	// get_last_PoPBlockHeight() // TODO: to be read form the upcoming PoP-store
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
 	msg := daotypes.NewMsgReissueRDDLProposal(sendingValidatorAddress, proposerAddress, txUnsigned, blockHeight,
 		firstIncludedPop, lastIncludedPop)

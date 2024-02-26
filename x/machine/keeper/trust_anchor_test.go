@@ -69,21 +69,3 @@ func TestUpdateTrustAnchor(t *testing.T) {
 		assert.True(t, activated)
 	}
 }
-
-func TestUpdateTrustAnchorInvalidPubKey(t *testing.T) {
-	t.Parallel()
-	keeper, ctx := keepertest.MachineKeeper(t)
-	items := createNTrustAnchor(t, keeper, ctx, 10)
-	for _, item := range items {
-		ta, activated, _ := keeper.GetTrustAnchor(ctx, item.Pubkey)
-		if !activated {
-			err := keeper.StoreTrustAnchor(ctx, ta, true)
-			assert.False(t, (err != nil))
-		}
-	}
-
-	for _, item := range items {
-		_, activated, _ := keeper.GetTrustAnchor(ctx, item.Pubkey)
-		assert.True(t, activated)
-	}
-}

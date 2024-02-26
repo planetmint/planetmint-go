@@ -4,13 +4,9 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/btcsuite/btcd/btcutil/hdkeychain"
-	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/go-bip39"
 )
 
 // Mnemonic sample mnemonic to use in tests
@@ -59,20 +55,4 @@ func Secp256k1AccAddress() sdk.AccAddress {
 func Asset() string {
 	cid := "cid0"
 	return cid
-}
-
-func ExtendedKeyPair(cfg chaincfg.Params) (string, string) {
-	seed, err := bip39.NewSeedWithErrorChecking(Mnemonic, keyring.DefaultBIP39Passphrase)
-	if err != nil {
-		panic(err)
-	}
-	xprivKey, err := hdkeychain.NewMaster(seed, &cfg)
-	if err != nil {
-		panic(err)
-	}
-	xpubKey, err := xprivKey.Neuter()
-	if err != nil {
-		panic(err)
-	}
-	return xprivKey.String(), xpubKey.String()
 }
