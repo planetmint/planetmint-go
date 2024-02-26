@@ -2,6 +2,7 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/x/machine/types"
 )
 
@@ -13,6 +14,11 @@ func (k Keeper) GetParams(ctx sdk.Context) (params types.Params) {
 		return params
 	}
 	k.cdc.MustUnmarshal(bz, &params)
+	params = types.Params{
+		AssetRegistryDomain: config.GetConfig().AssetRegistryDomain,
+		AssetRegistryPath:   config.GetConfig().AssetRegistryPath,
+		AssetRegistryScheme: config.GetConfig().AssetRegistryScheme,
+	}
 	return params
 }
 
