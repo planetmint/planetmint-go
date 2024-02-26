@@ -52,6 +52,7 @@ func NewKeeper(
 		addressIndexStoreKey:          addressIndexStoreKey,
 		memKey:                        memKey,
 		paramstore:                    ps,
+		authority:                     authority,
 	}
 }
 
