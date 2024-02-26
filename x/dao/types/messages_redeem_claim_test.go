@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/planetmint/planetmint-go/testutil/errormsg"
 	"github.com/stretchr/testify/require"
 )
 
@@ -17,7 +18,7 @@ func TestMsgCreateRedeemClaim_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid address",
 			msg: MsgCreateRedeemClaim{
-				Creator: "invalid_address",
+				Creator: errormsg.ErrorInvalidAddress,
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		},
@@ -46,7 +47,7 @@ func TestMsgUpdateRedeemClaim_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid address",
 			msg: MsgUpdateRedeemClaim{
-				Creator: "invalid_address",
+				Creator: errormsg.ErrorInvalidAddress,
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		},
@@ -75,7 +76,7 @@ func TestMsgConfirmRedeemClaim_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid address",
 			msg: MsgConfirmRedeemClaim{
-				Creator: "invalid_address",
+				Creator: errormsg.ErrorInvalidAddress,
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		},

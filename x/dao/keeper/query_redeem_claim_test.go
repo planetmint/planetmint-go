@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"github.com/planetmint/planetmint-go/errormsg"
 	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
 	"github.com/planetmint/planetmint-go/testutil/nullify"
 	"github.com/planetmint/planetmint-go/x/dao/types"
@@ -54,7 +55,7 @@ func TestRedeemClaimQuerySingle(t *testing.T) {
 		},
 		{
 			desc: "InvalidRequest",
-			err:  status.Error(codes.InvalidArgument, "invalid request"),
+			err:  status.Error(codes.InvalidArgument, errormsg.InvalidRequest),
 		},
 	}
 	for _, tc := range tests {
@@ -125,6 +126,6 @@ func TestRedeemClaimQueryPaginated(t *testing.T) {
 	})
 	t.Run("InvalidRequest", func(t *testing.T) {
 		_, err := keeper.RedeemClaimAll(wctx, nil)
-		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
+		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, errormsg.InvalidRequest))
 	})
 }

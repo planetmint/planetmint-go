@@ -7,6 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
+	"github.com/planetmint/planetmint-go/testutil/moduleobject"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	"github.com/planetmint/planetmint-go/x/dao/keeper"
 	"github.com/planetmint/planetmint-go/x/dao/types"
@@ -31,6 +32,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 	initiator := sample.Secp256k1AccAddress()
 	challenger := sample.Secp256k1AccAddress()
 	challengee := sample.Secp256k1AccAddress()
+	errInvalidPopData := "Invalid pop data"
 
 	testCases := []struct {
 		name   string
@@ -81,7 +83,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			"Initiator is not set: invalid challenge",
 		},
 		{
-			"Invalid pop data",
+			errInvalidPopData,
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
@@ -96,7 +98,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			"PoP report data does not match challenge: invalid challenge",
 		},
 		{
-			"Invalid pop data",
+			errInvalidPopData,
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
@@ -111,7 +113,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			"PoP reporter is not the challenger: invalid PoP reporter",
 		},
 		{
-			"Invalid pop data",
+			errInvalidPopData,
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
@@ -169,7 +171,7 @@ func TestMsgServerMintToken(t *testing.T) {
 	t.Parallel()
 	minter := sample.AccAddress()
 	beneficiary := sample.ConstBech32Addr
-	mintRequest := sample.MintRequest(beneficiary, 1000, "hash")
+	mintRequest := moduleobject.MintRequest(beneficiary, 1000, "hash")
 
 	msg := types.NewMsgMintToken(minter, &mintRequest)
 	msgServer, ctx, _ := setupMsgServer(t)
@@ -189,7 +191,7 @@ func TestMsgServerMintTokenInvalidAddress(t *testing.T) {
 	t.Parallel()
 	minter := sample.AccAddress()
 	beneficiary := "invalid address"
-	mintRequest := sample.MintRequest(beneficiary, 1000, "hash")
+	mintRequest := moduleobject.MintRequest(beneficiary, 1000, "hash")
 
 	msg := types.NewMsgMintToken(minter, &mintRequest)
 	msgServer, ctx, _ := setupMsgServer(t)

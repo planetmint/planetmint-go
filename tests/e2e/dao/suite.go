@@ -22,6 +22,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	"github.com/planetmint/planetmint-go/testutil/moduleobject"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 )
 
@@ -120,7 +121,7 @@ func (s *E2ETestSuite) TearDownSuite() {
 func (s *E2ETestSuite) TestMintToken() {
 	val := s.network.Validators[0]
 
-	mintRequest := sample.MintRequest(s.aliceAddr.String(), 1000, "hash")
+	mintRequest := moduleobject.MintRequest(s.aliceAddr.String(), 1000, "hash")
 	msg1 := daotypes.NewMsgMintToken(val.Address.String(), &mintRequest)
 	out, err := e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg1)
 	s.Require().NoError(err)

@@ -12,6 +12,7 @@ import (
 	"github.com/planetmint/planetmint-go/lib"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
+	"github.com/planetmint/planetmint-go/testutil/moduleobject"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
@@ -155,7 +156,7 @@ func (s *GasConsumptionE2ETestSuite) TestNetworkBasedTxGasLimit() {
 	var msgs []sdk.Msg
 
 	for i := 0; i < 1000; i++ {
-		mintRequest := sample.MintRequest(s.minterAddr.String(), 1, "hash"+strconv.Itoa(i))
+		mintRequest := moduleobject.MintRequest(s.minterAddr.String(), 1, "hash"+strconv.Itoa(i))
 		msg := daotypes.NewMsgMintToken(s.minterAddr.String(), &mintRequest)
 		msgs = append(msgs, msg)
 	}

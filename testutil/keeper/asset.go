@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/testutil/moduleobject"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	"github.com/planetmint/planetmint-go/x/asset/keeper"
 	"github.com/planetmint/planetmint-go/x/asset/types"
@@ -49,15 +50,15 @@ func AssetKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	ctrl := gomock.NewController(t)
 	mk := assettestutils.NewMockMachineKeeper(ctrl)
 	sk, pk := sample.KeyPair()
-	_, ppk := sample.ExtendedKeyPair(config.PlmntNetParams)
-	_, lpk := sample.ExtendedKeyPair(config.LiquidNetParams)
+	_, ppk := moduleobject.ExtendedKeyPair(config.PlmntNetParams)
+	_, lpk := moduleobject.ExtendedKeyPair(config.LiquidNetParams)
 
-	id := sample.MachineIndex(pk, ppk, lpk)
+	id := moduleobject.MachineIndex(pk, ppk, lpk)
 	mk.EXPECT().GetMachineIndexByPubKey(ctx, pk).Return(id, true).AnyTimes()
 	mk.EXPECT().GetMachineIndexByPubKey(ctx, ppk).Return(id, true).AnyTimes()
 	mk.EXPECT().GetMachineIndexByPubKey(ctx, sk).Return(id, false).AnyTimes()
-	mk.EXPECT().GetMachine(ctx, id).Return(sample.Machine(pk, pk, sk, ""), true).AnyTimes()
-	mk.EXPECT().GetMachine(ctx, sk).Return(sample.Machine(pk, pk, sk, ""), false).AnyTimes()
+	mk.EXPECT().GetMachine(ctx, id).Return(moduleobject.Machine(pk, pk, sk, ""), true).AnyTimes()
+	mk.EXPECT().GetMachine(ctx, sk).Return(moduleobject.Machine(pk, pk, sk, ""), false).AnyTimes()
 
 	k := keeper.NewKeeper(
 		cdc,

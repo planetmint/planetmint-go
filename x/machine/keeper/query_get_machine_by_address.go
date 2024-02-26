@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 
+	"github.com/planetmint/planetmint-go/errormsg"
 	"github.com/planetmint/planetmint-go/x/machine/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -12,7 +13,7 @@ import (
 
 func (k Keeper) GetMachineByAddress(goCtx context.Context, req *types.QueryGetMachineByAddressRequest) (*types.QueryGetMachineByAddressResponse, error) {
 	if req == nil {
-		return nil, status.Error(codes.InvalidArgument, "invalid request")
+		return nil, status.Error(codes.InvalidArgument, errormsg.InvalidRequest)
 	}
 
 	ctx := sdk.UnwrapSDKContext(goCtx)

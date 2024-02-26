@@ -52,10 +52,13 @@ type PopSelectionE2ETestSuite struct {
 	distributionOffset int64
 	claimDenom         string
 	feeDenom           string
+	errormsg           string
 }
 
 func NewPopSelectionE2ETestSuite(cfg network.Config) *PopSelectionE2ETestSuite {
-	return &PopSelectionE2ETestSuite{cfg: cfg}
+	testsuite := &PopSelectionE2ETestSuite{cfg: cfg}
+	testsuite.errormsg = "--%s=%s"
+	return testsuite
 }
 
 func (s *PopSelectionE2ETestSuite) SetupSuite() {
@@ -191,7 +194,7 @@ func (s *PopSelectionE2ETestSuite) VerifyTokens(token string) {
 	val := s.network.Validators[0]
 	// check balance for crddl
 	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetCmdQueryTotalSupply(), []string{
-		fmt.Sprintf("--%s=%s", bank.FlagDenom, token),
+		fmt.Sprintf(s.errormsg, bank.FlagDenom, token),
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), token)
@@ -199,7 +202,7 @@ func (s *PopSelectionE2ETestSuite) VerifyTokens(token string) {
 
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		machines[0].address,
-		fmt.Sprintf("--%s=%s", bank.FlagDenom, token),
+		fmt.Sprintf(s.errormsg, bank.FlagDenom, token),
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), token)
@@ -207,7 +210,7 @@ func (s *PopSelectionE2ETestSuite) VerifyTokens(token string) {
 
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		machines[1].address,
-		fmt.Sprintf("--%s=%s", bank.FlagDenom, token),
+		fmt.Sprintf(s.errormsg, bank.FlagDenom, token),
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), token)
@@ -275,7 +278,7 @@ func (s *PopSelectionE2ETestSuite) TestTokenRedeemClaim() {
 	// Claim burned on CreateRedeemClaim
 	balanceOut, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		addr.String(),
-		fmt.Sprintf("--%s=%s", bank.FlagDenom, s.claimDenom),
+		fmt.Sprintf(s.errormsg, bank.FlagDenom, s.claimDenom),
 	})
 	s.Require().NoError(err)
 	assert.Equal(s.T(), "amount: \"5993140682\"\ndenom: crddl\n", balanceOut.String()) // 3 * 1997716894 - 10000 = 5993140682

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/planetmint/planetmint-go/testutil/errormsg"
 	"github.com/stretchr/testify/require"
 )
 
@@ -17,7 +18,7 @@ func TestMsgAttestMachineValidateBasic(t *testing.T) {
 		{
 			name: "invalid address",
 			msg: MsgAttestMachine{
-				Creator: "invalid_address",
+				Creator: errormsg.ErrorInvalidAddress,
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		},

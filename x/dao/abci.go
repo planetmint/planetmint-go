@@ -69,4 +69,5 @@ func isDistributionHeight(ctx sdk.Context, k keeper.Keeper, height int64) bool {
 }
 
 func EndBlocker(_ sdk.Context, _ abci.RequestEndBlock, _ keeper.Keeper) {
+	// EndBlocker is currently not implemented and used by planetmint
 }

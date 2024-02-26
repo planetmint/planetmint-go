@@ -15,6 +15,8 @@ import (
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+
+	"github.com/planetmint/planetmint-go/testutil/moduleobject"
 )
 
 // E2ETestSuite struct definition of machine suite
@@ -57,7 +59,7 @@ func (s *E2ETestSuite) TestAttestMachine() {
 	// register Ta
 	prvKey, pubKey := sample.KeyPair()
 
-	ta := sample.TrustAnchor(pubKey)
+	ta := moduleobject.TrustAnchor(pubKey)
 	msg1 := machinetypes.NewMsgRegisterTrustAnchor(val.Address.String(), &ta)
 	out, err := e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg1)
 	s.Require().NoError(err)
@@ -72,7 +74,7 @@ func (s *E2ETestSuite) TestAttestMachine() {
 	s.Require().NoError(err)
 	addr, _ := k.GetAddress()
 
-	machine := sample.Machine(sample.Name, pubKey, prvKey, addr.String())
+	machine := moduleobject.Machine(sample.Name, pubKey, prvKey, addr.String())
 	msg2 := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
 	out, err = e2etestutil.BuildSignBroadcastTx(s.T(), addr, msg2)
 	s.Require().NoError(err)
@@ -105,7 +107,7 @@ func (s *E2ETestSuite) TestInvalidAttestMachine() {
 	s.Require().NoError(err)
 	addr, _ := k.GetAddress()
 
-	machine := sample.Machine(sample.Name, pubKey, prvKey, addr.String())
+	machine := moduleobject.Machine(sample.Name, pubKey, prvKey, addr.String())
 	s.Require().NoError(err)
 
 	msg := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
@@ -115,7 +117,7 @@ func (s *E2ETestSuite) TestInvalidAttestMachine() {
 	s.Require().Equal(int(txResponse.Code), int(4))
 
 	unregisteredPubKey, unregisteredPrivKey := sample.KeyPair(2)
-	machine = sample.Machine(sample.Name, unregisteredPubKey, unregisteredPrivKey, addr.String())
+	machine = moduleobject.Machine(sample.Name, unregisteredPubKey, unregisteredPrivKey, addr.String())
 	s.Require().NoError(err)
 
 	msg = machinetypes.NewMsgAttestMachine(addr.String(), &machine)
@@ -139,7 +141,7 @@ func (s *E2ETestSuite) TestMachineAllowanceAttestation() {
 	// register TA
 	prvKey, pubKey := sample.KeyPair(3)
 
-	ta := sample.TrustAnchor(pubKey)
+	ta := moduleobject.TrustAnchor(pubKey)
 	msg1 := machinetypes.NewMsgRegisterTrustAnchor(val.Address.String(), &ta)
 	_, err = e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg1)
 	s.Require().NoError(err)
@@ -163,7 +165,7 @@ func (s *E2ETestSuite) TestMachineAllowanceAttestation() {
 	s.Require().NoError(s.network.WaitForNextBlock())
 
 	// attest machine with fee granter without funding the machine account first
-	machine := sample.Machine(sample.Name, pubKey, prvKey, addr.String())
+	machine := moduleobject.Machine(sample.Name, pubKey, prvKey, addr.String())
 	s.Require().NoError(err)
 
 	// name and address of private key with which to sign

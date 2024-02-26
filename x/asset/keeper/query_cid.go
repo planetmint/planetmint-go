@@ -4,6 +4,7 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/planetmint/planetmint-go/errormsg"
 	"github.com/planetmint/planetmint-go/x/asset/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -11,7 +12,7 @@ import (
 
 func (k Keeper) GetNotarizedAsset(goCtx context.Context, req *types.QueryGetNotarizedAssetRequest) (*types.QueryGetNotarizedAssetResponse, error) {
 	if req == nil {
-		return nil, status.Error(codes.InvalidArgument, "invalid request")
+		return nil, status.Error(codes.InvalidArgument, errormsg.InvalidRequest)
 	}
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
