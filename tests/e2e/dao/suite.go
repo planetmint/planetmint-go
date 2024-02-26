@@ -9,6 +9,7 @@ import (
 	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
+	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/lib"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
@@ -78,6 +79,11 @@ func (s *E2ETestSuite) SetupSuite() {
 	daoGenState.Params.MintAddress = valAddr.String()
 	daoGenState.Params.ClaimAddress = valAddr.String()
 	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
+
+	conf := config.GetConfig()
+	conf.DistributionOffset = int(s.distributionOffset)
+	conf.ReissuanceEpochs = int(s.reissuanceEpochs)
+	conf.ClaimAddress = valAddr.String()
 
 	bbalances := sdk.NewCoins(
 		sdk.NewCoin(daoGenState.Params.TokenDenom, math.NewInt(10000)),
