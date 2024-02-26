@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/planetmint/planetmint-go/testutil/errormsg"
+	"github.com/planetmint/planetmint-go/testutil/sample"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
@@ -17,11 +18,16 @@ func TestMsgNotarizeAssetValidateBasic(t *testing.T) {
 		err  error
 	}{
 		{
-			name: "invalid address",
+			name: sdkerrors.ErrInvalidAddress.Error(),
 			msg: MsgNotarizeAsset{
 				Creator: errormsg.ErrorInvalidAddress,
 			},
 			err: sdkerrors.ErrInvalidAddress,
+		}, {
+			name: "valid address",
+			msg: MsgNotarizeAsset{
+				Creator: sample.AccAddress(),
+			},
 		},
 	}
 	for _, tt := range tests {

@@ -38,25 +38,6 @@ func (k Keeper) GetLastDistributionOrder(ctx sdk.Context) (val types.Distributio
 	return val, found
 }
 
-// TODO to be integrated at a later stage
-// func (k Keeper) getDistributionRequestPage(ctx sdk.Context, key []byte, offset uint64, page_size uint64, all bool, reverse bool) (distribution_orders []types.DistributionOrder) {
-// 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DistributionKey))
-
-// 	iterator := store.Iterator(nil, nil)
-// 	defer iterator.Close()
-// 	if reverse {
-// 		iterator = store.ReverseIterator(nil, nil)
-// 		defer iterator.Close()
-// 	}
-// 	for ; iterator.Valid(); iterator.Next() {
-// 		distribution_order := iterator.Value()
-// 		var distribution_order_org types.DistributionOrder
-// 		k.cdc.MustUnmarshal(distribution_order, &distribution_order_org)
-// 		distribution_orders = append(distribution_orders, distribution_order_org)
-// 	}
-// 	return distribution_orders
-// }
-
 func (k Keeper) ComputeDistribution(ctx sdk.Context, lastReissuance int64, blockHeight int64, amount uint64) (distribution types.DistributionOrder) {
 	distribution.FirstPop = lastReissuance
 	distribution.LastPop = blockHeight

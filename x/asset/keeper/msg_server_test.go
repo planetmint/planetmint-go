@@ -7,6 +7,7 @@ import (
 
 	"github.com/planetmint/planetmint-go/config"
 	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
+	"github.com/planetmint/planetmint-go/testutil/moduleobject"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	"github.com/planetmint/planetmint-go/x/asset/keeper"
 	"github.com/planetmint/planetmint-go/x/asset/types"
@@ -31,7 +32,7 @@ func TestMsgServer(t *testing.T) {
 
 func TestMsgServerNotarizeAsset(t *testing.T) {
 	t.Parallel()
-	extSk, _ := sample.ExtendedKeyPair(config.PlmntNetParams)
+	extSk, _ := moduleobject.ExtendedKeyPair(config.PlmntNetParams)
 	xskKey, _ := hdkeychain.NewKeyFromString(extSk)
 	privKey, _ := xskKey.ECPrivKey()
 	byteKey := privKey.Serialize()
