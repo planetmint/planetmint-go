@@ -21,6 +21,7 @@ type (
 		addressIndexStoreKey          storetypes.StoreKey
 		memKey                        storetypes.StoreKey
 		paramstore                    paramtypes.Subspace
+		authority                     string
 	}
 )
 
@@ -34,6 +35,7 @@ func NewKeeper(
 	addressIndexStoreKey,
 	memKey storetypes.StoreKey,
 	ps paramtypes.Subspace,
+	authority string,
 ) *Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
