@@ -47048,6 +47048,8 @@ paths:
                   tx_gas_limit:
                     type: string
                     format: uint64
+                  previous_app_hash:
+                    type: string
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -76717,6 +76719,8 @@ definitions:
       tx_gas_limit:
         type: string
         format: uint64
+      previous_app_hash:
+        type: string
     description: Params defines the parameters for the module.
   planetmintgo.dao.QueryAllRedeemClaimResponse:
     type: object
@@ -76992,6 +76996,8 @@ definitions:
           tx_gas_limit:
             type: string
             format: uint64
+          previous_app_hash:
+            type: string
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   planetmintgo.dao.QueryRedeemClaimByLiquidTxHashResponse:
     type: object

@@ -25,4 +25,5 @@ message Params {
   int64 mqtt_response_timeout = 14;
   string claim_address = 15;
   uint64 tx_gas_limit = 16;
+  string previous_app_hash = 17;
 }
