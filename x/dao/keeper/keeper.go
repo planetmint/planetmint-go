@@ -29,6 +29,7 @@ type (
 		accountKeeper types.AccountKeeper
 		machineKeeper types.MachineKeeper
 		authority     string
+		RootDir       string
 	}
 )
 
@@ -46,6 +47,7 @@ func NewKeeper(
 	accountKeeper types.AccountKeeper,
 	machineKeeper types.MachineKeeper,
 	authority string,
+	rootDir string,
 ) *Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -66,6 +68,7 @@ func NewKeeper(
 		accountKeeper: accountKeeper,
 		machineKeeper: machineKeeper,
 		authority:     authority,
+		RootDir:       rootDir,
 	}
 }
 

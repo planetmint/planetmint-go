@@ -61,6 +61,7 @@ func MachineKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		memStoreKey,
 		paramsSubspace,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		"",
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
