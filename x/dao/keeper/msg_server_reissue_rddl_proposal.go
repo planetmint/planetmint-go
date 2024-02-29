@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 
+	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
@@ -14,6 +15,11 @@ var (
 
 func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReissueRDDLProposal) (*types.MsgReissueRDDLProposalResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	err := k.validateReissuanceProposal(ctx, msg)
+	if err != nil {
+		return nil, err
+	}
 
 	var reissuance types.Reissuance
 	reissuance.BlockHeight = msg.GetBlockHeight()
@@ -37,4 +43,15 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 	util.SendReissuanceResult(goCtx, msg.GetProposer(), txID, msg.GetBlockHeight())
 
 	return &types.MsgReissueRDDLProposalResponse{}, nil
+}
+
+func (k msgServer) validateReissuanceProposal(ctx sdk.Context, msg *types.MsgReissueRDDLProposal) (err error) {
+	util.GetAppLogger().Debug(ctx, reissueTag+"received reissuance proposal: "+msg.String())
+	isValid := k.IsValidReissuanceProposal(ctx, msg)
+	if !isValid {
+		util.GetAppLogger().Info(ctx, reissueTag+"rejected reissuance proposal")
+		return errorsmod.Wrapf(types.ErrReissuanceProposal, reissueTag)
+	}
+	util.GetAppLogger().Debug(ctx, reissueTag+"accepted reissuance proposal: "+msg.String())
+	return
 }

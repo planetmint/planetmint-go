@@ -12,6 +12,7 @@ import (
 )
 
 var (
+	redeemClaimContext   = "redeem claim: "
 	createRedeemClaimTag = "create redeem claim: "
 )
 
@@ -19,13 +20,18 @@ func (k msgServer) CreateRedeemClaim(goCtx context.Context, msg *types.MsgCreate
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	params := k.GetParams(ctx)
 
+	err := k.validateCreateRedeemClaim(ctx, msg)
+	if err != nil {
+		return nil, err
+	}
+
 	var redeemClaim = types.RedeemClaim{
 		Creator:     msg.Creator,
 		Beneficiary: msg.Beneficiary,
 		Amount:      msg.Amount,
 	}
 
-	err := k.burnClaimAmount(ctx, sdk.MustAccAddressFromBech32(msg.Creator), msg.Amount)
+	err = k.burnClaimAmount(ctx, sdk.MustAccAddressFromBech32(msg.Creator), msg.Amount)
 	if err != nil {
 		util.GetAppLogger().Error(ctx, createRedeemClaimTag+"could not burn claim")
 	}
@@ -45,6 +51,19 @@ func (k msgServer) CreateRedeemClaim(goCtx context.Context, msg *types.MsgCreate
 	}
 
 	return &types.MsgCreateRedeemClaimResponse{}, nil
+}
+
+func (k msgServer) validateCreateRedeemClaim(ctx sdk.Context, msg *types.MsgCreateRedeemClaim) (err error) {
+	addr := sdk.MustAccAddressFromBech32(msg.Creator)
+
+	params := k.GetParams(ctx)
+	balance := k.bankKeeper.GetBalance(ctx, addr, params.ClaimDenom)
+
+	if !balance.Amount.GTE(sdk.NewIntFromUint64(msg.Amount)) {
+		return errorsmod.Wrap(sdkerrors.ErrInsufficientFunds, redeemClaimContext)
+	}
+
+	return nil
 }
 
 func (k msgServer) UpdateRedeemClaim(goCtx context.Context, msg *types.MsgUpdateRedeemClaim) (*types.MsgUpdateRedeemClaimResponse, error) {
@@ -75,6 +94,11 @@ func (k msgServer) UpdateRedeemClaim(goCtx context.Context, msg *types.MsgUpdate
 func (k msgServer) ConfirmRedeemClaim(goCtx context.Context, msg *types.MsgConfirmRedeemClaim) (*types.MsgConfirmRedeemClaimResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	err := k.validateConfirmRedeemClaim(ctx, msg)
+	if err != nil {
+		return nil, err
+	}
+
 	valFound, isFound := k.GetRedeemClaim(
 		ctx,
 		msg.Beneficiary,
@@ -96,6 +120,18 @@ func (k msgServer) ConfirmRedeemClaim(goCtx context.Context, msg *types.MsgConfi
 	k.SetRedeemClaim(ctx, redeemClaim)
 
 	return &types.MsgConfirmRedeemClaimResponse{}, nil
+}
+
+func (k msgServer) validateConfirmRedeemClaim(ctx sdk.Context, msg *types.MsgConfirmRedeemClaim) (err error) {
+	if msg.Creator != k.GetClaimAddress(ctx) {
+		return errorsmod.Wrapf(types.ErrInvalidClaimAddress, "expected: %s; got: %s", k.GetClaimAddress(ctx), msg.Creator)
+	}
+	_, found := k.GetRedeemClaim(ctx, msg.Beneficiary, msg.Id)
+	if !found {
+		return errorsmod.Wrapf(sdkerrors.ErrNotFound, "no redeem claim found for beneficiary: %s; id: %d", msg.Beneficiary, msg.Id)
+	}
+
+	return nil
 }
 
 func (k msgServer) burnClaimAmount(ctx sdk.Context, addr sdk.AccAddress, amount uint64) (err error) {

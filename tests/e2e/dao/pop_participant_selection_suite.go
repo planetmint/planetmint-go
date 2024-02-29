@@ -290,7 +290,9 @@ func (s *PopSelectionE2ETestSuite) TestTokenRedeemClaim() {
 
 	txResponse, err = lib.GetTxResponseFromOut(out)
 	s.Require().NoError(err)
-	s.Require().Equal(int(21), int(txResponse.Code))
+	s.Require().NoError(s.network.WaitForNextBlock())
+	_, err = clitestutil.GetRawLogFromTxOut(val, out)
+	s.Require().ErrorContains(err, "failed to execute message; message index: 0: expected: plmnt19cl05ztgt8ey6v86hjjjn3thfmpu6q2xtveehc; got: plmnt1kp93kns6hs2066d8qw0uz84fw3vlthewt2ck6p: invalid claim address")
 
 	// Validator with Claim Address sends ConfirmRedeemClaim => accepted
 	valConfirmMsg := daotypes.NewMsgConfirmRedeemClaim(val.Address.String(), 0, "liquidAddress")

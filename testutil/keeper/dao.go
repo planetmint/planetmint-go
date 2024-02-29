@@ -58,6 +58,7 @@ func DaoKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	bk.EXPECT().BurnCoins(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 	bk.EXPECT().SendCoinsFromModuleToAccount(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 	bk.EXPECT().SendCoinsFromAccountToModule(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	bk.EXPECT().GetBalance(gomock.Any(), gomock.Any(), gomock.Any()).Return(sdk.NewCoin("crddl", sdk.NewInt(10000))).AnyTimes()
 
 	k := keeper.NewKeeper(
 		cdc,
