@@ -2,7 +2,6 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
@@ -14,25 +13,6 @@ func (k Keeper) GetParams(ctx sdk.Context) (params types.Params) {
 		return params
 	}
 	k.cdc.MustUnmarshal(bz, &params)
-	mintAddress := params.MintAddress
-	params = types.Params{
-		ClaimAddress:                 config.GetConfig().ClaimAddress,
-		ClaimDenom:                   config.GetConfig().ClaimDenom,
-		DistributionAddressDao:       config.GetConfig().DistributionAddrDAO,
-		DistributionAddressEarlyInv:  config.GetConfig().DistributionAddrEarlyInv,
-		DistributionAddressInvestor:  config.GetConfig().DistributionAddrInvestor,
-		DistributionAddressPop:       config.GetConfig().DistributionAddrPop,
-		DistributionAddressStrategic: config.GetConfig().DistributionAddrStrategic,
-		DistributionOffset:           int64(config.GetConfig().DistributionOffset),
-		MintAddress:                  mintAddress,
-		MqttResponseTimeout:          int64(config.GetConfig().MqttResponseTimeout),
-		PopEpochs:                    int64(config.GetConfig().PopEpochs),
-		ReissuanceAsset:              config.GetConfig().ReissuanceAsset,
-		ReissuanceEpochs:             int64(config.GetConfig().ReissuanceEpochs),
-		StagedDenom:                  config.GetConfig().StagedDenom,
-		TokenDenom:                   config.GetConfig().TokenDenom,
-		TxGasLimit:                   uint64(config.GetConfig().TxGasLimit),
-	}
 	return params
 }
 
