@@ -49,7 +49,7 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 		return nil, types.ErrMachineTypeUndefined
 	}
 
-	if util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress) {
+	if util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress, k.rootDir) {
 		util.GetAppLogger().Info(ctx, "Issuing Machine NFT: "+msg.Machine.String())
 		err := k.issueMachineNFT(goCtx, msg.Machine)
 		if err != nil {

@@ -28,7 +28,7 @@ func (k msgServer) DistributionRequest(goCtx context.Context, msg *types.MsgDist
 	util.GetAppLogger().Info(ctx, distributionRequestTag+"storing distribution: "+msg.GetDistribution().String())
 	k.StoreDistributionOrder(ctx, *msg.GetDistribution())
 
-	validatorIdentity, validResult := util.GetValidatorCometBFTIdentity(ctx)
+	validatorIdentity, validResult := util.GetValidatorCometBFTIdentity(ctx, k.RootDir)
 	if !validResult || msg.Distribution.GetProposer() != validatorIdentity {
 		util.GetAppLogger().Info(ctx, distributionRequestTag+"Not the proposer. valid result: %t proposer: %s validator identity: %s", validResult, msg.Distribution.GetProposer(), validatorIdentity)
 		return &types.MsgDistributionRequestResponse{}, nil

@@ -58,6 +58,7 @@ func MachineKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		addressStoreKey,
 		memStoreKey,
 		paramsSubspace,
+		"",
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
