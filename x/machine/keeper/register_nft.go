@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -20,7 +21,31 @@ import (
 	elements "github.com/rddl-network/elements-rpc"
 )
 
-func issueNFTAsset(goCtx context.Context, name string, machineAddress string, domain string) (assetID string, contract string, err error) {
+var (
+	assetClientService     IAssetServiceClient
+	initAssetServiceClient sync.Once
+)
+
+type IAssetServiceClient interface {
+	IssueNFTAsset(goCtx context.Context, name string, machineAddress string, domain string) (assetID string, contract string, err error)
+	IssueMachineNFT(goCtx context.Context, machine *types.Machine, scheme string, domain string, path string) error
+	RegisterAsset(goCtx context.Context, assetID string, contract string, assetRegistryEndpoint string) error
+}
+
+type AssetServiceClient struct{}
+
+func GetAssetServiceClient() IAssetServiceClient {
+	initAssetServiceClient.Do(func() {
+		assetClientService = &AssetServiceClient{}
+	})
+	return assetClientService
+}
+
+func SetAssetServiceClient(asc IAssetServiceClient) {
+	assetClientService = asc
+}
+
+func (asc *AssetServiceClient) IssueNFTAsset(goCtx context.Context, name string, machineAddress string, domain string) (assetID string, contract string, err error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	conf := config.GetConfig()
 
@@ -113,12 +138,12 @@ func issueNFTAsset(goCtx context.Context, name string, machineAddress string, do
 	return assetID, contract, err
 }
 
-func issueMachineNFT(goCtx context.Context, machine *types.Machine, scheme string, domain string, path string) error {
+func (asc *AssetServiceClient) IssueMachineNFT(goCtx context.Context, machine *types.Machine, scheme string, domain string, path string) error {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	// asset registration is in order to have the contact published
 	var notarizedAsset types.LiquidAsset
 	notarizedAsset.Registered = true
-	assetID, contract, err := issueNFTAsset(goCtx, machine.Name, machine.Address, domain)
+	assetID, contract, err := asc.IssueNFTAsset(goCtx, machine.Name, machine.Address, domain)
 	if err != nil {
 		util.GetAppLogger().Error(ctx, err.Error())
 		return err
@@ -126,7 +151,7 @@ func issueMachineNFT(goCtx context.Context, machine *types.Machine, scheme strin
 	assetRegistryEndpoint := fmt.Sprintf("%s://%s/%s", scheme, domain, path)
 	fmt.Println(" Register Asset: " + assetRegistryEndpoint)
 	fmt.Println(" CONTRACT: " + contract)
-	err = RegisterAsset(goCtx, assetID, contract, assetRegistryEndpoint)
+	err = asc.RegisterAsset(goCtx, assetID, contract, assetRegistryEndpoint)
 	if err != nil {
 		util.GetAppLogger().Error(ctx, err.Error())
 		notarizedAsset.Registered = false
@@ -140,7 +165,7 @@ func issueMachineNFT(goCtx context.Context, machine *types.Machine, scheme strin
 	return err
 }
 
-func RegisterAsset(goCtx context.Context, assetID string, contract string, assetRegistryEndpoint string) error {
+func (asc *AssetServiceClient) RegisterAsset(goCtx context.Context, assetID string, contract string, assetRegistryEndpoint string) error {
 	var contractMap map[string]interface{}
 	err := json.Unmarshal([]byte(contract), &contractMap)
 	if err != nil {
