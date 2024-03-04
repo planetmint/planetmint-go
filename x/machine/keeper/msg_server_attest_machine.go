@@ -51,12 +51,17 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 
 	if util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress, k.rootDir) {
 		util.GetAppLogger().Info(ctx, "Issuing Machine NFT: "+msg.Machine.String())
-		err := k.issueMachineNFT(goCtx, msg.Machine)
-		if err != nil {
-			util.GetAppLogger().Error(ctx, "Machine NFT issuance failed : "+err.Error())
-		} else {
-			util.GetAppLogger().Info(ctx, "Machine NFT issuance successful: "+msg.Machine.String())
-		}
+		scheme := k.GetParams(ctx).AssetRegistryScheme
+		domain := k.GetParams(ctx).AssetRegistryDomain
+		path := k.GetParams(ctx).AssetRegistryPath
+		go func() {
+			localErr := k.issueMachineNFT(goCtx, msg.Machine, scheme, domain, path)
+			if localErr != nil {
+				util.GetAppLogger().Error(ctx, "Machine NFT issuance failed : "+localErr.Error())
+			} else {
+				util.GetAppLogger().Info(ctx, "Machine NFT issuance successful: "+msg.Machine.String())
+			}
+		}()
 	} else {
 		util.GetAppLogger().Info(ctx, "Not block proposer: skipping Machine NFT issuance")
 	}
@@ -79,7 +84,7 @@ func validateExtendedPublicKey(issuer string, cfg chaincfg.Params) bool {
 	return isValidExtendedPublicKey
 }
 
-func (k msgServer) issueNFTAsset(goCtx context.Context, name string, machineAddress string) (assetID string, contract string, err error) {
+func (k msgServer) issueNFTAsset(goCtx context.Context, name string, machineAddress string, domain string) (assetID string, contract string, err error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	conf := config.GetConfig()
 
@@ -106,7 +111,7 @@ func (k msgServer) issueNFTAsset(goCtx context.Context, name string, machineAddr
 
 	c := types.Contract{
 		Entity: types.Entity{
-			Domain: k.GetParams(ctx).AssetRegistryDomain,
+			Domain: domain,
 		},
 		IssuerPubkey: addressInfo.Pubkey,
 		MachineAddr:  machineAddress,
@@ -172,17 +177,18 @@ func (k msgServer) issueNFTAsset(goCtx context.Context, name string, machineAddr
 	return assetID, contract, err
 }
 
-func (k msgServer) issueMachineNFT(goCtx context.Context, machine *types.Machine) error {
+func (k msgServer) issueMachineNFT(goCtx context.Context, machine *types.Machine, scheme string, domain string, path string) error {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	// asset registration is in order to have the contact published
 	var notarizedAsset types.LiquidAsset
 	notarizedAsset.Registered = true
-	assetID, contract, err := k.issueNFTAsset(goCtx, machine.Name, machine.Address)
+	assetID, contract, err := k.issueNFTAsset(goCtx, machine.Name, machine.Address, domain)
 	if err != nil {
 		util.GetAppLogger().Error(ctx, err.Error())
 		return err
 	}
-	err = k.registerAsset(goCtx, assetID, contract)
+	assetRegistryEndpoint := fmt.Sprintf("%s://%s/%s", scheme, domain, path)
+	err = k.registerAsset(goCtx, assetID, contract, assetRegistryEndpoint)
 	if err != nil {
 		util.GetAppLogger().Error(ctx, err.Error())
 		notarizedAsset.Registered = false
@@ -196,9 +202,7 @@ func (k msgServer) issueMachineNFT(goCtx context.Context, machine *types.Machine
 	return err
 }
 
-func (k msgServer) registerAsset(goCtx context.Context, assetID string, contract string) error {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
+func (k msgServer) registerAsset(goCtx context.Context, assetID string, contract string, assetRegistryEndpoint string) error {
 	var contractMap map[string]interface{}
 	err := json.Unmarshal([]byte(contract), &contractMap)
 	if err != nil {
@@ -215,7 +219,6 @@ func (k msgServer) registerAsset(goCtx context.Context, assetID string, contract
 		return errorsmod.Wrap(types.ErrAssetRegistryReqFailure, "Marshall "+err.Error())
 	}
 
-	assetRegistryEndpoint := fmt.Sprintf("%s://%s/%s", k.GetParams(ctx).AssetRegistryScheme, k.GetParams(ctx).AssetRegistryDomain, k.GetParams(ctx).AssetRegistryPath)
 	req, err := http.NewRequestWithContext(goCtx, http.MethodPost, assetRegistryEndpoint, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return errorsmod.Wrap(types.ErrAssetRegistryReqFailure, "Request creation: "+err.Error())
