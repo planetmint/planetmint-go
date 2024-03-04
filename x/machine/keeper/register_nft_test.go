@@ -11,7 +11,7 @@ import (
 
 func TestRegisterNFT(t *testing.T) {
 	_, ctx := keepertest.MachineKeeper(t)
-	url := "https://testnet-assets.rddl.io"
+	url := "https://testnet-assets.rddl.io/register_asset"
 	contract := `{"entity":{"domain":"testnet-assets.rddl.io"},"issuer_pubkey":"020000000000000000000000000000000000000000000000000000000000000000","machine_addr":"plmnt10mq5nj8jhh27z7ejnz2ql3nh0qhzjnfvy50877","name":"machine","precision":0,"version":0}`
 	asset := "0000000000000000000000000000000000000000000000001000000000000000"
 	goctx := sdk.WrapSDKContext(ctx)
