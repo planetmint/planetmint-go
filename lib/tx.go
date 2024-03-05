@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"strconv"
+	"sync"
 	"syscall"
 
 	comethttp "github.com/cometbft/cometbft/rpc/client/http"
@@ -17,7 +18,10 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
-var ErrTypeAssertionFailed = errors.New("type assertion failed")
+var (
+	ErrTypeAssertionFailed = errors.New("type assertion failed")
+	LibSyncAccess          sync.Mutex
+)
 
 func init() {
 	GetConfig()
@@ -127,6 +131,8 @@ func getClientContext(fromAddress sdk.AccAddress) (clientCtx client.Context, err
 // BuildUnsignedTx builds a transaction to be signed given a set of messages.
 // Once created, the fee, memo, and messages are set.
 func BuildUnsignedTx(fromAddress sdk.AccAddress, msgs ...sdk.Msg) (txJSON string, err error) {
+	LibSyncAccess.Lock()
+	defer LibSyncAccess.Unlock()
 	clientCtx, txf, err := getClientContextAndTxFactory(fromAddress)
 	if err != nil {
 		return
@@ -145,6 +151,8 @@ func BuildUnsignedTx(fromAddress sdk.AccAddress, msgs ...sdk.Msg) (txJSON string
 }
 
 func broadcastTx(clientCtx client.Context, txf tx.Factory, msgs ...sdk.Msg) (out *bytes.Buffer, err error) {
+	LibSyncAccess.Lock()
+	defer LibSyncAccess.Unlock()
 	err = tx.GenerateOrBroadcastTxWithFactory(clientCtx, txf, msgs...)
 	if err != nil {
 		return
@@ -172,6 +180,8 @@ func broadcastTx(clientCtx client.Context, txf tx.Factory, msgs ...sdk.Msg) (out
 
 // BroadcastTxWithFileLock broadcasts a transaction via gRPC and synchronises requests via a file lock.
 func BroadcastTxWithFileLock(fromAddress sdk.AccAddress, msgs ...sdk.Msg) (out *bytes.Buffer, err error) {
+	LibSyncAccess.Lock()
+	defer LibSyncAccess.Unlock()
 	// open and lock file, if it exists
 	file, err := openSequenceFile(fromAddress)
 	if err != nil {
