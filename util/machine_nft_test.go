@@ -6,6 +6,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/planetmint/planetmint-go/testutil/keeper"
+	"github.com/planetmint/planetmint-go/testutil/moduleobject"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/util/mocks"
@@ -33,7 +34,7 @@ func TestMachineNFTIssuance(t *testing.T) {
 	util.RegisterAssetServiceHTTPClient = &mocks.MockClient{}
 	_, ctx := keeper.MachineKeeper(t)
 	sk, pk := sample.KeyPair()
-	machine := sample.Machine(pk, pk, sk, "")
+	machine := moduleobject.Machine(pk, pk, sk, "")
 	goCtx := sdk.WrapSDKContext(ctx)
 
 	err := util.IssueMachineNFT(goCtx, &machine, "https", "testnet-asset.rddl.io", "/register_asset")
