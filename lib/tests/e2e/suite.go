@@ -9,7 +9,6 @@ import (
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
-	"github.com/planetmint/planetmint-go/util"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -37,7 +36,6 @@ func (s *E2ETestSuite) SetupSuite() {
 
 // TearDownSuite clean up after testing
 func (s *E2ETestSuite) TearDownSuite() {
-	util.TerminationWaitGroup.Wait()
 	s.T().Log("tearing down e2e test suite")
 }
 
