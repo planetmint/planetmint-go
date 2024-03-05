@@ -39,7 +39,7 @@ func lazyLoadMQTTClient() {
 
 	conf := config.GetConfig()
 	hostPort := net.JoinHostPort(conf.MqttDomain, strconv.FormatInt(int64(conf.MqttPort), 10))
-	uri := "tcp://%s" + hostPort
+	uri := "tcp://" + hostPort
 
 	opts := mqtt.NewClientOptions().AddBroker(uri)
 	opts.SetClientID(conf.ValidatorAddress)
