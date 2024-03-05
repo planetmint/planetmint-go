@@ -15,6 +15,7 @@ import (
 	"github.com/planetmint/planetmint-go/testutil/moduleobject"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
+	"github.com/planetmint/planetmint-go/util"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -93,6 +94,7 @@ func (s *GasConsumptionE2ETestSuite) SetupSuite() {
 }
 
 func (s *GasConsumptionE2ETestSuite) TearDownSuite() {
+	util.TerminationWaitGroup.Wait()
 	s.T().Log("tearing down e2e test suites")
 }
 

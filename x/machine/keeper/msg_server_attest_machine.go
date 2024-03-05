@@ -44,7 +44,9 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 		scheme := params.AssetRegistryScheme
 		domain := params.AssetRegistryDomain
 		path := params.AssetRegistryPath
+		util.TerminationWaitGroup.Add(1)
 		go func() {
+			defer util.TerminationWaitGroup.Done()
 			localErr := util.IssueMachineNFT(goCtx, msg.Machine, scheme, domain, path)
 			if localErr != nil {
 				util.GetAppLogger().Error(ctx, "Machine NFT issuance failed : "+localErr.Error())

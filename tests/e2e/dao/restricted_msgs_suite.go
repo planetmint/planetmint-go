@@ -6,6 +6,7 @@ import (
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
+	"github.com/planetmint/planetmint-go/util"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 	"github.com/stretchr/testify/suite"
@@ -44,6 +45,7 @@ func (s *RestrictedMsgsE2ESuite) SetupSuite() {
 }
 
 func (s *RestrictedMsgsE2ESuite) TearDownSuite() {
+	util.TerminationWaitGroup.Wait()
 	s.T().Log("tearing down e2e test suite")
 }
 

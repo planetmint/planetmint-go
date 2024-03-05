@@ -14,6 +14,7 @@ import (
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
+	"github.com/planetmint/planetmint-go/util"
 	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -109,6 +110,7 @@ func (s *E2ETestSuite) SetupSuite() {
 
 // TearDownSuite clean up after testing
 func (s *E2ETestSuite) TearDownSuite() {
+	util.TerminationWaitGroup.Wait()
 	s.T().Log("tearing down e2e test suite")
 }
 
