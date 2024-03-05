@@ -131,8 +131,6 @@ func getClientContext(fromAddress sdk.AccAddress) (clientCtx client.Context, err
 // BuildUnsignedTx builds a transaction to be signed given a set of messages.
 // Once created, the fee, memo, and messages are set.
 func BuildUnsignedTx(fromAddress sdk.AccAddress, msgs ...sdk.Msg) (txJSON string, err error) {
-	LibSyncAccess.Lock()
-	defer LibSyncAccess.Unlock()
 	clientCtx, txf, err := getClientContextAndTxFactory(fromAddress)
 	if err != nil {
 		return
@@ -151,8 +149,6 @@ func BuildUnsignedTx(fromAddress sdk.AccAddress, msgs ...sdk.Msg) (txJSON string
 }
 
 func broadcastTx(clientCtx client.Context, txf tx.Factory, msgs ...sdk.Msg) (out *bytes.Buffer, err error) {
-	LibSyncAccess.Lock()
-	defer LibSyncAccess.Unlock()
 	err = tx.GenerateOrBroadcastTxWithFactory(clientCtx, txf, msgs...)
 	if err != nil {
 		return
