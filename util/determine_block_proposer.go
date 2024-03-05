@@ -10,7 +10,6 @@ import (
 
 	cometcfg "github.com/cometbft/cometbft/config"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/planetmint/planetmint-go/config"
 )
 
 type Key struct {
@@ -24,11 +23,9 @@ type KeyFile struct {
 	PrivKey Key    `json:"priv-key"`
 }
 
-func GetValidatorCometBFTIdentity(ctx sdk.Context) (string, bool) {
-	conf := config.GetConfig()
-
+func GetValidatorCometBFTIdentity(ctx sdk.Context, rootDir string) (string, bool) {
 	cfg := cometcfg.DefaultConfig()
-	jsonFilePath := filepath.Join(conf.ConfigRootDir, cfg.PrivValidatorKey)
+	jsonFilePath := filepath.Join(rootDir, cfg.PrivValidatorKey)
 
 	jsonFile, err := os.Open(jsonFilePath)
 	if err != nil {
@@ -50,8 +47,8 @@ func GetValidatorCometBFTIdentity(ctx sdk.Context) (string, bool) {
 	return strings.ToLower(keyFile.Address), true
 }
 
-func IsValidatorBlockProposer(ctx sdk.Context, proposerAddress []byte) bool {
-	validatorIdentity, validResult := GetValidatorCometBFTIdentity(ctx)
+func IsValidatorBlockProposer(ctx sdk.Context, proposerAddress []byte, rootDir string) bool {
+	validatorIdentity, validResult := GetValidatorCometBFTIdentity(ctx, rootDir)
 	if !validResult {
 		return false
 	}

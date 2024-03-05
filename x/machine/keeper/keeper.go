@@ -22,6 +22,7 @@ type (
 		memKey                        storetypes.StoreKey
 		paramstore                    paramtypes.Subspace
 		authority                     string
+		rootDir                       string
 	}
 )
 
@@ -36,6 +37,7 @@ func NewKeeper(
 	memKey storetypes.StoreKey,
 	ps paramtypes.Subspace,
 	authority string,
+	rootDir string,
 ) *Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -53,6 +55,7 @@ func NewKeeper(
 		memKey:                        memKey,
 		paramstore:                    ps,
 		authority:                     authority,
+		rootDir:                       rootDir,
 	}
 }
 

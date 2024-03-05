@@ -43,6 +43,7 @@ func Load(t *testing.T, configs ...Config) *Network {
 	// use mock client for testing
 	util.MQTTClient = &mocks.MockMQTTClient{}
 	elements.Client = &elementsmocks.MockClient{}
+	util.RegisterAssetServiceHTTPClient = &mocks.MockClient{}
 
 	// enable application logger in tests
 	appLogger := util.GetAppLogger()
@@ -50,8 +51,6 @@ func Load(t *testing.T, configs ...Config) *Network {
 
 	// set the proper root dir for the test environment so that the abci.go logic works
 	conf := config.GetConfig()
-	conf.SetRoot(validatorTmpDir + "/node0/simd")
-
 	net, err := New(t, validatorTmpDir, cfg)
 	require.NoError(t, err)
 
@@ -70,7 +69,7 @@ func Load(t *testing.T, configs ...Config) *Network {
 
 	libConfig := lib.GetConfig()
 	libConfig.SetClientCtx(net.Validators[0].ClientCtx)
-	libConfig.SetRoot(validatorTmpDir + "/node0/simd")
+	libConfig.SetRoot(net.Validators[0].ClientCtx.HomeDir)
 
 	require.NoError(t, err)
 	_, err = net.WaitForHeight(1)

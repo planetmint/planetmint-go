@@ -15,7 +15,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 
 	// Check if node is block proposer
 	// take the following actions only once, that's why we filter for the Block Proposer
-	if !util.IsValidatorBlockProposer(ctx, proposerAddress) {
+	if !util.IsValidatorBlockProposer(ctx, proposerAddress, k.RootDir) {
 		return
 	}
 	currentBlockHeight := req.Header.GetHeight()

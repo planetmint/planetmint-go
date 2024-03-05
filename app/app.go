@@ -549,6 +549,7 @@ func New(
 		keys[machinemoduletypes.MemStoreKey],
 		app.GetSubspace(machinemoduletypes.ModuleName),
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		homePath,
 	)
 	machineModule := machinemodule.NewAppModule(appCodec, app.MachineKeeper, app.AccountKeeper, app.BankKeeper)
 
@@ -576,6 +577,7 @@ func New(
 		app.AccountKeeper,
 		app.MachineKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		homePath,
 	)
 	daoModule := daomodule.NewAppModule(appCodec, app.DaoKeeper, app.AccountKeeper, app.BankKeeper)
 

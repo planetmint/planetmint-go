@@ -35,7 +35,7 @@ func (k msgServer) CreateRedeemClaim(goCtx context.Context, msg *types.MsgCreate
 		redeemClaim,
 	)
 
-	if util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress) {
+	if util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress, k.RootDir) {
 		util.GetAppLogger().Info(ctx, fmt.Sprintf("Issuing RDDL claim: %s/%d", msg.Beneficiary, id))
 		txID, err := util.DistributeAsset(msg.Beneficiary, util.UintValueToRDDLTokenString(msg.Amount), params.ReissuanceAsset)
 		if err != nil {

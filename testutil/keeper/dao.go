@@ -72,6 +72,7 @@ func DaoKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		nil,
 		nil,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		"",
 	)
 
 	// Initialize params

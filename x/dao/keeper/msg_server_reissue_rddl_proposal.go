@@ -23,7 +23,7 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 	reissuance.LastIncludedPop = msg.GetLastIncludedPop()
 	k.StoreReissuance(ctx, reissuance)
 
-	validatorIdentity, validResult := util.GetValidatorCometBFTIdentity(ctx)
+	validatorIdentity, validResult := util.GetValidatorCometBFTIdentity(ctx, k.RootDir)
 	if !validResult || msg.Proposer != validatorIdentity {
 		util.GetAppLogger().Info(ctx, reissueTag+"Not the proposer. valid result: %t proposer: %s validator identity: %s", validResult, msg.Proposer, validatorIdentity)
 		return &types.MsgReissueRDDLProposalResponse{}, nil

@@ -11,6 +11,6 @@ import (
 func TestE2ETestSuite(t *testing.T) {
 	t.Parallel()
 	cfg := network.LoaderDefaultConfig()
-	cfg.NumValidators = 1
+	cfg.NumValidators = 3
 	suite.Run(t, NewE2ETestSuite(cfg))
 }

@@ -589,9 +589,12 @@ func New(l Logger, baseDir string, cfg Config) (*Network, error) {
 		l.Log("started validator", idx)
 	}
 
-	height, err := network.LatestHeight()
-	if err != nil {
-		return nil, err
+	height := int64(0)
+	for height < 7 {
+		height, err = network.LatestHeight()
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	l.Log("started test network at height:", height)
