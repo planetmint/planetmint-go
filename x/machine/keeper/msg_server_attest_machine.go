@@ -38,21 +38,20 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 	if msg.Machine.GetType() == 0 { // 0 == RDDL_MACHINE_UNDEFINED
 		return nil, types.ErrMachineTypeUndefined
 	}
-
+	params := k.GetParams(ctx)
 	if util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress, k.rootDir) {
 		util.GetAppLogger().Info(ctx, "Issuing Machine NFT: "+msg.Machine.String())
-		scheme := k.GetParams(ctx).AssetRegistryScheme
-		domain := k.GetParams(ctx).AssetRegistryDomain
-		path := k.GetParams(ctx).AssetRegistryPath
-		//go func() {
-		asc := GetAssetServiceClient()
-		localErr := asc.IssueMachineNFT(goCtx, msg.Machine, scheme, domain, path)
+		scheme := params.AssetRegistryScheme
+		domain := params.AssetRegistryDomain
+		path := params.AssetRegistryPath
+		// go func() {
+		localErr := util.IssueMachineNFT(goCtx, msg.Machine, scheme, domain, path)
 		if localErr != nil {
 			util.GetAppLogger().Error(ctx, "Machine NFT issuance failed : "+localErr.Error())
 		} else {
 			util.GetAppLogger().Info(ctx, "Machine NFT issuance successful: "+msg.Machine.String())
 		}
-		//}()
+		// }()
 	} else {
 		util.GetAppLogger().Info(ctx, "Not block proposer: skipping Machine NFT issuance")
 	}

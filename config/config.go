@@ -140,12 +140,6 @@ func (config *Config) GetRPCURL() (url string) {
 	return
 }
 
-// CHANGE AGAIN
-// func (config *Config) SetRoot(root string) *Config {
-// 	config.ConfigRootDir = root
-// 	return config
-// }
-
 // SetPlanetmintConfig sets Planetmint's configuration
 func (config *Config) SetPlanetmintConfig(planetmintconfig interface{}) {
 	jsonConfig, err := json.Marshal(planetmintconfig)

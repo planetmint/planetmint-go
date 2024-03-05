@@ -380,8 +380,6 @@ func initAppConfig(clientCtx client.Context) (string, interface{}) {
 	srvCfg.MinGasPrices = "0stake"
 
 	plmntConfig := planetmintconfig.GetConfig()
-	// CHANGE AGAIN
-	//plmntConfig.SetRoot(clientCtx.HomeDir)
 	libConfig := lib.GetConfig()
 	libConfig.SetChainID(clientCtx.ChainID)
 

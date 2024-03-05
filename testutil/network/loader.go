@@ -14,7 +14,6 @@ import (
 	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/golang/mock/gomock"
 	"github.com/planetmint/planetmint-go/app"
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/lib"
@@ -22,8 +21,6 @@ import (
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/util/mocks"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
-	machine "github.com/planetmint/planetmint-go/x/machine/keeper"
-	machinetestutil "github.com/planetmint/planetmint-go/x/machine/testutil"
 	elements "github.com/rddl-network/elements-rpc"
 	elementsmocks "github.com/rddl-network/elements-rpc/utils/mocks"
 	"github.com/stretchr/testify/require"
@@ -46,14 +43,7 @@ func Load(t *testing.T, configs ...Config) *Network {
 	// use mock client for testing
 	util.MQTTClient = &mocks.MockMQTTClient{}
 	elements.Client = &elementsmocks.MockClient{}
-
-	// call to set sync.Once
-	_ = machine.GetAssetServiceClient()
-	ctrl := gomock.NewController(t)
-	ascMock := machinetestutil.NewMockIAssetServiceClient(ctrl)
-	ascMock.EXPECT().RegisterAsset(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
-	ascMock.EXPECT().IssueMachineNFT(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
-	machine.SetAssetServiceClient(ascMock)
+	util.RegisterAssetServiceHTTPClient = &mocks.MockClient{}
 
 	// enable application logger in tests
 	appLogger := util.GetAppLogger()
@@ -61,8 +51,6 @@ func Load(t *testing.T, configs ...Config) *Network {
 
 	// set the proper root dir for the test environment so that the abci.go logic works
 	conf := config.GetConfig()
-	// CHANGE AGAIN
-	// conf.SetRoot(validatorTmpDir + "/node0/simd")
 	net, err := New(t, validatorTmpDir, cfg)
 	require.NoError(t, err)
 
