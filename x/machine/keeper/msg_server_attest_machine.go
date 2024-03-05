@@ -44,14 +44,14 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 		scheme := params.AssetRegistryScheme
 		domain := params.AssetRegistryDomain
 		path := params.AssetRegistryPath
-		// go func() {
-		localErr := util.IssueMachineNFT(goCtx, msg.Machine, scheme, domain, path)
-		if localErr != nil {
-			util.GetAppLogger().Error(ctx, "Machine NFT issuance failed : "+localErr.Error())
-		} else {
-			util.GetAppLogger().Info(ctx, "Machine NFT issuance successful: "+msg.Machine.String())
-		}
-		// }()
+		go func() {
+			localErr := util.IssueMachineNFT(goCtx, msg.Machine, scheme, domain, path)
+			if localErr != nil {
+				util.GetAppLogger().Error(ctx, "Machine NFT issuance failed : "+localErr.Error())
+			} else {
+				util.GetAppLogger().Info(ctx, "Machine NFT issuance successful: "+msg.Machine.String())
+			}
+		}()
 	} else {
 		util.GetAppLogger().Info(ctx, "Not block proposer: skipping Machine NFT issuance")
 	}
