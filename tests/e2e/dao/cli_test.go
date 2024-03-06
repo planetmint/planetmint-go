@@ -8,31 +8,31 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-func TestE2ETestSuite(t *testing.T) {
+func TestE2EDaoTestSuite(t *testing.T) {
 	cfg := network.LoaderDefaultConfig()
 	cfg.NumValidators = 3
 	suite.Run(t, NewE2ETestSuite(cfg))
 }
 
-func TestPopE2ETestSuite(t *testing.T) {
+func TestPopE2EDaoTestSuite(t *testing.T) {
 	cfg := network.LoaderDefaultConfig()
 	cfg.NumValidators = 3
 	suite.Run(t, NewPopSelectionE2ETestSuite(cfg))
 }
 
-func TestGasConsumptionE2ETestSuite(t *testing.T) {
+func TestGasConsumptionE2EDaoTestSuite(t *testing.T) {
 	cfg := network.LoaderDefaultConfig()
 	cfg.NumValidators = 3
 	suite.Run(t, NewGasConsumptionE2ETestSuite(cfg))
 }
 
-func TestRestrictedMsgsE2ETestSuite(t *testing.T) {
+func TestRestrictedMsgsE2EDaoTestSuite(t *testing.T) {
 	cfg := network.LoaderDefaultConfig()
 	cfg.NumValidators = 3
 	suite.Run(t, NewRestrictedMsgsE2ESuite(cfg))
 }
 
-func TestAssetDistributionE2ETestSuite(t *testing.T) {
+func TestAssetDistributionE2EDaoTestSuite(t *testing.T) {
 	cfg := network.LoaderDefaultConfig()
 	cfg.NumValidators = 3
 	suite.Run(t, NewAssetDistributionE2ETestSuite(cfg))
