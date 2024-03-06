@@ -2,6 +2,7 @@ package network
 
 import (
 	"bufio"
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -20,6 +21,8 @@ import (
 	tmrand "github.com/cometbft/cometbft/libs/rand"
 	"github.com/cometbft/cometbft/node"
 	tmclient "github.com/cometbft/cometbft/rpc/client"
+	"github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/lib"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
@@ -568,6 +571,22 @@ func New(l Logger, baseDir string, cfg Config) (*Network, error) {
 			APIAddress: apiAddr,
 			Address:    addr,
 			ValAddress: sdk.ValAddress(addr),
+		}
+		if i == 0 {
+			conf := config.GetConfig()
+			conf.ValidatorAddress = network.Validators[0].Address.String()
+			// set missing validator client context values for sending txs
+			var output bytes.Buffer
+			network.Validators[0].ClientCtx.BroadcastMode = "sync"
+			network.Validators[0].ClientCtx.FromAddress = network.Validators[0].Address
+			network.Validators[0].ClientCtx.FromName = network.Validators[0].Moniker
+			network.Validators[0].ClientCtx.NodeURI = network.Validators[0].RPCAddress
+			network.Validators[0].ClientCtx.Output = &output
+			network.Validators[0].ClientCtx.SkipConfirm = true
+
+			libConfig := lib.GetConfig()
+			libConfig.SetClientCtx(network.Validators[0].ClientCtx)
+			libConfig.SetRoot(network.Validators[0].ClientCtx.HomeDir)
 		}
 	}
 
