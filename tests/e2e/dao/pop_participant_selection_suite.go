@@ -246,6 +246,8 @@ func (s *PopSelectionE2ETestSuite) TestTokenDistribution1() {
 	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
+	s.Require().NoError(s.network.WaitForNextBlock())
+	s.Require().NoError(s.network.WaitForNextBlock())
 
 	s.VerifyTokens(daoGenState.Params.ClaimDenom)
 }
