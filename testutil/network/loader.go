@@ -1,7 +1,6 @@
 package network
 
 import (
-	"bytes"
 	"testing"
 	"time"
 
@@ -15,12 +14,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/planetmint/planetmint-go/app"
-	"github.com/planetmint/planetmint-go/config"
-	"github.com/planetmint/planetmint-go/lib"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/util/mocks"
-	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 	elements "github.com/rddl-network/elements-rpc"
 	elementsmocks "github.com/rddl-network/elements-rpc/utils/mocks"
 	"github.com/stretchr/testify/require"
@@ -50,28 +46,10 @@ func Load(t *testing.T, configs ...Config) *Network {
 	appLogger.SetTestingLogger(t)
 
 	// set the proper root dir for the test environment so that the abci.go logic works
-	conf := config.GetConfig()
+
 	net, err := New(t, validatorTmpDir, cfg)
 	require.NoError(t, err)
 
-	conf.ValidatorAddress = net.Validators[0].Address.String()
-	// set missing validator client context values for sending txs
-	var output bytes.Buffer
-	net.Validators[0].ClientCtx.BroadcastMode = "sync"
-	net.Validators[0].ClientCtx.FromAddress = net.Validators[0].Address
-	net.Validators[0].ClientCtx.FromName = net.Validators[0].Moniker
-	net.Validators[0].ClientCtx.NodeURI = net.Validators[0].RPCAddress
-	net.Validators[0].ClientCtx.Output = &output
-	net.Validators[0].ClientCtx.SkipConfirm = true
-
-	var daoGenState daotypes.GenesisState
-	cfg.Codec.MustUnmarshalJSON(cfg.GenesisState[daotypes.ModuleName], &daoGenState)
-
-	libConfig := lib.GetConfig()
-	libConfig.SetClientCtx(net.Validators[0].ClientCtx)
-	libConfig.SetRoot(net.Validators[0].ClientCtx.HomeDir)
-
-	require.NoError(t, err)
 	_, err = net.WaitForHeight(1)
 	require.NoError(t, err)
 	t.Cleanup(net.Cleanup)
