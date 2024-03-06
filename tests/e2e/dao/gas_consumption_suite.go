@@ -64,7 +64,7 @@ func (s *GasConsumptionE2ETestSuite) createValAccount(cfg network.Config) (addre
 }
 
 func (s *GasConsumptionE2ETestSuite) SetupSuite() {
-	s.T().Log("setting up e2e test suite")
+	s.T().Log("setting up e2e dao gas consumption test suite")
 
 	s.feeDenom = sample.FeeDenom
 	s.cfg.Mnemonics = []string{sample.Mnemonic}
@@ -95,7 +95,7 @@ func (s *GasConsumptionE2ETestSuite) SetupSuite() {
 
 func (s *GasConsumptionE2ETestSuite) TearDownSuite() {
 	util.TerminationWaitGroup.Wait()
-	s.T().Log("tearing down e2e test suites")
+	s.T().Log("tearing down e2e dao gas consumption test suites")
 }
 
 func (s *GasConsumptionE2ETestSuite) TestValidatorConsumption() {

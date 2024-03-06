@@ -62,7 +62,7 @@ func NewPopSelectionE2ETestSuite(cfg network.Config) *PopSelectionE2ETestSuite {
 }
 
 func (s *PopSelectionE2ETestSuite) SetupSuite() {
-	s.T().Log("setting up e2e test suite")
+	s.T().Log("setting up e2e dao pop selection test suite")
 
 	s.popEpochs = 10
 	s.reissuanceEpochs = 60
@@ -88,7 +88,7 @@ func (s *PopSelectionE2ETestSuite) SetupSuite() {
 // TearDownSuite clean up after testing
 func (s *PopSelectionE2ETestSuite) TearDownSuite() {
 	util.TerminationWaitGroup.Wait()
-	s.T().Log("tearing down e2e test suite")
+	s.T().Log("tearing down e2e dao pop selection test suite")
 }
 
 func (s *PopSelectionE2ETestSuite) perpareLocalTest() testutil.BufferWriter {
