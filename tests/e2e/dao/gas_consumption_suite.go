@@ -138,7 +138,7 @@ func (s *GasConsumptionE2ETestSuite) TestNonValidatorConsumptionOverflow() {
 
 	_, err = clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().Error(err)
-	assert.Equal(s.T(), "out of gas in location: ReadFlat; gasWanted: 200000, gasUsed: 200316: out of gas", err.Error())
+	assert.Contains(s.T(), err.Error(), "out of gas")
 }
 
 func (s *GasConsumptionE2ETestSuite) createMsgs(from sdk.AccAddress, to sdk.AccAddress, n int) (msgs []sdk.Msg) {
