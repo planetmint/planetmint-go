@@ -23,35 +23,37 @@ type KeyFile struct {
 	PrivKey Key    `json:"priv-key"`
 }
 
-func GetValidatorCometBFTIdentity(ctx sdk.Context, rootDir string) (string, bool) {
+func GetValidatorCometBFTIdentity(ctx sdk.Context, rootDir string) (validatorIdentity string, err error) {
 	cfg := cometcfg.DefaultConfig()
 	jsonFilePath := filepath.Join(rootDir, cfg.PrivValidatorKey)
 
 	jsonFile, err := os.Open(jsonFilePath)
 	if err != nil {
 		GetAppLogger().Error(ctx, "error while opening config", err.Error())
-		return "", false
+		return
 	}
 	jsonBytes, err := io.ReadAll(jsonFile)
 	if err != nil {
 		GetAppLogger().Error(ctx, "error while reading file", err.Error())
-		return "", false
+		return
 	}
 
 	var keyFile KeyFile
 	err = json.Unmarshal(jsonBytes, &keyFile)
 	if err != nil {
 		GetAppLogger().Error(ctx, "error while unmarshaling key file", err.Error())
-		return "", false
+		return
 	}
-	return strings.ToLower(keyFile.Address), true
+	validatorIdentity = strings.ToLower(keyFile.Address)
+	return
 }
 
-func IsValidatorBlockProposer(ctx sdk.Context, proposerAddress []byte, rootDir string) bool {
-	validatorIdentity, validResult := GetValidatorCometBFTIdentity(ctx, rootDir)
-	if !validResult {
-		return false
+func IsValidatorBlockProposer(ctx sdk.Context, proposerAddress []byte, rootDir string) (result bool) {
+	validatorIdentity, err := GetValidatorCometBFTIdentity(ctx, rootDir)
+	if err != nil {
+		return
 	}
 	hexProposerAddress := hex.EncodeToString(proposerAddress)
-	return hexProposerAddress == validatorIdentity
+	result = hexProposerAddress == validatorIdentity
+	return
 }

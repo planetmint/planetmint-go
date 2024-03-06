@@ -5,6 +5,7 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/planetmint/planetmint-go/errormsg"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
@@ -29,9 +30,13 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 	reissuance.LastIncludedPop = msg.GetLastIncludedPop()
 	k.StoreReissuance(ctx, reissuance)
 
-	validatorIdentity, validResult := util.GetValidatorCometBFTIdentity(ctx, k.RootDir)
-	if !validResult || msg.Proposer != validatorIdentity {
-		util.GetAppLogger().Info(ctx, reissueTag+"Not the proposer. valid result: %t proposer: %s validator identity: %s", validResult, msg.Proposer, validatorIdentity)
+	validatorIdentity, err := util.GetValidatorCometBFTIdentity(ctx, k.RootDir)
+	if err != nil {
+		util.GetAppLogger().Error(ctx, reissueTag+errormsg.CouldNotGetValidatorIdentity+": "+err.Error())
+		return nil, err
+	}
+	if msg.Proposer != validatorIdentity {
+		util.GetAppLogger().Info(ctx, reissueTag+"Not the proposer. proposer: %s validator identity: %s", msg.Proposer, validatorIdentity)
 		return &types.MsgReissueRDDLProposalResponse{}, nil
 	}
 
