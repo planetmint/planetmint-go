@@ -50,7 +50,6 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 		} else {
 			util.GetAppLogger().Info(ctx, "Machine NFT issuance successful: "+msg.Machine.String())
 		}
-
 	} else {
 		util.GetAppLogger().Info(ctx, "Not block proposer: skipping Machine NFT issuance")
 	}
