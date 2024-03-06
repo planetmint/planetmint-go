@@ -572,22 +572,6 @@ func New(l Logger, baseDir string, cfg Config) (*Network, error) {
 			Address:    addr,
 			ValAddress: sdk.ValAddress(addr),
 		}
-		if i == 0 {
-			conf := config.GetConfig()
-			conf.ValidatorAddress = network.Validators[0].Address.String()
-			// set missing validator client context values for sending txs
-			var output bytes.Buffer
-			network.Validators[0].ClientCtx.BroadcastMode = "sync"
-			network.Validators[0].ClientCtx.FromAddress = network.Validators[0].Address
-			network.Validators[0].ClientCtx.FromName = network.Validators[0].Moniker
-			network.Validators[0].ClientCtx.NodeURI = network.Validators[0].RPCAddress
-			network.Validators[0].ClientCtx.Output = &output
-			network.Validators[0].ClientCtx.SkipConfirm = true
-
-			libConfig := lib.GetConfig()
-			libConfig.SetClientCtx(network.Validators[0].ClientCtx)
-			libConfig.SetRoot(network.Validators[0].ClientCtx.HomeDir)
-		}
 	}
 
 	err := initGenFiles(cfg, genAccounts, genBalances, genFiles)
@@ -606,6 +590,22 @@ func New(l Logger, baseDir string, cfg Config) (*Network, error) {
 			return nil, err
 		}
 		l.Log("started validator", idx)
+		if idx == 0 {
+			conf := config.GetConfig()
+			conf.ValidatorAddress = network.Validators[0].Address.String()
+			// set missing validator client context values for sending txs
+			var output bytes.Buffer
+			network.Validators[0].ClientCtx.BroadcastMode = "sync"
+			network.Validators[0].ClientCtx.FromAddress = network.Validators[0].Address
+			network.Validators[0].ClientCtx.FromName = network.Validators[0].Moniker
+			network.Validators[0].ClientCtx.NodeURI = network.Validators[0].RPCAddress
+			network.Validators[0].ClientCtx.Output = &output
+			network.Validators[0].ClientCtx.SkipConfirm = true
+
+			libConfig := lib.GetConfig()
+			libConfig.SetClientCtx(network.Validators[0].ClientCtx)
+			libConfig.SetRoot(network.Validators[0].ClientCtx.HomeDir)
+		}
 	}
 
 	height := int64(0)
