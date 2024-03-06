@@ -4,6 +4,7 @@ import (
 	"github.com/planetmint/planetmint-go/lib"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
+	"github.com/planetmint/planetmint-go/util"
 
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
@@ -29,7 +30,7 @@ func NewE2ETestSuite(cfg network.Config) *E2ETestSuite {
 
 // SetupSuite initializes asset E2ETestSuite
 func (s *E2ETestSuite) SetupSuite() {
-	s.T().Log("setting up e2e test suite")
+	s.T().Log("setting up e2e asset test suite")
 
 	s.network = network.Load(s.T(), s.cfg)
 	err := e2etestutil.AttestMachine(s.network, sample.Name, sample.Mnemonic, 0, sample.FeeDenom)
@@ -38,7 +39,8 @@ func (s *E2ETestSuite) SetupSuite() {
 
 // TearDownSuite clean up after testing
 func (s *E2ETestSuite) TearDownSuite() {
-	s.T().Log("tearing down e2e test suite")
+	util.TerminationWaitGroup.Wait()
+	s.T().Log("tearing down e2e asset test suite")
 }
 
 // TestNotarizeAsset notarizes asset over cli

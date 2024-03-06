@@ -14,7 +14,9 @@ import (
 func buildSignBroadcastTx(goCtx context.Context, loggingContext string, sendingValidatorAddress string, msg sdk.Msg) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	GetAppLogger().Info(ctx, loggingContext+": "+msg.String())
+	TerminationWaitGroup.Add(1)
 	go func() {
+		defer TerminationWaitGroup.Done()
 		ctx := sdk.UnwrapSDKContext(goCtx)
 		addr := sdk.MustAccAddressFromBech32(sendingValidatorAddress)
 		txJSON, err := lib.BuildUnsignedTx(addr, msg)

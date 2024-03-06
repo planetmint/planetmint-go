@@ -14,6 +14,7 @@ import (
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
+	"github.com/planetmint/planetmint-go/util"
 	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -48,7 +49,7 @@ func (s *E2ETestSuite) SetupSuite() {
 	s.reissuanceEpochs = 25
 	s.distributionOffset = 5
 
-	s.T().Log("setting up e2e test suite")
+	s.T().Log("setting up e2e dao test suite")
 
 	// Setup MintAddress parameter in genesis state
 	// use sample.Mnemonic to make mint address deterministic for test
@@ -109,7 +110,8 @@ func (s *E2ETestSuite) SetupSuite() {
 
 // TearDownSuite clean up after testing
 func (s *E2ETestSuite) TearDownSuite() {
-	s.T().Log("tearing down e2e test suite")
+	util.TerminationWaitGroup.Wait()
+	s.T().Log("tearing down e2e dao test suite")
 }
 
 func (s *E2ETestSuite) TestMintToken() {

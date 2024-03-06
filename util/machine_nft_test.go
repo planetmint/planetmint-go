@@ -16,7 +16,6 @@ import (
 )
 
 func TestRegisterNFT(t *testing.T) {
-	t.Parallel()
 	url := "https://testnet-assets.rddl.io/register_asset"
 	contract := `{"entity":{"domain":"testnet-assets.rddl.io"},"issuer_pubkey":"020000000000000000000000000000000000000000000000000000000000000000","machine_addr":"plmnt10mq5nj8jhh27z7ejnz2ql3nh0qhzjnfvy50877","name":"machine","precision":0,"version":0}`
 	asset := "0000000000000000000000000000000000000000000000000000000000000000"
@@ -28,8 +27,6 @@ func TestRegisterNFT(t *testing.T) {
 }
 
 func TestMachineNFTIssuance(t *testing.T) {
-	t.Parallel()
-
 	elements.Client = &elementsmocks.MockClient{}
 	util.RegisterAssetServiceHTTPClient = &mocks.MockClient{}
 	_, ctx := keeper.MachineKeeper(t)

@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-func TestE2ETestSuite(t *testing.T) {
+func TestE2ELibTestSuite(t *testing.T) {
 	t.Parallel()
 	cfg := network.DefaultConfig()
 	cfg.NumValidators = 1

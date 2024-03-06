@@ -6,6 +6,7 @@ import (
 
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	"github.com/planetmint/planetmint-go/testutil/network"
+	"github.com/planetmint/planetmint-go/util"
 	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 	"github.com/stretchr/testify/suite"
@@ -25,7 +26,7 @@ func NewAssetDistributionE2ETestSuite(cfg network.Config) *AssetDistributionE2ET
 }
 
 func (s *AssetDistributionE2ETestSuite) SetupSuite() {
-	s.T().Log("setting up e2e test suite")
+	s.T().Log("setting up e2e dao distribution test suite")
 
 	// set epochs: make sure to start after initial height of 7
 	s.distributionOffset = 5
@@ -41,7 +42,8 @@ func (s *AssetDistributionE2ETestSuite) SetupSuite() {
 }
 
 func (s *AssetDistributionE2ETestSuite) TearDownSuite() {
-	s.T().Log("tearing down e2e test suites")
+	util.TerminationWaitGroup.Wait()
+	s.T().Log("tearing down e2e dao distribution test suites")
 }
 
 func (s *AssetDistributionE2ETestSuite) TestAssetDistribution() {

@@ -5,6 +5,7 @@ import (
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
+	"github.com/planetmint/planetmint-go/util"
 	machinecli "github.com/planetmint/planetmint-go/x/machine/client/cli"
 	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 
@@ -35,7 +36,7 @@ func NewE2ETestSuite(cfg network.Config) *E2ETestSuite {
 
 // SetupSuite initializes machine E2ETestSuite
 func (s *E2ETestSuite) SetupSuite() {
-	s.T().Log("setting up e2e test suite")
+	s.T().Log("setting up e2e machine test suite")
 
 	s.feeDenom = sample.FeeDenom
 	s.network = network.Load(s.T(), s.cfg)
@@ -49,7 +50,8 @@ func (s *E2ETestSuite) SetupSuite() {
 
 // TearDownSuite clean up after testing
 func (s *E2ETestSuite) TearDownSuite() {
-	s.T().Log("tearing down e2e test suite")
+	util.TerminationWaitGroup.Wait()
+	s.T().Log("tearing down e2e machine test suite")
 }
 
 // TestAttestMachine attests machine and query attested machine from chain

@@ -109,6 +109,9 @@ issues:
     - path: tests/.*/*\.go
       linters:
         - paralleltest
+    - path: util/machine_nft_test\.go
+      linters:
+        - paralleltest
     - path: testutil/network/network.go
       linters:
         - gocognit

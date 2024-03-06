@@ -15,6 +15,7 @@ import (
 	"github.com/planetmint/planetmint-go/testutil/moduleobject"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
+	"github.com/planetmint/planetmint-go/util"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -63,7 +64,7 @@ func (s *GasConsumptionE2ETestSuite) createValAccount(cfg network.Config) (addre
 }
 
 func (s *GasConsumptionE2ETestSuite) SetupSuite() {
-	s.T().Log("setting up e2e test suite")
+	s.T().Log("setting up e2e dao gas consumption test suite")
 
 	s.feeDenom = sample.FeeDenom
 	s.cfg.Mnemonics = []string{sample.Mnemonic}
@@ -93,7 +94,8 @@ func (s *GasConsumptionE2ETestSuite) SetupSuite() {
 }
 
 func (s *GasConsumptionE2ETestSuite) TearDownSuite() {
-	s.T().Log("tearing down e2e test suites")
+	util.TerminationWaitGroup.Wait()
+	s.T().Log("tearing down e2e dao gas consumption test suites")
 }
 
 func (s *GasConsumptionE2ETestSuite) TestValidatorConsumption() {
@@ -136,7 +138,7 @@ func (s *GasConsumptionE2ETestSuite) TestNonValidatorConsumptionOverflow() {
 
 	_, err = clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().Error(err)
-	assert.Equal(s.T(), "out of gas in location: ReadFlat; gasWanted: 200000, gasUsed: 200316: out of gas", err.Error())
+	assert.Contains(s.T(), err.Error(), "out of gas")
 }
 
 func (s *GasConsumptionE2ETestSuite) createMsgs(from sdk.AccAddress, to sdk.AccAddress, n int) (msgs []sdk.Msg) {

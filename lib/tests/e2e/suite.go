@@ -29,14 +29,14 @@ func NewE2ETestSuite(cfg network.Config) *E2ETestSuite {
 
 // SetupSuite initializes machine E2ETestSuite
 func (s *E2ETestSuite) SetupSuite() {
-	s.T().Log("setting up e2e test suite")
+	s.T().Log("setting up e2e lib test suite")
 
 	s.network = network.New(s.T())
 }
 
 // TearDownSuite clean up after testing
 func (s *E2ETestSuite) TearDownSuite() {
-	s.T().Log("tearing down e2e test suite")
+	s.T().Log("tearing down e2e lib test suite")
 }
 
 func (s *E2ETestSuite) TestBankSendBroadcastTxWithFileLock() {

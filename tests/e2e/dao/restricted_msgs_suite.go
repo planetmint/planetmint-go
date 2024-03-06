@@ -6,6 +6,7 @@ import (
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
+	"github.com/planetmint/planetmint-go/util"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 	"github.com/stretchr/testify/suite"
@@ -34,7 +35,7 @@ func NewRestrictedMsgsE2ESuite(cfg network.Config) *RestrictedMsgsE2ESuite {
 }
 
 func (s *RestrictedMsgsE2ESuite) SetupSuite() {
-	s.T().Log("setting up e2e test suite")
+	s.T().Log("setting up e2e dao restricted msg test suite")
 
 	s.network = network.Load(s.T(), s.cfg)
 	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
@@ -44,7 +45,8 @@ func (s *RestrictedMsgsE2ESuite) SetupSuite() {
 }
 
 func (s *RestrictedMsgsE2ESuite) TearDownSuite() {
-	s.T().Log("tearing down e2e test suite")
+	util.TerminationWaitGroup.Wait()
+	s.T().Log("tearing down e2e dao restricted msg test suite")
 }
 
 func (s *RestrictedMsgsE2ESuite) TestRestrictedMsgsValidator() {
