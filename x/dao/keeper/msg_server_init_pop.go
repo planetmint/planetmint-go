@@ -4,8 +4,13 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/planetmint/planetmint-go/errormsg"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
+)
+
+var (
+	initPopTag = "init pop tag: "
 )
 
 func (k msgServer) InitPop(goCtx context.Context, msg *types.MsgInitPop) (*types.MsgInitPopResponse, error) {
@@ -21,6 +26,7 @@ func (k msgServer) InitPop(goCtx context.Context, msg *types.MsgInitPop) (*types
 
 	validatorIdentity, err := util.GetValidatorCometBFTIdentity(ctx, k.RootDir)
 	if err != nil {
+		util.GetAppLogger().Error(ctx, initPopTag+errormsg.CouldNotGetValidatorIdentity+": "+err.Error())
 		return nil, err
 	}
 	if msg.Initiator == validatorIdentity {

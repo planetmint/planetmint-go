@@ -1,6 +1,7 @@
 package errormsg
 
 var (
-	ErrorInvalidCreator = "invalid creator address (%s)"
-	InvalidRequest      = "invalid request"
+	CouldNotGetValidatorIdentity = "could not get validator identity"
+	ErrorInvalidCreator          = "invalid creator address (%s)"
+	InvalidRequest               = "invalid request"
 )

@@ -5,6 +5,7 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/planetmint/planetmint-go/errormsg"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
@@ -31,6 +32,7 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 
 	validatorIdentity, err := util.GetValidatorCometBFTIdentity(ctx, k.RootDir)
 	if err != nil {
+		util.GetAppLogger().Error(ctx, reissueTag+errormsg.CouldNotGetValidatorIdentity+": "+err.Error())
 		return nil, err
 	}
 	if msg.Proposer != validatorIdentity {
