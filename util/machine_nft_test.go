@@ -34,7 +34,7 @@ func TestMachineNFTIssuance(t *testing.T) {
 	machine := moduleobject.Machine(pk, pk, sk, "")
 	goCtx := sdk.WrapSDKContext(ctx)
 
-	err := util.IssueMachineNFT(goCtx, &machine, "https", "testnet-asset.rddl.io", "/register_asset")
-
+	params := types.DefaultParams()
+	err := util.IssueMachineNFT(goCtx, &machine, params.AssetRegistryScheme, params.AssetRegistryDomain, params.AssetRegistryPath)
 	assert.NoError(t, err)
 }
