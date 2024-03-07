@@ -2,6 +2,7 @@ package moduleobject
 
 import (
 	"encoding/hex"
+	"strconv"
 
 	"github.com/btcsuite/btcd/btcutil/hdkeychain"
 	"github.com/btcsuite/btcd/chaincfg"
@@ -51,6 +52,39 @@ func Machine(name, pubKey string, prvKey string, address string) machinetypes.Ma
 	m := machinetypes.Machine{
 		Name:               name,
 		Ticker:             name + "_ticker",
+		Domain:             "lab.r3c.network",
+		Reissue:            true,
+		Amount:             1000,
+		Precision:          8,
+		IssuerPlanetmint:   planetmintPubKey,
+		IssuerLiquid:       liquidPubKey,
+		MachineId:          pubKey,
+		Metadata:           &metadata,
+		Type:               1,
+		MachineIdSignature: signatureHex,
+		Address:            address,
+	}
+	return m
+}
+
+func MachineRandom(name, pubKey string, prvKey string, address string, random int) machinetypes.Machine {
+	metadata := Metadata()
+	_, liquidPubKey := ExtendedKeyPair(config.LiquidNetParams)
+	_, planetmintPubKey := ExtendedKeyPair(config.PlmntNetParams)
+
+	prvKeyBytes, _ := hex.DecodeString(prvKey)
+	sk := &secp256k1.PrivKey{Key: prvKeyBytes}
+	pubKeyBytes, _ := hex.DecodeString(pubKey)
+	sign, _ := sk.Sign(pubKeyBytes)
+	signatureHex := hex.EncodeToString(sign)
+
+	if address == "" {
+		address = sample.Secp256k1AccAddress().String()
+	}
+
+	m := machinetypes.Machine{
+		Name:               name + strconv.Itoa(random),
+		Ticker:             name + strconv.Itoa(random) + "_ticker",
 		Domain:             "lab.r3c.network",
 		Reissue:            true,
 		Amount:             1000,
