@@ -65,7 +65,6 @@ func TestMachineNFTIssuance(t *testing.T) {
 			err := util.IssueMachineNFT(goCtx, &machine, "https", "testnet-assets.rddl.io", "register_asset")
 			assert.NoError(t, err)
 			wg.Done()
-
 		}()
 	}
 	wg.Wait()

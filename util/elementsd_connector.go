@@ -135,7 +135,7 @@ func IssueNFTAsset(name string, machineAddress string, domain string) (assetID s
 
 	testMempoolAcceptResult := testMempoolAcceptResults[len(testMempoolAcceptResults)-1]
 	if !testMempoolAcceptResult.Allowed {
-		err = fmt.Errorf("not accepted by mempool: %+v %+v\n", testMempoolAcceptResult, signRawTransactionWithWalletResult)
+		err = fmt.Errorf("not accepted by mempool: %+v %+v", testMempoolAcceptResult, signRawTransactionWithWalletResult)
 		return
 	}
 
