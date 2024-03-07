@@ -4,7 +4,6 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
-	"log"
 	"strings"
 	"sync"
 
@@ -14,7 +13,8 @@ import (
 )
 
 var (
-	// this mutex has to protect all signing and crafting transactions so that UTXOs are not spend twice by accident
+	// this mutex has to protect all signing and crafting of transactions and their inputs
+	// so that UTXOs are not spend twice by accident
 	elementsSyncAccess sync.Mutex
 )
 
@@ -135,7 +135,8 @@ func IssueNFTAsset(name string, machineAddress string, domain string) (assetID s
 
 	testMempoolAcceptResult := testMempoolAcceptResults[len(testMempoolAcceptResults)-1]
 	if !testMempoolAcceptResult.Allowed {
-		log.Fatalln("not accepted by mempool")
+		err = fmt.Errorf("not accepted by mempool: %+v %+v\n", testMempoolAcceptResult, signRawTransactionWithWalletResult)
+		return
 	}
 
 	hex, err = elements.SendRawTransaction(url, []string{signRawTransactionWithWalletResult.Hex})
