@@ -1,4 +1,4 @@
-package restrictedMsgs
+package gas
 
 import (
 	"testing"
@@ -9,9 +9,9 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-func TestRestrictedMsgsE2EDaoTestSuite(t *testing.T) {
+func TestConsumptionE2EDaoTestSuite(t *testing.T) {
 	time.Sleep(2 * time.Second)
 	cfg := network.LoaderDefaultConfig()
 	cfg.NumValidators = 3
-	suite.Run(t, NewRestrictedMsgsE2ESuite(cfg))
+	suite.Run(t, NewConsumptionE2ETestSuite(cfg))
 }
