@@ -184,6 +184,7 @@ func (s *E2ETestSuite) TestMachineAllowanceAttestation() {
 	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
+	s.Require().NoError(s.network.WaitForNextBlock())
 
 	// reset clientCtx to validator ctx
 	libConfig.SetClientCtx(val.ClientCtx)

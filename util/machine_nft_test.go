@@ -3,6 +3,9 @@ package util_test
 import (
 	"context"
 	"encoding/json"
+	"math/rand"
+	"strconv"
+	"sync"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -47,11 +50,21 @@ func TestMachineNFTIssuance(t *testing.T) {
 	elements.Client = &elementsmocks.MockClient{}
 	util.RegisterAssetServiceHTTPClient = &mocks.MockClient{}
 	_, ctx := keeper.MachineKeeper(t)
-	sk, pk := sample.KeyPair()
-	machine := moduleobject.Machine(pk, pk, sk, "")
-	goCtx := sdk.WrapSDKContext(ctx)
-
 	params := types.DefaultParams()
-	err := util.IssueMachineNFT(goCtx, &machine, params.AssetRegistryScheme, params.AssetRegistryDomain, params.AssetRegistryPath)
-	assert.NoError(t, err)
+	var wg sync.WaitGroup
+
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go func() {
+			randomInt := rand.Int()
+			sk, pk := sample.KeyPair(randomInt)
+			machine := moduleobject.MachineRandom(pk, pk, sk, "address "+strconv.Itoa(randomInt), randomInt)
+			goCtx := sdk.WrapSDKContext(ctx)
+
+			err := util.IssueMachineNFT(goCtx, &machine, params.AssetRegistryScheme, params.AssetRegistryDomain, params.AssetRegistryPath)
+			assert.NoError(t, err)
+			wg.Done()
+		}()
+	}
+	wg.Wait()
 }

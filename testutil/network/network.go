@@ -334,6 +334,9 @@ func New(l Logger, baseDir string, cfg Config) (*Network, error) {
 		ctx := server.NewDefaultContext()
 		tmCfg := ctx.Config
 		tmCfg.Consensus.TimeoutCommit = cfg.TimeoutCommit
+		tmCfg.Consensus.TimeoutPrecommit = cfg.TimeoutCommit
+		tmCfg.Consensus.TimeoutPrevote = cfg.TimeoutCommit
+		tmCfg.Consensus.TimeoutPropose = cfg.TimeoutCommit
 
 		// Only allow the first validator to expose an RPC, API and gRPC
 		// server/client due to Tendermint in-process constraints.
