@@ -178,6 +178,10 @@ func (s *E2ETestSuite) TestMachineAllowanceAttestation() {
 
 	msg3 := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
 	_, err = e2etestutil.BuildSignBroadcastTx(s.T(), addr, msg3)
+
+	// reset clientCtx to validator ctx
+	libConfig.SetClientCtx(val.ClientCtx)
+
 	s.Require().NoError(err)
 
 	// give machine attestation some time to issue the liquid asset
@@ -185,9 +189,6 @@ func (s *E2ETestSuite) TestMachineAllowanceAttestation() {
 	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
-
-	// reset clientCtx to validator ctx
-	libConfig.SetClientCtx(val.ClientCtx)
 
 	args := []string{
 		pubKey,
