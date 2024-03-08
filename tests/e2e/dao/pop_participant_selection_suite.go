@@ -297,7 +297,8 @@ func (s *PopSelectionE2ETestSuite) TestTokenRedeemClaim() {
 	s.Require().NoError(err)
 	s.Require().Equal(int(0), int(txResponse.Code))
 
-	// WaitForBlock before query
+	// WaitForBlock before query (2 blocks since 3 validators)
+	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
 
 	// QueryRedeemClaim
