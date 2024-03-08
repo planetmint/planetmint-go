@@ -1,6 +1,7 @@
 package network
 
 import (
+	"strings"
 	"testing"
 	"time"
 
@@ -45,9 +46,12 @@ func Load(t *testing.T, configs ...Config) *Network {
 	appLogger := util.GetAppLogger()
 	appLogger.SetTestingLogger(t)
 
-	// set the proper root dir for the test environment so that the abci.go logic works
-
 	net, err := New(t, validatorTmpDir, cfg)
+	// this is only done to support multi validator test
+	// race conditions(load/unload) on the CI
+	if err != nil && strings.Contains(err.Error(), "bind: address already in use") {
+		net, err = New(t, validatorTmpDir, cfg)
+	}
 	require.NoError(t, err)
 
 	_, err = net.WaitForHeight(1)
