@@ -47,11 +47,10 @@ func TestRegisterNFT(t *testing.T) {
 }
 
 func TestMachineNFTIssuance(t *testing.T) {
-	t.Parallel()
-
 	elements.Client = &elementsmocks.MockClient{}
 	util.RegisterAssetServiceHTTPClient = &mocks.MockClient{}
 	_, ctx := keeper.MachineKeeper(t)
+	params := types.DefaultParams()
 	var wg sync.WaitGroup
 
 	for i := 0; i < 10; i++ {
@@ -62,7 +61,7 @@ func TestMachineNFTIssuance(t *testing.T) {
 			machine := moduleobject.MachineRandom(pk, pk, sk, "address "+strconv.Itoa(randomInt), randomInt)
 			goCtx := sdk.WrapSDKContext(ctx)
 
-			err := util.IssueMachineNFT(goCtx, &machine, "https", "testnet-assets.rddl.io", "register_asset")
+			err := util.IssueMachineNFT(goCtx, &machine, params.AssetRegistryScheme, params.AssetRegistryDomain, params.AssetRegistryPath)
 			assert.NoError(t, err)
 			wg.Done()
 		}()

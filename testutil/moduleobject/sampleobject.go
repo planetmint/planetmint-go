@@ -52,7 +52,7 @@ func Machine(name, pubKey string, prvKey string, address string) machinetypes.Ma
 	m := machinetypes.Machine{
 		Name:               name,
 		Ticker:             name + "_ticker",
-		Domain:             "lab.r3c.network",
+		Domain:             "testnet-assets.rddl.iok",
 		Reissue:            true,
 		Amount:             1000,
 		Precision:          8,
@@ -85,7 +85,7 @@ func MachineRandom(name, pubKey string, prvKey string, address string, random in
 	m := machinetypes.Machine{
 		Name:               name + strconv.Itoa(random),
 		Ticker:             name + strconv.Itoa(random) + "_ticker",
-		Domain:             "lab.r3c.network",
+		Domain:             "testnet-assets.rddl.io",
 		Reissue:            true,
 		Amount:             1000,
 		Precision:          8,
