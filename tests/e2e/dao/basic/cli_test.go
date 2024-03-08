@@ -1,4 +1,4 @@
-package machine
+package basic
 
 import (
 	"testing"
@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-func TestE2EMachineTestSuite(t *testing.T) {
+func TestE2EDaoTestSuite(t *testing.T) {
 	time.Sleep(2 * time.Second)
 	cfg := network.LoaderDefaultConfig()
 	cfg.NumValidators = 3

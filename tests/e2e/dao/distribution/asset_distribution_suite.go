@@ -1,4 +1,4 @@
-package dao
+package distribution
 
 import (
 	"math"

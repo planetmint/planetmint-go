@@ -1,4 +1,4 @@
-package dao
+package gas
 
 import (
 	"bufio"
@@ -21,7 +21,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type GasConsumptionE2ETestSuite struct {
+type ConsumptionE2ETestSuite struct {
 	suite.Suite
 
 	cfg        network.Config
@@ -30,11 +30,11 @@ type GasConsumptionE2ETestSuite struct {
 	feeDenom   string
 }
 
-func NewGasConsumptionE2ETestSuite(cfg network.Config) *GasConsumptionE2ETestSuite {
-	return &GasConsumptionE2ETestSuite{cfg: cfg}
+func NewConsumptionE2ETestSuite(cfg network.Config) *ConsumptionE2ETestSuite {
+	return &ConsumptionE2ETestSuite{cfg: cfg}
 }
 
-func (s *GasConsumptionE2ETestSuite) createValAccount(cfg network.Config) (address sdk.AccAddress, err error) {
+func (s *ConsumptionE2ETestSuite) createValAccount(cfg network.Config) (address sdk.AccAddress, err error) {
 	buf := bufio.NewReader(os.Stdin)
 
 	kb, err := keyring.New(sdk.KeyringServiceName(), keyring.BackendTest, s.T().TempDir(), buf, cfg.Codec, cfg.KeyringOptions...)
@@ -63,7 +63,7 @@ func (s *GasConsumptionE2ETestSuite) createValAccount(cfg network.Config) (addre
 	return addr, nil
 }
 
-func (s *GasConsumptionE2ETestSuite) SetupSuite() {
+func (s *ConsumptionE2ETestSuite) SetupSuite() {
 	s.T().Log("setting up e2e dao gas consumption test suite")
 
 	s.feeDenom = sample.FeeDenom
@@ -93,12 +93,12 @@ func (s *GasConsumptionE2ETestSuite) SetupSuite() {
 	s.Require().NoError(err)
 }
 
-func (s *GasConsumptionE2ETestSuite) TearDownSuite() {
+func (s *ConsumptionE2ETestSuite) TearDownSuite() {
 	util.TerminationWaitGroup.Wait()
 	s.T().Log("tearing down e2e dao gas consumption test suites")
 }
 
-func (s *GasConsumptionE2ETestSuite) TestValidatorConsumption() {
+func (s *ConsumptionE2ETestSuite) TestValidatorConsumption() {
 	val := s.network.Validators[0]
 
 	k, err := val.ClientCtx.Keyring.Key(sample.Name)
@@ -117,7 +117,7 @@ func (s *GasConsumptionE2ETestSuite) TestValidatorConsumption() {
 	s.Require().NoError(err)
 }
 
-func (s *GasConsumptionE2ETestSuite) TestNonValidatorConsumptionOverflow() {
+func (s *ConsumptionE2ETestSuite) TestNonValidatorConsumptionOverflow() {
 	val := s.network.Validators[0]
 
 	k, err := val.ClientCtx.Keyring.Key(sample.Name)
@@ -141,7 +141,7 @@ func (s *GasConsumptionE2ETestSuite) TestNonValidatorConsumptionOverflow() {
 	assert.Contains(s.T(), err.Error(), "out of gas")
 }
 
-func (s *GasConsumptionE2ETestSuite) createMsgs(from sdk.AccAddress, to sdk.AccAddress, n int) (msgs []sdk.Msg) {
+func (s *ConsumptionE2ETestSuite) createMsgs(from sdk.AccAddress, to sdk.AccAddress, n int) (msgs []sdk.Msg) {
 	coins := sdk.NewCoins(sdk.NewInt64Coin(s.feeDenom, 10))
 	for i := 0; i < n; i++ {
 		msg := banktypes.NewMsgSend(from, to, coins)
@@ -150,7 +150,7 @@ func (s *GasConsumptionE2ETestSuite) createMsgs(from sdk.AccAddress, to sdk.AccA
 	return
 }
 
-func (s *GasConsumptionE2ETestSuite) TestNetworkBasedTxGasLimit() {
+func (s *ConsumptionE2ETestSuite) TestNetworkBasedTxGasLimit() {
 	var gasAmountAboveGlobalGasLimit uint64 = 200000000
 	libConfig := lib.GetConfig()
 	libConfig.SetTxGas(gasAmountAboveGlobalGasLimit)

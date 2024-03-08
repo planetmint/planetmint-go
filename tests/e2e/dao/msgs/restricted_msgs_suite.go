@@ -1,4 +1,4 @@
-package dao
+package msgs
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"

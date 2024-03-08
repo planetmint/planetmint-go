@@ -1,4 +1,4 @@
-package dao
+package pop
 
 import (
 	"bufio"
@@ -42,7 +42,7 @@ var machines = []struct {
 	},
 }
 
-type PopSelectionE2ETestSuite struct {
+type SelectionE2ETestSuite struct {
 	suite.Suite
 
 	cfg                network.Config
@@ -55,13 +55,13 @@ type PopSelectionE2ETestSuite struct {
 	errormsg           string
 }
 
-func NewPopSelectionE2ETestSuite(cfg network.Config) *PopSelectionE2ETestSuite {
-	testsuite := &PopSelectionE2ETestSuite{cfg: cfg}
+func NewSelectionE2ETestSuite(cfg network.Config) *SelectionE2ETestSuite {
+	testsuite := &SelectionE2ETestSuite{cfg: cfg}
 	testsuite.errormsg = "--%s=%s"
 	return testsuite
 }
 
-func (s *PopSelectionE2ETestSuite) SetupSuite() {
+func (s *SelectionE2ETestSuite) SetupSuite() {
 	s.T().Log("setting up e2e dao pop selection test suite")
 
 	s.popEpochs = 10
@@ -86,12 +86,12 @@ func (s *PopSelectionE2ETestSuite) SetupSuite() {
 }
 
 // TearDownSuite clean up after testing
-func (s *PopSelectionE2ETestSuite) TearDownSuite() {
+func (s *SelectionE2ETestSuite) TearDownSuite() {
 	util.TerminationWaitGroup.Wait()
 	s.T().Log("tearing down e2e dao pop selection test suite")
 }
 
-func (s *PopSelectionE2ETestSuite) perpareLocalTest() testutil.BufferWriter {
+func (s *SelectionE2ETestSuite) perpareLocalTest() testutil.BufferWriter {
 	val := s.network.Validators[0]
 
 	latestHeight, err := s.network.LatestHeight()
@@ -123,7 +123,7 @@ type yamlChallenge struct {
 	Finished   bool   `yaml:"finished"`
 }
 
-func (s *PopSelectionE2ETestSuite) sendPoPResult(storedChallenge []byte, success bool) {
+func (s *SelectionE2ETestSuite) sendPoPResult(storedChallenge []byte, success bool) {
 	val := s.network.Validators[0]
 	var wrapper struct {
 		Challenge yamlChallenge `yaml:"challenge"`
@@ -156,14 +156,14 @@ func (s *PopSelectionE2ETestSuite) sendPoPResult(storedChallenge []byte, success
 	s.Require().NoError(err)
 }
 
-func (s *PopSelectionE2ETestSuite) TestPopSelectionNoActors() {
+func (s *SelectionE2ETestSuite) TestPopSelectionNoActors() {
 	out := s.perpareLocalTest()
 
 	assert.NotContains(s.T(), out.String(), machines[0].address)
 	assert.NotContains(s.T(), out.String(), machines[1].address)
 }
 
-func (s *PopSelectionE2ETestSuite) TestPopSelectionOneActors() {
+func (s *SelectionE2ETestSuite) TestPopSelectionOneActors() {
 	err := e2etestutil.AttestMachine(s.network, machines[0].name, machines[0].mnemonic, 0, s.feeDenom)
 	s.Require().NoError(err)
 
@@ -173,7 +173,7 @@ func (s *PopSelectionE2ETestSuite) TestPopSelectionOneActors() {
 	assert.NotContains(s.T(), out.String(), machines[1].address)
 }
 
-func (s *PopSelectionE2ETestSuite) TestPopSelectionTwoActors() {
+func (s *SelectionE2ETestSuite) TestPopSelectionTwoActors() {
 	err := e2etestutil.AttestMachine(s.network, machines[1].name, machines[1].mnemonic, 1, s.feeDenom)
 	s.Require().NoError(err)
 
@@ -184,7 +184,7 @@ func (s *PopSelectionE2ETestSuite) TestPopSelectionTwoActors() {
 	s.sendPoPResult(out.Bytes(), true)
 }
 
-func (s *PopSelectionE2ETestSuite) VerifyTokens(token string) {
+func (s *SelectionE2ETestSuite) VerifyTokens(token string) {
 	val := s.network.Validators[0]
 	// check balance for crddl
 	out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetCmdQueryTotalSupply(), []string{
@@ -211,7 +211,7 @@ func (s *PopSelectionE2ETestSuite) VerifyTokens(token string) {
 	assert.Equal(s.T(), "amount: \"11986301368\"\ndenom: "+token+"\n", out.String()) // 2 * 5993150684 = 11986301368
 }
 
-func (s *PopSelectionE2ETestSuite) TestTokenDistribution1() {
+func (s *SelectionE2ETestSuite) TestTokenDistribution1() {
 	out := s.perpareLocalTest()
 
 	assert.Contains(s.T(), out.String(), machines[0].address)
@@ -252,7 +252,7 @@ func (s *PopSelectionE2ETestSuite) TestTokenDistribution1() {
 	s.VerifyTokens(daoGenState.Params.ClaimDenom)
 }
 
-func (s *PopSelectionE2ETestSuite) TestTokenRedeemClaim() {
+func (s *SelectionE2ETestSuite) TestTokenRedeemClaim() {
 	val := s.network.Validators[0]
 
 	k, err := val.ClientCtx.Keyring.Key(machines[0].name)
@@ -297,7 +297,8 @@ func (s *PopSelectionE2ETestSuite) TestTokenRedeemClaim() {
 	s.Require().NoError(err)
 	s.Require().Equal(int(0), int(txResponse.Code))
 
-	// WaitForBlock before query
+	// WaitForBlock before query (2 blocks since 3 validators)
+	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
 
 	// QueryRedeemClaim
@@ -310,7 +311,7 @@ func (s *PopSelectionE2ETestSuite) TestTokenRedeemClaim() {
 	assert.Equal(s.T(), "redeemClaim:\n  amount: \"10000\"\n  beneficiary: liquidAddress\n  confirmed: true\n  creator: plmnt1kp93kns6hs2066d8qw0uz84fw3vlthewt2ck6p\n  id: \"0\"\n  liquidTxHash: \"0000000000000000000000000000000000000000000000000000000000000000\"\n", qOut.String())
 }
 
-func (s *PopSelectionE2ETestSuite) createValAccount(cfg network.Config) (address sdk.AccAddress, err error) {
+func (s *SelectionE2ETestSuite) createValAccount(cfg network.Config) (address sdk.AccAddress, err error) {
 	buf := bufio.NewReader(os.Stdin)
 
 	kb, err := keyring.New(sdk.KeyringServiceName(), keyring.BackendTest, s.T().TempDir(), buf, cfg.Codec, cfg.KeyringOptions...)

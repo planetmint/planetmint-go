@@ -1,4 +1,4 @@
-package dao
+package basic
 
 import (
 	"bufio"
