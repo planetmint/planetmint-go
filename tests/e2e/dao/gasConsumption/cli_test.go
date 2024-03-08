@@ -1,4 +1,4 @@
-package machine
+package gasConsumption
 
 import (
 	"testing"
@@ -9,9 +9,9 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-func TestE2EMachineTestSuite(t *testing.T) {
+func TestGasConsumptionE2EDaoTestSuite(t *testing.T) {
 	time.Sleep(2 * time.Second)
 	cfg := network.LoaderDefaultConfig()
 	cfg.NumValidators = 3
-	suite.Run(t, NewE2ETestSuite(cfg))
+	suite.Run(t, NewGasConsumptionE2ETestSuite(cfg))
 }

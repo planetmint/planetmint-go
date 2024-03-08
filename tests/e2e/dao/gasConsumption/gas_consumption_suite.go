@@ -1,4 +1,4 @@
-package dao
+package gasConsumption
 
 import (
 	"bufio"
