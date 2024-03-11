@@ -38,7 +38,7 @@ func getAccountNumberAndSequence(clientCtx client.Context) (accountNumber, seque
 }
 
 func getClientContextAndTxFactory(fromAddress sdk.AccAddress) (clientCtx client.Context, txf tx.Factory, err error) {
-	clientCtx = GetConfig().ClientCtx
+	clientCtx = GetConfig().clientCtx
 	// at least we need an account retriever
 	// it would be better to check for an empty client context, but that does not work at the moment
 	if clientCtx.AccountRetriever == nil {
@@ -70,17 +70,17 @@ func getTxFactoryWithAccountNumberAndSequence(clientCtx client.Context, accountN
 		WithAccountRetriever(clientCtx.AccountRetriever).
 		WithChainID(clientCtx.ChainID).
 		WithFeeGranter(clientCtx.FeeGranter).
-		WithGas(GetConfig().TxGas).
-		WithGasPrices("0.000005" + GetConfig().FeeDenom).
+		WithGas(GetConfig().txGas).
+		WithGasPrices("0.000005" + GetConfig().feeDenom).
 		WithKeybase(clientCtx.Keyring).
 		WithSequence(sequence).
 		WithTxConfig(clientCtx.TxConfig)
 }
 
 func getClientContext(fromAddress sdk.AccAddress) (clientCtx client.Context, err error) {
-	encodingConfig := GetConfig().EncodingConfig
+	encodingConfig := GetConfig().encodingConfig
 
-	rootDir := GetConfig().RootDir
+	rootDir := GetConfig().rootDir
 	input := os.Stdin
 	codec := encodingConfig.Marshaler
 	keyringOptions := []keyring.Option{}
@@ -95,7 +95,7 @@ func getClientContext(fromAddress sdk.AccAddress) (clientCtx client.Context, err
 		return
 	}
 
-	remote := GetConfig().RPCEndpoint
+	remote := GetConfig().rpcEndpoint
 	wsClient, err := comethttp.New(remote, "/websocket")
 	if err != nil {
 		return
@@ -106,7 +106,7 @@ func getClientContext(fromAddress sdk.AccAddress) (clientCtx client.Context, err
 	clientCtx = client.Context{
 		AccountRetriever:  authtypes.AccountRetriever{},
 		BroadcastMode:     "sync",
-		ChainID:           GetConfig().ChainID,
+		ChainID:           GetConfig().chainID,
 		Client:            wsClient,
 		Codec:             codec,
 		From:              fromAddress.String(),

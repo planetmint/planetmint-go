@@ -10,13 +10,13 @@ import (
 
 // Config defines library top level configuration.
 type Config struct {
-	ChainID        string                `json:"chain-id"        mapstructure:"chain-id"`
-	ClientCtx      client.Context        `json:"client-ctx"      mapstructure:"client-ctx"`
-	EncodingConfig params.EncodingConfig `json:"encoding-config" mapstructure:"encoding-config"`
-	FeeDenom       string                `json:"fee-denom"       mapstructure:"fee-denom"`
-	RootDir        string                `json:"root-dir"        mapstructure:"root-dir"`
-	RPCEndpoint    string                `json:"rpc-endpoint"    mapstructure:"rpc-endpoint"`
-	TxGas          uint64                `json:"tx-gas"          mapstructure:"tx-gas"`
+	chainID        string                `json:"chain-id"        mapstructure:"chain-id"`
+	clientCtx      client.Context        `json:"client-ctx"      mapstructure:"client-ctx"`
+	encodingConfig params.EncodingConfig `json:"encoding-config" mapstructure:"encoding-config"`
+	feeDenom       string                `json:"fee-denom"       mapstructure:"fee-denom"`
+	rootDir        string                `json:"root-dir"        mapstructure:"root-dir"`
+	rpcEndpoint    string                `json:"rpc-endpoint"    mapstructure:"rpc-endpoint"`
+	txGas          uint64                `json:"tx-gas"          mapstructure:"tx-gas"`
 }
 
 // lib wide global singleton
@@ -30,13 +30,13 @@ var (
 // DefaultConfig returns library default configuration.
 func DefaultConfig() *Config {
 	return &Config{
-		ChainID:        "planetmint-testnet-1",
-		ClientCtx:      client.Context{},
-		EncodingConfig: params.EncodingConfig{},
-		FeeDenom:       "plmnt",
-		RootDir:        "~/.planetmint-go/",
-		RPCEndpoint:    "http://127.0.0.1:26657",
-		TxGas:          200000,
+		chainID:        "planetmint-testnet-1",
+		clientCtx:      client.Context{},
+		encodingConfig: params.EncodingConfig{},
+		feeDenom:       "plmnt",
+		rootDir:        "~/.planetmint-go/",
+		rpcEndpoint:    "http://127.0.0.1:26657",
+		txGas:          200000,
 	}
 }
 
@@ -65,7 +65,7 @@ func (config *Config) SetBech32PrefixForAccount(bech32Prefix string) *Config {
 func (config *Config) SetEncodingConfig(encodingConfig params.EncodingConfig) *Config {
 	changeLock.Lock()
 	defer changeLock.Unlock()
-	config.EncodingConfig = encodingConfig
+	config.encodingConfig = encodingConfig
 	return config
 }
 
@@ -73,7 +73,7 @@ func (config *Config) SetEncodingConfig(encodingConfig params.EncodingConfig) *C
 func (config *Config) SetChainID(chainID string) *Config {
 	changeLock.Lock()
 	defer changeLock.Unlock()
-	config.ChainID = chainID
+	config.chainID = chainID
 	return config
 }
 
@@ -81,7 +81,7 @@ func (config *Config) SetChainID(chainID string) *Config {
 func (config *Config) SetClientCtx(clientCtx client.Context) *Config {
 	changeLock.Lock()
 	defer changeLock.Unlock()
-	config.ClientCtx = clientCtx
+	config.clientCtx = clientCtx
 	return config
 }
 
@@ -89,7 +89,7 @@ func (config *Config) SetClientCtx(clientCtx client.Context) *Config {
 func (config *Config) SetFeeDenom(feeDenom string) *Config {
 	changeLock.Lock()
 	defer changeLock.Unlock()
-	config.FeeDenom = feeDenom
+	config.feeDenom = feeDenom
 	return config
 }
 
@@ -97,7 +97,7 @@ func (config *Config) SetFeeDenom(feeDenom string) *Config {
 func (config *Config) SetRoot(root string) *Config {
 	changeLock.Lock()
 	defer changeLock.Unlock()
-	config.RootDir = root
+	config.rootDir = root
 	return config
 }
 
@@ -105,7 +105,7 @@ func (config *Config) SetRoot(root string) *Config {
 func (config *Config) SetRPCEndpoint(rpcEndpoint string) *Config {
 	changeLock.Lock()
 	defer changeLock.Unlock()
-	config.RPCEndpoint = rpcEndpoint
+	config.rpcEndpoint = rpcEndpoint
 	return config
 }
 
@@ -113,6 +113,6 @@ func (config *Config) SetRPCEndpoint(rpcEndpoint string) *Config {
 func (config *Config) SetTxGas(txGas uint64) *Config {
 	changeLock.Lock()
 	defer changeLock.Unlock()
-	config.TxGas = txGas
+	config.txGas = txGas
 	return config
 }
