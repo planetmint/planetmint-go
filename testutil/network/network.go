@@ -749,13 +749,9 @@ func (n *Network) Cleanup() {
 	}()
 
 	n.Logger.Log("cleaning up test network...")
-
+	n.Logger.Log("Stage 1 APIs...")
 	for i := len(n.Validators) - 1; i >= 0; i-- {
 		v := n.Validators[i]
-		if v.tmNode != nil && v.tmNode.IsRunning() {
-			_ = v.tmNode.Stop()
-		}
-
 		if v.api != nil {
 			_ = v.api.Close()
 		}
@@ -767,6 +763,15 @@ func (n *Network) Cleanup() {
 			}
 		}
 	}
+	n.Logger.Log("Stage 2 CometBFT...")
+	for i := len(n.Validators) - 1; i >= 0; i-- {
+		v := n.Validators[i]
+		if v.tmNode != nil && v.tmNode.IsRunning() {
+			_ = v.tmNode.Stop()
+		}
+	}
+
+	n.Logger.Log("Stage 3 Application Threads...")
 	// waiting for all threads to be terminated
 	util.TerminationWaitGroup.Wait()
 
@@ -774,6 +779,7 @@ func (n *Network) Cleanup() {
 	// 100ms chosen randomly.
 	time.Sleep(100 * time.Millisecond)
 
+	n.Logger.Log("Stage 4 Files...")
 	if n.Config.CleanupDir {
 		_ = os.RemoveAll(n.BaseDir)
 	}
