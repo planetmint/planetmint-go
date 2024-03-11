@@ -61,7 +61,7 @@ func (s *E2ETestSuite) TestBankSendBroadcastTxWithFileLock() {
 	assert.Equal(s.T(), "received wrong fee denom; got: plmnt required: stake: invalid coins", txResponse.RawLog)
 
 	libConfig := lib.GetConfig()
-	libConfig.FeeDenom = "stake"
+	libConfig.SetFeeDenom("stake")
 
 	// incorrect coin
 	out, err = lib.BroadcastTxWithFileLock(val.Address, msg)

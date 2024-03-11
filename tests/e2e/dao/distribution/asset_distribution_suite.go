@@ -6,7 +6,6 @@ import (
 
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	"github.com/planetmint/planetmint-go/testutil/network"
-	"github.com/planetmint/planetmint-go/util"
 	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 	"github.com/stretchr/testify/suite"
@@ -42,7 +41,6 @@ func (s *AssetDistributionE2ETestSuite) SetupSuite() {
 }
 
 func (s *AssetDistributionE2ETestSuite) TearDownSuite() {
-	util.TerminationWaitGroup.Wait()
 	s.T().Log("tearing down e2e dao distribution test suites")
 }
 

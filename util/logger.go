@@ -16,6 +16,7 @@ var (
 	globalApplicationLoggerTag string
 	appLogger                  *AppLogger
 	initAppLogger              sync.Once
+	syncTestingLog             sync.Mutex
 )
 
 func init() {
@@ -33,7 +34,9 @@ func GetAppLogger() *AppLogger {
 }
 
 func (logger *AppLogger) SetTestingLogger(testingLogger *testing.T) *AppLogger {
+	syncTestingLog.Lock()
 	logger.testingLogger = testingLogger
+	syncTestingLog.Unlock()
 	return logger
 }
 
@@ -49,7 +52,9 @@ func (logger *AppLogger) testingLog(msg string, keyvals ...interface{}) {
 		return
 	}
 	msg = format(msg, keyvals...)
+	syncTestingLog.Lock()
 	logger.testingLogger.Logf(msg)
+	syncTestingLog.Unlock()
 }
 
 func (logger *AppLogger) Info(ctx sdk.Context, msg string, keyvals ...interface{}) {
