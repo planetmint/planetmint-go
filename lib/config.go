@@ -10,13 +10,13 @@ import (
 
 // Config defines library top level configuration.
 type Config struct {
-	chainID        string                `json:"chain-id"        mapstructure:"chain-id"`
-	clientCtx      client.Context        `json:"client-ctx"      mapstructure:"client-ctx"`
-	encodingConfig params.EncodingConfig `json:"encoding-config" mapstructure:"encoding-config"`
-	feeDenom       string                `json:"fee-denom"       mapstructure:"fee-denom"`
-	rootDir        string                `json:"root-dir"        mapstructure:"root-dir"`
-	rpcEndpoint    string                `json:"rpc-endpoint"    mapstructure:"rpc-endpoint"`
-	txGas          uint64                `json:"tx-gas"          mapstructure:"tx-gas"`
+	chainID        string
+	clientCtx      client.Context
+	encodingConfig params.EncodingConfig
+	feeDenom       string
+	rootDir        string
+	rpcEndpoint    string
+	txGas          uint64
 }
 
 // lib wide global singleton
