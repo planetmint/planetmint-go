@@ -43,8 +43,6 @@ func DefaultConfig() *Config {
 // GetConfig returns the config instance for the SDK.
 func GetConfig() *Config {
 	initConfig.Do(func() {
-		changeLock.Lock()
-		defer changeLock.Unlock()
 		libConfig = DefaultConfig()
 		sdkConfig = sdk.GetConfig()
 		libConfig.SetBech32PrefixForAccount("plmnt")
