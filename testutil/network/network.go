@@ -24,6 +24,7 @@ import (
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/lib"
 	"github.com/planetmint/planetmint-go/testutil/sample"
+	"github.com/planetmint/planetmint-go/util"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 
@@ -766,6 +767,8 @@ func (n *Network) Cleanup() {
 			}
 		}
 	}
+	// waiting for all threads to be terminated
+	util.TerminationWaitGroup.Wait()
 
 	// Give a brief pause for things to finish closing in other processes. Hopefully this helps with the address-in-use errors.
 	// 100ms chosen randomly.

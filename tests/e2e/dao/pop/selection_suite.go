@@ -17,7 +17,6 @@ import (
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
-	"github.com/planetmint/planetmint-go/util"
 	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 	"github.com/stretchr/testify/assert"
@@ -87,7 +86,6 @@ func (s *SelectionE2ETestSuite) SetupSuite() {
 
 // TearDownSuite clean up after testing
 func (s *SelectionE2ETestSuite) TearDownSuite() {
-	util.TerminationWaitGroup.Wait()
 	s.T().Log("tearing down e2e dao pop selection test suite")
 }
 
