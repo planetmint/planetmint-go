@@ -258,7 +258,7 @@ func (s *SelectionE2ETestSuite) TestTokenRedeemClaim() {
 	addr, _ := k.GetAddress()
 
 	// Addr sends CreateRedeemClaim => accepted query redeem claim
-	createClaimMsg := daotypes.NewMsgCreateRedeemClaim(addr.String(), "liquidAddress", 10000)
+	createClaimMsg := daotypes.NewMsgCreateRedeemClaim(addr.String(), "liquidAddress")
 	out, err := lib.BroadcastTxWithFileLock(addr, createClaimMsg)
 	s.Require().NoError(err)
 
@@ -275,7 +275,7 @@ func (s *SelectionE2ETestSuite) TestTokenRedeemClaim() {
 		fmt.Sprintf(s.errormsg, bank.FlagDenom, s.claimDenom),
 	})
 	s.Require().NoError(err)
-	assert.Equal(s.T(), "amount: \"5993140682\"\ndenom: crddl\n", balanceOut.String()) // 3 * 1997716894 - 10000 = 5993140682
+	assert.Equal(s.T(), "amount: \"0\"\ndenom: crddl\n", balanceOut.String()) // consumes all claims
 
 	// Addr sends ConfirmRedeemClaim => rejected not claim address
 	confirmMsg := daotypes.NewMsgConfirmRedeemClaim(addr.String(), 0, "liquidAddress")
@@ -302,11 +302,11 @@ func (s *SelectionE2ETestSuite) TestTokenRedeemClaim() {
 	// QueryRedeemClaim
 	qOut, err := clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdShowRedeemClaim(), []string{"liquidAddress", "0"})
 	s.Require().NoError(err)
-	assert.Equal(s.T(), "redeemClaim:\n  amount: \"10000\"\n  beneficiary: liquidAddress\n  confirmed: true\n  creator: plmnt1kp93kns6hs2066d8qw0uz84fw3vlthewt2ck6p\n  id: \"0\"\n  liquidTxHash: \"0000000000000000000000000000000000000000000000000000000000000000\"\n", qOut.String())
+	assert.Equal(s.T(), "redeemClaim:\n  amount: \"5993150682\"\n  beneficiary: liquidAddress\n  confirmed: true\n  creator: plmnt1kp93kns6hs2066d8qw0uz84fw3vlthewt2ck6p\n  id: \"0\"\n  liquidTxHash: \"0000000000000000000000000000000000000000000000000000000000000000\"\n", qOut.String())
 
 	qOut, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdRedeemClaimByLiquidTxHash(), []string{"0000000000000000000000000000000000000000000000000000000000000000"})
 	s.Require().NoError(err)
-	assert.Equal(s.T(), "redeemClaim:\n  amount: \"10000\"\n  beneficiary: liquidAddress\n  confirmed: true\n  creator: plmnt1kp93kns6hs2066d8qw0uz84fw3vlthewt2ck6p\n  id: \"0\"\n  liquidTxHash: \"0000000000000000000000000000000000000000000000000000000000000000\"\n", qOut.String())
+	assert.Equal(s.T(), "redeemClaim:\n  amount: \"5993150682\"\n  beneficiary: liquidAddress\n  confirmed: true\n  creator: plmnt1kp93kns6hs2066d8qw0uz84fw3vlthewt2ck6p\n  id: \"0\"\n  liquidTxHash: \"0000000000000000000000000000000000000000000000000000000000000000\"\n", qOut.String())
 }
 
 func (s *SelectionE2ETestSuite) createValAccount(cfg network.Config) (address sdk.AccAddress, err error) {
