@@ -20,18 +20,16 @@ func (k msgServer) CreateRedeemClaim(goCtx context.Context, msg *types.MsgCreate
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	params := k.GetParams(ctx)
 
-	err := k.validateCreateRedeemClaim(ctx, msg)
-	if err != nil {
-		return nil, err
-	}
+	addr := sdk.MustAccAddressFromBech32(msg.Creator)
+	burnCoins := k.bankKeeper.GetBalance(ctx, addr, params.ClaimDenom)
 
 	var redeemClaim = types.RedeemClaim{
 		Creator:     msg.Creator,
 		Beneficiary: msg.Beneficiary,
-		Amount:      msg.Amount,
+		Amount:      burnCoins.Amount.Uint64(),
 	}
 
-	err = k.burnClaimAmount(ctx, sdk.MustAccAddressFromBech32(msg.Creator), msg.Amount)
+	err := k.burnClaimAmount(ctx, sdk.MustAccAddressFromBech32(msg.Creator), sdk.NewCoins(burnCoins))
 	if err != nil {
 		util.GetAppLogger().Error(ctx, createRedeemClaimTag+"could not burn claim")
 	}
@@ -43,7 +41,7 @@ func (k msgServer) CreateRedeemClaim(goCtx context.Context, msg *types.MsgCreate
 
 	if util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress, k.RootDir) {
 		util.GetAppLogger().Info(ctx, fmt.Sprintf("Issuing RDDL claim: %s/%d", msg.Beneficiary, id))
-		txID, err := util.DistributeAsset(msg.Beneficiary, util.UintValueToRDDLTokenString(msg.Amount), params.ReissuanceAsset)
+		txID, err := util.DistributeAsset(msg.Beneficiary, util.UintValueToRDDLTokenString(burnCoins.Amount.Uint64()), params.ReissuanceAsset)
 		if err != nil {
 			util.GetAppLogger().Error(ctx, createRedeemClaimTag+"could not issue claim to beneficiary: "+msg.GetBeneficiary())
 		}
@@ -51,19 +49,6 @@ func (k msgServer) CreateRedeemClaim(goCtx context.Context, msg *types.MsgCreate
 	}
 
 	return &types.MsgCreateRedeemClaimResponse{}, nil
-}
-
-func (k msgServer) validateCreateRedeemClaim(ctx sdk.Context, msg *types.MsgCreateRedeemClaim) (err error) {
-	addr := sdk.MustAccAddressFromBech32(msg.Creator)
-
-	params := k.GetParams(ctx)
-	balance := k.bankKeeper.GetBalance(ctx, addr, params.ClaimDenom)
-
-	if !balance.Amount.GTE(sdk.NewIntFromUint64(msg.Amount)) {
-		return errorsmod.Wrap(sdkerrors.ErrInsufficientFunds, redeemClaimContext)
-	}
-
-	return nil
 }
 
 func (k msgServer) UpdateRedeemClaim(goCtx context.Context, msg *types.MsgUpdateRedeemClaim) (*types.MsgUpdateRedeemClaimResponse, error) {
@@ -134,9 +119,7 @@ func (k msgServer) validateConfirmRedeemClaim(ctx sdk.Context, msg *types.MsgCon
 	return nil
 }
 
-func (k msgServer) burnClaimAmount(ctx sdk.Context, addr sdk.AccAddress, amount uint64) (err error) {
-	params := k.GetParams(ctx)
-	burnCoins := sdk.NewCoins(sdk.NewCoin(params.ClaimDenom, sdk.NewIntFromUint64(amount)))
+func (k msgServer) burnClaimAmount(ctx sdk.Context, addr sdk.AccAddress, burnCoins sdk.Coins) (err error) {
 	err = k.bankKeeper.SendCoinsFromAccountToModule(ctx, addr, types.ModuleName, burnCoins)
 	if err != nil {
 		return err
