@@ -12,7 +12,6 @@ import (
 )
 
 var (
-	redeemClaimContext   = "redeem claim: "
 	createRedeemClaimTag = "create redeem claim: "
 )
 
