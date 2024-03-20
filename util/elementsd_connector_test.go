@@ -16,14 +16,12 @@ import (
 )
 
 func TestReissueAsset(t *testing.T) {
-	t.Parallel()
 	elements.Client = &elementsmocks.MockClient{}
 	_, err := util.ReissueAsset("reissueasset 06c20c8de513527f1ae6c901f74a05126525ac2d7e89306f4a7fd5ec4e674403 900.000")
 	assert.NoError(t, err)
 }
 
 func TestDistributeAsset(t *testing.T) {
-	t.Parallel()
 	elements.Client = &elementsmocks.MockClient{}
 
 	_, err := util.DistributeAsset(
@@ -34,7 +32,6 @@ func TestDistributeAsset(t *testing.T) {
 }
 
 func TestIssueNFTAsset(t *testing.T) {
-	t.Parallel()
 	elements.Client = &elementsmocks.MockClient{}
 
 	params := types.DefaultParams()

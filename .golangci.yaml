@@ -133,3 +133,6 @@ issues:
     - path: docs/docs\.go
       linters:
         - revive
+    - path: util/elementsd_connector_test\.go
+      linters:
+        - paralleltest
