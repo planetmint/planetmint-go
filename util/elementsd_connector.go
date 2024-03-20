@@ -24,7 +24,7 @@ func ReissueAsset(reissueTx string) (txID string, err error) {
 	cmdArgs := strings.Split(reissueTx, " ")
 	elementsSyncAccess.Lock()
 	defer elementsSyncAccess.Unlock()
-	result, err := elements.ReissueAsset(url, []string{cmdArgs[1], cmdArgs[2]})
+	result, err := elements.ReissueAsset(url, []string{`"` + cmdArgs[1] + `"`, cmdArgs[2]})
 	if err != nil {
 		return
 	}
@@ -39,7 +39,7 @@ func DistributeAsset(address string, amount string, reissuanceAsset string) (txI
 	elementsSyncAccess.Lock()
 	defer elementsSyncAccess.Unlock()
 	txID, err = elements.SendToAddress(url, []string{
-		address,
+		`"` + address + `"`,
 		`"` + amount + `"`,
 		`""`,
 		`""`,
@@ -62,7 +62,7 @@ func IssueNFTAsset(name string, machineAddress string, domain string) (assetID s
 		return
 	}
 
-	addressInfo, err := elements.GetAddressInfo(url, []string{address})
+	addressInfo, err := elements.GetAddressInfo(url, []string{`"` + address + `"`})
 	if err != nil {
 		return
 	}
@@ -74,7 +74,7 @@ func IssueNFTAsset(name string, machineAddress string, domain string) (assetID s
 		return
 	}
 
-	fundRawTransactionResult, err := elements.FundRawTransaction(url, []string{hex, `{"feeRate":0.00001000}`})
+	fundRawTransactionResult, err := elements.FundRawTransaction(url, []string{`"` + hex + `"`, `{"feeRate":0.00001000}`})
 	if err != nil {
 		return
 	}
@@ -109,7 +109,7 @@ func IssueNFTAsset(name string, machineAddress string, domain string) (assetID s
 		hash[i], hash[j] = hash[j], hash[i]
 	}
 
-	rawIssueAssetResults, err := elements.RawIssueAsset(url, []string{fundRawTransactionResult.Hex,
+	rawIssueAssetResults, err := elements.RawIssueAsset(url, []string{`"` + fundRawTransactionResult.Hex + `"`,
 		`[{"asset_amount":0.00000001, "asset_address":"` + address + `", "blind":false, "contract_hash":"` + fmt.Sprintf("%+x", hash) + `"}]`,
 	})
 	if err != nil {
@@ -117,13 +117,13 @@ func IssueNFTAsset(name string, machineAddress string, domain string) (assetID s
 	}
 
 	rawIssueAssetResult := rawIssueAssetResults[len(rawIssueAssetResults)-1]
-	hex, err = elements.BlindRawTransaction(url, []string{rawIssueAssetResult.Hex, `true`, `[]`, `false`})
+	hex, err = elements.BlindRawTransaction(url, []string{`"` + rawIssueAssetResult.Hex + `"`, `true`, `[]`, `false`})
 	if err != nil {
 		return
 	}
 	assetID = rawIssueAssetResult.Asset
 
-	signRawTransactionWithWalletResult, err := elements.SignRawTransactionWithWallet(url, []string{hex})
+	signRawTransactionWithWalletResult, err := elements.SignRawTransactionWithWallet(url, []string{`"` + hex + `"`})
 	if err != nil {
 		return
 	}
@@ -139,7 +139,7 @@ func IssueNFTAsset(name string, machineAddress string, domain string) (assetID s
 		return
 	}
 
-	hex, err = elements.SendRawTransaction(url, []string{signRawTransactionWithWalletResult.Hex})
+	hex, err = elements.SendRawTransaction(url, []string{`"` + signRawTransactionWithWalletResult.Hex + `"`})
 	if err != nil {
 		return
 	}
