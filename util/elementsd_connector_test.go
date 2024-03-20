@@ -1,7 +1,6 @@
 package util_test
 
 import (
-	"fmt"
 	"math/rand"
 	"strconv"
 	"sync"
@@ -17,24 +16,25 @@ import (
 )
 
 func TestReissueAsset(t *testing.T) {
+	t.Parallel()
 	elements.Client = &elementsmocks.MockClient{}
-	txid, err := util.ReissueAsset("reissueasset 06c20c8de513527f1ae6c901f74a05126525ac2d7e89306f4a7fd5ec4e674403 900.000")
-	fmt.Println("txid :" + txid)
+	_, err := util.ReissueAsset("reissueasset 06c20c8de513527f1ae6c901f74a05126525ac2d7e89306f4a7fd5ec4e674403 900.000")
 	assert.NoError(t, err)
 }
 
 func TestDistributeAsset(t *testing.T) {
+	t.Parallel()
 	elements.Client = &elementsmocks.MockClient{}
 
-	txid, err := util.DistributeAsset(
+	_, err := util.DistributeAsset(
 		"tlq1qqt5078sef4aqls29c3j3pwfmukgjug70t37x26gwyhzpdxmtmjmphar88fwsl9qcm559jevve772prhtuyf9xkxdtrhvuce6a",
 		"20",
 		"06c20c8de513527f1ae6c901f74a05126525ac2d7e89306f4a7fd5ec4e674403")
-	fmt.Println("txid :" + txid)
 	assert.NoError(t, err)
 }
 
 func TestIssueNFTAsset(t *testing.T) {
+	t.Parallel()
 	elements.Client = &elementsmocks.MockClient{}
 
 	params := types.DefaultParams()
@@ -47,10 +47,7 @@ func TestIssueNFTAsset(t *testing.T) {
 			sk, pk := sample.KeyPair(randomInt)
 			machine := moduleobject.MachineRandom(pk, pk, sk, "address "+strconv.Itoa(randomInt), randomInt)
 
-			assetID, contract, hex, err := util.IssueNFTAsset(machine.Name, machine.Address, params.AssetRegistryDomain)
-			fmt.Println("asset id :" + assetID)
-			fmt.Println("contract :" + contract)
-			fmt.Println("hex :" + hex)
+			_, _, _, err := util.IssueNFTAsset(machine.Name, machine.Address, params.AssetRegistryDomain)
 			assert.NoError(t, err)
 
 			wg.Done()
