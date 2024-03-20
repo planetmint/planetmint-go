@@ -6,6 +6,9 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        directory: [".", "lib"]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,7 +24,9 @@ jobs:
         run: go mod verify
 
       - name: Build
-        run: go build -v ./...
+        run: |
+          pushd ${{ matrix.directory }}
+          go build -v ./...
 
   proto:
     runs-on: ubuntu-latest
@@ -52,6 +57,9 @@ jobs:
 
   gofmt:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        directory: [".", "lib"]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -64,10 +72,15 @@ jobs:
           go-version: "1.21"
 
       - name: Run gofmt
-        run: if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then exit 1; fi
+        run: |
+          pushd ${{ matrix.directory }}
+          if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then exit 1; fi
 
   govet:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        directory: [".", "lib"]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -80,10 +93,15 @@ jobs:
           go-version: "1.21"
 
       - name: Run go vet
-        run: go vet ./...
+        run: |
+          pushd ${{ matrix.directory }}
+          go vet ./...
 
   staticcheck:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        directory: [".", "lib"]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -100,9 +118,13 @@ jobs:
 
       - name: Run staticcheck
         run: |
+          pushd ${{ matrix.directory }}
           staticcheck ./...
 
   golangci-lint:
+    strategy:
+      matrix:
+        directory: [".", "lib"]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -120,30 +142,13 @@ jobs:
 
       - name: Run golangci-lint
         run: |
-          golangci-lint run
-
-  golangci-lint-lib:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: "1.21"
-
-      - name: Install golangci-lint
-        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-
-      - name: Run golangci-lint
-        run: |
-          pushd lib
+          pushd ${{ matrix.directory }}
           golangci-lint run
 
   gotest:
+    strategy:
+      matrix:
+        directory: [".", "lib"]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -158,26 +163,8 @@ jobs:
 
       - name: Run tests
         run: |
+          pushd ${{ matrix.directory }}
           # Exclude generated .pb.go and .pb.gw.go files from test and coverage
           go test -coverprofile cover.out -race -vet=off -v $(go list ./... | grep -v types)
           # Print coverage by function
-          go tool cover -func=cover.out
-
-  gotest-lib:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: "1.21"
-
-      - name: Run tests
-        run: |
-          pushd lib
-          go test -coverprofile cover.out -race -vet=off -v ./...
           go tool cover -func=cover.out
