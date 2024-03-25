@@ -21,14 +21,16 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	currentBlockHeight := req.Header.GetHeight()
 
 	hexProposerAddress := hex.EncodeToString(proposerAddress)
-	if isPopHeight(ctx, k, currentBlockHeight) {
-		// select PoP participants
-		challenger, challengee := k.SelectPopParticipants(ctx)
+	go func() {
+		if isPopHeight(ctx, k, currentBlockHeight) {
+			// select PoP participants
+			challenger, challengee := k.SelectPopParticipants(ctx)
 
-		// Init PoP - independent from challenger and challengee
-		// The keeper will send the MQTT initializing message to challenger && challengee
-		util.SendInitPoP(ctx, hexProposerAddress, challenger, challengee, currentBlockHeight)
-	}
+			// Init PoP - independent from challenger and challengee
+			// The keeper will send the MQTT initializing message to challenger && challengee
+			util.SendInitPoP(ctx, hexProposerAddress, challenger, challengee, currentBlockHeight)
+		}
+	}()
 
 	if isReissuanceHeight(ctx, k, currentBlockHeight) {
 		reissuance, err := k.CreateNextReissuanceObject(ctx, currentBlockHeight)
@@ -39,7 +41,6 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 			util.GetAppLogger().Error(ctx, "error while computing the RDDL reissuance ", err)
 		}
 	}
-
 	if isDistributionHeight(ctx, k, currentBlockHeight) {
 		distribution, err := k.GetDistributionForReissuedTokens(ctx, currentBlockHeight)
 		if err != nil {
@@ -48,6 +49,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 		distribution.Proposer = hexProposerAddress
 		util.SendDistributionRequest(ctx, distribution)
 	}
+
 }
 
 func isPopHeight(ctx sdk.Context, k keeper.Keeper, height int64) bool {
