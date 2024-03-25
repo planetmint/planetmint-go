@@ -5,6 +5,7 @@ import (
 
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/keeper"
+	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 
 	abci "github.com/cometbft/cometbft/abci/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -20,9 +21,10 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	}
 	currentBlockHeight := req.Header.GetHeight()
 
+	params := k.GetParams(ctx)
 	hexProposerAddress := hex.EncodeToString(proposerAddress)
 	go func() {
-		if isPopHeight(ctx, k, currentBlockHeight) {
+		if isPopHeight(params, currentBlockHeight) {
 			// select PoP participants
 			challenger, challengee := k.SelectPopParticipants(ctx)
 
@@ -32,7 +34,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 		}
 	}()
 
-	if isReissuanceHeight(ctx, k, currentBlockHeight) {
+	if isReissuanceHeight(params, currentBlockHeight) {
 		reissuance, err := k.CreateNextReissuanceObject(ctx, currentBlockHeight)
 		if err == nil {
 			util.SendInitReissuance(ctx, hexProposerAddress, reissuance.GetCommand(), currentBlockHeight,
@@ -41,7 +43,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 			util.GetAppLogger().Error(ctx, "error while computing the RDDL reissuance ", err)
 		}
 	}
-	if isDistributionHeight(ctx, k, currentBlockHeight) {
+	if isDistributionHeight(params, currentBlockHeight) {
 		distribution, err := k.GetDistributionForReissuedTokens(ctx, currentBlockHeight)
 		if err != nil {
 			util.GetAppLogger().Error(ctx, "error while computing the RDDL distribution ", err)
@@ -49,25 +51,24 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 		distribution.Proposer = hexProposerAddress
 		util.SendDistributionRequest(ctx, distribution)
 	}
-
 }
 
-func isPopHeight(ctx sdk.Context, k keeper.Keeper, height int64) bool {
-	return height%k.GetParams(ctx).PopEpochs == 0
+func isPopHeight(params daotypes.Params, height int64) bool {
+	return height%params.PopEpochs == 0
 }
 
-func isReissuanceHeight(ctx sdk.Context, k keeper.Keeper, height int64) bool {
+func isReissuanceHeight(params daotypes.Params, height int64) bool {
 	// e.g. 483840 % 17280 = 0
-	return height%k.GetParams(ctx).ReissuanceEpochs == 0
+	return height%params.ReissuanceEpochs == 0
 }
 
-func isDistributionHeight(ctx sdk.Context, k keeper.Keeper, height int64) bool {
+func isDistributionHeight(params daotypes.Params, height int64) bool {
 	// e.g. 360 % 17280 = 360
-	if height <= k.GetParams(ctx).ReissuanceEpochs {
+	if height <= params.ReissuanceEpochs {
 		return false
 	}
 	// e.g. 484200 % 17280 = 360
-	return height%k.GetParams(ctx).ReissuanceEpochs == k.GetParams(ctx).DistributionOffset
+	return height%params.ReissuanceEpochs == params.DistributionOffset
 }
 
 func EndBlocker(_ sdk.Context, _ abci.RequestEndBlock, _ keeper.Keeper) {
