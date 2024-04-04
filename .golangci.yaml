@@ -133,3 +133,9 @@ issues:
     - path: docs/docs\.go
       linters:
         - revive
+    - path: monitor/mqtt_monitor_test\.go
+      linters:
+        - paralleltest
+    - path: monitor/.*\.go
+      linters:
+        - durationcheck
