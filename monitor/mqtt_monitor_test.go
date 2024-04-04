@@ -6,7 +6,6 @@ import (
 
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/monitor"
-	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/util/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/syndtr/goleveldb/leveldb"
@@ -14,7 +13,7 @@ import (
 
 func init() {
 	// Use MQTT mock client
-	util.MQTTClient = &mocks.MockMQTTClient{}
+	monitor.MonitorMQTTClient = &mocks.MockMQTTClient{}
 }
 
 const (
@@ -23,7 +22,7 @@ const (
 )
 
 func TestGMonitorActiveParticipants(t *testing.T) {
-	util.LazyLoadMQTTClient()
+	monitor.LazyLoadMonitorMQTTClient()
 	cfg := config.GetConfig()
 	db, err := leveldb.OpenFile("./activeActors.db", nil)
 	assert.NoError(t, err)
@@ -46,7 +45,7 @@ func TestGMonitorActiveParticipants(t *testing.T) {
 }
 
 func TestCleanupRemoval(t *testing.T) {
-	util.LazyLoadMQTTClient()
+	monitor.LazyLoadMonitorMQTTClient()
 
 	cfg := config.GetConfig()
 	db, err := leveldb.OpenFile("./activeActors.db", nil)
@@ -71,7 +70,7 @@ func TestCleanupRemoval(t *testing.T) {
 }
 
 func TestCleanupPrecisionTest(t *testing.T) {
-	util.LazyLoadMQTTClient()
+	monitor.LazyLoadMonitorMQTTClient()
 
 	cfg := config.GetConfig()
 	db, err := leveldb.OpenFile("./activeActors.db", nil)

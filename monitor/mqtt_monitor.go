@@ -2,6 +2,7 @@ package monitor
 
 import (
 	"math/rand"
+	"net"
 	"strconv"
 	"strings"
 	"sync"
@@ -14,6 +15,8 @@ import (
 	"github.com/syndtr/goleveldb/leveldb"
 )
 
+var MonitorMQTTClient util.MQTTClientI
+
 type MqttMonitor struct {
 	db                          *leveldb.DB
 	dbMutex                     sync.Mutex // Mutex to synchronize write operations
@@ -23,6 +26,22 @@ type MqttMonitor struct {
 	numberOfElements            int64
 	sdkContext                  *sdk.Context
 	contextMutex                sync.Mutex
+}
+
+func LazyLoadMonitorMQTTClient() {
+	if MonitorMQTTClient != nil {
+		return
+	}
+
+	conf := config.GetConfig()
+	hostPort := net.JoinHostPort(conf.MqttDomain, strconv.FormatInt(int64(conf.MqttPort), 10))
+	uri := "tcp://" + hostPort
+
+	opts := mqtt.NewClientOptions().AddBroker(uri)
+	opts.SetClientID(conf.ValidatorAddress + "-monitor")
+	opts.SetUsername(conf.MqttUser)
+	opts.SetPassword(conf.MqttPassword)
+	MonitorMQTTClient = mqtt.NewClient(opts)
 }
 
 func NewMqttMonitorService(db *leveldb.DB, config config.Config) *MqttMonitor {
@@ -133,8 +152,8 @@ func (mms *MqttMonitor) MqttMsgHandler(_ mqtt.Client, msg mqtt.Message) {
 }
 
 func (mms *MqttMonitor) MonitorActiveParticipants() {
-	util.LazyLoadMQTTClient()
-	if token := util.MQTTClient.Connect(); token.Wait() && token.Error() != nil {
+	LazyLoadMonitorMQTTClient()
+	if token := MonitorMQTTClient.Connect(); token.Wait() && token.Error() != nil {
 		mms.Log("[Monitor] error connecting to mqtt: " + token.Error().Error())
 		panic(token.Error())
 	}
@@ -143,7 +162,7 @@ func (mms *MqttMonitor) MonitorActiveParticipants() {
 
 	// Subscribe to a topic
 	subscriptionTopic := "tele/#"
-	if token := util.MQTTClient.Subscribe(subscriptionTopic, 0, messageHandler); token.Wait() && token.Error() != nil {
+	if token := MonitorMQTTClient.Subscribe(subscriptionTopic, 0, messageHandler); token.Wait() && token.Error() != nil {
 		mms.Log("[Monitor] error registering the mqtt subscription: " + token.Error().Error())
 		panic(token.Error())
 	}

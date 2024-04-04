@@ -26,9 +26,7 @@ type MQTTClientI interface {
 var (
 	MQTTClient                              MQTTClientI
 	mqttMachineByAddressAvailabilityMapping map[string]bool
-	mqttAcitveMachineMapping                map[string]int64
 	rwMu                                    sync.RWMutex
-	rwActiveMachineMu                       sync.RWMutex
 )
 
 const (
@@ -53,7 +51,6 @@ func LazyLoadMQTTClient() {
 
 func init() {
 	mqttMachineByAddressAvailabilityMapping = make(map[string]bool)
-	mqttAcitveMachineMapping = make(map[string]int64)
 }
 
 func SendMqttPopInitMessagesToServer(ctx sdk.Context, challenge types.Challenge) {
