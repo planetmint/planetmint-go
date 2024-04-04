@@ -21,6 +21,7 @@ type MQTTClientI interface {
 	Publish(topic string, qos byte, retained bool, payload interface{}) mqtt.Token
 	Subscribe(topic string, qos byte, callback mqtt.MessageHandler) mqtt.Token
 	Unsubscribe(topics ...string) mqtt.Token
+	IsConnected() bool
 }
 
 var (

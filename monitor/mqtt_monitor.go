@@ -153,18 +153,23 @@ func (mms *MqttMonitor) MqttMsgHandler(_ mqtt.Client, msg mqtt.Message) {
 
 func (mms *MqttMonitor) MonitorActiveParticipants() {
 	LazyLoadMonitorMQTTClient()
-	if token := MonitorMQTTClient.Connect(); token.Wait() && token.Error() != nil {
-		mms.Log("[Monitor] error connecting to mqtt: " + token.Error().Error())
-		panic(token.Error())
-	}
+	for {
+		if !MonitorMQTTClient.IsConnected() {
+			if token := MonitorMQTTClient.Connect(); token.Wait() && token.Error() != nil {
+				mms.Log("[Monitor] error connecting to mqtt: " + token.Error().Error())
+				panic(token.Error())
+			}
 
-	var messageHandler mqtt.MessageHandler = mms.MqttMsgHandler
+			var messageHandler mqtt.MessageHandler = mms.MqttMsgHandler
 
-	// Subscribe to a topic
-	subscriptionTopic := "tele/#"
-	if token := MonitorMQTTClient.Subscribe(subscriptionTopic, 0, messageHandler); token.Wait() && token.Error() != nil {
-		mms.Log("[Monitor] error registering the mqtt subscription: " + token.Error().Error())
-		panic(token.Error())
+			// Subscribe to a topic
+			subscriptionTopic := "tele/#"
+			if token := MonitorMQTTClient.Subscribe(subscriptionTopic, 0, messageHandler); token.Wait() && token.Error() != nil {
+				mms.Log("[Monitor] error registering the mqtt subscription: " + token.Error().Error())
+				panic(token.Error())
+			}
+		}
+		time.Sleep(30 * time.Second)
 	}
 }
 
