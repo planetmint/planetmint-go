@@ -15,9 +15,12 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/golang/mock/gomock"
+	"github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/monitor"
 	"github.com/planetmint/planetmint-go/x/dao/keeper"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 	"github.com/stretchr/testify/require"
+	"github.com/syndtr/goleveldb/leveldb"
 
 	daotestutil "github.com/planetmint/planetmint-go/x/dao/testutil"
 )
@@ -53,6 +56,11 @@ func DaoKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 
 	ctrl := gomock.NewController(t)
 	bk := daotestutil.NewMockBankKeeper(ctrl)
+	aciveActorsDB, err := leveldb.OpenFile("./activeActors.db", nil)
+	if err != nil {
+		panic(err)
+	}
+	mqttMonitor := monitor.NewMqttMonitorService(aciveActorsDB, *config.GetConfig())
 
 	bk.EXPECT().MintCoins(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 	bk.EXPECT().BurnCoins(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
@@ -74,10 +82,11 @@ func DaoKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		nil,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 		"",
+		mqttMonitor,
 	)
 
 	// Initialize params
-	err := k.SetParams(ctx, types.DefaultParams())
+	err = k.SetParams(ctx, types.DefaultParams())
 	if err != nil {
 		panic(err)
 	}

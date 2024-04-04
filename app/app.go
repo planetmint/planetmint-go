@@ -108,7 +108,9 @@ import (
 	solomachine "github.com/cosmos/ibc-go/v7/modules/light-clients/06-solomachine"
 	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
 	"github.com/spf13/cast"
+	"github.com/syndtr/goleveldb/leveldb"
 
+	"github.com/planetmint/planetmint-go/monitor"
 	machinemodule "github.com/planetmint/planetmint-go/x/machine"
 	machinemodulekeeper "github.com/planetmint/planetmint-go/x/machine/keeper"
 	machinemoduletypes "github.com/planetmint/planetmint-go/x/machine/types"
@@ -124,6 +126,7 @@ import (
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	pmante "github.com/planetmint/planetmint-go/app/ante"
+	plmntconfig "github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/docs"
 	appparams "github.com/planetmint/planetmint-go/lib/params"
 )
@@ -269,7 +272,8 @@ type App struct {
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
-	mm *module.Manager
+	mm          *module.Manager
+	mqttMonitor *monitor.MqttMonitor
 
 	// sm is the simulation manager
 	sm           *module.SimulationManager
@@ -333,6 +337,15 @@ func New(
 		memKeys:           memKeys,
 	}
 
+	aciveActorsDB, err := leveldb.OpenFile(homePath+"/activeActors.db", nil)
+	if err != nil {
+		panic(err)
+	}
+	app.mqttMonitor = monitor.NewMqttMonitorService(aciveActorsDB, *plmntconfig.GetConfig())
+	err = app.mqttMonitor.Start()
+	if err != nil {
+		panic(err)
+	}
 	app.ParamsKeeper = initParamsKeeper(
 		appCodec,
 		cdc,
@@ -578,6 +591,7 @@ func New(
 		app.MachineKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 		homePath,
+		app.mqttMonitor,
 	)
 	daoModule := daomodule.NewAppModule(appCodec, app.DaoKeeper, app.AccountKeeper, app.BankKeeper)
 

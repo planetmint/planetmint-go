@@ -57,3 +57,17 @@ func IsValidatorBlockProposer(ctx sdk.Context, proposerAddress []byte, rootDir s
 	result = hexProposerAddress == validatorIdentity
 	return
 }
+
+func IsValidAddress(address string) (valid bool, err error) {
+	// Attempt to decode the address
+	_, err = sdk.AccAddressFromBech32(address)
+	if err != nil {
+		return
+	}
+	if !strings.Contains(address, "plmnt") {
+		valid = false
+		return
+	}
+	valid = true
+	return
+}
