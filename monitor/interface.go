@@ -45,7 +45,6 @@ func LazyMqttMonitorLoader(homeDir string) {
 	if err != nil {
 		panic(err)
 	}
-
 }
 
 func SetContext(ctx sdk.Context) {
