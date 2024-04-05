@@ -27,7 +27,6 @@ type (
 		machineKeeper types.MachineKeeper
 		authority     string
 		RootDir       string
-		MqttMonitor   *monitor.MqttMonitor
 	}
 )
 
@@ -46,13 +45,12 @@ func NewKeeper(
 	machineKeeper types.MachineKeeper,
 	authority string,
 	rootDir string,
-	mqttMonitor *monitor.MqttMonitor,
 ) *Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
 		ps = ps.WithKeyTable(types.ParamKeyTable())
 	}
-
+	monitor.LazyMqttMonitorLoader(rootDir)
 	return &Keeper{
 		cdc:                   cdc,
 		storeKey:              storeKey,
@@ -68,7 +66,6 @@ func NewKeeper(
 		machineKeeper: machineKeeper,
 		authority:     authority,
 		RootDir:       rootDir,
-		MqttMonitor:   mqttMonitor,
 	}
 }
 

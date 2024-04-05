@@ -15,6 +15,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/planetmint/planetmint-go/app"
+	"github.com/planetmint/planetmint-go/monitor"
+	monitormocks "github.com/planetmint/planetmint-go/monitor/mocks"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/util/mocks"
@@ -39,6 +41,8 @@ func Load(t *testing.T, configs ...Config) *Network {
 
 	// use mock client for testing
 	util.MQTTClient = &mocks.MockMQTTClient{}
+	monitor.MonitorMQTTClient = &mocks.MockMQTTClient{}
+	monitor.MqttMonitorInstance = &monitormocks.MockMQTTMonitorClientI{}
 	elements.Client = &elementsmocks.MockClient{}
 	util.RegisterAssetServiceHTTPClient = &mocks.MockClient{}
 

@@ -3,6 +3,7 @@ package dao
 import (
 	"encoding/hex"
 
+	"github.com/planetmint/planetmint-go/monitor"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/keeper"
 
@@ -23,8 +24,8 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	hexProposerAddress := hex.EncodeToString(proposerAddress)
 	if isPopHeight(ctx, k, currentBlockHeight) {
 		// select PoP participants
-		k.MqttMonitor.SetContext(ctx)
-		challenger, challengee, err := k.MqttMonitor.SelectPoPParticipantsOutOfActiveActors()
+		monitor.MqttMonitorInstance.SetContext(ctx)
+		challenger, challengee, err := monitor.MqttMonitorInstance.SelectPoPParticipantsOutOfActiveActors()
 		if err != nil {
 			util.GetAppLogger().Error(ctx, "error during PoP Participant selection ", err)
 		}

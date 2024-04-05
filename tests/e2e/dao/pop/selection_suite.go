@@ -7,11 +7,13 @@ import (
 	"math"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	"github.com/planetmint/planetmint-go/lib"
+	"github.com/planetmint/planetmint-go/monitor"
 	"github.com/planetmint/planetmint-go/testutil"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
@@ -163,6 +165,7 @@ func (s *SelectionE2ETestSuite) TestPopSelectionNoActors() {
 
 func (s *SelectionE2ETestSuite) TestPopSelectionOneActors() {
 	err := e2etestutil.AttestMachine(s.network, machines[0].name, machines[0].mnemonic, 0, s.feeDenom)
+	monitor.MqttMonitorInstance.AddParticipant(machines[0].address, time.Now().Unix())
 	s.Require().NoError(err)
 
 	out := s.perpareLocalTest()
@@ -173,6 +176,7 @@ func (s *SelectionE2ETestSuite) TestPopSelectionOneActors() {
 
 func (s *SelectionE2ETestSuite) TestPopSelectionTwoActors() {
 	err := e2etestutil.AttestMachine(s.network, machines[1].name, machines[1].mnemonic, 1, s.feeDenom)
+	monitor.MqttMonitorInstance.AddParticipant(machines[1].address, time.Now().Unix())
 	s.Require().NoError(err)
 
 	out := s.perpareLocalTest()
