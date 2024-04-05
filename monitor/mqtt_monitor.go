@@ -26,6 +26,21 @@ type MqttMonitor struct {
 	numberOfElements            int64
 	sdkContext                  *sdk.Context
 	contextMutex                sync.Mutex
+	isTerminated                bool
+	terminationMutex            sync.Mutex
+}
+
+func (mms *MqttMonitor) Terminate() {
+	mms.terminationMutex.Lock()
+	mms.isTerminated = true
+	mms.terminationMutex.Unlock()
+}
+
+func (mms *MqttMonitor) IsTerminated() (isTerminated bool) {
+	mms.terminationMutex.Lock()
+	isTerminated = mms.isTerminated
+	mms.terminationMutex.Unlock()
+	return
 }
 
 func LazyLoadMonitorMQTTClient() {
@@ -115,6 +130,9 @@ func (mms *MqttMonitor) SelectPoPParticipantsOutOfActiveActors() (challenger str
 }
 
 func (mms *MqttMonitor) MqttMsgHandler(_ mqtt.Client, msg mqtt.Message) {
+	if mms.IsTerminated() {
+		return
+	}
 	topicParts := strings.Split(msg.Topic(), "/")
 	if len(topicParts) != 3 {
 		return
@@ -153,7 +171,7 @@ func (mms *MqttMonitor) MqttMsgHandler(_ mqtt.Client, msg mqtt.Message) {
 
 func (mms *MqttMonitor) MonitorActiveParticipants() {
 	LazyLoadMonitorMQTTClient()
-	for {
+	for !mms.IsTerminated() {
 		if !MonitorMQTTClient.IsConnected() {
 			if token := MonitorMQTTClient.Connect(); token.Wait() && token.Error() != nil {
 				mms.Log("[Monitor] error connecting to mqtt: " + token.Error().Error())
@@ -169,7 +187,7 @@ func (mms *MqttMonitor) MonitorActiveParticipants() {
 				panic(token.Error())
 			}
 		}
-		time.Sleep(30 * time.Second)
+		time.Sleep(5 * time.Second)
 	}
 }
 

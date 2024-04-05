@@ -44,6 +44,7 @@ func TestGMonitorActiveParticipants(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Contains(t, challenger, "plmnt")
 	assert.Contains(t, challengee, "plmnt")
+	mqttMonitor.Terminate()
 }
 
 func TestCleanupRemoval(t *testing.T) {
@@ -71,6 +72,7 @@ func TestCleanupRemoval(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "", challenger)
 	assert.Contains(t, "", challengee)
+	mqttMonitor.Terminate()
 }
 
 func TestCleanupPrecisionTest(t *testing.T) {
@@ -99,4 +101,5 @@ func TestCleanupPrecisionTest(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Contains(t, challenger, "plmnt")
 	assert.Contains(t, challengee, "plmnt")
+	mqttMonitor.Terminate()
 }

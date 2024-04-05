@@ -42,7 +42,7 @@ func Load(t *testing.T, configs ...Config) *Network {
 	// use mock client for testing
 	util.MQTTClient = &mocks.MockMQTTClient{}
 	monitor.MonitorMQTTClient = &mocks.MockMQTTClient{}
-	monitor.MqttMonitorInstance = &monitormocks.MockMQTTMonitorClientI{}
+	monitor.SetMqttMonitorInstance(&monitormocks.MockMQTTMonitorClientI{})
 	elements.Client = &elementsmocks.MockClient{}
 	util.RegisterAssetServiceHTTPClient = &mocks.MockClient{}
 

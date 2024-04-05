@@ -1,6 +1,8 @@
 package monitor
 
 import (
+	"sync"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/syndtr/goleveldb/leveldb"
@@ -13,10 +15,20 @@ type MQTTMonitorClientI interface {
 	Start() (err error)
 }
 
-var MqttMonitorInstance MQTTMonitorClientI
+var monitorMutex sync.Mutex
+var mqttMonitorInstance MQTTMonitorClientI
+
+func SetMqttMonitorInstance(monitorInstance MQTTMonitorClientI) {
+	monitorMutex.Lock()
+	mqttMonitorInstance = monitorInstance
+	monitorMutex.Unlock()
+}
 
 func LazyMqttMonitorLoader(homeDir string) {
-	if MqttMonitorInstance != nil {
+	monitorMutex.Lock()
+	tmpInstance := mqttMonitorInstance
+	monitorMutex.Unlock()
+	if tmpInstance != nil {
 		return
 	}
 	if homeDir == "" {
@@ -26,9 +38,37 @@ func LazyMqttMonitorLoader(homeDir string) {
 	if err != nil {
 		panic(err)
 	}
-	MqttMonitorInstance = NewMqttMonitorService(aciveActorsDB, *config.GetConfig())
-	err = MqttMonitorInstance.Start()
+	monitorMutex.Lock()
+	mqttMonitorInstance = NewMqttMonitorService(aciveActorsDB, *config.GetConfig())
+	monitorMutex.Unlock()
+	err = mqttMonitorInstance.Start()
 	if err != nil {
 		panic(err)
 	}
+
+}
+
+func SetContext(ctx sdk.Context) {
+	monitorMutex.Lock()
+	mqttMonitorInstance.SetContext(ctx)
+	monitorMutex.Unlock()
+}
+
+func SelectPoPParticipantsOutOfActiveActors() (challenger string, challengee string, err error) {
+	monitorMutex.Lock()
+	challenger, challengee, err = mqttMonitorInstance.SelectPoPParticipantsOutOfActiveActors()
+	monitorMutex.Unlock()
+	return
+}
+
+func Start() (err error) {
+	err = mqttMonitorInstance.Start()
+	return
+}
+
+func AddParticipant(address string, lastSeenTS int64) (err error) {
+	monitorMutex.Lock()
+	err = mqttMonitorInstance.AddParticipant(address, lastSeenTS)
+	monitorMutex.Unlock()
+	return
 }

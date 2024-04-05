@@ -81,7 +81,7 @@ func (mms *MqttMonitor) CleanupDB() {
 	defer iter.Release() // Make sure to release the iterator at the end
 
 	// Iterate over all elements in the database
-	for iter.Next() {
+	for iter.Next() && !mms.IsTerminated() {
 		// Use iter.Key() and iter.Value() to access the key and value
 		lastSeen, err := mms.getDataFromIter(iter)
 		if err != nil {
