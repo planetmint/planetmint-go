@@ -25,6 +25,8 @@ func TestGMonitorActiveParticipants(t *testing.T) {
 	monitor.LazyLoadMonitorMQTTClient()
 	cfg := config.GetConfig()
 	db, err := leveldb.OpenFile("./activeActors.db", nil)
+	defer db.Close()
+
 	assert.NoError(t, err)
 	mqttMonitor := monitor.NewMqttMonitorService(db, *cfg)
 	err = mqttMonitor.Start()
@@ -42,6 +44,7 @@ func TestGMonitorActiveParticipants(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Contains(t, challenger, "plmnt")
 	assert.Contains(t, challengee, "plmnt")
+
 }
 
 func TestCleanupRemoval(t *testing.T) {
@@ -49,6 +52,7 @@ func TestCleanupRemoval(t *testing.T) {
 
 	cfg := config.GetConfig()
 	db, err := leveldb.OpenFile("./activeActors.db", nil)
+	defer db.Close()
 	assert.NoError(t, err)
 	mqttMonitor := monitor.NewMqttMonitorService(db, *cfg)
 	err = mqttMonitor.Start()
@@ -74,6 +78,7 @@ func TestCleanupPrecisionTest(t *testing.T) {
 
 	cfg := config.GetConfig()
 	db, err := leveldb.OpenFile("./activeActors.db", nil)
+	defer db.Close()
 	assert.NoError(t, err)
 	mqttMonitor := monitor.NewMqttMonitorService(db, *cfg)
 	err = mqttMonitor.Start()
