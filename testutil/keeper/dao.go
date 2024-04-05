@@ -15,14 +15,16 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/golang/mock/gomock"
+	"github.com/planetmint/planetmint-go/monitor"
+	monitormocks "github.com/planetmint/planetmint-go/monitor/mocks"
 	"github.com/planetmint/planetmint-go/x/dao/keeper"
+	daotestutil "github.com/planetmint/planetmint-go/x/dao/testutil"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 	"github.com/stretchr/testify/require"
-
-	daotestutil "github.com/planetmint/planetmint-go/x/dao/testutil"
 )
 
 func DaoKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
+	monitor.MqttMonitorInstance = &monitormocks.MockMQTTMonitorClientI{}
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 	challengeStoreKey := storetypes.NewMemoryStoreKey(types.ChallengeKey)

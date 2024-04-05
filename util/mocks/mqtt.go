@@ -16,6 +16,7 @@ type MockMQTTClient struct {
 	UnsubscribeFunc func(topics ...string) mqtt.Token
 	IsConnectedFunc func() bool
 	connected       bool
+	connectedMutex  sync.Mutex
 }
 
 // GetConnectFunc fetches the mock client's `Connect` func
@@ -98,7 +99,9 @@ func GetUnsubscribeFunc(_ ...string) mqtt.Token {
 
 // Connect is the mock client's `Disconnect` func
 func (m *MockMQTTClient) Connect() mqtt.Token {
+	m.connectedMutex.Lock()
 	m.connected = true
+	m.connectedMutex.Unlock()
 	return GetConnectFunc()
 }
 
@@ -121,5 +124,8 @@ func (m *MockMQTTClient) Unsubscribe(topics ...string) mqtt.Token {
 }
 
 func (m *MockMQTTClient) IsConnected() bool {
-	return m.connected
+	m.connectedMutex.Lock()
+	connected := m.connected
+	m.connectedMutex.Unlock()
+	return connected
 }
