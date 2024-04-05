@@ -10,7 +10,7 @@ type MockMQTTMonitorClientI struct {
 }
 
 // AddParticipant mocks base method.
-func (m *MockMQTTMonitorClientI) AddParticipant(address string, lastSeenTS int64) error {
+func (m *MockMQTTMonitorClientI) AddParticipant(address string, _ int64) error {
 	m.myStringList = append(m.myStringList, address)
 
 	return nil
@@ -28,8 +28,7 @@ func (m *MockMQTTMonitorClientI) SelectPoPParticipantsOutOfActiveActors() (strin
 }
 
 // SetContext mocks base method.
-func (m *MockMQTTMonitorClientI) SetContext(ctx types.Context) {
-	return
+func (m *MockMQTTMonitorClientI) SetContext(_ types.Context) {
 }
 
 // Start mocks base method.
