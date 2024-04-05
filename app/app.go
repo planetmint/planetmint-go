@@ -332,6 +332,7 @@ func New(
 		tkeys:             tkeys,
 		memKeys:           memKeys,
 	}
+
 	app.ParamsKeeper = initParamsKeeper(
 		appCodec,
 		cdc,
