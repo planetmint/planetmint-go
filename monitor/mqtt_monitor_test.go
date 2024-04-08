@@ -9,6 +9,7 @@ import (
 	"github.com/planetmint/planetmint-go/util/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/syndtr/goleveldb/leveldb"
+	"github.com/syndtr/goleveldb/leveldb/storage"
 )
 
 func init() {
@@ -24,7 +25,7 @@ const (
 func TestGMonitorActiveParticipants(t *testing.T) {
 	monitor.LazyLoadMonitorMQTTClient()
 	cfg := config.GetConfig()
-	db, err := leveldb.OpenFile("./activeActors.db", nil)
+	db, err := leveldb.Open(storage.NewMemStorage(), nil)
 	assert.NoError(t, err)
 	defer db.Close()
 
@@ -51,7 +52,7 @@ func TestCleanupRemoval(t *testing.T) {
 	monitor.LazyLoadMonitorMQTTClient()
 
 	cfg := config.GetConfig()
-	db, err := leveldb.OpenFile("./activeActors.db", nil)
+	db, err := leveldb.Open(storage.NewMemStorage(), nil)
 	assert.NoError(t, err)
 	defer db.Close()
 
@@ -79,7 +80,7 @@ func TestCleanupPrecisionTest(t *testing.T) {
 	monitor.LazyLoadMonitorMQTTClient()
 
 	cfg := config.GetConfig()
-	db, err := leveldb.OpenFile("./activeActors.db", nil)
+	db, err := leveldb.Open(storage.NewMemStorage(), nil)
 	assert.NoError(t, err)
 	defer db.Close()
 
