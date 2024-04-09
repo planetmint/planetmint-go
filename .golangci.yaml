@@ -136,3 +136,9 @@ issues:
     - path: util/elementsd_connector_test\.go
       linters:
         - paralleltest
+    - path: monitor/mqtt_monitor_test\.go
+      linters:
+        - paralleltest
+    - path: monitor/.*\.go
+      linters:
+        - durationcheck

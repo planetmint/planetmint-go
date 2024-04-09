@@ -1,6 +1,7 @@
 package util
 
 import (
+	"encoding/json"
 	"net"
 	"strconv"
 	"strings"
@@ -20,6 +21,7 @@ type MQTTClientI interface {
 	Publish(topic string, qos byte, retained bool, payload interface{}) mqtt.Token
 	Subscribe(topic string, qos byte, callback mqtt.MessageHandler) mqtt.Token
 	Unsubscribe(topics ...string) mqtt.Token
+	IsConnected() bool
 }
 
 var (
@@ -32,7 +34,7 @@ const (
 	MqttCmdPrefix = "cmnd/"
 )
 
-func lazyLoadMQTTClient() {
+func LazyLoadMQTTClient() {
 	if MQTTClient != nil {
 		return
 	}
@@ -66,7 +68,7 @@ func SendMqttPopInitMessagesToServer(ctx sdk.Context, challenge types.Challenge)
 }
 
 func sendMqttPopInitMessages(challenge types.Challenge) (err error) {
-	lazyLoadMQTTClient()
+	LazyLoadMQTTClient()
 	if token := MQTTClient.Connect(); token.Wait() && token.Error() != nil {
 		err = token.Error()
 		return
@@ -92,7 +94,7 @@ func sendMqttPopInitMessages(challenge types.Challenge) (err error) {
 }
 
 func GetMqttStatusOfParticipant(address string, responseTimeoutInMs int64) (isAvailable bool, err error) {
-	lazyLoadMQTTClient()
+	LazyLoadMQTTClient()
 	if token := MQTTClient.Connect(); token.Wait() && token.Error() != nil {
 		err = token.Error()
 		return
@@ -141,4 +143,13 @@ func GetMqttStatusOfParticipant(address string, responseTimeoutInMs int64) (isAv
 	rwMu.Unlock() // Unlock after writing
 	MQTTClient.Disconnect(1000)
 	return
+}
+
+func ToJSON(payload []byte) (map[string]interface{}, error) {
+	jsonString := string(payload)
+
+	var result map[string]interface{}
+	// Unmarshal the JSON string into the map
+	err := json.Unmarshal([]byte(jsonString), &result)
+	return result, err
 }

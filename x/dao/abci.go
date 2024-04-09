@@ -3,6 +3,7 @@ package dao
 import (
 	"encoding/hex"
 
+	"github.com/planetmint/planetmint-go/monitor"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/keeper"
 
@@ -23,7 +24,15 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	hexProposerAddress := hex.EncodeToString(proposerAddress)
 	if isPopHeight(ctx, k, currentBlockHeight) {
 		// select PoP participants
-		challenger, challengee := k.SelectPopParticipants(ctx)
+		monitor.SetContext(ctx)
+		challenger, challengee, err := monitor.SelectPoPParticipantsOutOfActiveActors()
+		if err != nil {
+			util.GetAppLogger().Error(ctx, "error during PoP Participant selection ", err)
+		}
+		if err != nil || challenger == "" || challengee == "" {
+			challenger = ""
+			challengee = ""
+		}
 
 		// Init PoP - independent from challenger and challengee
 		// The keeper will send the MQTT initializing message to challenger && challengee

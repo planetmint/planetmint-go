@@ -5,15 +5,15 @@ import (
 )
 
 const (
-	factor = 100000000.0
+	Factor = 100000000.0
 )
 
 func RDDLToken2Uint(amount float64) uint64 {
-	return uint64(amount * factor)
+	return uint64(amount * Factor)
 }
 
 func RDDLToken2Float(amount uint64) float64 {
-	return float64(amount) / factor
+	return float64(amount) / Factor
 }
 
 func RDDLTokenStringToFloat(amount string) (amountFloat float64, err error) {
