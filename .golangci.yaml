@@ -133,6 +133,9 @@ issues:
     - path: docs/docs\.go
       linters:
         - revive
+    - path: util/elementsd_connector_test\.go
+      linters:
+        - paralleltest
     - path: monitor/mqtt_monitor_test\.go
       linters:
         - paralleltest
