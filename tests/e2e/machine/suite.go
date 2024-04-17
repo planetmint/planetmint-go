@@ -11,6 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	txcli "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
 	"github.com/stretchr/testify/assert"
@@ -94,6 +95,14 @@ func (s *E2ETestSuite) TestAttestMachine() {
 	}
 
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdGetMachineByPublicKey(), args)
+	s.Require().NoError(err)
+	txResponse, err := lib.GetTxResponseFromOut(out)
+	s.Require().NoError(err)
+
+	txResp, err := txcli.QueryTx(val.ClientCtx, txResponse.TxHash)
+	s.Require().NoError(err)
+
+	assert.Contains(s.T(), txResp.TxHash, txResponse.TxHash)
 	s.Require().NoError(err)
 }
 
