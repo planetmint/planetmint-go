@@ -84,6 +84,10 @@ func (dfd DeductFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bo
 	var (
 		err error
 	)
+	msgs := tx.GetMsgs()
+	if len(msgs) == 1 && sdk.MsgTypeURL(msgs[0]) == "/planetmintgo.machine.MsgAttestMachine" {
+		return next(ctx, tx, simulate)
+	}
 
 	fee := feeTx.GetFee()
 	if !simulate {
