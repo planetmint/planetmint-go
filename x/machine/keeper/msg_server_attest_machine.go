@@ -78,7 +78,6 @@ func (k msgServer) sendInitialFundingTokensToMachine(goCtx context.Context, mach
 	logMsg := fmt.Sprintf("transferring %v tokens to address %s", keeperParams.GetDaoMachineFundingAmount(), machineAddress.String())
 	util.GetAppLogger().Info(ctx, logMsg)
 	util.SendPLMNTTokens(goCtx, machineAddress, keeperParams.GetDaoMachineFundingAmount(), keeperParams.DaoMachineFundingDenom)
-	return
 }
 
 func validateExtendedPublicKey(issuer string, cfg chaincfg.Params) bool {
