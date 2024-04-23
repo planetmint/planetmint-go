@@ -88,6 +88,7 @@ func (s *E2ETestSuite) TestAttestMachine() {
 		err = lib.ErrTypeAssertionFailed
 		s.Require().NoError(err)
 	}
+	assert.Contains(s.T(), preAttestationBalance.String(), "10000")
 
 	machine := moduleobject.Machine(sample.Name, pubKey, prvKey, addr.String())
 	msg2 := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
@@ -95,6 +96,7 @@ func (s *E2ETestSuite) TestAttestMachine() {
 	s.Require().NoError(err)
 
 	// give machine attestation some time to issue the liquid asset
+	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
@@ -119,7 +121,7 @@ func (s *E2ETestSuite) TestAttestMachine() {
 	assert.Contains(s.T(), txResp.TxHash, txResponse.TxHash)
 	s.Require().NoError(err)
 
-	// Check postAttestationBalance as it should be the same as prior to the machine attestation
+	// Check postAttestationBalance it should be the preAttestationBalance + th 8800 tokens being donated to the machine (no fees are taken)
 	postAttestationBalanceOutput, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		addr.String(),
 	})
@@ -129,8 +131,7 @@ func (s *E2ETestSuite) TestAttestMachine() {
 		err = lib.ErrTypeAssertionFailed
 		s.Require().NoError(err)
 	}
-
-	assert.Equal(s.T(), preAttestationBalance, postAttestationBalance)
+	assert.Contains(s.T(), postAttestationBalance.String(), "18800")
 }
 
 func (s *E2ETestSuite) TestInvalidAttestMachine() {

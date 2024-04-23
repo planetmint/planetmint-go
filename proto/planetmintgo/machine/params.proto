@@ -11,4 +11,6 @@ message Params {
   string asset_registry_scheme =1;
   string asset_registry_domain =2;
   string asset_registry_path =3;
+  uint64 dao_machine_funding_amount = 4;
+  string dao_machine_funding_denom = 5;
 }
