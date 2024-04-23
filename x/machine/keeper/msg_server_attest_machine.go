@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	config "github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/util"
@@ -50,6 +51,8 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 		} else {
 			util.GetAppLogger().Info(ctx, "Machine NFT issuance successful: "+msg.Machine.String())
 		}
+
+		k.sendInitialFundingTokensToMachine(goCtx, msg.GetMachine().GetAddress(), params)
 	} else {
 		util.GetAppLogger().Info(ctx, "Not block proposer: skipping Machine NFT issuance")
 	}
@@ -60,7 +63,21 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 	if err != nil {
 		return nil, err
 	}
+
 	return &types.MsgAttestMachineResponse{}, err
+}
+
+func (k msgServer) sendInitialFundingTokensToMachine(goCtx context.Context, machineAddressString string, keeperParams types.Params) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	machineAddress, err := sdk.AccAddressFromBech32(machineAddressString)
+	if err != nil {
+		util.GetAppLogger().Error(ctx, "error: for provided address "+machineAddress.String())
+		return
+	}
+
+	logMsg := fmt.Sprintf("transferring %v tokens to address %s", keeperParams.GetDaoMachineFundingAmount(), machineAddress.String())
+	util.GetAppLogger().Info(ctx, logMsg)
+	util.SendTokens(goCtx, machineAddress, keeperParams.GetDaoMachineFundingAmount(), keeperParams.GetDaoMachineFundingDenom())
 }
 
 func validateExtendedPublicKey(issuer string, cfg chaincfg.Params) bool {

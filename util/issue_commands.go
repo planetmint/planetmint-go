@@ -4,6 +4,7 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/lib"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
@@ -97,5 +98,17 @@ func SendUpdateRedeemClaim(goCtx context.Context, beneficiary string, id uint64,
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
 	msg := daotypes.NewMsgUpdateRedeemClaim(sendingValidatorAddress, beneficiary, txID, id)
 	loggingContext := "redeem claim"
+	buildSignBroadcastTx(goCtx, loggingContext, sendingValidatorAddress, msg)
+}
+
+func SendTokens(goCtx context.Context, beneficiary sdk.AccAddress, amount uint64, denominator string) {
+	sendingValidatorAddress := config.GetConfig().ValidatorAddress
+
+	coin := sdk.NewCoin(denominator, sdk.NewIntFromUint64(amount))
+	coins := sdk.NewCoins(coin)
+	orgAddr := sdk.MustAccAddressFromBech32(sendingValidatorAddress)
+	msg := banktypes.NewMsgSend(orgAddr, beneficiary, coins)
+
+	loggingContext := "sending " + denominator + " tokens"
 	buildSignBroadcastTx(goCtx, loggingContext, sendingValidatorAddress, msg)
 }
