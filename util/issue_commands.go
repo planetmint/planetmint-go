@@ -101,18 +101,14 @@ func SendUpdateRedeemClaim(goCtx context.Context, beneficiary string, id uint64,
 	buildSignBroadcastTx(goCtx, loggingContext, sendingValidatorAddress, msg)
 }
 
-func SendPLMNTTokens(goCtx context.Context, beneficiary sdk.AccAddress, amount uint64, denominator string) {
+func SendTokens(goCtx context.Context, beneficiary sdk.AccAddress, amount uint64, denominator string) {
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
 
 	coin := sdk.NewCoin(denominator, sdk.NewIntFromUint64(amount))
 	coins := sdk.NewCoins(coin)
-	orgAddr, err := sdk.AccAddressFromBech32(sendingValidatorAddress)
-	if err != nil {
-		ctx := sdk.UnwrapSDKContext(goCtx)
-		GetAppLogger().Error(ctx, "sending PLMNT tokens: couldn't convert validator address to Address object")
-	}
+	orgAddr := sdk.MustAccAddressFromBech32(sendingValidatorAddress)
 	msg := banktypes.NewMsgSend(orgAddr, beneficiary, coins)
 
-	loggingContext := "sending PLMNT tokens"
+	loggingContext := "sending " + denominator + " tokens"
 	buildSignBroadcastTx(goCtx, loggingContext, sendingValidatorAddress, msg)
 }
