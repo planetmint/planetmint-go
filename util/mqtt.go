@@ -43,7 +43,7 @@ func LazyLoadMQTTClient() {
 	conf := config.GetConfig()
 	hostPort := net.JoinHostPort(conf.MqttDomain, strconv.FormatInt(int64(conf.MqttPort), 10))
 	uri := "tcp://" + hostPort
-	if conf.MqttTls {
+	if conf.MqttTLS {
 		uri = "ssl://" + hostPort
 	}
 
@@ -51,7 +51,7 @@ func LazyLoadMQTTClient() {
 	opts.SetClientID(conf.ValidatorAddress)
 	opts.SetUsername(conf.MqttUser)
 	opts.SetPassword(conf.MqttPassword)
-	if conf.MqttTls {
+	if conf.MqttTLS {
 		tlsConfig := &tls.Config{}
 		opts.SetTLSConfig(tlsConfig)
 	}

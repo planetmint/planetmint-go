@@ -41,7 +41,7 @@ type Config struct {
 	MqttPort         int    `json:"mqtt-port"         mapstructure:"mqtt-port"`
 	MqttUser         string `json:"mqtt-user"         mapstructure:"mqtt-user"`
 	MqttPassword     string `json:"mqtt-password"     mapstructure:"mqtt-password"`
-	MqttTls          bool   `json:"mqtt-tls"     mapstructure:"mqtt-tls"`
+	MqttTLS          bool   `json:"mqtt-tls"          mapstructure:"mqtt-tls"`
 }
 
 // cosmos-sdk wide global singleton
@@ -65,7 +65,7 @@ func DefaultConfig() *Config {
 		MqttPort:         1885,
 		MqttUser:         "user",
 		MqttPassword:     "password",
-		MqttTls:          true,
+		MqttTLS:          true,
 	}
 }
 
