@@ -23,7 +23,7 @@ mqtt-domain = "{{ .PlmntConfig.MqttDomain }}"
 mqtt-port = {{ .PlmntConfig.MqttPort }}
 mqtt-user = "{{ .PlmntConfig.MqttUser }}"
 mqtt-password = "{{ .PlmntConfig.MqttPassword }}"
-mqtt-tls = "{{ .PlmntConfig.MqttTls }}"
+mqtt-tls = "{{ .PlmntConfig.MqttTLS }}"
 
 `
 
