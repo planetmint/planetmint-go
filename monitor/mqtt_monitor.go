@@ -1,6 +1,7 @@
 package monitor
 
 import (
+	"crypto/tls"
 	"math/rand"
 	"net"
 	"strconv"
@@ -51,11 +52,19 @@ func LazyLoadMonitorMQTTClient() {
 	conf := config.GetConfig()
 	hostPort := net.JoinHostPort(conf.MqttDomain, strconv.FormatInt(int64(conf.MqttPort), 10))
 	uri := "tcp://" + hostPort
+	if conf.MqttTls {
+		uri = "ssl://" + hostPort
+	}
 
 	opts := mqtt.NewClientOptions().AddBroker(uri)
 	opts.SetClientID(conf.ValidatorAddress + "-monitor")
 	opts.SetUsername(conf.MqttUser)
 	opts.SetPassword(conf.MqttPassword)
+	if conf.MqttTls {
+		tlsConfig := &tls.Config{}
+		opts.SetTLSConfig(tlsConfig)
+	}
+
 	MonitorMQTTClient = mqtt.NewClient(opts)
 }
 
