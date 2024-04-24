@@ -23,6 +23,7 @@ mqtt-domain = "{{ .PlmntConfig.MqttDomain }}"
 mqtt-port = {{ .PlmntConfig.MqttPort }}
 mqtt-user = "{{ .PlmntConfig.MqttUser }}"
 mqtt-password = "{{ .PlmntConfig.MqttPassword }}"
+mqtt-tls = "{{ .PlmntConfig.MqttTLS }}"
 
 `
 
@@ -40,6 +41,7 @@ type Config struct {
 	MqttPort         int    `json:"mqtt-port"         mapstructure:"mqtt-port"`
 	MqttUser         string `json:"mqtt-user"         mapstructure:"mqtt-user"`
 	MqttPassword     string `json:"mqtt-password"     mapstructure:"mqtt-password"`
+	MqttTLS          bool   `json:"mqtt-tls"          mapstructure:"mqtt-tls"`
 }
 
 // cosmos-sdk wide global singleton
@@ -63,6 +65,7 @@ func DefaultConfig() *Config {
 		MqttPort:         1885,
 		MqttUser:         "user",
 		MqttPassword:     "password",
+		MqttTLS:          true,
 	}
 }
 
