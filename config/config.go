@@ -23,7 +23,7 @@ mqtt-domain = "{{ .PlmntConfig.MqttDomain }}"
 mqtt-port = {{ .PlmntConfig.MqttPort }}
 mqtt-user = "{{ .PlmntConfig.MqttUser }}"
 mqtt-password = "{{ .PlmntConfig.MqttPassword }}"
-
+claim-host = "{{ .PlmntConfig.ClaimHost }}"
 `
 
 // Config defines Planetmint's top level configuration
@@ -40,6 +40,7 @@ type Config struct {
 	MqttPort         int    `json:"mqtt-port"         mapstructure:"mqtt-port"`
 	MqttUser         string `json:"mqtt-user"         mapstructure:"mqtt-user"`
 	MqttPassword     string `json:"mqtt-password"     mapstructure:"mqtt-password"`
+	ClaimHost        string `json:"claim-host"        mapstructure:"claim-host"`
 }
 
 // cosmos-sdk wide global singleton
@@ -63,6 +64,7 @@ func DefaultConfig() *Config {
 		MqttPort:         1885,
 		MqttUser:         "user",
 		MqttPassword:     "password",
+		ClaimHost:        "testnet-p2r.rddl.io",
 	}
 }
 

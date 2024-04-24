@@ -3,17 +3,26 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
+	"github.com/rddl-network/rddl-claim-service/client"
+	"github.com/rddl-network/rddl-claim-service/service"
 )
 
 var (
-	createRedeemClaimTag = "create redeem claim: "
+	createRedeemClaimTag       = "create redeem claim: "
+	RDDLClaimServiceHTTPClient *http.Client
 )
+
+func init() {
+	RDDLClaimServiceHTTPClient = &http.Client{}
+}
 
 func (k msgServer) CreateRedeemClaim(goCtx context.Context, msg *types.MsgCreateRedeemClaim) (*types.MsgCreateRedeemClaimResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
@@ -39,12 +48,7 @@ func (k msgServer) CreateRedeemClaim(goCtx context.Context, msg *types.MsgCreate
 	)
 
 	if util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress, k.RootDir) {
-		util.GetAppLogger().Info(ctx, fmt.Sprintf("Issuing RDDL claim: %s/%d", msg.Beneficiary, id))
-		txID, err := util.DistributeAsset(msg.Beneficiary, util.UintValueToRDDLTokenString(burnCoins.Amount.Uint64()), params.ReissuanceAsset)
-		if err != nil {
-			util.GetAppLogger().Error(ctx, createRedeemClaimTag+"could not issue claim to beneficiary: "+msg.GetBeneficiary())
-		}
-		util.SendUpdateRedeemClaim(goCtx, msg.Beneficiary, id, txID)
+		go k.postClaimToService(ctx, msg.GetBeneficiary(), burnCoins.Amount.Uint64(), id)
 	}
 
 	return &types.MsgCreateRedeemClaimResponse{}, nil
@@ -128,4 +132,16 @@ func (k msgServer) burnClaimAmount(ctx sdk.Context, addr sdk.AccAddress, burnCoi
 		return err
 	}
 	return
+}
+
+func (k msgServer) postClaimToService(ctx sdk.Context, beneficiary string, amount uint64, id uint64) {
+	goCtx := sdk.WrapSDKContext(ctx)
+	cfg := config.GetConfig()
+	rcClient := client.NewRCClient(cfg.ClaimHost, RDDLClaimServiceHTTPClient)
+	util.GetAppLogger().Info(ctx, fmt.Sprintf("Issuing RDDL claim: %s/%d", beneficiary, id))
+	res, err := rcClient.PostClaim(goCtx, service.PostClaimRequest{Beneficiary: beneficiary, Amount: amount, ClaimID: int(id)})
+	if err != nil {
+		util.GetAppLogger().Error(ctx, createRedeemClaimTag+"could not issue claim to beneficiary: "+beneficiary)
+	}
+	util.SendUpdateRedeemClaim(goCtx, beneficiary, id, res.TxID)
 }
