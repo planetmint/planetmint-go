@@ -61,7 +61,7 @@ func DefaultConfig() *Config {
 		RPCWallet:        "rpcwallet",
 		ValidatorAddress: "plmnt1w5dww335zhh98pzv783hqre355ck3u4w4hjxcx",
 		MqttDomain:       "testnet-mqtt.rddl.io",
-		MqttPort:         1885,
+		MqttPort:         1886,
 		MqttUser:         "user",
 		MqttPassword:     "password",
 		MqttTLS:          true,
