@@ -40,7 +40,7 @@ func (k msgServer) CreateRedeemClaim(goCtx context.Context, msg *types.MsgCreate
 	)
 
 	if util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress, k.RootDir) {
-		go k.postClaimToService(ctx, msg.GetBeneficiary(), burnCoins.Amount.Uint64(), id)
+		go postClaimToService(goCtx, msg.GetBeneficiary(), burnCoins.Amount.Uint64(), id)
 	}
 
 	return &types.MsgCreateRedeemClaimResponse{}, nil
@@ -126,8 +126,8 @@ func (k msgServer) burnClaimAmount(ctx sdk.Context, addr sdk.AccAddress, burnCoi
 	return
 }
 
-func (k msgServer) postClaimToService(ctx sdk.Context, beneficiary string, amount uint64, id uint64) {
-	goCtx := sdk.WrapSDKContext(ctx)
+func postClaimToService(goCtx context.Context, beneficiary string, amount uint64, id uint64) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
 	util.GetAppLogger().Info(ctx, fmt.Sprintf("Issuing RDDL claim: %s/%d", beneficiary, id))
 	txID, err := clients.PostClaim(goCtx, beneficiary, amount, id)
 	if err != nil {
