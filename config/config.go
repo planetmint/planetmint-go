@@ -23,6 +23,7 @@ mqtt-domain = "{{ .PlmntConfig.MqttDomain }}"
 mqtt-port = {{ .PlmntConfig.MqttPort }}
 mqtt-user = "{{ .PlmntConfig.MqttUser }}"
 mqtt-password = "{{ .PlmntConfig.MqttPassword }}"
+claim-host = "{{ .PlmntConfig.ClaimHost }}"
 mqtt-tls = {{ .PlmntConfig.MqttTLS }}
 `
 
@@ -40,6 +41,7 @@ type Config struct {
 	MqttPort         int    `json:"mqtt-port"         mapstructure:"mqtt-port"`
 	MqttUser         string `json:"mqtt-user"         mapstructure:"mqtt-user"`
 	MqttPassword     string `json:"mqtt-password"     mapstructure:"mqtt-password"`
+	ClaimHost        string `json:"claim-host"        mapstructure:"claim-host"`
 	MqttTLS          bool   `json:"mqtt-tls"          mapstructure:"mqtt-tls"`
 }
 
@@ -64,6 +66,7 @@ func DefaultConfig() *Config {
 		MqttPort:         1886,
 		MqttUser:         "user",
 		MqttPassword:     "password",
+		ClaimHost:        "testnet-p2r.rddl.io",
 		MqttTLS:          true,
 	}
 }

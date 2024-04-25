@@ -14,9 +14,12 @@ import (
 	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/golang/mock/gomock"
 	"github.com/planetmint/planetmint-go/app"
+	"github.com/planetmint/planetmint-go/clients"
 	"github.com/planetmint/planetmint-go/monitor"
 	monitormocks "github.com/planetmint/planetmint-go/monitor/mocks"
+	claimmocks "github.com/planetmint/planetmint-go/testutil/mocks"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/util/mocks"
@@ -45,6 +48,12 @@ func Load(t *testing.T, configs ...Config) *Network {
 	monitor.SetMqttMonitorInstance(&monitormocks.MockMQTTMonitorClientI{})
 	elements.Client = &elementsmocks.MockClient{}
 	util.RegisterAssetServiceHTTPClient = &mocks.MockClient{}
+	ctrl := gomock.NewController(t)
+	claimMock := claimmocks.NewMockIRCClient(ctrl)
+	claimMock.EXPECT().PostClaim(gomock.Any(), gomock.Any()).AnyTimes().Return(clients.PostClaimResponse{
+		TxID: "0000000000000000000000000000000000000000000000000000000000000000",
+	}, nil)
+	clients.ClaimServiceClient = claimMock
 
 	// enable application logger in tests
 	appLogger := util.GetAppLogger()
