@@ -23,8 +23,7 @@ mqtt-domain = "{{ .PlmntConfig.MqttDomain }}"
 mqtt-port = {{ .PlmntConfig.MqttPort }}
 mqtt-user = "{{ .PlmntConfig.MqttUser }}"
 mqtt-password = "{{ .PlmntConfig.MqttPassword }}"
-mqtt-tls = "{{ .PlmntConfig.MqttTLS }}"
-
+mqtt-tls = {{ .PlmntConfig.MqttTLS }}
 `
 
 // Config defines Planetmint's top level configuration
