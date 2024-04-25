@@ -3,26 +3,18 @@ package keeper
 import (
 	"context"
 	"fmt"
-	"net/http"
 
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/planetmint/planetmint-go/config"
+	"github.com/planetmint/planetmint-go/clients"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
-	"github.com/rddl-network/rddl-claim-service/client"
-	"github.com/rddl-network/rddl-claim-service/service"
 )
 
 var (
-	createRedeemClaimTag       = "create redeem claim: "
-	RDDLClaimServiceHTTPClient *http.Client
+	createRedeemClaimTag = "create redeem claim: "
 )
-
-func init() {
-	RDDLClaimServiceHTTPClient = &http.Client{}
-}
 
 func (k msgServer) CreateRedeemClaim(goCtx context.Context, msg *types.MsgCreateRedeemClaim) (*types.MsgCreateRedeemClaimResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
@@ -136,12 +128,10 @@ func (k msgServer) burnClaimAmount(ctx sdk.Context, addr sdk.AccAddress, burnCoi
 
 func (k msgServer) postClaimToService(ctx sdk.Context, beneficiary string, amount uint64, id uint64) {
 	goCtx := sdk.WrapSDKContext(ctx)
-	cfg := config.GetConfig()
-	rcClient := client.NewRCClient(cfg.ClaimHost, RDDLClaimServiceHTTPClient)
 	util.GetAppLogger().Info(ctx, fmt.Sprintf("Issuing RDDL claim: %s/%d", beneficiary, id))
-	res, err := rcClient.PostClaim(goCtx, service.PostClaimRequest{Beneficiary: beneficiary, Amount: amount, ClaimID: int(id)})
+	txID, err := clients.PostClaim(goCtx, beneficiary, amount, id)
 	if err != nil {
 		util.GetAppLogger().Error(ctx, createRedeemClaimTag+"could not issue claim to beneficiary: "+beneficiary)
 	}
-	util.SendUpdateRedeemClaim(goCtx, beneficiary, id, res.TxID)
+	util.SendUpdateRedeemClaim(goCtx, beneficiary, id, txID)
 }
