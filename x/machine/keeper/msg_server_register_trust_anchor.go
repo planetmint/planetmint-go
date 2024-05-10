@@ -35,6 +35,12 @@ func validatePublicKey(pubkey string) bool {
 		return false
 	}
 
+	//uncompressed key
+	if len(pubkeyBytes) == 64 {
+		return true
+	}
+
+	// compressed key
 	// Check if byte slice has correct length
 	if len(pubkeyBytes) != 33 {
 		return false
