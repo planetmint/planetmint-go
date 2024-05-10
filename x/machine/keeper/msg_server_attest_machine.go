@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	config "github.com/planetmint/planetmint-go/config"
@@ -13,6 +14,7 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/rddl-network/go-utils/signature"
 )
 
 func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMachine) (*types.MsgAttestMachineResponse, error) {
@@ -22,9 +24,17 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 	// and removed from here due to inconsistency or checking the same thing over and over again.
 	ta, _, _ := k.GetTrustAnchor(ctx, msg.Machine.MachineId)
 
-	isValidMachineID, err := util.ValidateSignature(msg.Machine.MachineId, msg.Machine.MachineIdSignature, msg.Machine.MachineId)
-	if !isValidMachineID {
-		return nil, err
+	isValidSecp256r1, errR1 := signature.ValidateSECP256R1Signature(msg.Machine.MachineId, msg.Machine.MachineIdSignature, msg.Machine.MachineId)
+	if errR1 != nil || !isValidSecp256r1 {
+		isValidSecp256k1, errK1 := signature.ValidateSignature(msg.Machine.MachineId, msg.Machine.MachineIdSignature, msg.Machine.MachineId)
+		if errK1 != nil || !isValidSecp256k1 {
+			errStr := ""
+			if errR1 != nil {
+				errStr = errR1.Error()
+			}
+			aggreatedErrorMessage := "Invalid machine signature: " + errStr + ", " + errK1.Error()
+			return nil, errors.New(aggreatedErrorMessage)
+		}
 	}
 
 	isValidIssuerPlanetmint := validateExtendedPublicKey(msg.Machine.IssuerPlanetmint, config.PlmntNetParams)
@@ -59,7 +69,7 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 
 	k.StoreMachine(ctx, *msg.Machine)
 	k.StoreMachineIndex(ctx, *msg.Machine)
-	err = k.StoreTrustAnchor(ctx, ta, true)
+	err := k.StoreTrustAnchor(ctx, ta, true)
 	if err != nil {
 		return nil, err
 	}
