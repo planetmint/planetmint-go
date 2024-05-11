@@ -35,7 +35,7 @@ func validatePublicKey(pubkey string) bool {
 		return false
 	}
 
-	//uncompressed key
+	// uncompressed key
 	if len(pubkeyBytes) == 64 {
 		return true
 	}
