@@ -289,6 +289,8 @@ func (s *SelectionE2ETestSuite) TestTokenRedeemClaim() {
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
+	s.Require().NoError(s.network.WaitForNextBlock()) // added another waiting block to pass CI test cases (they are a bit slower)
+
 	_, err = clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().ErrorContains(err, "failed to execute message; message index: 0: expected: plmnt19cl05ztgt8ey6v86hjjjn3thfmpu6q2xtveehc; got: plmnt1kp93kns6hs2066d8qw0uz84fw3vlthewt2ck6p: invalid claim address")
 
