@@ -56,7 +56,7 @@ func LazyLoadMonitorMQTTClient() {
 		uri = "ssl://" + hostPort
 	}
 
-	opts := mqtt.NewClientOptions().AddBroker(uri)
+	opts := mqtt.NewClientOptions().AddBroker(uri).SetKeepAlive(60)
 	opts.SetClientID(conf.ValidatorAddress + "-monitor")
 	opts.SetUsername(conf.MqttUser)
 	opts.SetPassword(conf.MqttPassword)
@@ -202,10 +202,12 @@ func (mms *MqttMonitor) MonitorActiveParticipants() {
 
 func (mms *MqttMonitor) Log(msg string) {
 	mms.contextMutex.Lock()
-	if mms.sdkContext != nil {
-		util.GetAppLogger().Info(*mms.sdkContext, msg)
-	}
+	localContext := mms.sdkContext
 	mms.contextMutex.Unlock()
+	if localContext != nil {
+		util.GetAppLogger().Info(*localContext, msg)
+	}
+
 }
 
 func (mms *MqttMonitor) SetContext(ctx sdk.Context) {
