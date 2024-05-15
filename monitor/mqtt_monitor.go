@@ -217,6 +217,7 @@ func (mms *MqttMonitor) MonitorActiveParticipants() {
 				log.Println("[app] [Monitor] retry establishing a connection")
 				break // Exit inner loop on disconnect
 			}
+			mms.SetMaxRetries()
 			time.Sleep(60 * time.Second) // Adjust sleep time based on your needs
 		}
 	}
