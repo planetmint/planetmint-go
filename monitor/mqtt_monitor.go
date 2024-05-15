@@ -84,7 +84,7 @@ func (mms *MqttMonitor) runPeriodicTasks() {
 	defer tickerRestablishConnection.Stop()
 	defer tickerCleanup.Stop()
 
-	for {
+	for !mms.IsTerminated() {
 		select {
 		case <-tickerRestablishConnection.C:
 			go mms.MonitorActiveParticipants()
@@ -187,6 +187,7 @@ func (mms *MqttMonitor) MonitorActiveParticipants() {
 	clientMutex.Lock()
 	if localMqttClient != nil {
 		log.Println("[app] [Monitor] client is still working")
+		clientMutex.Unlock()
 		return
 	}
 	localMqttClient = mms.lazyLoadMonitorMQTTClient()
