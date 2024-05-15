@@ -3,7 +3,6 @@ package monitor
 import (
 	"sync"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/syndtr/goleveldb/leveldb"
 )
@@ -11,7 +10,6 @@ import (
 type MQTTMonitorClientI interface {
 	AddParticipant(address string, lastSeenTS int64) (err error)
 	SelectPoPParticipantsOutOfActiveActors() (challenger string, challengee string, err error)
-	SetContext(ctx sdk.Context)
 	Start() (err error)
 }
 
@@ -45,12 +43,6 @@ func LazyMqttMonitorLoader(homeDir string) {
 	if err != nil {
 		panic(err)
 	}
-}
-
-func SetContext(ctx sdk.Context) {
-	monitorMutex.Lock()
-	mqttMonitorInstance.SetContext(ctx)
-	monitorMutex.Unlock()
 }
 
 func SelectPoPParticipantsOutOfActiveActors() (challenger string, challengee string, err error) {

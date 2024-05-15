@@ -242,9 +242,3 @@ func (mms *MqttMonitor) Log(msg string) {
 		util.GetAppLogger().Info(*localContext, msg)
 	}
 }
-
-func (mms *MqttMonitor) SetContext(ctx sdk.Context) {
-	mms.contextMutex.Lock()
-	mms.sdkContext = &ctx
-	mms.contextMutex.Unlock()
-}

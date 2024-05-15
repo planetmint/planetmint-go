@@ -1,9 +1,5 @@
 package mocks
 
-import (
-	types "github.com/cosmos/cosmos-sdk/types"
-)
-
 // MockMQTTMonitorClientI is a mock of MQTTMonitorClientI interface.
 type MockMQTTMonitorClientI struct {
 	myStringList []string
@@ -25,10 +21,6 @@ func (m *MockMQTTMonitorClientI) SelectPoPParticipantsOutOfActiveActors() (strin
 		challengee = m.myStringList[amount-1]
 	}
 	return challenger, challengee, nil
-}
-
-// SetContext mocks base method.
-func (m *MockMQTTMonitorClientI) SetContext(_ types.Context) {
 }
 
 // Start mocks base method.
