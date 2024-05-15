@@ -19,12 +19,11 @@ import (
 
 var MonitorMQTTClient util.MQTTClientI
 var clientMutex sync.Mutex
-var localMqttClient util.MQTTClientI = nil
+var localMqttClient util.MQTTClientI
 
 type MqttMonitor struct {
 	db                          *leveldb.DB
 	dbMutex                     sync.Mutex // Mutex to synchronize write operations
-	ticker                      *time.Ticker
 	CleanupPeriodicityInMinutes time.Duration
 	config                      config.Config
 	numberOfElements            int64
@@ -93,7 +92,6 @@ func (mms *MqttMonitor) runPeriodicTasks() {
 			go mms.CleanupDB()
 		}
 	}
-
 }
 
 func (mms *MqttMonitor) Start() (err error) {
@@ -244,7 +242,6 @@ func (mms *MqttMonitor) Log(msg string) {
 	if localContext != nil {
 		util.GetAppLogger().Info(*localContext, msg)
 	}
-
 }
 
 func (mms *MqttMonitor) SetContext(ctx sdk.Context) {
