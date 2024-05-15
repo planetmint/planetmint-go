@@ -23,7 +23,6 @@ const (
 )
 
 func TestGMonitorActiveParticipants(t *testing.T) {
-	monitor.LazyLoadMonitorMQTTClient()
 	cfg := config.GetConfig()
 	db, err := leveldb.Open(storage.NewMemStorage(), nil)
 	assert.NoError(t, err)
@@ -49,8 +48,6 @@ func TestGMonitorActiveParticipants(t *testing.T) {
 }
 
 func TestCleanupRemoval(t *testing.T) {
-	monitor.LazyLoadMonitorMQTTClient()
-
 	cfg := config.GetConfig()
 	db, err := leveldb.Open(storage.NewMemStorage(), nil)
 	assert.NoError(t, err)
@@ -77,8 +74,6 @@ func TestCleanupRemoval(t *testing.T) {
 }
 
 func TestCleanupPrecisionTest(t *testing.T) {
-	monitor.LazyLoadMonitorMQTTClient()
-
 	cfg := config.GetConfig()
 	db, err := leveldb.Open(storage.NewMemStorage(), nil)
 	assert.NoError(t, err)
