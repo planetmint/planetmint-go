@@ -187,6 +187,7 @@ func (mms *MqttMonitor) MonitorActiveParticipants() {
 	clientMutex.Lock()
 	if localMqttClient != nil {
 		log.Println("[app] [Monitor] client is still working")
+		clientMutex.Unlock()
 		return
 	}
 	localMqttClient = mms.lazyLoadMonitorMQTTClient()
