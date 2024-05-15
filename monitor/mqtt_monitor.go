@@ -126,7 +126,6 @@ func (mms *MqttMonitor) SelectPoPParticipantsOutOfActiveActors() (challenger str
 	found := 0
 	var lastSeen LastSeenEvent
 	for iter.Next() {
-		log.Println("[app] [Monitor] count: " + strconv.Itoa(count))
 		if count == randomChallenger {
 			lastSeen, err = mms.getDataFromIter(iter)
 			if err != nil {

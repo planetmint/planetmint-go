@@ -96,8 +96,6 @@ func (mms *MqttMonitor) CleanupDB() {
 			continue
 		}
 		timeThreshold := time.Now().Add(-1 * mms.CleanupPeriodicityInMinutes * time.Minute).Unix()
-		log.Println("[app] [Monitor] threshold " + strconv.FormatInt(timeThreshold, 10))
-		log.Println("[app] [Monitor] timestamp " + strconv.FormatInt(lastSeen.Timestamp, 10))
 		if lastSeen.Timestamp <= timeThreshold {
 			// If the entry is older than 12 hours, delete it
 			err := mms.deleteEntry(iter.Key())
