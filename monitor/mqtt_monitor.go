@@ -84,7 +84,7 @@ func (mms *MqttMonitor) runPeriodicTasks() {
 	defer tickerRestablishConnection.Stop()
 	defer tickerCleanup.Stop()
 
-	for {
+	for !mms.IsTerminated() {
 		select {
 		case <-tickerRestablishConnection.C:
 			go mms.MonitorActiveParticipants()
