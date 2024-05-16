@@ -221,7 +221,7 @@ func (mms *MqttMonitor) MonitorActiveParticipants() {
 		log.Println("[app] [Monitor] subscribed to tele/# channels")
 
 		for !mms.IsTerminated() {
-			if !mqttClient.IsConnected() {
+			if !mqttClient.IsConnected() || !mqttClient.IsConnectionOpen() {
 				log.Println("[app] [Monitor] retry establishing a connection")
 				break // Exit inner loop on disconnect
 			}
