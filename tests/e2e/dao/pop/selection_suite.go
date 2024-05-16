@@ -164,9 +164,9 @@ func (s *SelectionE2ETestSuite) TestPopSelectionNoActors() {
 }
 
 func (s *SelectionE2ETestSuite) TestPopSelectionOneActors() {
-	err := e2etestutil.AttestMachine(s.network, machines[0].name, machines[0].mnemonic, 0, s.feeDenom)
+	err := monitor.AddParticipant(machines[0].address, time.Now().Unix())
 	s.Require().NoError(err)
-	err = monitor.AddParticipant(machines[0].address, time.Now().Unix())
+	err = e2etestutil.AttestMachine(s.network, machines[0].name, machines[0].mnemonic, 0, s.feeDenom)
 	s.Require().NoError(err)
 
 	out := s.perpareLocalTest()
@@ -176,9 +176,9 @@ func (s *SelectionE2ETestSuite) TestPopSelectionOneActors() {
 }
 
 func (s *SelectionE2ETestSuite) TestPopSelectionTwoActors() {
-	err := e2etestutil.AttestMachine(s.network, machines[1].name, machines[1].mnemonic, 1, s.feeDenom)
+	err := monitor.AddParticipant(machines[1].address, time.Now().Unix())
 	s.Require().NoError(err)
-	err = monitor.AddParticipant(machines[1].address, time.Now().Unix())
+	err = e2etestutil.AttestMachine(s.network, machines[1].name, machines[1].mnemonic, 1, s.feeDenom)
 	s.Require().NoError(err)
 
 	out := s.perpareLocalTest()
@@ -310,13 +310,11 @@ func (s *SelectionE2ETestSuite) TestTokenRedeemClaim() {
 	// QueryRedeemClaim
 	qOut, err := clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdShowRedeemClaim(), []string{"liquidAddress", "0"})
 	s.Require().NoError(err)
-	// from 5993150682 to 3995433788 due to more waiting blocks (CI race conditions)
-	assert.Equal(s.T(), "redeemClaim:\n  amount: \"3995433788\"\n  beneficiary: liquidAddress\n  confirmed: true\n  creator: plmnt1kp93kns6hs2066d8qw0uz84fw3vlthewt2ck6p\n  id: \"0\"\n  liquidTxHash: \"0000000000000000000000000000000000000000000000000000000000000000\"\n", qOut.String())
+	assert.Equal(s.T(), "redeemClaim:\n  amount: \"5993150682\"\n  beneficiary: liquidAddress\n  confirmed: true\n  creator: plmnt1kp93kns6hs2066d8qw0uz84fw3vlthewt2ck6p\n  id: \"0\"\n  liquidTxHash: \"0000000000000000000000000000000000000000000000000000000000000000\"\n", qOut.String())
 
 	qOut, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdRedeemClaimByLiquidTxHash(), []string{"0000000000000000000000000000000000000000000000000000000000000000"})
 	s.Require().NoError(err)
-	// from 5993150682 to 3995433788 due to more waiting blocks (CI race conditions)
-	assert.Equal(s.T(), "redeemClaim:\n  amount: \"3995433788\"\n  beneficiary: liquidAddress\n  confirmed: true\n  creator: plmnt1kp93kns6hs2066d8qw0uz84fw3vlthewt2ck6p\n  id: \"0\"\n  liquidTxHash: \"0000000000000000000000000000000000000000000000000000000000000000\"\n", qOut.String())
+	assert.Equal(s.T(), "redeemClaim:\n  amount: \"5993150682\"\n  beneficiary: liquidAddress\n  confirmed: true\n  creator: plmnt1kp93kns6hs2066d8qw0uz84fw3vlthewt2ck6p\n  id: \"0\"\n  liquidTxHash: \"0000000000000000000000000000000000000000000000000000000000000000\"\n", qOut.String())
 }
 
 func (s *SelectionE2ETestSuite) createValAccount(cfg network.Config) (address sdk.AccAddress, err error) {
