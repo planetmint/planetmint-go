@@ -28,7 +28,7 @@ type MqttMonitor struct {
 	sdkContext                  *sdk.Context
 	contextMutex                sync.Mutex
 	isTerminated                bool
-	terminationMutex            sync.Mutex
+	terminationMutex            sync.RWMutex
 	maxRetries                  time.Duration
 	lostConnection              bool
 	lostConnectionMutex         sync.Mutex
@@ -43,9 +43,9 @@ func (mms *MqttMonitor) Terminate() {
 }
 
 func (mms *MqttMonitor) IsTerminated() (isTerminated bool) {
-	mms.terminationMutex.Lock()
+	mms.terminationMutex.RLock()
 	isTerminated = mms.isTerminated
-	mms.terminationMutex.Unlock()
+	mms.terminationMutex.RUnlock()
 	return
 }
 
