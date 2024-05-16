@@ -51,7 +51,7 @@ func (mms *MqttMonitor) IsTerminated() (isTerminated bool) {
 
 func getClientID() string {
 	conf := config.GetConfig()
-	return "-monitor" + conf.ValidatorAddress
+	return "monitor-" + conf.ValidatorAddress
 }
 
 func (mms *MqttMonitor) lazyLoadMonitorMQTTClient() util.MQTTClientI {
