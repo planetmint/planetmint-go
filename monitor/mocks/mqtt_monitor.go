@@ -1,5 +1,7 @@
 package mocks
 
+import "log"
+
 // MockMQTTMonitorClientI is a mock of MQTTMonitorClientI interface.
 type MockMQTTMonitorClientI struct {
 	myStringList []string
@@ -7,6 +9,7 @@ type MockMQTTMonitorClientI struct {
 
 // AddParticipant mocks base method.
 func (m *MockMQTTMonitorClientI) AddParticipant(address string, _ int64) error {
+	log.Println("[app] [Monitor] [Mock] added participant: " + address)
 	m.myStringList = append(m.myStringList, address)
 
 	return nil
@@ -20,6 +23,7 @@ func (m *MockMQTTMonitorClientI) SelectPoPParticipantsOutOfActiveActors() (strin
 		challenger = m.myStringList[amount-2]
 		challengee = m.myStringList[amount-1]
 	}
+	log.Println("[app] [Monitor] [Mock] participants: " + challenger + ", " + challengee)
 	return challenger, challengee, nil
 }
 
