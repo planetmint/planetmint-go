@@ -25,16 +25,13 @@ func (mms *MqttMonitor) AddParticipant(address string, lastSeenTS int64) (err er
 		log.Println("[app] [Monitor] Error serializing ConversionRequest: " + err.Error())
 		return
 	}
-	increaseCounter := false
+
 	// returns an error if the entry does not exist (we have to increase the counter in this case)
 	_, err = mms.db.Get([]byte(address), nil)
 	if err != nil {
-		increaseCounter = true
+		mms.setNumDBElements(mms.getNumDBElements() + 1)
 	}
 	mms.dbMutex.Lock()
-	if increaseCounter {
-		mms.numberOfElements++
-	}
 	err = mms.db.Put([]byte(address), lastSeenBytes, nil)
 	mms.dbMutex.Unlock()
 	if err != nil {
@@ -47,9 +44,9 @@ func (mms *MqttMonitor) AddParticipant(address string, lastSeenTS int64) (err er
 }
 
 func (mms *MqttMonitor) deleteEntry(key []byte) (err error) {
+	mms.setNumDBElements(mms.getNumDBElements() - 1)
 	mms.dbMutex.Lock()
 	err = mms.db.Delete(key, nil)
-	mms.numberOfElements--
 	mms.dbMutex.Unlock()
 	return
 }

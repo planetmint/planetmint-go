@@ -24,6 +24,7 @@ type MqttMonitor struct {
 	dbMutex                     sync.Mutex // Mutex to synchronize write operations
 	CleanupPeriodicityInMinutes time.Duration
 	config                      config.Config
+	numberOfElementsMutex       sync.RWMutex
 	numberOfElements            int64
 	sdkContext                  *sdk.Context
 	contextMutex                sync.Mutex
@@ -47,6 +48,18 @@ func (mms *MqttMonitor) IsTerminated() (isTerminated bool) {
 	isTerminated = mms.isTerminated
 	mms.terminationMutex.RUnlock()
 	return
+}
+
+func (mms *MqttMonitor) getNumDBElements() int64 {
+	mms.numberOfElementsMutex.RLock()
+	defer mms.numberOfElementsMutex.RUnlock()
+	return mms.numberOfElements
+}
+
+func (mms *MqttMonitor) setNumDBElements(numElements int64) {
+	mms.numberOfElementsMutex.Lock()
+	defer mms.numberOfElementsMutex.Unlock()
+	mms.numberOfElements = numElements
 }
 
 func getClientID() string {
@@ -107,7 +120,7 @@ func (mms *MqttMonitor) Start() (err error) {
 	if err != nil {
 		return
 	}
-	mms.numberOfElements = amount
+	mms.setNumDBElements(amount)
 	go mms.runPeriodicTasks()
 	go mms.MonitorActiveParticipants()
 	go mms.CleanupDB()
@@ -116,17 +129,19 @@ func (mms *MqttMonitor) Start() (err error) {
 func (mms *MqttMonitor) getRandomNumbers() (challenger int, challengee int) {
 	for challenger == challengee {
 		// Generate random numbers
-		challenger = rand.Intn(int(mms.numberOfElements))
-		challengee = rand.Intn(int(mms.numberOfElements))
+		numElements := int(mms.getNumDBElements())
+		challenger = rand.Intn(numElements)
+		challengee = rand.Intn(numElements)
 	}
 	return
 }
 func (mms *MqttMonitor) SelectPoPParticipantsOutOfActiveActors() (challenger string, challengee string, err error) {
-	if mms.numberOfElements < 2 {
+	numElements := int(mms.getNumDBElements())
+	if numElements < 2 {
 		return
 	}
 	randomChallenger, randomChallengee := mms.getRandomNumbers()
-	log.Println("[app] [Monitor] number of elements: " + strconv.Itoa(int(mms.numberOfElements)))
+	log.Println("[app] [Monitor] number of elements: " + strconv.Itoa(numElements))
 	log.Println("[app] [Monitor] selected IDs: " + strconv.Itoa(randomChallenger) + " " + strconv.Itoa(randomChallengee))
 	iter := mms.db.NewIterator(nil, nil)
 	defer iter.Release()
