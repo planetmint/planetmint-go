@@ -13,7 +13,7 @@ type MQTTMonitorClientI interface {
 	Start() (err error)
 }
 
-var monitorMutex sync.Mutex
+var monitorMutex sync.RWMutex
 var mqttMonitorInstance MQTTMonitorClientI
 
 func SetMqttMonitorInstance(monitorInstance MQTTMonitorClientI) {
@@ -23,9 +23,9 @@ func SetMqttMonitorInstance(monitorInstance MQTTMonitorClientI) {
 }
 
 func LazyMqttMonitorLoader(homeDir string) {
-	monitorMutex.Lock()
+	monitorMutex.RLock()
 	tmpInstance := mqttMonitorInstance
-	monitorMutex.Unlock()
+	monitorMutex.RUnlock()
 	if tmpInstance != nil {
 		return
 	}
@@ -36,9 +36,8 @@ func LazyMqttMonitorLoader(homeDir string) {
 	if err != nil {
 		panic(err)
 	}
-	monitorMutex.Lock()
-	mqttMonitorInstance = NewMqttMonitorService(aciveActorsDB, *config.GetConfig())
-	monitorMutex.Unlock()
+
+	SetMqttMonitorInstance(NewMqttMonitorService(aciveActorsDB, *config.GetConfig()))
 	err = mqttMonitorInstance.Start()
 	if err != nil {
 		panic(err)
@@ -46,9 +45,9 @@ func LazyMqttMonitorLoader(homeDir string) {
 }
 
 func SelectPoPParticipantsOutOfActiveActors() (challenger string, challengee string, err error) {
-	monitorMutex.Lock()
+	monitorMutex.RLock()
 	challenger, challengee, err = mqttMonitorInstance.SelectPoPParticipantsOutOfActiveActors()
-	monitorMutex.Unlock()
+	monitorMutex.RUnlock()
 	return
 }
 
@@ -58,8 +57,8 @@ func Start() (err error) {
 }
 
 func AddParticipant(address string, lastSeenTS int64) (err error) {
-	monitorMutex.Lock()
+	monitorMutex.RLock()
 	err = mqttMonitorInstance.AddParticipant(address, lastSeenTS)
-	monitorMutex.Unlock()
+	monitorMutex.RUnlock()
 	return
 }

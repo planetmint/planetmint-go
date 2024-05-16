@@ -18,20 +18,23 @@ import (
 )
 
 var MonitorMQTTClient util.MQTTClientI
-var clientMutex sync.Mutex
-var localMqttClient util.MQTTClientI
 
 type MqttMonitor struct {
 	db                          *leveldb.DB
 	dbMutex                     sync.Mutex // Mutex to synchronize write operations
 	CleanupPeriodicityInMinutes time.Duration
 	config                      config.Config
+	numberOfElementsMutex       sync.RWMutex
 	numberOfElements            int64
 	sdkContext                  *sdk.Context
 	contextMutex                sync.Mutex
 	isTerminated                bool
-	terminationMutex            sync.Mutex
+	terminationMutex            sync.RWMutex
 	maxRetries                  time.Duration
+	lostConnection              bool
+	lostConnectionMutex         sync.Mutex
+	clientMutex                 sync.Mutex
+	localMqttClient             util.MQTTClientI
 }
 
 func (mms *MqttMonitor) Terminate() {
@@ -41,10 +44,27 @@ func (mms *MqttMonitor) Terminate() {
 }
 
 func (mms *MqttMonitor) IsTerminated() (isTerminated bool) {
-	mms.terminationMutex.Lock()
+	mms.terminationMutex.RLock()
 	isTerminated = mms.isTerminated
-	mms.terminationMutex.Unlock()
+	mms.terminationMutex.RUnlock()
 	return
+}
+
+func (mms *MqttMonitor) getNumDBElements() int64 {
+	mms.numberOfElementsMutex.RLock()
+	defer mms.numberOfElementsMutex.RUnlock()
+	return mms.numberOfElements
+}
+
+func (mms *MqttMonitor) setNumDBElements(numElements int64) {
+	mms.numberOfElementsMutex.Lock()
+	defer mms.numberOfElementsMutex.Unlock()
+	mms.numberOfElements = numElements
+}
+
+func getClientID() string {
+	conf := config.GetConfig()
+	return "monitor-" + conf.ValidatorAddress
 }
 
 func (mms *MqttMonitor) lazyLoadMonitorMQTTClient() util.MQTTClientI {
@@ -59,10 +79,11 @@ func (mms *MqttMonitor) lazyLoadMonitorMQTTClient() util.MQTTClientI {
 		uri = "ssl://" + hostPort
 	}
 
-	opts := mqtt.NewClientOptions().AddBroker(uri).SetKeepAlive(60).SetCleanSession(true)
-	opts.SetClientID(conf.ValidatorAddress + "-monitor")
+	opts := mqtt.NewClientOptions().AddBroker(uri).SetKeepAlive(time.Second * 60).SetCleanSession(true)
+	opts.SetClientID(getClientID())
 	opts.SetUsername(conf.MqttUser)
 	opts.SetPassword(conf.MqttPassword)
+	opts.SetConnectionLostHandler(mms.onConnectionLost)
 	if conf.MqttTLS {
 		tlsConfig := &tls.Config{}
 		opts.SetTLSConfig(tlsConfig)
@@ -99,7 +120,7 @@ func (mms *MqttMonitor) Start() (err error) {
 	if err != nil {
 		return
 	}
-	mms.numberOfElements = amount
+	mms.setNumDBElements(amount)
 	go mms.runPeriodicTasks()
 	go mms.MonitorActiveParticipants()
 	go mms.CleanupDB()
@@ -108,17 +129,19 @@ func (mms *MqttMonitor) Start() (err error) {
 func (mms *MqttMonitor) getRandomNumbers() (challenger int, challengee int) {
 	for challenger == challengee {
 		// Generate random numbers
-		challenger = rand.Intn(int(mms.numberOfElements))
-		challengee = rand.Intn(int(mms.numberOfElements))
+		numElements := int(mms.getNumDBElements())
+		challenger = rand.Intn(numElements)
+		challengee = rand.Intn(numElements)
 	}
 	return
 }
 func (mms *MqttMonitor) SelectPoPParticipantsOutOfActiveActors() (challenger string, challengee string, err error) {
-	if mms.numberOfElements < 2 {
+	numElements := int(mms.getNumDBElements())
+	if numElements < 2 {
 		return
 	}
 	randomChallenger, randomChallengee := mms.getRandomNumbers()
-	log.Println("[app] [Monitor] number of elements: " + strconv.Itoa(int(mms.numberOfElements)))
+	log.Println("[app] [Monitor] number of elements: " + strconv.Itoa(numElements))
 	log.Println("[app] [Monitor] selected IDs: " + strconv.Itoa(randomChallenger) + " " + strconv.Itoa(randomChallengee))
 	iter := mms.db.NewIterator(nil, nil)
 	defer iter.Release()
@@ -183,41 +206,62 @@ func (mms *MqttMonitor) MqttMsgHandler(_ mqtt.Client, msg mqtt.Message) {
 	}
 }
 
+func (mms *MqttMonitor) onConnectionLost(_ mqtt.Client, err error) {
+	log.Println("[app] [Monitor] Connection lost: " + err.Error())
+	// Handle connection loss here (e.g., reconnect attempts, logging)
+	if !mms.IsTerminated() {
+		mms.lostConnectionMutex.Lock()
+		mms.lostConnection = true
+		mms.lostConnectionMutex.Unlock()
+	}
+}
+
 func (mms *MqttMonitor) MonitorActiveParticipants() {
-	clientMutex.Lock()
-	if localMqttClient != nil {
+	mms.clientMutex.Lock()
+	if mms.localMqttClient != nil {
 		log.Println("[app] [Monitor] client is still working")
-		clientMutex.Unlock()
+		mms.clientMutex.Unlock()
 		return
 	}
-	localMqttClient = mms.lazyLoadMonitorMQTTClient()
-	client := localMqttClient
-	clientMutex.Unlock()
+	mms.localMqttClient = mms.lazyLoadMonitorMQTTClient()
+	mqttClient := mms.localMqttClient
+	mms.clientMutex.Unlock()
 
 	// Maximum reconnection attempts (adjust as needed)
 	mms.SetMaxRetries()
 	for !mms.IsTerminated() && mms.maxRetries > 0 {
-		if token := client.Connect(); token.Wait() && token.Error() != nil {
+		if token := mqttClient.Connect(); token.Wait() && token.Error() != nil {
 			log.Println("[app] [Monitor] error connecting to mqtt: " + token.Error().Error())
 			mms.maxRetries--
 			time.Sleep(time.Second * 5)
 			continue
 		}
+		mms.lostConnectionMutex.Lock()
+		mms.lostConnection = false
+		mms.lostConnectionMutex.Unlock()
+
+		log.Println("[app] [Monitor] established connection")
 
 		var messageHandler mqtt.MessageHandler = mms.MqttMsgHandler
 
 		// Subscribe to a topic
 		subscriptionTopic := "tele/#"
-		if token := client.Subscribe(subscriptionTopic, 0, messageHandler); token.Wait() && token.Error() != nil {
+		if token := mqttClient.Subscribe(subscriptionTopic, 0, messageHandler); token.Wait() && token.Error() != nil {
 			log.Println("[app] [Monitor] error registering the mqtt subscription: " + token.Error().Error())
 			continue
 		}
+		log.Println("[app] [Monitor] subscribed to tele/# channels")
 
 		for !mms.IsTerminated() {
-			if !client.IsConnected() {
+			mms.lostConnectionMutex.Lock()
+			lostConnectionEvent := mms.lostConnection
+			mms.lostConnectionMutex.Unlock()
+			if !mqttClient.IsConnected() || !mqttClient.IsConnectionOpen() || lostConnectionEvent {
 				log.Println("[app] [Monitor] retry establishing a connection")
 				break // Exit inner loop on disconnect
 			}
+
+			SendUpdateMessage(mqttClient)
 			mms.SetMaxRetries()
 			time.Sleep(60 * time.Second) // Adjust sleep time based on your needs
 		}
@@ -227,9 +271,16 @@ func (mms *MqttMonitor) MonitorActiveParticipants() {
 		log.Println("[app] [Monitor] Reached maximum reconnection attempts. Exiting. New client will be activated soon.")
 	}
 
-	clientMutex.Lock()
-	localMqttClient = nil
-	clientMutex.Unlock()
+	mms.clientMutex.Lock()
+	mms.localMqttClient = nil
+	mms.clientMutex.Unlock()
+}
+
+func SendUpdateMessage(mqttClient util.MQTTClientI) {
+	// Publish message
+	now := time.Now().Format("2006-01-02 15:04:05") // Adjust format as needed
+	token := mqttClient.Publish("tele/"+getClientID(), 1, false, now)
+	token.Wait()
 }
 
 func (mms *MqttMonitor) SetMaxRetries() {
