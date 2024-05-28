@@ -1,9 +1,9 @@
 package monitor
 
 import (
+	"context"
 	"crypto/tls"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"math/rand"
@@ -222,9 +222,10 @@ func IsLegitMachineAddress(address string) (active bool, err error) {
 	client := &http.Client{}
 
 	// Create a new request
-	req, err := http.NewRequest(http.MethodGet, url, nil)
+	ctx := context.Background()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
-		fmt.Println(err)
+		log.Println("[app] [Monitor] cannot send machine query request " + err.Error())
 		return
 	}
 
@@ -258,7 +259,7 @@ func IsLegitMachineAddress(address string) (active bool, err error) {
 	var data map[string]interface{}
 	err = json.Unmarshal(body, &data)
 	if err != nil {
-		fmt.Println(err)
+		log.Println("[app] [Monitor] cannot unmarshal response " + err.Error())
 		return
 	}
 
@@ -268,14 +269,18 @@ func IsLegitMachineAddress(address string) (active bool, err error) {
 		log.Println("[app] [Monitor] response does not contain the required machine")
 		return
 	}
-	machineMap := machineValue.(map[string]interface{})
+	machineMap, ok := machineValue.(map[string]interface{})
+	if !ok {
+		log.Println("[app] [Monitor] cannot convert machine map")
+		return
+	}
 	nameMap, ok := machineMap["name"]
 	if !ok {
 		log.Println("[app] [Monitor] response does not contain the required name")
 		return
 	}
-
-	if nameMap.(string) != address {
+	value, ok := nameMap.(string)
+	if !ok || value != address {
 		log.Println("[app] [Monitor] return machine is not the required one")
 		return
 	}
