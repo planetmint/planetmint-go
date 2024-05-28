@@ -35,6 +35,7 @@ func (k Keeper) GetCidsByAddress(ctx sdk.Context, address string) (cids []string
 
 		if string(addressBytes) == address {
 			cids = append(cids, string(cidBytes))
+			break
 		}
 	}
 	return cids, len(cids) > 0
