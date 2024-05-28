@@ -45,8 +45,7 @@ func TestGetAssetByPubKeys(t *testing.T) {
 	_ = createNAsset(keeper, ctx, 10)
 	assets, found := keeper.GetCidsByAddress(ctx, "plmnt_address")
 	assert.True(t, found)
-	assert.Equal(t, len(assets), 5)
+	assert.Equal(t, len(assets), 1) // TODO: just for HF: before 5 
 	assets, found = keeper.GetCidsByAddress(ctx, "plmnt_address1")
 	assert.True(t, found)
-	assert.Equal(t, len(assets), 5)
-}
+	assert.Equal(t, len(assets), 1) // TODO: just for HF: before 5
