@@ -80,15 +80,15 @@ func TestGetAssetsByAddress(t *testing.T) {
 	items := createNAsset(keeper, ctx, 10)
 	cids, found := keeper.GetAssetsByAddress(ctx, items[0].Creator, nil, nil)
 	assert.True(t, found)
-	assert.Equal(t, items[0].Cid, cids[0])
+	assert.Equal(t, items[8].Cid, cids[0])
 	assert.Equal(t, items[4].Cid, cids[2])
 	cids, found = keeper.GetAssetsByAddress(ctx, items[1].Creator, nil, nil)
 	assert.True(t, found)
-	assert.Equal(t, items[1].Cid, cids[0])
+	assert.Equal(t, items[9].Cid, cids[0])
 	assert.Equal(t, items[5].Cid, cids[2])
 
 	cids, found = keeper.GetAssetsByAddress(ctx, items[0].Creator, util.SerializeUint64(3), nil)
 	assert.True(t, found)
 	assert.Equal(t, 3, len(cids))
-	assert.Equal(t, items[4].Cid, cids[0])
+	assert.Equal(t, items[8].Cid, cids[0])
 }

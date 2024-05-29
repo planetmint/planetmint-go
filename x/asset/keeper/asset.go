@@ -63,7 +63,7 @@ func (k Keeper) GetAssetByAddressAndID(ctx sdk.Context, address string, id uint6
 func (k Keeper) GetAssetsByAddress(ctx sdk.Context, address string, start []byte, end []byte) (cids []string, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.AddressPrefix(address))
 
-	iterator := store.Iterator(start, end)
+	iterator := store.ReverseIterator(start, end)
 	defer iterator.Close()
 	for ; iterator.Valid(); iterator.Next() {
 		cidBytes := iterator.Value()

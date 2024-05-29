@@ -52,7 +52,7 @@ func local_request_Query_Params_0(ctx context.Context, marshaler runtime.Marshal
 }
 
 var (
-	filter_Query_GetCIDsByAddress_0 = &utilities.DoubleArray{Encoding: map[string]int{"address": 0, "lookupPeriodInMin": 1}, Base: []int{1, 1, 2, 0, 0}, Check: []int{0, 1, 1, 2, 3}}
+	filter_Query_GetCIDsByAddress_0 = &utilities.DoubleArray{Encoding: map[string]int{"address": 0, "numElements": 1}, Base: []int{1, 1, 2, 0, 0}, Check: []int{0, 1, 1, 2, 3}}
 )
 
 func request_Query_GetCIDsByAddress_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
@@ -77,15 +77,15 @@ func request_Query_GetCIDsByAddress_0(ctx context.Context, marshaler runtime.Mar
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "address", err)
 	}
 
-	val, ok = pathParams["lookupPeriodInMin"]
+	val, ok = pathParams["numElements"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "lookupPeriodInMin")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "numElements")
 	}
 
-	protoReq.LookupPeriodInMin, err = runtime.Uint64(val)
+	protoReq.NumElements, err = runtime.Uint64(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "lookupPeriodInMin", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "numElements", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -122,15 +122,15 @@ func local_request_Query_GetCIDsByAddress_0(ctx context.Context, marshaler runti
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "address", err)
 	}
 
-	val, ok = pathParams["lookupPeriodInMin"]
+	val, ok = pathParams["numElements"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "lookupPeriodInMin")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "numElements")
 	}
 
-	protoReq.LookupPeriodInMin, err = runtime.Uint64(val)
+	protoReq.NumElements, err = runtime.Uint64(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "lookupPeriodInMin", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "numElements", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -381,7 +381,7 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 var (
 	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"planetmint", "asset", "params"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_GetCIDsByAddress_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3}, []string{"planetmint", "asset", "address", "lookupPeriodInMin"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_GetCIDsByAddress_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3}, []string{"planetmint", "asset", "address", "numElements"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Query_GetNotarizedAsset_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 2}, []string{"planetmint", "asset", "cid"}, "", runtime.AssumeColonVerbOpt(true)))
 )

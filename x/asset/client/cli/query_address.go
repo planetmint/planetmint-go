@@ -19,7 +19,7 @@ func CmdGetByAddress() *cobra.Command {
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			reqAddress := args[0]
-			reqLookupPeriodInMin, err := cast.ToUint64E(args[1])
+			reqNumElements, err := cast.ToUint64E(args[1])
 			if err != nil {
 				return err
 			}
@@ -33,8 +33,8 @@ func CmdGetByAddress() *cobra.Command {
 
 			params := &types.QueryGetCIDsByAddressRequest{
 
-				Address:           reqAddress,
-				LookupPeriodInMin: reqLookupPeriodInMin,
+				Address:     reqAddress,
+				NumElements: reqNumElements,
 			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
