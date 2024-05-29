@@ -9,7 +9,7 @@ import (
 	"github.com/planetmint/planetmint-go/x/asset/types"
 )
 
-func MigrateStore(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.BinaryCodec) error {
+func MigrateStore(ctx sdk.Context, storeKey storetypes.StoreKey, _ codec.BinaryCodec) error {
 	store := prefix.NewStore(ctx.KVStore(storeKey), types.KeyPrefix(types.AssetKey))
 
 	mapping := make(map[string][][]byte)
