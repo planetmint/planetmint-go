@@ -996,4 +996,9 @@ func (app *App) setupUpgradeHandlers() {
 		fromVM[machinemoduletypes.ModuleName] = machinemodule.AppModule{}.ConsensusVersion()
 		return app.mm.RunMigrations(ctx, app.configurator, fromVM)
 	})
+	app.UpgradeKeeper.SetUpgradeHandler("v0.10.0", func(ctx sdk.Context, _ upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+		// Set versions to the latest ConsensusVersion in the VersionMap.
+		fromVM[assetmoduletypes.ModuleName] = assetmodule.AppModule{}.ConsensusVersion()
+		return app.mm.RunMigrations(ctx, app.configurator, fromVM)
+	})
 }
