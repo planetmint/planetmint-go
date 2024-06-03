@@ -71,20 +71,3 @@ func (k Keeper) GetAssetsByAddress(ctx sdk.Context, address string, start []byte
 	}
 	return cids, len(cids) > 0
 }
-
-func (k Keeper) GetCidsByAddress(ctx sdk.Context, address string) (cids []string, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AssetKey))
-
-	reverseIterator := store.ReverseIterator(nil, nil)
-	defer reverseIterator.Close()
-	for ; reverseIterator.Valid(); reverseIterator.Next() {
-		addressBytes := reverseIterator.Value()
-		cidBytes := reverseIterator.Key()
-
-		if string(addressBytes) == address {
-			cids = append(cids, string(cidBytes))
-			break
-		}
-	}
-	return cids, len(cids) > 0
-}

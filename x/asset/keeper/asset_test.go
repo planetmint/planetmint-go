@@ -40,18 +40,6 @@ func TestGetAssetbyCid(t *testing.T) {
 	}
 }
 
-func TestGetAssetByPubKeys(t *testing.T) {
-	t.Parallel()
-	keeper, ctx := keepertest.AssetKeeper(t)
-	_ = createNAsset(keeper, ctx, 10)
-	assets, found := keeper.GetCidsByAddress(ctx, "plmnt_address")
-	assert.True(t, found)
-	assert.Equal(t, len(assets), 1) // TODO: just for HF: before 5
-	assets, found = keeper.GetCidsByAddress(ctx, "plmnt_address1")
-	assert.True(t, found)
-	assert.Equal(t, len(assets), 1) // TODO: just for HF: before 5
-}
-
 func TestAssetCount(t *testing.T) {
 	t.Parallel()
 	keeper, ctx := keepertest.AssetKeeper(t)
