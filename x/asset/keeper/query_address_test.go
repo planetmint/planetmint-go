@@ -17,7 +17,7 @@ func TestGetNotarizedAssetByAddress(t *testing.T) {
 	keeper, ctx := keepertest.AssetKeeper(t)
 	wctx := sdk.WrapSDKContext(ctx)
 	_ = createNAsset(keeper, ctx, 10)
-	assets, _ := keeper.GetAssetsByAddress(ctx, "plmnt_address", nil, util.SerializeUint64(3))
+	assets, _ := keeper.GetAssetsByAddress(ctx, "plmnt_address", nil, util.SerializeUint64(3+1))
 	for _, tc := range []struct {
 		desc     string
 		request  *types.QueryGetCIDsByAddressRequest
