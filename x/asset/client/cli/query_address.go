@@ -14,7 +14,7 @@ var _ = strconv.Itoa(0)
 
 func CmdGetByAddress() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "address [address] [lookup-period-in-min]",
+		Use:   "address [address] [num-elements]",
 		Short: "Query for assets by address",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
