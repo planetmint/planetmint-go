@@ -274,12 +274,12 @@ func IsLegitMachineAddress(address string) (active bool, err error) {
 		log.Println("[app] [Monitor] cannot convert machine map")
 		return
 	}
-	nameMap, ok := machineMap["name"]
+	addressMap, ok := machineMap["address"]
 	if !ok {
 		log.Println("[app] [Monitor] response does not contain the required name")
 		return
 	}
-	value, ok := nameMap.(string)
+	value, ok := addressMap.(string)
 	if !ok || value != address {
 		log.Println("[app] [Monitor] return machine is not the required one")
 		return
