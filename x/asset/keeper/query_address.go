@@ -18,7 +18,7 @@ func (k Keeper) GetCIDsByAddress(goCtx context.Context, req *types.QueryGetCIDsB
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	cids, found := k.GetAssetsByAddress(ctx, req.GetAddress(), nil, util.SerializeUint64(req.GetNumElements()+1))
+	cids, found := k.GetAssetsByAddress(ctx, req.GetAddress(), nil, util.SerializeUint64(req.GetNumElements()))
 	if !found {
 		return nil, status.Error(codes.NotFound, "no CIDs found")
 	}
