@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
+	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/asset/keeper"
 	"github.com/planetmint/planetmint-go/x/asset/types"
 
@@ -39,14 +40,43 @@ func TestGetAssetbyCid(t *testing.T) {
 	}
 }
 
-func TestGetAssetByPubKeys(t *testing.T) {
+func TestAssetCount(t *testing.T) {
 	t.Parallel()
 	keeper, ctx := keepertest.AssetKeeper(t)
-	_ = createNAsset(keeper, ctx, 10)
-	assets, found := keeper.GetCidsByAddress(ctx, "plmnt_address")
+	numItems := 10
+	items := createNAsset(keeper, ctx, numItems)
+	count, found := keeper.GetAddressAssetCount(ctx, items[0].Creator)
 	assert.True(t, found)
-	assert.Equal(t, len(assets), 1) // TODO: just for HF: before 5
-	assets, found = keeper.GetCidsByAddress(ctx, "plmnt_address1")
+	assert.Equal(t, uint64(5), count)
+	count, found = keeper.GetAddressAssetCount(ctx, items[1].Creator)
 	assert.True(t, found)
-	assert.Equal(t, len(assets), 1) // TODO: just for HF: before 5
+	assert.Equal(t, uint64(5), count)
+}
+
+func TestGetAssetByAddressAndID(t *testing.T) {
+	t.Parallel()
+	keeper, ctx := keepertest.AssetKeeper(t)
+	items := createNAsset(keeper, ctx, 1)
+	cid, found := keeper.GetAssetByAddressAndID(ctx, items[0].Creator, 1)
+	assert.True(t, found)
+	assert.Equal(t, items[0].Cid, cid)
+}
+
+func TestGetAssetsByAddress(t *testing.T) {
+	t.Parallel()
+	keeper, ctx := keepertest.AssetKeeper(t)
+	items := createNAsset(keeper, ctx, 10)
+	cids, found := keeper.GetAssetsByAddress(ctx, items[0].Creator, nil, nil)
+	assert.True(t, found)
+	assert.Equal(t, items[8].Cid, cids[0])
+	assert.Equal(t, items[4].Cid, cids[2])
+	cids, found = keeper.GetAssetsByAddress(ctx, items[1].Creator, nil, nil)
+	assert.True(t, found)
+	assert.Equal(t, items[9].Cid, cids[0])
+	assert.Equal(t, items[5].Cid, cids[2])
+
+	cids, found = keeper.GetAssetsByAddress(ctx, items[0].Creator, util.SerializeUint64(3), nil)
+	assert.True(t, found)
+	assert.Equal(t, 3, len(cids))
+	assert.Equal(t, items[8].Cid, cids[0])
 }

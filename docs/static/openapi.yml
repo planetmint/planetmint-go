@@ -46437,7 +46437,7 @@ paths:
                         }
       tags:
         - Query
-  /planetmint/asset/address/{address}/{lookupPeriodInMin}:
+  /planetmint/asset/address/{address}/{numElements}:
     get:
       summary: Queries a list of GetCIDsByAddress items.
       operationId: PlanetmintgoAssetGetCIDsByAddress
@@ -46502,7 +46502,7 @@ paths:
           in: path
           required: true
           type: string
-        - name: lookupPeriodInMin
+        - name: numElements
           in: path
           required: true
           type: string
