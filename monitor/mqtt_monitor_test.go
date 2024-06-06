@@ -99,3 +99,10 @@ func TestCleanupPrecisionTest(t *testing.T) {
 	assert.Contains(t, challengee, "plmnt")
 	mqttMonitor.Terminate()
 }
+
+func TestIsLegitMachineAddress(t *testing.T) {
+	t.SkipNow()
+	active, err := monitor.IsLegitMachineAddress("plmnt1z6xmwqfnn9mvean9gsd57segawgjykpxw8hq5t")
+	assert.NoError(t, err)
+	assert.Equal(t, active, true)
+}

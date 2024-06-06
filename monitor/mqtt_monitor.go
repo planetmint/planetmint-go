@@ -1,10 +1,14 @@
 package monitor
 
 import (
+	"context"
 	"crypto/tls"
+	"encoding/json"
+	"io"
 	"log"
 	"math/rand"
 	"net"
+	"net/http"
 	"strconv"
 	"strings"
 	"sync"
@@ -196,6 +200,11 @@ func (mms *MqttMonitor) MqttMsgHandler(_ mqtt.Client, msg mqtt.Message) {
 		return
 	}
 
+	active, err := IsLegitMachineAddress(address)
+	if err != nil || !active {
+		return
+	}
+
 	unixTime := time.Now().Unix()
 	err = mms.AddParticipant(address, unixTime)
 
@@ -204,6 +213,81 @@ func (mms *MqttMonitor) MqttMsgHandler(_ mqtt.Client, msg mqtt.Message) {
 	} else {
 		log.Println("[app] [Monitor] added active actor to DB: " + address)
 	}
+}
+
+func IsLegitMachineAddress(address string) (active bool, err error) {
+	url := "http://localhost:1317/planetmint/machine/address/" + address
+
+	// Create a new HTTP client
+	client := &http.Client{}
+
+	// Create a new request
+	ctx := context.Background()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		log.Println("[app] [Monitor] cannot send machine query request " + err.Error())
+		return
+	}
+
+	// Set the header
+	req.Header.Set("Accept", "application/json")
+
+	// Send the request
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Println("[app] [Monitor] cannot connect to server: " + err.Error())
+		return
+	}
+
+	// Close the response body
+	defer resp.Body.Close()
+
+	// Read the response body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Println("[app] [Monitor] cannot read response: " + err.Error())
+		return
+	}
+
+	// Check the status code
+	if resp.StatusCode != http.StatusOK {
+		log.Printf("[app] [Monitor] Error: unexpected status code: " + string(body))
+		return
+	}
+
+	// Unmarshal the response body into a map
+	var data map[string]interface{}
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		log.Println("[app] [Monitor] cannot unmarshal response " + err.Error())
+		return
+	}
+
+	// Check if the "info" key exists
+	machineValue, ok := data["machine"]
+	if !ok {
+		log.Println("[app] [Monitor] response does not contain the required machine")
+		return
+	}
+	machineMap, ok := machineValue.(map[string]interface{})
+	if !ok {
+		log.Println("[app] [Monitor] cannot convert machine map")
+		return
+	}
+	addressMap, ok := machineMap["address"]
+	if !ok {
+		log.Println("[app] [Monitor] response does not contain the required name")
+		return
+	}
+	value, ok := addressMap.(string)
+	if !ok || value != address {
+		log.Println("[app] [Monitor] return machine is not the required one")
+		return
+	}
+
+	err = nil
+	active = true
+	return
 }
 
 func (mms *MqttMonitor) onConnectionLost(_ mqtt.Client, err error) {
