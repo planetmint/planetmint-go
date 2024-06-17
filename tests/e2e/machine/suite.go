@@ -5,17 +5,20 @@ import (
 
 	"github.com/planetmint/planetmint-go/lib"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
-	"github.com/planetmint/planetmint-go/testutil/network"
+
+	// "github.com/planetmint/planetmint-go/testutil/network"
+	"github.com/cosmos/cosmos-sdk/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
-	machinecli "github.com/planetmint/planetmint-go/x/machine/client/cli"
+
+	// machinecli "github.com/planetmint/planetmint-go/x/machine/client/cli"
 	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 
+	"cosmossdk.io/x/feegrant"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	txcli "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
-	"github.com/cosmos/cosmos-sdk/x/feegrant"
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"

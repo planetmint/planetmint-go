@@ -8,7 +8,8 @@ import (
 	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/testutil/sample"
-	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
+
+	// daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
@@ -123,10 +124,10 @@ func TrustAnchor(pubkey string) machinetypes.TrustAnchor {
 	}
 }
 
-func MintRequest(beneficiaryAddr string, amount uint64, txhash string) daotypes.MintRequest {
-	return daotypes.MintRequest{
-		Beneficiary:  beneficiaryAddr,
-		Amount:       amount,
-		LiquidTxHash: txhash,
-	}
-}
+// func MintRequest(beneficiaryAddr string, amount uint64, txhash string) daotypes.MintRequest {
+// 	return daotypes.MintRequest{
+// 		Beneficiary:  beneficiaryAddr,
+// 		Amount:       amount,
+// 		LiquidTxHash: txhash,
+// 	}
+// }

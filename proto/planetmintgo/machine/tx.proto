@@ -2,56 +2,67 @@ syntax = "proto3";
 
 package planetmintgo.machine;
 
-import "planetmintgo/machine/machine.proto";
-import "planetmintgo/machine/trust_anchor.proto";
-import "planetmintgo/machine/liquid_asset.proto";
-import "planetmintgo/machine/params.proto";
 import "amino/amino.proto";
-import "gogoproto/gogo.proto";
-import "cosmos_proto/cosmos.proto";
 import "cosmos/msg/v1/msg.proto";
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "planetmintgo/machine/params.proto";
+import "planetmintgo/machine/machine.proto";
+import "planetmintgo/machine/liquid_asset.proto";
+import "planetmintgo/machine/trust_anchor.proto";
 
 option go_package = "github.com/planetmint/planetmint-go/x/machine/types";
 
 // Msg defines the Msg service.
 service Msg {
-  rpc AttestMachine       (MsgAttestMachine      ) returns (MsgAttestMachineResponse      );
-  rpc RegisterTrustAnchor (MsgRegisterTrustAnchor) returns (MsgRegisterTrustAnchorResponse);
-  rpc NotarizeLiquidAsset (MsgNotarizeLiquidAsset) returns (MsgNotarizeLiquidAssetResponse);
+  option (cosmos.msg.v1.service) = true;
+  
+  // UpdateParams defines a (governance) operation for updating the module
+  // parameters. The authority defaults to the x/gov module account.
   rpc UpdateParams        (MsgUpdateParams       ) returns (MsgUpdateParamsResponse       );
+  rpc AttestMachine       (MsgAttestMachine      ) returns (MsgAttestMachineResponse      );
+  rpc NotarizeLiquidAsset (MsgNotarizeLiquidAsset) returns (MsgNotarizeLiquidAssetResponse);
+  rpc RegisterTrustAnchor (MsgRegisterTrustAnchor) returns (MsgRegisterTrustAnchorResponse);
 }
+// MsgUpdateParams is the Msg/UpdateParams request type.
+message MsgUpdateParams {
+  option (cosmos.msg.v1.signer) =                              "authority";
+  option           (amino.name) = "planetmintgo/x/machine/MsgUpdateParams";
+  
+  // authority is the address that controls the module (defaults to x/gov unless overwritten).
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // params defines the module parameters to update.
+  
+  // NOTE: All parameters must be supplied.
+  Params params = 2 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+}
+
+// MsgUpdateParamsResponse defines the response structure for executing a
+// MsgUpdateParams message.
+message MsgUpdateParamsResponse {}
+
 message MsgAttestMachine {
+  option (cosmos.msg.v1.signer) = "creator";
   string  creator = 1;
   Machine machine = 2;
 }
 
 message MsgAttestMachineResponse {}
 
-message MsgRegisterTrustAnchor {
-  string      creator     = 1;
-  TrustAnchor trustAnchor = 2;
-}
-
-message MsgRegisterTrustAnchorResponse {}
-
 message MsgNotarizeLiquidAsset {
+  option (cosmos.msg.v1.signer) = "creator";
   string      creator      = 1;
   LiquidAsset notarization = 2;
 }
 
 message MsgNotarizeLiquidAssetResponse {}
 
-message MsgUpdateParams {
-  option (cosmos.msg.v1.signer) = "authority";
-  
-  // authority is the address that controls the module (defaults to x/gov unless overwritten).
-  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-
-  // params defines the x/dao parameters to update.
-  
-  // NOTE: All parameters must be supplied.
-  Params params = 2 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+message MsgRegisterTrustAnchor {
+  option (cosmos.msg.v1.signer) = "creator";
+  string      creator     = 1;
+  TrustAnchor trustAnchor = 2;
 }
 
-message MsgUpdateParamsResponse {}
+message MsgRegisterTrustAnchorResponse {}
 

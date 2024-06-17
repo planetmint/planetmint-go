@@ -3,34 +3,36 @@ package keeper
 import (
 	"testing"
 
-	"github.com/planetmint/planetmint-go/x/machine/keeper"
-	"github.com/planetmint/planetmint-go/x/machine/types"
-
-	tmdb "github.com/cometbft/cometbft-db"
-	"github.com/cometbft/cometbft/libs/log"
-	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	"cosmossdk.io/log"
+	"cosmossdk.io/store"
+	"cosmossdk.io/store/metrics"
+	storetypes "cosmossdk.io/store/types"
+	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	"github.com/cosmos/cosmos-sdk/store"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	"github.com/cosmos/cosmos-sdk/runtime"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
+
+	"github.com/planetmint/planetmint-go/x/machine/types"
+
+	"github.com/planetmint/planetmint-go/x/machine/keeper"
 )
 
-func MachineKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
-	storeKey := sdk.NewKVStoreKey(types.StoreKey)
-	taIndexStoreKey := sdk.NewKVStoreKey(types.TAIndexKey)
-	issuerPlanetmintIndexStoreKey := sdk.NewKVStoreKey(types.IssuerPlanetmintIndexKey)
-	issuerLiquidIndexStoreKey := sdk.NewKVStoreKey(types.IssuerLiquidIndexKey)
-	trustAnchorStoreKey := sdk.NewKVStoreKey(types.TrustAnchorKey)
-	addressStoreKey := sdk.NewKVStoreKey(types.AddressIndexKey)
+func MachineKeeper(t testing.TB) (keeper.Keeper, sdk.Context) {
+	storeKey := storetypes.NewKVStoreKey(types.StoreKey)
+	taIndexStoreKey := storetypes.NewKVStoreKey(types.TAIndexKey)
+	issuerPlanetmintIndexStoreKey := storetypes.NewKVStoreKey(types.IssuerPlanetmintIndexKey)
+	issuerLiquidIndexStoreKey := storetypes.NewKVStoreKey(types.IssuerLiquidIndexKey)
+	trustAnchorStoreKey := storetypes.NewKVStoreKey(types.TrustAnchorKey)
+	addressStoreKey := storetypes.NewKVStoreKey(types.AddressIndexKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 
-	db := tmdb.NewMemDB()
-	stateStore := store.NewCommitMultiStore(db)
+	db := dbm.NewMemDB()
+	stateStore := store.NewCommitMultiStore(db, log.NewNopLogger(), metrics.NewNoOpMetrics())
 	stateStore.MountStoreWithDB(storeKey, storetypes.StoreTypeIAVL, db)
 	stateStore.MountStoreWithDB(taIndexStoreKey, storetypes.StoreTypeIAVL, db)
 	stateStore.MountStoreWithDB(issuerPlanetmintIndexStoreKey, storetypes.StoreTypeIAVL, db)
@@ -42,32 +44,22 @@ func MachineKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 
 	registry := codectypes.NewInterfaceRegistry()
 	cdc := codec.NewProtoCodec(registry)
-
-	paramsSubspace := typesparams.NewSubspace(cdc,
-		types.Amino,
-		storeKey,
-		memStoreKey,
-		"MachineParams",
-	)
+	authority := authtypes.NewModuleAddress(govtypes.ModuleName)
 
 	k := keeper.NewKeeper(
 		cdc,
-		storeKey,
-		taIndexStoreKey,
-		issuerPlanetmintIndexStoreKey,
-		issuerLiquidIndexStoreKey,
-		trustAnchorStoreKey,
-		addressStoreKey,
-		memStoreKey,
-		paramsSubspace,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		runtime.NewKVStoreService(storeKey),
+		log.NewNopLogger(),
+		authority.String(),
 		"",
 	)
 
-	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
+	ctx := sdk.NewContext(stateStore, cmtproto.Header{}, false, log.NewNopLogger())
 
 	// Initialize params
-	_ = k.SetParams(ctx, types.DefaultParams())
+	if err := k.SetParams(ctx, types.DefaultParams()); err != nil {
+		panic(err)
+	}
 
 	return k, ctx
 }

@@ -1,23 +1,20 @@
 package main
 
 import (
-	"errors"
+	"fmt"
 	"os"
 
-	"github.com/cosmos/cosmos-sdk/server"
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 
-	"github.com/planetmint/planetmint-go/app"
 	"github.com/planetmint/planetmint-go/cmd/planetmint-god/cmd"
+
+	app "github.com/planetmint/planetmint-go/app"
 )
 
 func main() {
-	rootCmd, _ := cmd.NewRootCmd()
+	rootCmd := cmd.NewRootCmd()
 	if err := svrcmd.Execute(rootCmd, "", app.DefaultNodeHome); err != nil {
-		var e *server.ErrorCode
-		if errors.As(err, &e) {
-			os.Exit(e.Code)
-		}
+		fmt.Fprintln(rootCmd.OutOrStderr(), err)
 		os.Exit(1)
 	}
 }

@@ -12,8 +12,22 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/planetmint/planetmint-go/config"
-	"github.com/planetmint/planetmint-go/x/dao/types"
 )
+
+// TODO: replace with dao types after module is migrated
+type Challenge struct {
+	Initiator  string `protobuf:"bytes,1,opt,name=initiator,proto3" json:"initiator,omitempty"`
+	Challenger string `protobuf:"bytes,2,opt,name=challenger,proto3" json:"challenger,omitempty"`
+	Challengee string `protobuf:"bytes,3,opt,name=challengee,proto3" json:"challengee,omitempty"`
+	Height     int64  `protobuf:"varint,4,opt,name=height,proto3" json:"height,omitempty"`
+	Success    bool   `protobuf:"varint,5,opt,name=success,proto3" json:"success,omitempty"`
+	Finished   bool   `protobuf:"varint,6,opt,name=finished,proto3" json:"finished,omitempty"`
+}
+
+func (c *Challenge) String() string        { return "" }
+func (c *Challenge) GetHeight() int64      { return 0 }
+func (c *Challenge) GetChallengee() string { return "" }
+func (c *Challenge) GetChallenger() string { return "" }
 
 // MQTTClientI interface
 type MQTTClientI interface {
@@ -64,7 +78,8 @@ func init() {
 	mqttMachineByAddressAvailabilityMapping = make(map[string]bool)
 }
 
-func SendMqttPopInitMessagesToServer(ctx sdk.Context, challenge types.Challenge) {
+// func SendMqttPopInitMessagesToServer(ctx sdk.Context, challenge types.Challenge) {
+func SendMqttPopInitMessageToServer(ctx sdk.Context, challenge Challenge) {
 	// PoP can only be executed if at least two actors are available.
 	if challenge.Challenger == "" || challenge.Challengee == "" {
 		return
@@ -77,7 +92,8 @@ func SendMqttPopInitMessagesToServer(ctx sdk.Context, challenge types.Challenge)
 	GetAppLogger().Info(ctx, "MQTT message successfully sent: "+challenge.String())
 }
 
-func sendMqttPopInitMessages(challenge types.Challenge) (err error) {
+// func sendMqttPopInitMessages(challenge types.Challenge) (err error) {
+func sendMqttPopInitMessages(challenge Challenge) (err error) {
 	LazyLoadMQTTClient()
 	if token := MQTTClient.Connect(); token.Wait() && token.Error() != nil {
 		err = token.Error()

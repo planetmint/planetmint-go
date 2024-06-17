@@ -4,5 +4,5 @@ package planetmintgo.machine;
 option go_package = "github.com/planetmint/planetmint-go/x/machine/types";
 
 message TrustAnchor {
-    string pubkey = 1;
+  string pubkey = 1; 
 }

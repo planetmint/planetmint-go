@@ -1,16 +1,18 @@
 syntax = "proto3";
 package planetmintgo.machine;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 
 option go_package = "github.com/planetmint/planetmint-go/x/machine/types";
 
 // Params defines the parameters for the module.
 message Params {
-  option (gogoproto.goproto_stringer) = false;
+  option (amino.name) = "planetmintgo/x/machine/Params";
+  option (gogoproto.equal) = true;
   string asset_registry_scheme =1;
   string asset_registry_domain =2;
   string asset_registry_path =3;
   uint64 dao_machine_funding_amount = 4;
-  string dao_machine_funding_denom = 5;
+  string dao_machine_funding_denom = 5;  
 }

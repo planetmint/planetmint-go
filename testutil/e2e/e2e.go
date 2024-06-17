@@ -11,7 +11,9 @@ import (
 	"github.com/planetmint/planetmint-go/lib"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	"github.com/planetmint/planetmint-go/testutil/moduleobject"
-	"github.com/planetmint/planetmint-go/testutil/network"
+
+	// "github.com/planetmint/planetmint-go/testutil/network"
+	"github.com/cosmos/cosmos-sdk/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 )
