@@ -7,12 +7,13 @@ import (
 
 	config "github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/util"
+
+	errorsmod "cosmossdk.io/errors"
 	"github.com/planetmint/planetmint-go/x/machine/types"
 
 	"github.com/btcsuite/btcd/btcutil/hdkeychain"
 	"github.com/btcsuite/btcd/chaincfg"
 
-	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/rddl-network/go-utils/signature"
 )

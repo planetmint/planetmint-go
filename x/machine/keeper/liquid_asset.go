@@ -4,18 +4,21 @@ import (
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/machine/types"
 
-	"github.com/cosmos/cosmos-sdk/store/prefix"
+	"cosmossdk.io/store/prefix"
+	"github.com/cosmos/cosmos-sdk/runtime"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func (k Keeper) StoreLiquidAttest(ctx sdk.Context, asset types.LiquidAsset) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.LiquidAssetKey))
+	storeAdapter := runtime.KVStoreAdapter(k.storeService.OpenKVStore(ctx))
+	store := prefix.NewStore(storeAdapter, types.KeyPrefix(types.LiquidAssetKey))
 	appendValue := k.cdc.MustMarshal(&asset)
 	store.Set(util.SerializeString(asset.MachineID), appendValue)
 }
 
 func (k Keeper) LookupLiquidAsset(ctx sdk.Context, machineID string) (val types.LiquidAsset, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.LiquidAssetKey))
+	storeAdapter := runtime.KVStoreAdapter(k.storeService.OpenKVStore(ctx))
+	store := prefix.NewStore(storeAdapter, types.KeyPrefix(types.LiquidAssetKey))
 	liquidAsset := store.Get(util.SerializeString(machineID))
 
 	if liquidAsset == nil {

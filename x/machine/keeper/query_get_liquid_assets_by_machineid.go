@@ -10,16 +10,16 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) GetLiquidAssetsByMachineid(goCtx context.Context, req *types.QueryGetLiquidAssetsByMachineidRequest) (*types.QueryGetLiquidAssetsByMachineidResponse, error) {
+func (k Keeper) GetLiquidAssetsByMachineId(goCtx context.Context, req *types.QueryGetLiquidAssetsByMachineIdRequest) (*types.QueryGetLiquidAssetsByMachineIdResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, errormsg.InvalidRequest)
 	}
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	liquidAsset, found := k.LookupLiquidAsset(ctx, req.GetMachineID())
+	liquidAsset, found := k.LookupLiquidAsset(ctx, req.GetMachineId())
 	if !found {
 		return nil, status.Error(codes.InvalidArgument, "no associated asset found")
 	}
-	return &types.QueryGetLiquidAssetsByMachineidResponse{LiquidAssetEntry: &liquidAsset}, nil
+	return &types.QueryGetLiquidAssetsByMachineIdResponse{LiquidAssetEntry: &liquidAsset}, nil
 }

@@ -4,28 +4,28 @@ import (
 	"context"
 	"testing"
 
-	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
-	"github.com/planetmint/planetmint-go/testutil/moduleobject"
-	"github.com/planetmint/planetmint-go/x/machine/keeper"
-	"github.com/planetmint/planetmint-go/x/machine/types"
-
-	"github.com/planetmint/planetmint-go/testutil/sample"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/planetmint/planetmint-go/x/machine/types"
+
+	"github.com/planetmint/planetmint-go/x/machine/keeper"
+
+	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
+	"github.com/planetmint/planetmint-go/testutil/moduleobject"
+	"github.com/planetmint/planetmint-go/testutil/sample"
 )
 
-func setupMsgServer(t testing.TB) (types.MsgServer, context.Context) {
+func setupMsgServer(t testing.TB) (keeper.Keeper, types.MsgServer, context.Context) {
 	k, ctx := keepertest.MachineKeeper(t)
-	return keeper.NewMsgServerImpl(*k), sdk.WrapSDKContext(ctx)
+	return k, keeper.NewMsgServerImpl(k), ctx
 }
 
 func TestMsgServer(t *testing.T) {
-	t.Parallel()
-	ms, ctx := setupMsgServer(t)
+	k, ms, ctx := setupMsgServer(t)
 	require.NotNil(t, ms)
 	require.NotNil(t, ctx)
+	require.NotEmpty(t, k)
 }
 
 func TestMsgServerAttestMachine(t *testing.T) {
@@ -35,7 +35,7 @@ func TestMsgServerAttestMachine(t *testing.T) {
 	taMsg := types.NewMsgRegisterTrustAnchor(pk, &ta)
 	machine := moduleobject.Machine(pk, pk, sk, "")
 	msg := types.NewMsgAttestMachine(pk, &machine)
-	msgServer, ctx := setupMsgServer(t)
+	_, msgServer, ctx := setupMsgServer(t)
 	_, err := msgServer.RegisterTrustAnchor(ctx, taMsg)
 	assert.NoError(t, err)
 	res, err := msgServer.AttestMachine(ctx, msg)
@@ -52,7 +52,7 @@ func TestMsgServerAttestMachineInvalidLiquidKey(t *testing.T) {
 	machine := moduleobject.Machine(pk, pk, sk, "")
 	machine.IssuerLiquid = "invalidkey"
 	msg := types.NewMsgAttestMachine(pk, &machine)
-	msgServer, ctx := setupMsgServer(t)
+	_, msgServer, ctx := setupMsgServer(t)
 	_, err := msgServer.RegisterTrustAnchor(ctx, taMsg)
 	assert.NoError(t, err)
 	_, err = msgServer.AttestMachine(ctx, msg)
@@ -64,7 +64,7 @@ func TestMsgServerRegisterTrustAnchor(t *testing.T) {
 	_, pk := sample.KeyPair()
 	ta := moduleobject.TrustAnchor(pk)
 	msg := types.NewMsgRegisterTrustAnchor(pk, &ta)
-	msgServer, ctx := setupMsgServer(t)
+	_, msgServer, ctx := setupMsgServer(t)
 	res, err := msgServer.RegisterTrustAnchor(ctx, msg)
 	if assert.NoError(t, err) {
 		assert.Equal(t, &types.MsgRegisterTrustAnchorResponse{}, res)
@@ -76,7 +76,7 @@ func TestMsgServerRegisterTrustAnchorUncompressedKey(t *testing.T) {
 	pk := "6003d0ab9af4ec112629195a7266a244aecf1ac7691da0084be3e7ceea2ee71571b0963fffd9c80a640317509a681ac66c2ed70ecc9f317a0d2b1a9bff94ff74"
 	ta := moduleobject.TrustAnchor(pk)
 	msg := types.NewMsgRegisterTrustAnchor(pk, &ta)
-	msgServer, ctx := setupMsgServer(t)
+	_, msgServer, ctx := setupMsgServer(t)
 	res, err := msgServer.RegisterTrustAnchor(ctx, msg)
 	if assert.NoError(t, err) {
 		assert.Equal(t, &types.MsgRegisterTrustAnchorResponse{}, res)
@@ -88,7 +88,7 @@ func TestMsgServerRegisterTrustAnchorTwice(t *testing.T) {
 	_, pk := sample.KeyPair()
 	ta := moduleobject.TrustAnchor(pk)
 	msg := types.NewMsgRegisterTrustAnchor(pk, &ta)
-	msgServer, ctx := setupMsgServer(t)
+	_, msgServer, ctx := setupMsgServer(t)
 	res, err := msgServer.RegisterTrustAnchor(ctx, msg)
 	if assert.NoError(t, err) {
 		assert.Equal(t, &types.MsgRegisterTrustAnchorResponse{}, res)
@@ -104,7 +104,7 @@ func TestMsgServerRegisterTrustAnchorInvalidPubkey(t *testing.T) {
 		Pubkey: "invalidpublickey",
 	}
 	msg := types.NewMsgRegisterTrustAnchor(pk, &ta)
-	msgServer, ctx := setupMsgServer(t)
+	_, msgServer, ctx := setupMsgServer(t)
 	_, err := msgServer.RegisterTrustAnchor(ctx, msg)
 	assert.EqualError(t, err, "invalid trust anchor pubkey")
 }

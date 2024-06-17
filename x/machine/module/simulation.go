@@ -3,23 +3,25 @@ package machine
 import (
 	"math/rand"
 
-	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
-	"github.com/planetmint/planetmint-go/testutil/sample"
-	machinesimulation "github.com/planetmint/planetmint-go/x/machine/simulation"
+
 	"github.com/planetmint/planetmint-go/x/machine/types"
+
+	machinesimulation "github.com/planetmint/planetmint-go/x/machine/simulation"
+
+	"github.com/planetmint/planetmint-go/testutil/sample"
 )
 
 // avoid unused import issue
 var (
-	_ = sample.AccAddress
 	_ = machinesimulation.FindAccount
-	_ = simulation.MsgEntryKind
-	_ = baseapp.Paramspace
 	_ = rand.Rand{}
+	_ = sample.AccAddress
+	_ = sdk.AccAddress{}
+	_ = simulation.MsgEntryKind
 )
 
 const (
@@ -27,17 +29,13 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgAttestMachine int = 100
 
-	opWeightMsgRegisterTrustAnchor = "op_weight_msg_register_trust_anchor"
-	// TODO: Determine the simulation weight value
-	defaultWeightMsgRegisterTrustAnchor int = 100
-
 	opWeightMsgNotarizeLiquidAsset = "op_weight_msg_notarize_liquid_asset"
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgNotarizeLiquidAsset int = 100
 
-	opWeightMsgUpdateParams = "op_weight_msg_update_params"
+	opWeightMsgRegisterTrustAnchor = "op_weight_msg_register_trust_anchor"
 	// TODO: Determine the simulation weight value
-	defaultWeightMsgUpdateParams int = 100
+	defaultWeightMsgRegisterTrustAnchor int = 100
 
 	// this line is used by starport scaffolding # simapp/module/const
 )
@@ -56,21 +54,14 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 }
 
 // RegisterStoreDecoder registers a decoder.
-func (am AppModule) RegisterStoreDecoder(_ sdk.StoreDecoderRegistry) {
-	// Implement if needed
-}
-
-// ProposalContents doesn't return any content functions for governance proposals.
-func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedProposalMsg {
-	return nil
-}
+func (am AppModule) RegisterStoreDecoder(_ simtypes.StoreDecoderRegistry) {}
 
 // WeightedOperations returns the all the gov module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
 	operations := make([]simtypes.WeightedOperation, 0)
 
 	var weightMsgAttestMachine int
-	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgAttestMachine, &weightMsgAttestMachine, nil,
+	simState.AppParams.GetOrGenerate(opWeightMsgAttestMachine, &weightMsgAttestMachine, nil,
 		func(_ *rand.Rand) {
 			weightMsgAttestMachine = defaultWeightMsgAttestMachine
 		},
@@ -80,19 +71,8 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		machinesimulation.SimulateMsgAttestMachine(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
-	var weightMsgRegisterTrustAnchor int
-	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgRegisterTrustAnchor, &weightMsgRegisterTrustAnchor, nil,
-		func(_ *rand.Rand) {
-			weightMsgRegisterTrustAnchor = defaultWeightMsgRegisterTrustAnchor
-		},
-	)
-	operations = append(operations, simulation.NewWeightedOperation(
-		weightMsgRegisterTrustAnchor,
-		machinesimulation.SimulateMsgRegisterTrustAnchor(am.accountKeeper, am.bankKeeper, am.keeper),
-	))
-
 	var weightMsgNotarizeLiquidAsset int
-	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgNotarizeLiquidAsset, &weightMsgNotarizeLiquidAsset, nil,
+	simState.AppParams.GetOrGenerate(opWeightMsgNotarizeLiquidAsset, &weightMsgNotarizeLiquidAsset, nil,
 		func(_ *rand.Rand) {
 			weightMsgNotarizeLiquidAsset = defaultWeightMsgNotarizeLiquidAsset
 		},
@@ -102,15 +82,15 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		machinesimulation.SimulateMsgNotarizeLiquidAsset(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
-	var weightMsgUpdateParams int
-	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgUpdateParams, &weightMsgUpdateParams, nil,
+	var weightMsgRegisterTrustAnchor int
+	simState.AppParams.GetOrGenerate(opWeightMsgRegisterTrustAnchor, &weightMsgRegisterTrustAnchor, nil,
 		func(_ *rand.Rand) {
-			weightMsgUpdateParams = defaultWeightMsgUpdateParams
+			weightMsgRegisterTrustAnchor = defaultWeightMsgRegisterTrustAnchor
 		},
 	)
 	operations = append(operations, simulation.NewWeightedOperation(
-		weightMsgUpdateParams,
-		machinesimulation.SimulateMsgUpdateParams(am.accountKeeper, am.bankKeeper, am.keeper),
+		weightMsgRegisterTrustAnchor,
+		machinesimulation.SimulateMsgRegisterTrustAnchor(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
 	// this line is used by starport scaffolding # simapp/module/operation
@@ -119,21 +99,13 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 }
 
 // ProposalMsgs returns msgs used for governance proposals for simulations.
-func (am AppModule) ProposalMsgs(_ module.SimulationState) []simtypes.WeightedProposalMsg {
+func (am AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.WeightedProposalMsg {
 	return []simtypes.WeightedProposalMsg{
 		simulation.NewWeightedProposalMsg(
 			opWeightMsgAttestMachine,
 			defaultWeightMsgAttestMachine,
 			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
 				machinesimulation.SimulateMsgAttestMachine(am.accountKeeper, am.bankKeeper, am.keeper)
-				return nil
-			},
-		),
-		simulation.NewWeightedProposalMsg(
-			opWeightMsgRegisterTrustAnchor,
-			defaultWeightMsgRegisterTrustAnchor,
-			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
-				machinesimulation.SimulateMsgRegisterTrustAnchor(am.accountKeeper, am.bankKeeper, am.keeper)
 				return nil
 			},
 		),
@@ -146,10 +118,10 @@ func (am AppModule) ProposalMsgs(_ module.SimulationState) []simtypes.WeightedPr
 			},
 		),
 		simulation.NewWeightedProposalMsg(
-			opWeightMsgUpdateParams,
-			defaultWeightMsgUpdateParams,
+			opWeightMsgRegisterTrustAnchor,
+			defaultWeightMsgRegisterTrustAnchor,
 			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
-				machinesimulation.SimulateMsgUpdateParams(am.accountKeeper, am.bankKeeper, am.keeper)
+				machinesimulation.SimulateMsgRegisterTrustAnchor(am.accountKeeper, am.bankKeeper, am.keeper)
 				return nil
 			},
 		),

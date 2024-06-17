@@ -3,19 +3,17 @@ package keeper_test
 import (
 	"testing"
 
-	testkeeper "github.com/planetmint/planetmint-go/testutil/keeper"
-	"github.com/planetmint/planetmint-go/x/machine/types"
 	"github.com/stretchr/testify/require"
+
+	"github.com/planetmint/planetmint-go/x/machine/types"
+
+	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
 )
 
 func TestGetParams(t *testing.T) {
-	t.Parallel()
-	k, ctx := testkeeper.MachineKeeper(t)
+	k, ctx := keepertest.MachineKeeper(t)
 	params := types.DefaultParams()
 
-	err := k.SetParams(ctx, params)
-
-	require.NoError(t, err)
-
+	require.NoError(t, k.SetParams(ctx, params))
 	require.EqualValues(t, params, k.GetParams(ctx))
 }

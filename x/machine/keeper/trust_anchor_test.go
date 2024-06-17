@@ -15,7 +15,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func createNTrustAnchor(t *testing.T, keeper *keeper.Keeper, ctx sdk.Context, n int) []types.TrustAnchor {
+func createNTrustAnchor(t *testing.T, keeper keeper.Keeper, ctx sdk.Context, n int) []types.TrustAnchor {
 	items := make([]types.TrustAnchor, n)
 	for i := range items {
 		pk := fmt.Sprintf("pubkey%v", i)

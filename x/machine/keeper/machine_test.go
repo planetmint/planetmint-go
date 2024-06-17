@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func createNMachine(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Machine {
+func createNMachine(keeper keeper.Keeper, ctx sdk.Context, n int) []types.Machine {
 	items := make([]types.Machine, n)
 	for i := range items {
 		items[i].MachineId = fmt.Sprintf("machineId%v", i)

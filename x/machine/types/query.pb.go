@@ -7,6 +7,7 @@ import (
 	context "context"
 	fmt "fmt"
 	_ "github.com/cosmos/cosmos-sdk/types/query"
+	_ "github.com/cosmos/cosmos-sdk/types/tx/amino"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	grpc1 "github.com/cosmos/gogoproto/grpc"
 	proto "github.com/cosmos/gogoproto/proto"
@@ -202,7 +203,7 @@ func (m *QueryGetMachineByPublicKeyResponse) GetMachine() *Machine {
 }
 
 type QueryGetTrustAnchorStatusRequest struct {
-	Machineid string `protobuf:"bytes,1,opt,name=machineid,proto3" json:"machineid,omitempty"`
+	MachineId string `protobuf:"bytes,1,opt,name=machineId,proto3" json:"machineId,omitempty"`
 }
 
 func (m *QueryGetTrustAnchorStatusRequest) Reset()         { *m = QueryGetTrustAnchorStatusRequest{} }
@@ -238,16 +239,16 @@ func (m *QueryGetTrustAnchorStatusRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryGetTrustAnchorStatusRequest proto.InternalMessageInfo
 
-func (m *QueryGetTrustAnchorStatusRequest) GetMachineid() string {
+func (m *QueryGetTrustAnchorStatusRequest) GetMachineId() string {
 	if m != nil {
-		return m.Machineid
+		return m.MachineId
 	}
 	return ""
 }
 
 type QueryGetTrustAnchorStatusResponse struct {
-	Machineid   string `protobuf:"bytes,1,opt,name=machineid,proto3" json:"machineid,omitempty"`
-	Isactivated bool   `protobuf:"varint,2,opt,name=isactivated,proto3" json:"isactivated,omitempty"`
+	MachineId   string `protobuf:"bytes,1,opt,name=machineId,proto3" json:"machineId,omitempty"`
+	IsActivated bool   `protobuf:"varint,2,opt,name=isActivated,proto3" json:"isActivated,omitempty"`
 }
 
 func (m *QueryGetTrustAnchorStatusResponse) Reset()         { *m = QueryGetTrustAnchorStatusResponse{} }
@@ -283,16 +284,16 @@ func (m *QueryGetTrustAnchorStatusResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryGetTrustAnchorStatusResponse proto.InternalMessageInfo
 
-func (m *QueryGetTrustAnchorStatusResponse) GetMachineid() string {
+func (m *QueryGetTrustAnchorStatusResponse) GetMachineId() string {
 	if m != nil {
-		return m.Machineid
+		return m.MachineId
 	}
 	return ""
 }
 
-func (m *QueryGetTrustAnchorStatusResponse) GetIsactivated() bool {
+func (m *QueryGetTrustAnchorStatusResponse) GetIsActivated() bool {
 	if m != nil {
-		return m.Isactivated
+		return m.IsActivated
 	}
 	return false
 }
@@ -385,24 +386,24 @@ func (m *QueryGetMachineByAddressResponse) GetMachine() *Machine {
 	return nil
 }
 
-type QueryGetLiquidAssetsByMachineidRequest struct {
-	MachineID string `protobuf:"bytes,1,opt,name=machineID,proto3" json:"machineID,omitempty"`
+type QueryGetLiquidAssetsByMachineIdRequest struct {
+	MachineId string `protobuf:"bytes,1,opt,name=machineId,proto3" json:"machineId,omitempty"`
 }
 
-func (m *QueryGetLiquidAssetsByMachineidRequest) Reset() {
-	*m = QueryGetLiquidAssetsByMachineidRequest{}
+func (m *QueryGetLiquidAssetsByMachineIdRequest) Reset() {
+	*m = QueryGetLiquidAssetsByMachineIdRequest{}
 }
-func (m *QueryGetLiquidAssetsByMachineidRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryGetLiquidAssetsByMachineidRequest) ProtoMessage()    {}
-func (*QueryGetLiquidAssetsByMachineidRequest) Descriptor() ([]byte, []int) {
+func (m *QueryGetLiquidAssetsByMachineIdRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetLiquidAssetsByMachineIdRequest) ProtoMessage()    {}
+func (*QueryGetLiquidAssetsByMachineIdRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_bf7841d43d757203, []int{8}
 }
-func (m *QueryGetLiquidAssetsByMachineidRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryGetLiquidAssetsByMachineIdRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryGetLiquidAssetsByMachineidRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryGetLiquidAssetsByMachineIdRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryGetLiquidAssetsByMachineidRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryGetLiquidAssetsByMachineIdRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -412,43 +413,43 @@ func (m *QueryGetLiquidAssetsByMachineidRequest) XXX_Marshal(b []byte, determini
 		return b[:n], nil
 	}
 }
-func (m *QueryGetLiquidAssetsByMachineidRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryGetLiquidAssetsByMachineidRequest.Merge(m, src)
+func (m *QueryGetLiquidAssetsByMachineIdRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetLiquidAssetsByMachineIdRequest.Merge(m, src)
 }
-func (m *QueryGetLiquidAssetsByMachineidRequest) XXX_Size() int {
+func (m *QueryGetLiquidAssetsByMachineIdRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryGetLiquidAssetsByMachineidRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryGetLiquidAssetsByMachineidRequest.DiscardUnknown(m)
+func (m *QueryGetLiquidAssetsByMachineIdRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetLiquidAssetsByMachineIdRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryGetLiquidAssetsByMachineidRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryGetLiquidAssetsByMachineIdRequest proto.InternalMessageInfo
 
-func (m *QueryGetLiquidAssetsByMachineidRequest) GetMachineID() string {
+func (m *QueryGetLiquidAssetsByMachineIdRequest) GetMachineId() string {
 	if m != nil {
-		return m.MachineID
+		return m.MachineId
 	}
 	return ""
 }
 
-type QueryGetLiquidAssetsByMachineidResponse struct {
+type QueryGetLiquidAssetsByMachineIdResponse struct {
 	LiquidAssetEntry *LiquidAsset `protobuf:"bytes,1,opt,name=liquidAssetEntry,proto3" json:"liquidAssetEntry,omitempty"`
 }
 
-func (m *QueryGetLiquidAssetsByMachineidResponse) Reset() {
-	*m = QueryGetLiquidAssetsByMachineidResponse{}
+func (m *QueryGetLiquidAssetsByMachineIdResponse) Reset() {
+	*m = QueryGetLiquidAssetsByMachineIdResponse{}
 }
-func (m *QueryGetLiquidAssetsByMachineidResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryGetLiquidAssetsByMachineidResponse) ProtoMessage()    {}
-func (*QueryGetLiquidAssetsByMachineidResponse) Descriptor() ([]byte, []int) {
+func (m *QueryGetLiquidAssetsByMachineIdResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetLiquidAssetsByMachineIdResponse) ProtoMessage()    {}
+func (*QueryGetLiquidAssetsByMachineIdResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_bf7841d43d757203, []int{9}
 }
-func (m *QueryGetLiquidAssetsByMachineidResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryGetLiquidAssetsByMachineIdResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryGetLiquidAssetsByMachineidResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryGetLiquidAssetsByMachineIdResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryGetLiquidAssetsByMachineidResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryGetLiquidAssetsByMachineIdResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -458,19 +459,19 @@ func (m *QueryGetLiquidAssetsByMachineidResponse) XXX_Marshal(b []byte, determin
 		return b[:n], nil
 	}
 }
-func (m *QueryGetLiquidAssetsByMachineidResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryGetLiquidAssetsByMachineidResponse.Merge(m, src)
+func (m *QueryGetLiquidAssetsByMachineIdResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetLiquidAssetsByMachineIdResponse.Merge(m, src)
 }
-func (m *QueryGetLiquidAssetsByMachineidResponse) XXX_Size() int {
+func (m *QueryGetLiquidAssetsByMachineIdResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryGetLiquidAssetsByMachineidResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryGetLiquidAssetsByMachineidResponse.DiscardUnknown(m)
+func (m *QueryGetLiquidAssetsByMachineIdResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetLiquidAssetsByMachineIdResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryGetLiquidAssetsByMachineidResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryGetLiquidAssetsByMachineIdResponse proto.InternalMessageInfo
 
-func (m *QueryGetLiquidAssetsByMachineidResponse) GetLiquidAssetEntry() *LiquidAsset {
+func (m *QueryGetLiquidAssetsByMachineIdResponse) GetLiquidAssetEntry() *LiquidAsset {
 	if m != nil {
 		return m.LiquidAssetEntry
 	}
@@ -486,57 +487,59 @@ func init() {
 	proto.RegisterType((*QueryGetTrustAnchorStatusResponse)(nil), "planetmintgo.machine.QueryGetTrustAnchorStatusResponse")
 	proto.RegisterType((*QueryGetMachineByAddressRequest)(nil), "planetmintgo.machine.QueryGetMachineByAddressRequest")
 	proto.RegisterType((*QueryGetMachineByAddressResponse)(nil), "planetmintgo.machine.QueryGetMachineByAddressResponse")
-	proto.RegisterType((*QueryGetLiquidAssetsByMachineidRequest)(nil), "planetmintgo.machine.QueryGetLiquidAssetsByMachineidRequest")
-	proto.RegisterType((*QueryGetLiquidAssetsByMachineidResponse)(nil), "planetmintgo.machine.QueryGetLiquidAssetsByMachineidResponse")
+	proto.RegisterType((*QueryGetLiquidAssetsByMachineIdRequest)(nil), "planetmintgo.machine.QueryGetLiquidAssetsByMachineIdRequest")
+	proto.RegisterType((*QueryGetLiquidAssetsByMachineIdResponse)(nil), "planetmintgo.machine.QueryGetLiquidAssetsByMachineIdResponse")
 }
 
 func init() { proto.RegisterFile("planetmintgo/machine/query.proto", fileDescriptor_bf7841d43d757203) }
 
 var fileDescriptor_bf7841d43d757203 = []byte{
-	// 688 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x55, 0xc1, 0x4f, 0x13, 0x4f,
-	0x18, 0xed, 0x92, 0xdf, 0x0f, 0x64, 0xb8, 0x98, 0xa1, 0x26, 0x64, 0x53, 0x4b, 0x99, 0x44, 0x41,
-	0x22, 0x9d, 0x00, 0x01, 0x8c, 0x68, 0x62, 0x1b, 0xd4, 0x10, 0x6d, 0x02, 0xd5, 0x93, 0xc6, 0x90,
-	0xe9, 0x76, 0xb2, 0x4c, 0x6c, 0x77, 0x96, 0x9d, 0x59, 0xc2, 0x86, 0xf4, 0xa0, 0x7f, 0x81, 0x89,
-	0x57, 0xff, 0x0b, 0xef, 0x9e, 0x3c, 0x70, 0x24, 0xf1, 0xe2, 0xc9, 0x18, 0xf0, 0x0f, 0x31, 0x9d,
-	0x9d, 0xed, 0x2e, 0x74, 0x58, 0x41, 0x4f, 0x9d, 0x7e, 0xfb, 0xde, 0xfb, 0xde, 0xf7, 0xed, 0xbc,
-	0x2c, 0xa8, 0xf8, 0x1d, 0xe2, 0x51, 0xd9, 0x65, 0x9e, 0x74, 0x39, 0xee, 0x12, 0x67, 0x97, 0x79,
-	0x14, 0xef, 0x85, 0x34, 0x88, 0xaa, 0x7e, 0xc0, 0x25, 0x87, 0xc5, 0x2c, 0xa2, 0xaa, 0x11, 0x76,
-	0xd1, 0xe5, 0x2e, 0x57, 0x00, 0xdc, 0x3f, 0xc5, 0x58, 0xbb, 0xe4, 0x72, 0xee, 0x76, 0x28, 0x26,
-	0x3e, 0xc3, 0xc4, 0xf3, 0xb8, 0x24, 0x92, 0x71, 0x4f, 0xe8, 0xa7, 0xf3, 0x0e, 0x17, 0x5d, 0x2e,
-	0x70, 0x8b, 0x08, 0xdd, 0x02, 0xef, 0x2f, 0xb6, 0xa8, 0x24, 0x8b, 0xd8, 0x27, 0x2e, 0xf3, 0x14,
-	0x58, 0x63, 0x67, 0x8c, 0xbe, 0x7c, 0x12, 0x90, 0x6e, 0x22, 0x87, 0x8c, 0x10, 0xfd, 0xab, 0x31,
-	0xb3, 0x46, 0x4c, 0x87, 0xed, 0x85, 0xac, 0xbd, 0x43, 0x84, 0xa0, 0x32, 0x06, 0xa2, 0x22, 0x80,
-	0xdb, 0x7d, 0x47, 0x5b, 0xaa, 0x43, 0x93, 0xee, 0x85, 0x54, 0x48, 0xb4, 0x0d, 0x26, 0xcf, 0x54,
-	0x85, 0xcf, 0x3d, 0x41, 0xe1, 0x7d, 0x30, 0x1a, 0x3b, 0x99, 0xb2, 0x2a, 0xd6, 0xdc, 0xc4, 0x52,
-	0xa9, 0x6a, 0xda, 0x51, 0x35, 0x66, 0xd5, 0xff, 0x3b, 0xfa, 0x31, 0x5d, 0x68, 0x6a, 0x06, 0xaa,
-	0x81, 0x19, 0x25, 0xf9, 0x94, 0xca, 0x46, 0x8c, 0xab, 0x47, 0x5b, 0x61, 0xab, 0xc3, 0x9c, 0x67,
-	0x34, 0xd2, 0x7d, 0x61, 0x09, 0x8c, 0xfb, 0x49, 0x4d, 0xf5, 0x18, 0x6f, 0xa6, 0x05, 0xf4, 0x06,
-	0xa0, 0x3c, 0x09, 0x6d, 0x72, 0x0d, 0x8c, 0x69, 0x23, 0xda, 0xe5, 0x4d, 0xb3, 0x4b, 0x2d, 0xd1,
-	0x4c, 0xd0, 0xe8, 0x11, 0xa8, 0x24, 0xf2, 0x2f, 0x83, 0x50, 0xc8, 0x9a, 0xe7, 0xec, 0xf2, 0xe0,
-	0x85, 0x24, 0x32, 0x14, 0x19, 0x83, 0x1a, 0xce, 0xda, 0x89, 0xc1, 0x41, 0x01, 0x39, 0xe9, 0x8c,
-	0x06, 0x05, 0xed, 0x2f, 0x57, 0x02, 0x56, 0xc0, 0x04, 0x13, 0xc4, 0x91, 0x6c, 0x9f, 0x48, 0xda,
-	0x9e, 0x1a, 0xa9, 0x58, 0x73, 0xd7, 0x9a, 0xd9, 0x12, 0x5a, 0x07, 0xd3, 0x43, 0x5b, 0xa8, 0xb5,
-	0xdb, 0x01, 0x15, 0x03, 0x97, 0x53, 0x60, 0x8c, 0xc4, 0x15, 0xdd, 0x20, 0xf9, 0x8b, 0x5e, 0xa7,
-	0x33, 0x0e, 0x93, 0xff, 0x75, 0x81, 0x4f, 0xc0, 0xed, 0x44, 0xfc, 0xb9, 0xba, 0x69, 0xb5, 0xfe,
-	0x45, 0x13, 0xf5, 0xa8, 0x91, 0x8c, 0x37, 0xbc, 0xc6, 0xcd, 0x8d, 0x73, 0x3b, 0xd8, 0xdc, 0x40,
-	0x07, 0x60, 0xf6, 0x8f, 0x3a, 0xda, 0x6b, 0x03, 0x5c, 0xef, 0xa4, 0x90, 0xc7, 0x9e, 0x0c, 0x22,
-	0x6d, 0x7a, 0xc6, 0x6c, 0x3a, 0x23, 0xd8, 0x1c, 0xa2, 0x2e, 0x7d, 0x1a, 0x03, 0xff, 0xab, 0xd6,
-	0xf0, 0x9d, 0x05, 0x46, 0xe3, 0x7b, 0x0c, 0xe7, 0xcc, 0x4a, 0xc3, 0xb1, 0xb1, 0xef, 0x5c, 0x02,
-	0x19, 0x1b, 0x47, 0xe8, 0xfd, 0xb7, 0x5f, 0x1f, 0x47, 0x4a, 0xd0, 0xc6, 0x29, 0xe5, 0x5c, 0xdc,
-	0xe1, 0x17, 0x0b, 0xdc, 0x30, 0xde, 0x75, 0xb8, 0x96, 0xd3, 0x28, 0x2f, 0x60, 0xf6, 0xbd, 0xab,
-	0x13, 0xb5, 0xe1, 0x25, 0x65, 0xf8, 0x2e, 0x9c, 0x37, 0x1a, 0x56, 0xf0, 0x9d, 0xb7, 0x34, 0xc2,
-	0x87, 0x83, 0xbc, 0xf6, 0xe0, 0x57, 0x0b, 0x14, 0x4d, 0x59, 0x80, 0xab, 0xf9, 0x36, 0x2e, 0x8a,
-	0x9f, 0xbd, 0x76, 0x65, 0x9e, 0x76, 0xbf, 0xae, 0xdc, 0xaf, 0xc0, 0x65, 0x93, 0x7b, 0xd9, 0xa7,
-	0xed, 0x10, 0xc5, 0xc3, 0x42, 0x11, 0xf1, 0xe1, 0x20, 0x92, 0x3d, 0xf8, 0xd9, 0x02, 0x93, 0x86,
-	0xc0, 0xc0, 0x95, 0x4b, 0x2e, 0xf3, 0x6c, 0x3a, 0xed, 0xd5, 0xab, 0xd2, 0xf4, 0x0c, 0x0b, 0x6a,
-	0x86, 0x59, 0x78, 0xcb, 0x34, 0x83, 0x0e, 0x38, 0x3e, 0xd4, 0x87, 0x1e, 0x3c, 0xb6, 0x80, 0x7d,
-	0x71, 0x82, 0xe0, 0x83, 0x7c, 0x17, 0xf9, 0x01, 0xb6, 0x1f, 0xfe, 0x25, 0x5b, 0x8f, 0xb2, 0xa2,
-	0x46, 0xc1, 0x70, 0xc1, 0x34, 0x4a, 0xf6, 0x2b, 0x95, 0xbe, 0x88, 0xcd, 0x8d, 0x5e, 0xbd, 0x71,
-	0x74, 0x52, 0xb6, 0x8e, 0x4f, 0xca, 0xd6, 0xcf, 0x93, 0xb2, 0xf5, 0xe1, 0xb4, 0x5c, 0x38, 0x3e,
-	0x2d, 0x17, 0xbe, 0x9f, 0x96, 0x0b, 0xaf, 0x96, 0x5d, 0x26, 0x77, 0xc3, 0x56, 0xd5, 0xe1, 0xdd,
-	0xac, 0x64, 0x7a, 0x5c, 0x70, 0x39, 0x3e, 0x48, 0xdf, 0x78, 0xe4, 0x53, 0xd1, 0x1a, 0x55, 0x9f,
-	0xc0, 0xe5, 0xdf, 0x01, 0x00, 0x00, 0xff, 0xff, 0x54, 0x57, 0xb2, 0xca, 0x0c, 0x08, 0x00, 0x00,
+	// 708 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x55, 0x51, 0x6b, 0x13, 0x4d,
+	0x14, 0xcd, 0x16, 0xbe, 0xf6, 0xeb, 0xf4, 0x45, 0xa7, 0x11, 0xca, 0xd2, 0xa6, 0xe9, 0x42, 0x6d,
+	0x2d, 0x34, 0x43, 0x5b, 0xda, 0x0a, 0x2a, 0x9a, 0x40, 0x2d, 0x45, 0x83, 0x35, 0x8a, 0x0f, 0x8a,
+	0x2c, 0x93, 0xcd, 0xb0, 0x5d, 0xcc, 0xee, 0x6c, 0x77, 0x66, 0x4b, 0x97, 0xd2, 0x17, 0xf1, 0x07,
+	0x08, 0xfe, 0x09, 0x1f, 0x05, 0xff, 0x44, 0x9f, 0xa4, 0x20, 0x88, 0x20, 0x88, 0xb4, 0x82, 0x7f,
+	0x43, 0x32, 0x7b, 0x37, 0xd9, 0x92, 0xcd, 0x9a, 0xea, 0x4b, 0x3b, 0xb9, 0x39, 0xf7, 0xdc, 0x73,
+	0x66, 0xef, 0xc9, 0xa2, 0xb2, 0xdf, 0xa6, 0x1e, 0x93, 0xae, 0xe3, 0x49, 0x9b, 0x13, 0x97, 0x5a,
+	0x7b, 0x8e, 0xc7, 0xc8, 0x7e, 0xc8, 0x82, 0xa8, 0xe2, 0x07, 0x5c, 0x72, 0x5c, 0x4c, 0x23, 0x2a,
+	0x80, 0xd0, 0xaf, 0x52, 0xd7, 0xf1, 0x38, 0x51, 0x7f, 0x63, 0xa0, 0x5e, 0xb4, 0xb9, 0xcd, 0xd5,
+	0x91, 0x74, 0x4e, 0x50, 0x9d, 0xb6, 0x39, 0xb7, 0xdb, 0x8c, 0x50, 0xdf, 0x21, 0xd4, 0xf3, 0xb8,
+	0xa4, 0xd2, 0xe1, 0x9e, 0x80, 0x6f, 0x97, 0x2c, 0x2e, 0x5c, 0x2e, 0x48, 0x93, 0x0a, 0x98, 0x4a,
+	0x0e, 0x56, 0x9a, 0x4c, 0xd2, 0x15, 0xe2, 0x53, 0xdb, 0xf1, 0x14, 0x18, 0xb0, 0x73, 0x99, 0x52,
+	0x7d, 0x1a, 0x50, 0x37, 0xa1, 0x33, 0x32, 0x21, 0xf0, 0x1f, 0x30, 0x0b, 0x99, 0x98, 0xb6, 0xb3,
+	0x1f, 0x3a, 0x2d, 0x93, 0x0a, 0xc1, 0x64, 0x0c, 0x34, 0x8a, 0x08, 0x3f, 0xee, 0x28, 0xda, 0x55,
+	0x13, 0x1a, 0x6c, 0x3f, 0x64, 0x42, 0x1a, 0xcf, 0xd0, 0xe4, 0x85, 0xaa, 0xf0, 0xb9, 0x27, 0x18,
+	0xbe, 0x8b, 0x46, 0x63, 0x25, 0x53, 0x5a, 0x59, 0x5b, 0x9c, 0x58, 0x9d, 0xae, 0x64, 0x5d, 0x5b,
+	0x25, 0xee, 0xaa, 0x8d, 0x9f, 0x7c, 0x9f, 0x2d, 0xbc, 0xff, 0xf5, 0x61, 0x49, 0x6b, 0x40, 0x9b,
+	0x51, 0x45, 0x73, 0x8a, 0x77, 0x9b, 0xc9, 0x7a, 0x0c, 0xae, 0x45, 0xbb, 0x61, 0xb3, 0xed, 0x58,
+	0x0f, 0x58, 0x04, 0xc3, 0xf1, 0x34, 0x1a, 0xf7, 0x93, 0x9a, 0x1a, 0x34, 0xde, 0xe8, 0x15, 0x8c,
+	0x97, 0xc8, 0xc8, 0xa3, 0x00, 0xa5, 0x9b, 0x68, 0x0c, 0xd4, 0x80, 0xd4, 0x99, 0x6c, 0xa9, 0x40,
+	0xd1, 0x48, 0xd0, 0xc6, 0x3d, 0x54, 0x4e, 0xe8, 0x9f, 0x06, 0xa1, 0x90, 0x55, 0xcf, 0xda, 0xe3,
+	0xc1, 0x13, 0x49, 0x65, 0x28, 0x52, 0x02, 0x01, 0xbe, 0xd3, 0x4a, 0x04, 0x76, 0x0b, 0x86, 0xd5,
+	0xf3, 0x98, 0xc1, 0x00, 0xfa, 0x72, 0x29, 0x70, 0x19, 0x4d, 0x38, 0xa2, 0x6a, 0x49, 0xe7, 0x80,
+	0x4a, 0xd6, 0x9a, 0x1a, 0x29, 0x6b, 0x8b, 0xff, 0x37, 0xd2, 0x25, 0xe3, 0x16, 0x9a, 0xed, 0xbb,
+	0x85, 0x6a, 0xab, 0x15, 0x30, 0xd1, 0x55, 0x39, 0x85, 0xc6, 0x68, 0x5c, 0x81, 0x01, 0xc9, 0x47,
+	0xe3, 0x45, 0xcf, 0x63, 0x7f, 0xf3, 0xbf, 0x5e, 0xe0, 0x7d, 0x74, 0x3d, 0x21, 0x7f, 0xa8, 0xd6,
+	0xad, 0xda, 0xd9, 0x36, 0x51, 0x8b, 0xea, 0x89, 0xbd, 0xe1, 0xae, 0xf1, 0x10, 0x2d, 0xfc, 0x91,
+	0x07, 0xb4, 0xd6, 0xd1, 0x95, 0x76, 0x0f, 0xb2, 0xe5, 0xc9, 0x20, 0x02, 0xd1, 0x73, 0xd9, 0xa2,
+	0x53, 0x84, 0x8d, 0xbe, 0xd6, 0xd5, 0x4f, 0x63, 0xe8, 0x3f, 0x35, 0x1a, 0xbf, 0xd1, 0xd0, 0x68,
+	0xbc, 0xcc, 0x78, 0x31, 0x9b, 0xa9, 0x3f, 0x3b, 0xfa, 0x8d, 0x21, 0x90, 0xb1, 0x70, 0x63, 0xfe,
+	0xf5, 0xe7, 0x9f, 0xef, 0x46, 0x66, 0xf1, 0x0c, 0xe9, 0xb5, 0x2c, 0xf7, 0xc5, 0x1e, 0x7f, 0xd3,
+	0xd0, 0xb5, 0xcc, 0x75, 0xc7, 0x9b, 0x39, 0xb3, 0xf2, 0x32, 0xa6, 0xdf, 0xbc, 0x7c, 0x23, 0x68,
+	0x7e, 0xa4, 0x34, 0xef, 0xe0, 0xed, 0x94, 0xe6, 0x01, 0xf2, 0x6d, 0x26, 0x4d, 0x38, 0x9b, 0xcd,
+	0xc8, 0x8c, 0x33, 0x6c, 0xbe, 0x62, 0x11, 0x39, 0xea, 0xe6, 0xf9, 0x18, 0x7f, 0xd1, 0x50, 0x31,
+	0x2b, 0x2b, 0x78, 0x23, 0x5f, 0xe3, 0xa0, 0x78, 0xea, 0x9b, 0x97, 0xee, 0x03, 0x6b, 0x75, 0x65,
+	0x6d, 0x1b, 0x6f, 0x0d, 0x67, 0x4d, 0x76, 0x88, 0x4c, 0xaa, 0x98, 0x4c, 0xa1, 0xa8, 0xc8, 0x51,
+	0x77, 0x81, 0x8f, 0xf1, 0x47, 0x0d, 0x4d, 0x66, 0x44, 0x0c, 0xaf, 0x0f, 0x79, 0xf7, 0x17, 0xf3,
+	0xac, 0x6f, 0x5c, 0xb6, 0x0d, 0x5c, 0x2d, 0x2b, 0x57, 0x0b, 0x78, 0x3e, 0xed, 0x2a, 0xf1, 0x01,
+	0x3f, 0x09, 0xe4, 0x08, 0x0e, 0xc7, 0xf8, 0x54, 0x43, 0xfa, 0xe0, 0xcc, 0xe1, 0xdb, 0xf9, 0x2a,
+	0xf2, 0x23, 0xaf, 0xdf, 0xf9, 0xcb, 0x6e, 0xb0, 0xb2, 0xae, 0xac, 0x10, 0xbc, 0x9c, 0x65, 0x25,
+	0xfd, 0x72, 0xbb, 0xf0, 0x20, 0x6a, 0xf5, 0x93, 0xb3, 0x92, 0x76, 0x7a, 0x56, 0xd2, 0x7e, 0x9c,
+	0x95, 0xb4, 0xb7, 0xe7, 0xa5, 0xc2, 0xe9, 0x79, 0xa9, 0xf0, 0xf5, 0xbc, 0x54, 0x78, 0xbe, 0x66,
+	0x3b, 0x72, 0x2f, 0x6c, 0x56, 0x2c, 0xee, 0x0e, 0x7e, 0xe6, 0x87, 0xdd, 0x11, 0x32, 0xf2, 0x99,
+	0x68, 0x8e, 0xaa, 0x37, 0xe7, 0xda, 0xef, 0x00, 0x00, 0x00, 0xff, 0xff, 0x88, 0x80, 0x05, 0xf2,
+	0x56, 0x08, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -560,7 +563,7 @@ type QueryClient interface {
 	// Queries a list of GetMachineByAddress items.
 	GetMachineByAddress(ctx context.Context, in *QueryGetMachineByAddressRequest, opts ...grpc.CallOption) (*QueryGetMachineByAddressResponse, error)
 	// Queries a list of GetLiquidAssetsByMachineid items.
-	GetLiquidAssetsByMachineid(ctx context.Context, in *QueryGetLiquidAssetsByMachineidRequest, opts ...grpc.CallOption) (*QueryGetLiquidAssetsByMachineidResponse, error)
+	GetLiquidAssetsByMachineId(ctx context.Context, in *QueryGetLiquidAssetsByMachineIdRequest, opts ...grpc.CallOption) (*QueryGetLiquidAssetsByMachineIdResponse, error)
 }
 
 type queryClient struct {
@@ -607,9 +610,9 @@ func (c *queryClient) GetMachineByAddress(ctx context.Context, in *QueryGetMachi
 	return out, nil
 }
 
-func (c *queryClient) GetLiquidAssetsByMachineid(ctx context.Context, in *QueryGetLiquidAssetsByMachineidRequest, opts ...grpc.CallOption) (*QueryGetLiquidAssetsByMachineidResponse, error) {
-	out := new(QueryGetLiquidAssetsByMachineidResponse)
-	err := c.cc.Invoke(ctx, "/planetmintgo.machine.Query/GetLiquidAssetsByMachineid", in, out, opts...)
+func (c *queryClient) GetLiquidAssetsByMachineId(ctx context.Context, in *QueryGetLiquidAssetsByMachineIdRequest, opts ...grpc.CallOption) (*QueryGetLiquidAssetsByMachineIdResponse, error) {
+	out := new(QueryGetLiquidAssetsByMachineIdResponse)
+	err := c.cc.Invoke(ctx, "/planetmintgo.machine.Query/GetLiquidAssetsByMachineId", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -627,7 +630,7 @@ type QueryServer interface {
 	// Queries a list of GetMachineByAddress items.
 	GetMachineByAddress(context.Context, *QueryGetMachineByAddressRequest) (*QueryGetMachineByAddressResponse, error)
 	// Queries a list of GetLiquidAssetsByMachineid items.
-	GetLiquidAssetsByMachineid(context.Context, *QueryGetLiquidAssetsByMachineidRequest) (*QueryGetLiquidAssetsByMachineidResponse, error)
+	GetLiquidAssetsByMachineId(context.Context, *QueryGetLiquidAssetsByMachineIdRequest) (*QueryGetLiquidAssetsByMachineIdResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
@@ -646,8 +649,8 @@ func (*UnimplementedQueryServer) GetTrustAnchorStatus(ctx context.Context, req *
 func (*UnimplementedQueryServer) GetMachineByAddress(ctx context.Context, req *QueryGetMachineByAddressRequest) (*QueryGetMachineByAddressResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMachineByAddress not implemented")
 }
-func (*UnimplementedQueryServer) GetLiquidAssetsByMachineid(ctx context.Context, req *QueryGetLiquidAssetsByMachineidRequest) (*QueryGetLiquidAssetsByMachineidResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetLiquidAssetsByMachineid not implemented")
+func (*UnimplementedQueryServer) GetLiquidAssetsByMachineId(ctx context.Context, req *QueryGetLiquidAssetsByMachineIdRequest) (*QueryGetLiquidAssetsByMachineIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetLiquidAssetsByMachineId not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
@@ -726,20 +729,20 @@ func _Query_GetMachineByAddress_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_GetLiquidAssetsByMachineid_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryGetLiquidAssetsByMachineidRequest)
+func _Query_GetLiquidAssetsByMachineId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetLiquidAssetsByMachineIdRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).GetLiquidAssetsByMachineid(ctx, in)
+		return srv.(QueryServer).GetLiquidAssetsByMachineId(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/planetmintgo.machine.Query/GetLiquidAssetsByMachineid",
+		FullMethod: "/planetmintgo.machine.Query/GetLiquidAssetsByMachineId",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).GetLiquidAssetsByMachineid(ctx, req.(*QueryGetLiquidAssetsByMachineidRequest))
+		return srv.(QueryServer).GetLiquidAssetsByMachineId(ctx, req.(*QueryGetLiquidAssetsByMachineIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -765,8 +768,8 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Query_GetMachineByAddress_Handler,
 		},
 		{
-			MethodName: "GetLiquidAssetsByMachineid",
-			Handler:    _Query_GetLiquidAssetsByMachineid_Handler,
+			MethodName: "GetLiquidAssetsByMachineId",
+			Handler:    _Query_GetLiquidAssetsByMachineId_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -914,10 +917,10 @@ func (m *QueryGetTrustAnchorStatusRequest) MarshalToSizedBuffer(dAtA []byte) (in
 	_ = i
 	var l int
 	_ = l
-	if len(m.Machineid) > 0 {
-		i -= len(m.Machineid)
-		copy(dAtA[i:], m.Machineid)
-		i = encodeVarintQuery(dAtA, i, uint64(len(m.Machineid)))
+	if len(m.MachineId) > 0 {
+		i -= len(m.MachineId)
+		copy(dAtA[i:], m.MachineId)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.MachineId)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -944,9 +947,9 @@ func (m *QueryGetTrustAnchorStatusResponse) MarshalToSizedBuffer(dAtA []byte) (i
 	_ = i
 	var l int
 	_ = l
-	if m.Isactivated {
+	if m.IsActivated {
 		i--
-		if m.Isactivated {
+		if m.IsActivated {
 			dAtA[i] = 1
 		} else {
 			dAtA[i] = 0
@@ -954,10 +957,10 @@ func (m *QueryGetTrustAnchorStatusResponse) MarshalToSizedBuffer(dAtA []byte) (i
 		i--
 		dAtA[i] = 0x10
 	}
-	if len(m.Machineid) > 0 {
-		i -= len(m.Machineid)
-		copy(dAtA[i:], m.Machineid)
-		i = encodeVarintQuery(dAtA, i, uint64(len(m.Machineid)))
+	if len(m.MachineId) > 0 {
+		i -= len(m.MachineId)
+		copy(dAtA[i:], m.MachineId)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.MachineId)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -1029,7 +1032,7 @@ func (m *QueryGetMachineByAddressResponse) MarshalToSizedBuffer(dAtA []byte) (in
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryGetLiquidAssetsByMachineidRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryGetLiquidAssetsByMachineIdRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1039,27 +1042,27 @@ func (m *QueryGetLiquidAssetsByMachineidRequest) Marshal() (dAtA []byte, err err
 	return dAtA[:n], nil
 }
 
-func (m *QueryGetLiquidAssetsByMachineidRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryGetLiquidAssetsByMachineIdRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryGetLiquidAssetsByMachineidRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryGetLiquidAssetsByMachineIdRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.MachineID) > 0 {
-		i -= len(m.MachineID)
-		copy(dAtA[i:], m.MachineID)
-		i = encodeVarintQuery(dAtA, i, uint64(len(m.MachineID)))
+	if len(m.MachineId) > 0 {
+		i -= len(m.MachineId)
+		copy(dAtA[i:], m.MachineId)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.MachineId)))
 		i--
 		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryGetLiquidAssetsByMachineidResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryGetLiquidAssetsByMachineIdResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1069,12 +1072,12 @@ func (m *QueryGetLiquidAssetsByMachineidResponse) Marshal() (dAtA []byte, err er
 	return dAtA[:n], nil
 }
 
-func (m *QueryGetLiquidAssetsByMachineidResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryGetLiquidAssetsByMachineIdResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryGetLiquidAssetsByMachineidResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryGetLiquidAssetsByMachineIdResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1157,7 +1160,7 @@ func (m *QueryGetTrustAnchorStatusRequest) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.Machineid)
+	l = len(m.MachineId)
 	if l > 0 {
 		n += 1 + l + sovQuery(uint64(l))
 	}
@@ -1170,11 +1173,11 @@ func (m *QueryGetTrustAnchorStatusResponse) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.Machineid)
+	l = len(m.MachineId)
 	if l > 0 {
 		n += 1 + l + sovQuery(uint64(l))
 	}
-	if m.Isactivated {
+	if m.IsActivated {
 		n += 2
 	}
 	return n
@@ -1206,20 +1209,20 @@ func (m *QueryGetMachineByAddressResponse) Size() (n int) {
 	return n
 }
 
-func (m *QueryGetLiquidAssetsByMachineidRequest) Size() (n int) {
+func (m *QueryGetLiquidAssetsByMachineIdRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	l = len(m.MachineID)
+	l = len(m.MachineId)
 	if l > 0 {
 		n += 1 + l + sovQuery(uint64(l))
 	}
 	return n
 }
 
-func (m *QueryGetLiquidAssetsByMachineidResponse) Size() (n int) {
+func (m *QueryGetLiquidAssetsByMachineIdResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1570,7 +1573,7 @@ func (m *QueryGetTrustAnchorStatusRequest) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Machineid", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field MachineId", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1598,7 +1601,7 @@ func (m *QueryGetTrustAnchorStatusRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Machineid = string(dAtA[iNdEx:postIndex])
+			m.MachineId = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -1652,7 +1655,7 @@ func (m *QueryGetTrustAnchorStatusResponse) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Machineid", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field MachineId", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1680,11 +1683,11 @@ func (m *QueryGetTrustAnchorStatusResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Machineid = string(dAtA[iNdEx:postIndex])
+			m.MachineId = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Isactivated", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field IsActivated", wireType)
 			}
 			var v int
 			for shift := uint(0); ; shift += 7 {
@@ -1701,7 +1704,7 @@ func (m *QueryGetTrustAnchorStatusResponse) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.Isactivated = bool(v != 0)
+			m.IsActivated = bool(v != 0)
 		default:
 			iNdEx = preIndex
 			skippy, err := skipQuery(dAtA[iNdEx:])
@@ -1891,7 +1894,7 @@ func (m *QueryGetMachineByAddressResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryGetLiquidAssetsByMachineidRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryGetLiquidAssetsByMachineIdRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1914,15 +1917,15 @@ func (m *QueryGetLiquidAssetsByMachineidRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryGetLiquidAssetsByMachineidRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryGetLiquidAssetsByMachineIdRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryGetLiquidAssetsByMachineidRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryGetLiquidAssetsByMachineIdRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MachineID", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field MachineId", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1950,7 +1953,7 @@ func (m *QueryGetLiquidAssetsByMachineidRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.MachineID = string(dAtA[iNdEx:postIndex])
+			m.MachineId = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -1973,7 +1976,7 @@ func (m *QueryGetLiquidAssetsByMachineidRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryGetLiquidAssetsByMachineidResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryGetLiquidAssetsByMachineIdResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1996,10 +1999,10 @@ func (m *QueryGetLiquidAssetsByMachineidResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryGetLiquidAssetsByMachineidResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryGetLiquidAssetsByMachineIdResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryGetLiquidAssetsByMachineidResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryGetLiquidAssetsByMachineIdResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:

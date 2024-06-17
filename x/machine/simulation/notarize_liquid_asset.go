@@ -11,9 +11,9 @@ import (
 )
 
 func SimulateMsgNotarizeLiquidAsset(
-	_ types.AccountKeeper,
-	_ types.BankKeeper,
-	_ keeper.Keeper,
+	ak types.AccountKeeper,
+	bk types.BankKeeper,
+	k keeper.Keeper,
 ) simtypes.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
@@ -24,6 +24,6 @@ func SimulateMsgNotarizeLiquidAsset(
 
 		// TODO: Handling the NotarizeLiquidAsset simulation
 
-		return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "NotarizeLiquidAsset simulation not implemented"), nil, nil
+		return simtypes.NoOpMsg(types.ModuleName, sdk.MsgTypeURL(msg), "NotarizeLiquidAsset simulation not implemented"), nil, nil
 	}
 }

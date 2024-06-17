@@ -3,15 +3,18 @@ package machine_test
 import (
 	"testing"
 
-	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
-	"github.com/planetmint/planetmint-go/testutil/nullify"
-	"github.com/planetmint/planetmint-go/x/machine"
 	"github.com/planetmint/planetmint-go/x/machine/types"
+
+	machine "github.com/planetmint/planetmint-go/x/machine/module"
+
+	"github.com/planetmint/planetmint-go/testutil/nullify"
+
+	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
+
 	"github.com/stretchr/testify/require"
 )
 
 func TestGenesis(t *testing.T) {
-	t.Parallel()
 	genesisState := types.GenesisState{
 		Params: types.DefaultParams(),
 
@@ -19,8 +22,8 @@ func TestGenesis(t *testing.T) {
 	}
 
 	k, ctx := keepertest.MachineKeeper(t)
-	machine.InitGenesis(ctx, *k, genesisState)
-	got := machine.ExportGenesis(ctx, *k)
+	machine.InitGenesis(ctx, k, genesisState)
+	got := machine.ExportGenesis(ctx, k)
 	require.NotNil(t, got)
 
 	nullify.Fill(&genesisState)

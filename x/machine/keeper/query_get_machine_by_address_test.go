@@ -6,7 +6,6 @@ import (
 	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
 	"github.com/planetmint/planetmint-go/x/machine/types"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -14,7 +13,6 @@ import (
 
 func TestGetMachineByAddress(t *testing.T) {
 	keeper, ctx := keepertest.MachineKeeper(t)
-	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNMachine(keeper, ctx, 1)
 	for _, tc := range []struct {
 		desc     string
@@ -33,7 +31,7 @@ func TestGetMachineByAddress(t *testing.T) {
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
-			response, err := keeper.GetMachineByAddress(wctx, tc.request)
+			response, err := keeper.GetMachineByAddress(ctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {

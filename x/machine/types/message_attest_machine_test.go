@@ -3,30 +3,33 @@ package types
 import (
 	"testing"
 
+	"github.com/planetmint/planetmint-go/testutil/sample"
+
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/planetmint/planetmint-go/testutil/errormsg"
 	"github.com/stretchr/testify/require"
 )
 
-func TestMsgAttestMachineValidateBasic(t *testing.T) {
-	t.Parallel()
+func TestMsgAttestMachine_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
 		msg  MsgAttestMachine
 		err  error
 	}{
 		{
-			name: sdkerrors.ErrInvalidAddress.Error(),
+			name: "invalid address",
 			msg: MsgAttestMachine{
-				Creator: errormsg.ErrorInvalidAddress,
+				Creator: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
+		}, {
+			name: "valid address",
+			msg: MsgAttestMachine{
+				Creator: sample.AccAddress(),
+			},
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
 			err := tt.msg.ValidateBasic()
 			if tt.err != nil {
 				require.ErrorIs(t, err, tt.err)

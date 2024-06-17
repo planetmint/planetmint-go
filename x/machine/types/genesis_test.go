@@ -8,8 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestGenesisStateValidate(t *testing.T) {
-	t.Parallel()
+func TestGenesisState_Validate(t *testing.T) {
 	tests := []struct {
 		desc     string
 		genState *types.GenesisState
@@ -31,9 +30,7 @@ func TestGenesisStateValidate(t *testing.T) {
 		// this line is used by starport scaffolding # types/genesis/testcase
 	}
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
-			t.Parallel()
 			err := tc.genState.Validate()
 			if tc.valid {
 				require.NoError(t, err)

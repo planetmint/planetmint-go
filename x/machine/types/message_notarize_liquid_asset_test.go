@@ -4,29 +4,31 @@ import (
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/planetmint/planetmint-go/testutil/errormsg"
+	"github.com/planetmint/planetmint-go/testutil/sample"
 	"github.com/stretchr/testify/require"
 )
 
-func TestMsgUpdateParams_ValidateBasic(t *testing.T) {
-	t.Parallel()
+func TestMsgNotarizeLiquidAsset_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
-		msg  MsgUpdateParams
+		msg  MsgNotarizeLiquidAsset
 		err  error
 	}{
 		{
-			name: sdkerrors.ErrInvalidAddress.Error(),
-			msg: MsgUpdateParams{
-				Authority: errormsg.ErrorInvalidAddress,
+			name: "invalid address",
+			msg: MsgNotarizeLiquidAsset{
+				Creator: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
+		}, {
+			name: "valid address",
+			msg: MsgNotarizeLiquidAsset{
+				Creator: sample.AccAddress(),
+			},
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
 			err := tt.msg.ValidateBasic()
 			if tt.err != nil {
 				require.ErrorIs(t, err, tt.err)
