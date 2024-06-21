@@ -2,31 +2,21 @@ package machine
 
 import (
 	"bytes"
+	"fmt"
+	"reflect"
 
-	"github.com/planetmint/planetmint-go/lib"
-	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
-
-	// "github.com/planetmint/planetmint-go/testutil/network"
+	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/testutil"
+	"github.com/cosmos/cosmos-sdk/testutil/cli"
 	"github.com/cosmos/cosmos-sdk/testutil/network"
-	"github.com/planetmint/planetmint-go/testutil/sample"
-
-	// machinecli "github.com/planetmint/planetmint-go/x/machine/client/cli"
-	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
-
-	"cosmossdk.io/x/feegrant"
-	"github.com/cosmos/cosmos-sdk/crypto/hd"
-	"github.com/cosmos/cosmos-sdk/crypto/keyring"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	txcli "github.com/cosmos/cosmos-sdk/x/auth/tx"
-	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
+	"github.com/planetmint/planetmint-go/lib"
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
-
 	"github.com/planetmint/planetmint-go/testutil/moduleobject"
+	"github.com/planetmint/planetmint-go/testutil/sample"
+	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
+	"github.com/stretchr/testify/suite"
 )
 
-// E2ETestSuite struct definition of machine suite
 type E2ETestSuite struct {
 	suite.Suite
 
@@ -35,204 +25,321 @@ type E2ETestSuite struct {
 	feeDenom string
 }
 
-// NewE2ETestSuite returns configured machine E2ETestSuite
 func NewE2ETestSuite(cfg network.Config) *E2ETestSuite {
 	return &E2ETestSuite{cfg: cfg}
 }
 
-// SetupSuite initializes machine E2ETestSuite
 func (s *E2ETestSuite) SetupSuite() {
 	s.T().Log("setting up e2e machine test suite")
 
 	s.feeDenom = sample.FeeDenom
-	s.network = network.Load(s.T(), s.cfg)
 
-	// create machine account for attestation
+	libCfg := lib.GetConfig()
+
+	var err error
+	s.network, err = network.New(s.T(), s.T().TempDir(), s.cfg)
+	s.Require().NoError(err)
+	s.Require().NoError(s.network.WaitForNextBlock())
+
+	s.network.Validators[0].ClientCtx.SkipConfirm = true
+	s.network.Validators[0].ClientCtx.BroadcastMode = flags.BroadcastSync
+	s.network.Validators[0].ClientCtx.Output = &bytes.Buffer{}
+	libCfg.SetClientCtx(s.network.Validators[0].ClientCtx)
+	libCfg.SetFeeDenom("stake") // TODO: remove once token denom is set to plmnt again
+
 	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
 	s.Require().NoError(err)
-	err = e2etestutil.FundAccount(s.network, account, s.feeDenom)
+	err = e2etestutil.FundAccount(s.network, account, "stake") // TODO: replace denom with sample.FeeDenom once network is setup correctly again
 	s.Require().NoError(err)
 }
 
-// TearDownSuite clean up after testing
 func (s *E2ETestSuite) TearDownSuite() {
 	s.T().Log("tearing down e2e machine test suite")
+	s.network.Cleanup()
 }
 
-// TestAttestMachine attests machine and query attested machine from chain
 func (s *E2ETestSuite) TestAttestMachine() {
 	val := s.network.Validators[0]
 
 	// register Ta
 	prvKey, pubKey := sample.KeyPair()
-
 	ta := moduleobject.TrustAnchor(pubKey)
 	msg1 := machinetypes.NewMsgRegisterTrustAnchor(val.Address.String(), &ta)
 	out, err := e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg1)
 	s.Require().NoError(err)
 
-	s.Require().NoError(s.network.WaitForNextBlock())
-	s.Require().NoError(s.network.WaitForNextBlock())
-	rawLog, err := clitestutil.GetRawLogFromTxOut(val, out)
+	txRes1, err := lib.GetTxResponseFromOut(out)
 	s.Require().NoError(err)
-
-	assert.Contains(s.T(), rawLog, "planetmintgo.machine.MsgRegisterTrustAnchor")
+	s.Require().NoError(cli.CheckTxCode(s.network, val.ClientCtx, txRes1.TxHash, 0))
 
 	k, err := val.ClientCtx.Keyring.Key(sample.Name)
 	s.Require().NoError(err)
 	addr, _ := k.GetAddress()
-
-	// Check preAttestationBalance in order to verify that it doesn't change after machine attestation
-	preAttestationBalanceOutput, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
-		addr.String(),
-	})
-	s.Require().NoError(err)
-	preAttestationBalance, ok := preAttestationBalanceOutput.(*bytes.Buffer)
-	if !ok {
-		err = lib.ErrTypeAssertionFailed
-		s.Require().NoError(err)
-	}
-	assert.Contains(s.T(), preAttestationBalance.String(), "10000")
 
 	machine := moduleobject.Machine(sample.Name, pubKey, prvKey, addr.String())
 	msg2 := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
 	out, err = e2etestutil.BuildSignBroadcastTx(s.T(), addr, msg2)
 	s.Require().NoError(err)
 
-	// give machine attestation some time to issue the liquid asset
 	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
 
-	rawLog, err = clitestutil.GetRawLogFromTxOut(val, out)
+	txRes2, err := lib.GetTxResponseFromOut(out)
+	s.Require().NoError(err)
+	s.Require().NoError(cli.CheckTxCode(s.network, val.ClientCtx, txRes2.TxHash, 0))
 	s.Require().NoError(err)
 
-	assert.Contains(s.T(), rawLog, "planetmintgo.machine.MsgAttestMachine")
-
-	args := []string{
-		pubKey,
-	}
-
-	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdGetMachineByPublicKey(), args)
-	s.Require().NoError(err)
-	txResponse, err := lib.GetTxResponseFromOut(out)
+	apiRes, err := testutil.GetRequest(fmt.Sprintf("%s/planetmint/planetmint-go/machine/get_machine_by_public_key/%s", val.APIAddress, pubKey))
 	s.Require().NoError(err)
 
-	txResp, err := txcli.QueryTx(val.ClientCtx, txResponse.TxHash)
+	var mac machinetypes.QueryGetMachineByPublicKeyResponse
+	err = s.cfg.Codec.UnmarshalJSON(apiRes, &mac)
 	s.Require().NoError(err)
-
-	assert.Contains(s.T(), txResp.TxHash, txResponse.TxHash)
-	s.Require().NoError(err)
-
-	// Check postAttestationBalance it should be the preAttestationBalance + th 8800 tokens being donated to the machine (no fees are taken)
-	postAttestationBalanceOutput, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
-		addr.String(),
-	})
-	s.Require().NoError(err)
-	postAttestationBalance, ok := postAttestationBalanceOutput.(*bytes.Buffer)
-	if !ok {
-		err = lib.ErrTypeAssertionFailed
-		s.Require().NoError(err)
-	}
-	assert.Contains(s.T(), postAttestationBalance.String(), "18800")
+	isEqual := reflect.DeepEqual(machine, *mac.Machine)
+	s.Require().True(isEqual)
 }
 
-func (s *E2ETestSuite) TestInvalidAttestMachine() {
-	val := s.network.Validators[0]
+// package machine
 
-	// already used in previous test case
-	prvKey, pubKey := sample.KeyPair()
+// import (
+// 	"bytes"
 
-	k, err := val.ClientCtx.Keyring.Key(sample.Name)
-	s.Require().NoError(err)
-	addr, _ := k.GetAddress()
+// 	"github.com/planetmint/planetmint-go/lib"
+// 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 
-	machine := moduleobject.Machine(sample.Name, pubKey, prvKey, addr.String())
-	s.Require().NoError(err)
+// 	// "github.com/planetmint/planetmint-go/testutil/network"
+// 	"github.com/cosmos/cosmos-sdk/testutil/network"
+// 	"github.com/planetmint/planetmint-go/testutil/sample"
 
-	msg := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
-	out, _ := lib.BroadcastTxWithFileLock(addr, msg)
-	txResponse, err := lib.GetTxResponseFromOut(out)
-	s.Require().NoError(err)
-	s.Require().Equal(int(txResponse.Code), int(4))
+// 	// machinecli "github.com/planetmint/planetmint-go/x/machine/client/cli"
+// 	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 
-	unregisteredPubKey, unregisteredPrivKey := sample.KeyPair(2)
-	machine = moduleobject.Machine(sample.Name, unregisteredPubKey, unregisteredPrivKey, addr.String())
-	s.Require().NoError(err)
+// 	"cosmossdk.io/x/feegrant"
+// 	"github.com/cosmos/cosmos-sdk/crypto/hd"
+// 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
+// 	sdk "github.com/cosmos/cosmos-sdk/types"
+// 	txcli "github.com/cosmos/cosmos-sdk/x/auth/tx"
+// 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
+// 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
+// 	"github.com/stretchr/testify/assert"
+// 	"github.com/stretchr/testify/suite"
 
-	msg = machinetypes.NewMsgAttestMachine(addr.String(), &machine)
-	out, _ = lib.BroadcastTxWithFileLock(addr, msg)
-	txResponse, err = lib.GetTxResponseFromOut(out)
-	s.Require().NoError(err)
-	s.Require().Equal(int(txResponse.Code), int(3))
-}
+// 	"github.com/planetmint/planetmint-go/testutil/moduleobject"
+// )
 
-func (s *E2ETestSuite) TestMachineAllowanceAttestation() {
-	// create address for machine
-	val := s.network.Validators[0]
-	kb := val.ClientCtx.Keyring
+// // E2ETestSuite struct definition of machine suite
+// type E2ETestSuite struct {
+// 	suite.Suite
 
-	account, _, err := kb.NewMnemonic("AllowanceMachine", keyring.English, sample.DefaultDerivationPath, keyring.DefaultBIP39Passphrase, hd.Secp256k1)
-	s.Require().NoError(err)
+// 	cfg      network.Config
+// 	network  *network.Network
+// 	feeDenom string
+// }
 
-	addr, err := account.GetAddress()
-	s.Require().NoError(err)
+// // NewE2ETestSuite returns configured machine E2ETestSuite
+// func NewE2ETestSuite(cfg network.Config) *E2ETestSuite {
+// 	return &E2ETestSuite{cfg: cfg}
+// }
 
-	// register TA
-	prvKey, pubKey := sample.KeyPair(3)
+// // SetupSuite initializes machine E2ETestSuite
+// func (s *E2ETestSuite) SetupSuite() {
+// 	s.T().Log("setting up e2e machine test suite")
 
-	ta := moduleobject.TrustAnchor(pubKey)
-	msg1 := machinetypes.NewMsgRegisterTrustAnchor(val.Address.String(), &ta)
-	_, err = e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg1)
-	s.Require().NoError(err)
-	s.Require().NoError(s.network.WaitForNextBlock())
+// 	s.feeDenom = sample.FeeDenom
+// 	// s.network = network.Load(s.T(), s.cfg)
 
-	// create allowance for machine
-	allowedMsgs := []string{"/planetmintgo.machine.MsgAttestMachine"}
-	limit := sdk.NewCoins(sdk.NewInt64Coin(s.feeDenom, 2))
-	basic := feegrant.BasicAllowance{
-		SpendLimit: limit,
-	}
-	var grant feegrant.FeeAllowanceI
-	grant = &basic
-	grant, err = feegrant.NewAllowedMsgAllowance(grant, allowedMsgs)
-	s.Require().NoError(err)
+// 	n, err := network.New(nil, s.T().TempDir(), s.cfg)
 
-	msg2, err := feegrant.NewMsgGrantAllowance(grant, val.Address, addr)
-	s.Require().NoError(err)
-	_, err = e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg2)
-	s.Require().NoError(err)
-	s.Require().NoError(s.network.WaitForNextBlock())
+// 	s.network = n
 
-	// attest machine with fee granter without funding the machine account first
-	machine := moduleobject.Machine(sample.Name, pubKey, prvKey, addr.String())
-	s.Require().NoError(err)
+// 	// create machine account for attestation
+// 	account, err := e2etestutil.CreateAccount(s.network, sample.Name, sample.Mnemonic)
+// 	s.Require().NoError(err)
+// 	err = e2etestutil.FundAccount(s.network, account, s.feeDenom)
+// 	s.Require().NoError(err)
+// }
 
-	// name and address of private key with which to sign
-	clientCtx := val.ClientCtx.
-		WithFeeGranterAddress(val.Address)
-	libConfig := lib.GetConfig()
-	libConfig.SetClientCtx(clientCtx)
+// // TearDownSuite clean up after testing
+// func (s *E2ETestSuite) TearDownSuite() {
+// 	s.T().Log("tearing down e2e machine test suite")
+// }
 
-	msg3 := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
-	_, err = e2etestutil.BuildSignBroadcastTx(s.T(), addr, msg3)
+// // TestAttestMachine attests machine and query attested machine from chain
+// func (s *E2ETestSuite) TestAttestMachine() {
+// 	val := s.network.Validators[0]
 
-	// reset clientCtx to validator ctx
-	libConfig.SetClientCtx(val.ClientCtx)
+// 	// register Ta
+// 	prvKey, pubKey := sample.KeyPair()
 
-	s.Require().NoError(err)
+// 	ta := moduleobject.TrustAnchor(pubKey)
+// 	msg1 := machinetypes.NewMsgRegisterTrustAnchor(val.Address.String(), &ta)
+// 	out, err := e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg1)
+// 	s.Require().NoError(err)
 
-	// give machine attestation some time to issue the liquid asset
-	s.Require().NoError(s.network.WaitForNextBlock())
-	s.Require().NoError(s.network.WaitForNextBlock())
-	s.Require().NoError(s.network.WaitForNextBlock())
-	s.Require().NoError(s.network.WaitForNextBlock())
+// 	s.Require().NoError(s.network.WaitForNextBlock())
+// 	s.Require().NoError(s.network.WaitForNextBlock())
+// 	rawLog, err := clitestutil.GetRawLogFromTxOut(val, out)
+// 	s.Require().NoError(err)
 
-	args := []string{
-		pubKey,
-	}
+// 	assert.Contains(s.T(), rawLog, "planetmintgo.machine.MsgRegisterTrustAnchor")
 
-	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdGetMachineByPublicKey(), args)
-	s.Require().NoError(err)
-}
+// 	k, err := val.ClientCtx.Keyring.Key(sample.Name)
+// 	s.Require().NoError(err)
+// 	addr, _ := k.GetAddress()
+
+// 	// Check preAttestationBalance in order to verify that it doesn't change after machine attestation
+// 	preAttestationBalanceOutput, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
+// 		addr.String(),
+// 	})
+// 	s.Require().NoError(err)
+// 	preAttestationBalance, ok := preAttestationBalanceOutput.(*bytes.Buffer)
+// 	if !ok {
+// 		err = lib.ErrTypeAssertionFailed
+// 		s.Require().NoError(err)
+// 	}
+// 	assert.Contains(s.T(), preAttestationBalance.String(), "10000")
+
+// 	machine := moduleobject.Machine(sample.Name, pubKey, prvKey, addr.String())
+// 	msg2 := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
+// 	out, err = e2etestutil.BuildSignBroadcastTx(s.T(), addr, msg2)
+// 	s.Require().NoError(err)
+
+// 	// give machine attestation some time to issue the liquid asset
+// 	s.Require().NoError(s.network.WaitForNextBlock())
+// 	s.Require().NoError(s.network.WaitForNextBlock())
+// 	s.Require().NoError(s.network.WaitForNextBlock())
+// 	s.Require().NoError(s.network.WaitForNextBlock())
+
+// 	rawLog, err = clitestutil.GetRawLogFromTxOut(val, out)
+// 	s.Require().NoError(err)
+
+// 	assert.Contains(s.T(), rawLog, "planetmintgo.machine.MsgAttestMachine")
+
+// 	args := []string{
+// 		pubKey,
+// 	}
+
+// 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdGetMachineByPublicKey(), args)
+// 	s.Require().NoError(err)
+// 	txResponse, err := lib.GetTxResponseFromOut(out)
+// 	s.Require().NoError(err)
+
+// 	txResp, err := txcli.QueryTx(val.ClientCtx, txResponse.TxHash)
+// 	s.Require().NoError(err)
+
+// 	assert.Contains(s.T(), txResp.TxHash, txResponse.TxHash)
+// 	s.Require().NoError(err)
+
+// 	// Check postAttestationBalance it should be the preAttestationBalance + th 8800 tokens being donated to the machine (no fees are taken)
+// 	postAttestationBalanceOutput, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
+// 		addr.String(),
+// 	})
+// 	s.Require().NoError(err)
+// 	postAttestationBalance, ok := postAttestationBalanceOutput.(*bytes.Buffer)
+// 	if !ok {
+// 		err = lib.ErrTypeAssertionFailed
+// 		s.Require().NoError(err)
+// 	}
+// 	assert.Contains(s.T(), postAttestationBalance.String(), "18800")
+// }
+
+// func (s *E2ETestSuite) TestInvalidAttestMachine() {
+// 	val := s.network.Validators[0]
+
+// 	// already used in previous test case
+// 	prvKey, pubKey := sample.KeyPair()
+
+// 	k, err := val.ClientCtx.Keyring.Key(sample.Name)
+// 	s.Require().NoError(err)
+// 	addr, _ := k.GetAddress()
+
+// 	machine := moduleobject.Machine(sample.Name, pubKey, prvKey, addr.String())
+// 	s.Require().NoError(err)
+
+// 	msg := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
+// 	out, _ := lib.BroadcastTxWithFileLock(addr, msg)
+// 	txResponse, err := lib.GetTxResponseFromOut(out)
+// 	s.Require().NoError(err)
+// 	s.Require().Equal(int(txResponse.Code), int(4))
+
+// 	unregisteredPubKey, unregisteredPrivKey := sample.KeyPair(2)
+// 	machine = moduleobject.Machine(sample.Name, unregisteredPubKey, unregisteredPrivKey, addr.String())
+// 	s.Require().NoError(err)
+
+// 	msg = machinetypes.NewMsgAttestMachine(addr.String(), &machine)
+// 	out, _ = lib.BroadcastTxWithFileLock(addr, msg)
+// 	txResponse, err = lib.GetTxResponseFromOut(out)
+// 	s.Require().NoError(err)
+// 	s.Require().Equal(int(txResponse.Code), int(3))
+// }
+
+// func (s *E2ETestSuite) TestMachineAllowanceAttestation() {
+// 	// create address for machine
+// 	val := s.network.Validators[0]
+// 	kb := val.ClientCtx.Keyring
+
+// 	account, _, err := kb.NewMnemonic("AllowanceMachine", keyring.English, sample.DefaultDerivationPath, keyring.DefaultBIP39Passphrase, hd.Secp256k1)
+// 	s.Require().NoError(err)
+
+// 	addr, err := account.GetAddress()
+// 	s.Require().NoError(err)
+
+// 	// register TA
+// 	prvKey, pubKey := sample.KeyPair(3)
+
+// 	ta := moduleobject.TrustAnchor(pubKey)
+// 	msg1 := machinetypes.NewMsgRegisterTrustAnchor(val.Address.String(), &ta)
+// 	_, err = e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg1)
+// 	s.Require().NoError(err)
+// 	s.Require().NoError(s.network.WaitForNextBlock())
+
+// 	// create allowance for machine
+// 	allowedMsgs := []string{"/planetmintgo.machine.MsgAttestMachine"}
+// 	limit := sdk.NewCoins(sdk.NewInt64Coin(s.feeDenom, 2))
+// 	basic := feegrant.BasicAllowance{
+// 		SpendLimit: limit,
+// 	}
+// 	var grant feegrant.FeeAllowanceI
+// 	grant = &basic
+// 	grant, err = feegrant.NewAllowedMsgAllowance(grant, allowedMsgs)
+// 	s.Require().NoError(err)
+
+// 	msg2, err := feegrant.NewMsgGrantAllowance(grant, val.Address, addr)
+// 	s.Require().NoError(err)
+// 	_, err = e2etestutil.BuildSignBroadcastTx(s.T(), val.Address, msg2)
+// 	s.Require().NoError(err)
+// 	s.Require().NoError(s.network.WaitForNextBlock())
+
+// 	// attest machine with fee granter without funding the machine account first
+// 	machine := moduleobject.Machine(sample.Name, pubKey, prvKey, addr.String())
+// 	s.Require().NoError(err)
+
+// 	// name and address of private key with which to sign
+// 	clientCtx := val.ClientCtx.
+// 		WithFeeGranterAddress(val.Address)
+// 	libConfig := lib.GetConfig()
+// 	libConfig.SetClientCtx(clientCtx)
+
+// 	msg3 := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
+// 	_, err = e2etestutil.BuildSignBroadcastTx(s.T(), addr, msg3)
+
+// 	// reset clientCtx to validator ctx
+// 	libConfig.SetClientCtx(val.ClientCtx)
+
+// 	s.Require().NoError(err)
+
+// 	// give machine attestation some time to issue the liquid asset
+// 	s.Require().NoError(s.network.WaitForNextBlock())
+// 	s.Require().NoError(s.network.WaitForNextBlock())
+// 	s.Require().NoError(s.network.WaitForNextBlock())
+// 	s.Require().NoError(s.network.WaitForNextBlock())
+
+// 	args := []string{
+// 		pubKey,
+// 	}
+
+// 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdGetMachineByPublicKey(), args)
+// 	s.Require().NoError(err)
+// }

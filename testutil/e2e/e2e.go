@@ -1,18 +1,14 @@
 package e2e
 
 import (
-	"errors"
-	"strings"
-
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/planetmint/planetmint-go/lib"
-	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	"github.com/planetmint/planetmint-go/testutil/moduleobject"
 
-	// "github.com/planetmint/planetmint-go/testutil/network"
+	"github.com/cosmos/cosmos-sdk/testutil/cli"
 	"github.com/cosmos/cosmos-sdk/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
@@ -46,22 +42,14 @@ func FundAccount(network *network.Network, account *keyring.Record, tokenDenom s
 		return err
 	}
 
-	err = network.WaitForNextBlock()
-	if err != nil {
-		return err
-	}
-	err = network.WaitForNextBlock()
+	txRes, err := lib.GetTxResponseFromOut(out)
 	if err != nil {
 		return err
 	}
 
-	rawLog, err := clitestutil.GetRawLogFromTxOut(val, out)
+	err = cli.CheckTxCode(network, val.ClientCtx, txRes.TxHash, 0)
 	if err != nil {
 		return err
-	}
-
-	if !strings.Contains(rawLog, "cosmos.bank.v1beta1.MsgSend") {
-		err = errors.New("failed to fund account")
 	}
 
 	return

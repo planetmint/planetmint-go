@@ -58,6 +58,9 @@ func (config *Config) SetBech32PrefixForAccount(bech32Prefix string) *Config {
 	changeLock.Lock()
 	defer changeLock.Unlock()
 	sdkConfig.SetBech32PrefixForAccount(bech32Prefix, "pub")
+	// TODO: check if lines below are needed except for WIP test setup if so move to respective function or rename this function
+	sdkConfig.SetBech32PrefixForValidator(bech32Prefix+"valoper", "pub")
+	sdkConfig.SetBech32PrefixForConsensusNode(bech32Prefix+"valcons", "pub")
 	return config
 }
 

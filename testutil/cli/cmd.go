@@ -8,8 +8,8 @@ import (
 	"github.com/planetmint/planetmint-go/lib"
 	"github.com/planetmint/planetmint-go/testutil"
 
+	"github.com/cosmos/cosmos-sdk/testutil/network"
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
-	"github.com/planetmint/planetmint-go/testutil/network"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/cobra"

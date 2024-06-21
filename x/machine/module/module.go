@@ -189,7 +189,7 @@ type ModuleInputs struct {
 
 	AccountKeeper types.AccountKeeper
 	BankKeeper    types.BankKeeper
-	rootDir       string
+	// rootDir       string TODO: find out if this should be put in ModuleInputs or read from cfg when ProvideModule is called
 }
 
 type ModuleOutputs struct {
@@ -210,7 +210,7 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 		in.StoreService,
 		in.Logger,
 		authority.String(),
-		in.rootDir,
+		"rootDir", // TODO: hardcoded because of setting up e2e testnetwork see comment in line 192
 	)
 	m := NewAppModule(
 		in.Cdc,

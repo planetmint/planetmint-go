@@ -212,7 +212,8 @@ func BroadcastTxWithFileLock(fromAddress sdk.AccAddress, msgs ...sdk.Msg) (out *
 	}()
 
 	// get basic chain information
-	withoutFee := isMachineAttestationMsg(msgs...)
+	// withoutFee := isMachineAttestationMsg(msgs...)
+	withoutFee := false // TODO: replace with check after AnteHandlers are in place (DeductFeeDecorator does not take a fee on machine attestation)
 	clientCtx, txf, err := getClientContextAndTxFactory(fromAddress, withoutFee)
 	if err != nil {
 		return
