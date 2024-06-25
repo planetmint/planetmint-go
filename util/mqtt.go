@@ -1,6 +1,7 @@
 package util
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"net"
 	"strconv"
@@ -22,6 +23,7 @@ type MQTTClientI interface {
 	Subscribe(topic string, qos byte, callback mqtt.MessageHandler) mqtt.Token
 	Unsubscribe(topics ...string) mqtt.Token
 	IsConnected() bool
+	IsConnectionOpen() bool
 }
 
 var (
@@ -42,11 +44,19 @@ func LazyLoadMQTTClient() {
 	conf := config.GetConfig()
 	hostPort := net.JoinHostPort(conf.MqttDomain, strconv.FormatInt(int64(conf.MqttPort), 10))
 	uri := "tcp://" + hostPort
+	if conf.MqttTLS {
+		uri = "ssl://" + hostPort
+	}
 
 	opts := mqtt.NewClientOptions().AddBroker(uri)
 	opts.SetClientID(conf.ValidatorAddress)
 	opts.SetUsername(conf.MqttUser)
 	opts.SetPassword(conf.MqttPassword)
+	if conf.MqttTLS {
+		tlsConfig := &tls.Config{}
+		opts.SetTLSConfig(tlsConfig)
+	}
+
 	MQTTClient = mqtt.NewClient(opts)
 }
 

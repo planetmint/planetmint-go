@@ -21,4 +21,6 @@ var (
 	ErrAssetRegistryReqFailure      = errorsmod.Register(ModuleName, 13, "request to asset registry could not be created")
 	ErrAssetRegistryReqSending      = errorsmod.Register(ModuleName, 14, "request to asset registry could not be sent")
 	ErrAssetRegistryRepsonse        = errorsmod.Register(ModuleName, 15, "request response issue")
+	ErrInvalidAddress               = errorsmod.Register(ModuleName, 16, "invalid address")
+	ErrTransferFailed               = errorsmod.Register(ModuleName, 17, "transfer failed")
 )

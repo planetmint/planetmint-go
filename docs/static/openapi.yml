@@ -46437,7 +46437,7 @@ paths:
                         }
       tags:
         - Query
-  /planetmint/asset/address/{address}/{lookupPeriodInMin}:
+  /planetmint/asset/address/{address}/{numElements}:
     get:
       summary: Queries a list of GetCIDsByAddress items.
       operationId: PlanetmintgoAssetGetCIDsByAddress
@@ -46502,7 +46502,7 @@ paths:
           in: path
           required: true
           type: string
-        - name: lookupPeriodInMin
+        - name: numElements
           in: path
           required: true
           type: string
@@ -47643,6 +47643,11 @@ paths:
                   asset_registry_domain:
                     type: string
                   asset_registry_path:
+                    type: string
+                  dao_machine_funding_amount:
+                    type: string
+                    format: uint64
+                  dao_machine_funding_denom:
                     type: string
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
@@ -77177,6 +77182,11 @@ definitions:
         type: string
       asset_registry_path:
         type: string
+      dao_machine_funding_amount:
+        type: string
+        format: uint64
+      dao_machine_funding_denom:
+        type: string
     description: Params defines the parameters for the module.
   planetmintgo.machine.QueryGetLiquidAssetsByMachineidResponse:
     type: object
@@ -77299,6 +77309,11 @@ definitions:
           asset_registry_domain:
             type: string
           asset_registry_path:
+            type: string
+          dao_machine_funding_amount:
+            type: string
+            format: uint64
+          dao_machine_funding_denom:
             type: string
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   planetmintgo.machine.TrustAnchor:

@@ -13,17 +13,20 @@ func ParamKeyTable() paramtypes.KeyTable {
 }
 
 // NewParams creates a new Params instance
-func NewParams(assetRegistryScheme string, assetRegistryDomain string, assetRegistryPath string) Params {
+func NewParams(assetRegistryScheme string, assetRegistryDomain string, assetRegistryPath string,
+	daoMachineFundingAmount uint64, daoMachineFundingDenom string) Params {
 	return Params{
-		AssetRegistryScheme: assetRegistryScheme,
-		AssetRegistryDomain: assetRegistryDomain,
-		AssetRegistryPath:   assetRegistryPath,
+		AssetRegistryScheme:     assetRegistryScheme,
+		AssetRegistryDomain:     assetRegistryDomain,
+		AssetRegistryPath:       assetRegistryPath,
+		DaoMachineFundingAmount: daoMachineFundingAmount,
+		DaoMachineFundingDenom:  daoMachineFundingDenom,
 	}
 }
 
 // DefaultParams returns a default set of parameters
 func DefaultParams() Params {
-	return NewParams("https", "testnet-assets.rddl.io", "register_asset")
+	return NewParams("https", "testnet-assets.rddl.io", "register_asset", 8800, "plmnt")
 }
 
 // ParamSetPairs get the params.ParamSet

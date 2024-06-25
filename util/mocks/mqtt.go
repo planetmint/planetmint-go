@@ -9,14 +9,15 @@ import (
 
 // MockMQTTClient is the mock mqtt client
 type MockMQTTClient struct {
-	ConnectFunc     func() mqtt.Token
-	DisconnectFunc  func(quiesce uint)
-	PublishFunc     func(topic string, qos byte, retained bool, payload interface{}) mqtt.Token
-	SubscribeFunc   func(topic string, qos byte, callback mqtt.MessageHandler) mqtt.Token
-	UnsubscribeFunc func(topics ...string) mqtt.Token
-	IsConnectedFunc func() bool
-	connected       bool
-	connectedMutex  sync.Mutex
+	ConnectFunc          func() mqtt.Token
+	DisconnectFunc       func(quiesce uint)
+	PublishFunc          func(topic string, qos byte, retained bool, payload interface{}) mqtt.Token
+	SubscribeFunc        func(topic string, qos byte, callback mqtt.MessageHandler) mqtt.Token
+	UnsubscribeFunc      func(topics ...string) mqtt.Token
+	IsConnectedFunc      func() bool
+	IsConnectionOpenFunc func() bool
+	connected            bool
+	connectedMutex       sync.Mutex
 }
 
 // GetConnectFunc fetches the mock client's `Connect` func
@@ -124,6 +125,13 @@ func (m *MockMQTTClient) Unsubscribe(topics ...string) mqtt.Token {
 }
 
 func (m *MockMQTTClient) IsConnected() bool {
+	m.connectedMutex.Lock()
+	connected := m.connected
+	m.connectedMutex.Unlock()
+	return connected
+}
+
+func (m *MockMQTTClient) IsConnectionOpen() bool {
 	m.connectedMutex.Lock()
 	connected := m.connected
 	m.connectedMutex.Unlock()
