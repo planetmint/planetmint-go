@@ -20,7 +20,7 @@ service Query {
   
   // Queries a list of GetCIDsByAddress items.
   rpc GetCIDsByAddress (QueryGetCIDsByAddressRequest) returns (QueryGetCIDsByAddressResponse) {
-    option (google.api.http).get = "/planetmint/asset/address/{address}/{lookupPeriodInMin}";
+    option (google.api.http).get = "/planetmint/asset/address/{address}/{numElements}";
   
   }
   
@@ -42,7 +42,7 @@ message QueryParamsResponse {
 
 message QueryGetCIDsByAddressRequest {
   string                                address         = 1;
-  uint64                                lookupPeriodInMin = 2;
+  uint64                                numElements = 2;
   cosmos.base.query.v1beta1.PageRequest pagination        = 3;
 }
 

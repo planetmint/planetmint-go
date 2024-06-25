@@ -48,6 +48,10 @@ func FundAccount(network *network.Network, account *keyring.Record, tokenDenom s
 	if err != nil {
 		return err
 	}
+	err = network.WaitForNextBlock()
+	if err != nil {
+		return err
+	}
 
 	rawLog, err := clitestutil.GetRawLogFromTxOut(val, out)
 	if err != nil {
@@ -99,6 +103,10 @@ func AttestMachine(network *network.Network, name string, mnemonic string, num i
 		return err
 	}
 
+	err = network.WaitForNextBlock()
+	if err != nil {
+		return err
+	}
 	err = network.WaitForNextBlock()
 	if err != nil {
 		return err

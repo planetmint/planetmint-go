@@ -66,7 +66,7 @@ func DefaultConfig() *Config {
 		MqttPort:         1886,
 		MqttUser:         "user",
 		MqttPassword:     "password",
-		ClaimHost:        "testnet-p2r.rddl.io",
+		ClaimHost:        "https://testnet-p2r.rddl.io",
 		MqttTLS:          true,
 	}
 }
