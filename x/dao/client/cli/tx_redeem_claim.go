@@ -19,12 +19,6 @@ func CmdCreateRedeemClaim() *cobra.Command {
 			// Get indexes
 			indexBeneficiary := args[0]
 
-			// Get value arguments
-			argAmount, err := strconv.ParseUint(args[1], 10, 64)
-			if err != nil {
-				return err
-			}
-
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
@@ -33,7 +27,6 @@ func CmdCreateRedeemClaim() *cobra.Command {
 			msg := types.NewMsgCreateRedeemClaim(
 				clientCtx.GetFromAddress().String(),
 				indexBeneficiary,
-				argAmount,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

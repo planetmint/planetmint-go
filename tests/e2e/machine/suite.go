@@ -1,6 +1,8 @@
 package machine
 
 import (
+	"bytes"
+
 	"github.com/planetmint/planetmint-go/lib"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	"github.com/planetmint/planetmint-go/testutil/network"
@@ -11,6 +13,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	txcli "github.com/cosmos/cosmos-sdk/x/auth/tx"
+	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
 	"github.com/stretchr/testify/assert"
@@ -65,6 +69,7 @@ func (s *E2ETestSuite) TestAttestMachine() {
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
+	s.Require().NoError(s.network.WaitForNextBlock())
 	rawLog, err := clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().NoError(err)
 
@@ -74,12 +79,25 @@ func (s *E2ETestSuite) TestAttestMachine() {
 	s.Require().NoError(err)
 	addr, _ := k.GetAddress()
 
+	// Check preAttestationBalance in order to verify that it doesn't change after machine attestation
+	preAttestationBalanceOutput, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
+		addr.String(),
+	})
+	s.Require().NoError(err)
+	preAttestationBalance, ok := preAttestationBalanceOutput.(*bytes.Buffer)
+	if !ok {
+		err = lib.ErrTypeAssertionFailed
+		s.Require().NoError(err)
+	}
+	assert.Contains(s.T(), preAttestationBalance.String(), "10000")
+
 	machine := moduleobject.Machine(sample.Name, pubKey, prvKey, addr.String())
 	msg2 := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
 	out, err = e2etestutil.BuildSignBroadcastTx(s.T(), addr, msg2)
 	s.Require().NoError(err)
 
 	// give machine attestation some time to issue the liquid asset
+	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
@@ -95,6 +113,26 @@ func (s *E2ETestSuite) TestAttestMachine() {
 
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdGetMachineByPublicKey(), args)
 	s.Require().NoError(err)
+	txResponse, err := lib.GetTxResponseFromOut(out)
+	s.Require().NoError(err)
+
+	txResp, err := txcli.QueryTx(val.ClientCtx, txResponse.TxHash)
+	s.Require().NoError(err)
+
+	assert.Contains(s.T(), txResp.TxHash, txResponse.TxHash)
+	s.Require().NoError(err)
+
+	// Check postAttestationBalance it should be the preAttestationBalance + th 8800 tokens being donated to the machine (no fees are taken)
+	postAttestationBalanceOutput, err := clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
+		addr.String(),
+	})
+	s.Require().NoError(err)
+	postAttestationBalance, ok := postAttestationBalanceOutput.(*bytes.Buffer)
+	if !ok {
+		err = lib.ErrTypeAssertionFailed
+		s.Require().NoError(err)
+	}
+	assert.Contains(s.T(), postAttestationBalance.String(), "18800")
 }
 
 func (s *E2ETestSuite) TestInvalidAttestMachine() {

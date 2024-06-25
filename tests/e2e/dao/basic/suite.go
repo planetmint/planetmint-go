@@ -121,6 +121,7 @@ func (s *E2ETestSuite) TestMintToken() {
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
+	s.Require().NoError(s.network.WaitForNextBlock())
 	rawLog, err := clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().NoError(err)
 

@@ -1,6 +1,8 @@
 package util
 
 import (
+	"crypto/tls"
+	"encoding/json"
 	"net"
 	"strconv"
 	"strings"
@@ -20,6 +22,8 @@ type MQTTClientI interface {
 	Publish(topic string, qos byte, retained bool, payload interface{}) mqtt.Token
 	Subscribe(topic string, qos byte, callback mqtt.MessageHandler) mqtt.Token
 	Unsubscribe(topics ...string) mqtt.Token
+	IsConnected() bool
+	IsConnectionOpen() bool
 }
 
 var (
@@ -32,7 +36,7 @@ const (
 	MqttCmdPrefix = "cmnd/"
 )
 
-func lazyLoadMQTTClient() {
+func LazyLoadMQTTClient() {
 	if MQTTClient != nil {
 		return
 	}
@@ -40,11 +44,19 @@ func lazyLoadMQTTClient() {
 	conf := config.GetConfig()
 	hostPort := net.JoinHostPort(conf.MqttDomain, strconv.FormatInt(int64(conf.MqttPort), 10))
 	uri := "tcp://" + hostPort
+	if conf.MqttTLS {
+		uri = "ssl://" + hostPort
+	}
 
 	opts := mqtt.NewClientOptions().AddBroker(uri)
 	opts.SetClientID(conf.ValidatorAddress)
 	opts.SetUsername(conf.MqttUser)
 	opts.SetPassword(conf.MqttPassword)
+	if conf.MqttTLS {
+		tlsConfig := &tls.Config{}
+		opts.SetTLSConfig(tlsConfig)
+	}
+
 	MQTTClient = mqtt.NewClient(opts)
 }
 
@@ -66,7 +78,7 @@ func SendMqttPopInitMessagesToServer(ctx sdk.Context, challenge types.Challenge)
 }
 
 func sendMqttPopInitMessages(challenge types.Challenge) (err error) {
-	lazyLoadMQTTClient()
+	LazyLoadMQTTClient()
 	if token := MQTTClient.Connect(); token.Wait() && token.Error() != nil {
 		err = token.Error()
 		return
@@ -92,7 +104,7 @@ func sendMqttPopInitMessages(challenge types.Challenge) (err error) {
 }
 
 func GetMqttStatusOfParticipant(address string, responseTimeoutInMs int64) (isAvailable bool, err error) {
-	lazyLoadMQTTClient()
+	LazyLoadMQTTClient()
 	if token := MQTTClient.Connect(); token.Wait() && token.Error() != nil {
 		err = token.Error()
 		return
@@ -141,4 +153,13 @@ func GetMqttStatusOfParticipant(address string, responseTimeoutInMs int64) (isAv
 	rwMu.Unlock() // Unlock after writing
 	MQTTClient.Disconnect(1000)
 	return
+}
+
+func ToJSON(payload []byte) (map[string]interface{}, error) {
+	jsonString := string(payload)
+
+	var result map[string]interface{}
+	// Unmarshal the JSON string into the map
+	err := json.Unmarshal([]byte(jsonString), &result)
+	return result, err
 }
