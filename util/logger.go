@@ -16,7 +16,7 @@ var (
 	globalApplicationLoggerTag string
 	appLogger                  *AppLogger
 	initAppLogger              sync.Once
-	syncTestingLog             sync.Mutex
+	syncTestingLog             sync.RWMutex
 )
 
 func init() {
@@ -48,13 +48,13 @@ func format(msg string, keyvals ...interface{}) string {
 }
 
 func (logger *AppLogger) testingLog(msg string, keyvals ...interface{}) {
+	syncTestingLog.RLock()
+	defer syncTestingLog.RUnlock()
 	if logger.testingLogger == nil {
 		return
 	}
 	msg = format(msg, keyvals...)
-	syncTestingLog.Lock()
 	logger.testingLogger.Logf(msg)
-	syncTestingLog.Unlock()
 }
 
 func (logger *AppLogger) Info(ctx sdk.Context, msg string, keyvals ...interface{}) {
