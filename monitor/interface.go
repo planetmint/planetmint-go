@@ -3,7 +3,6 @@ package monitor
 import (
 	"sync"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/syndtr/goleveldb/leveldb"
 )
@@ -11,11 +10,10 @@ import (
 type MQTTMonitorClientI interface {
 	AddParticipant(address string, lastSeenTS int64) (err error)
 	SelectPoPParticipantsOutOfActiveActors() (challenger string, challengee string, err error)
-	SetContext(ctx sdk.Context)
 	Start() (err error)
 }
 
-var monitorMutex sync.Mutex
+var monitorMutex sync.RWMutex
 var mqttMonitorInstance MQTTMonitorClientI
 
 func SetMqttMonitorInstance(monitorInstance MQTTMonitorClientI) {
@@ -25,9 +23,9 @@ func SetMqttMonitorInstance(monitorInstance MQTTMonitorClientI) {
 }
 
 func LazyMqttMonitorLoader(homeDir string) {
-	monitorMutex.Lock()
+	monitorMutex.RLock()
 	tmpInstance := mqttMonitorInstance
-	monitorMutex.Unlock()
+	monitorMutex.RUnlock()
 	if tmpInstance != nil {
 		return
 	}
@@ -38,25 +36,18 @@ func LazyMqttMonitorLoader(homeDir string) {
 	if err != nil {
 		panic(err)
 	}
-	monitorMutex.Lock()
-	mqttMonitorInstance = NewMqttMonitorService(aciveActorsDB, *config.GetConfig())
-	monitorMutex.Unlock()
+
+	SetMqttMonitorInstance(NewMqttMonitorService(aciveActorsDB, *config.GetConfig()))
 	err = mqttMonitorInstance.Start()
 	if err != nil {
 		panic(err)
 	}
 }
 
-func SetContext(ctx sdk.Context) {
-	monitorMutex.Lock()
-	mqttMonitorInstance.SetContext(ctx)
-	monitorMutex.Unlock()
-}
-
 func SelectPoPParticipantsOutOfActiveActors() (challenger string, challengee string, err error) {
-	monitorMutex.Lock()
+	monitorMutex.RLock()
 	challenger, challengee, err = mqttMonitorInstance.SelectPoPParticipantsOutOfActiveActors()
-	monitorMutex.Unlock()
+	monitorMutex.RUnlock()
 	return
 }
 
@@ -66,8 +57,8 @@ func Start() (err error) {
 }
 
 func AddParticipant(address string, lastSeenTS int64) (err error) {
-	monitorMutex.Lock()
+	monitorMutex.RLock()
 	err = mqttMonitorInstance.AddParticipant(address, lastSeenTS)
-	monitorMutex.Unlock()
+	monitorMutex.RUnlock()
 	return
 }

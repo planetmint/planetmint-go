@@ -16,13 +16,18 @@ import (
 
 var ClaimServiceClient IRCClient
 
-func init() {
+func lazyLoad() IRCClient {
+	if ClaimServiceClient != nil {
+		return ClaimServiceClient
+	}
 	cfg := config.GetConfig()
 	ClaimServiceClient = NewRCClient(cfg.ClaimHost, &http.Client{})
+	return ClaimServiceClient
 }
 
 func PostClaim(ctx context.Context, beneficiary string, amount uint64, id uint64) (txID string, err error) {
-	res, err := ClaimServiceClient.PostClaim(ctx, PostClaimRequest{Beneficiary: beneficiary, Amount: amount, ClaimID: int(id)})
+	client := lazyLoad()
+	res, err := client.PostClaim(ctx, PostClaimRequest{Beneficiary: beneficiary, Amount: amount, ClaimID: int(id)})
 	if err != nil {
 		return
 	}
