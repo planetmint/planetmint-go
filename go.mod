@@ -25,6 +25,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.2
 	github.com/planetmint/planetmint-go/lib v0.5.0
 	github.com/rddl-network/elements-rpc v1.0.0
+	github.com/rddl-network/go-utils v0.1.1
 	github.com/spf13/cast v1.6.0
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/pflag v1.0.5

@@ -71,6 +71,18 @@ func TestMsgServerRegisterTrustAnchor(t *testing.T) {
 	}
 }
 
+func TestMsgServerRegisterTrustAnchorUncompressedKey(t *testing.T) {
+	t.Parallel()
+	pk := "6003d0ab9af4ec112629195a7266a244aecf1ac7691da0084be3e7ceea2ee71571b0963fffd9c80a640317509a681ac66c2ed70ecc9f317a0d2b1a9bff94ff74"
+	ta := moduleobject.TrustAnchor(pk)
+	msg := types.NewMsgRegisterTrustAnchor(pk, &ta)
+	msgServer, ctx := setupMsgServer(t)
+	res, err := msgServer.RegisterTrustAnchor(ctx, msg)
+	if assert.NoError(t, err) {
+		assert.Equal(t, &types.MsgRegisterTrustAnchorResponse{}, res)
+	}
+}
+
 func TestMsgServerRegisterTrustAnchorTwice(t *testing.T) {
 	t.Parallel()
 	_, pk := sample.KeyPair()
