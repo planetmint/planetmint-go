@@ -241,8 +241,10 @@ var (
 				Config: appconfig.WrapAny(&paramsmodulev1.Module{}),
 			},
 			{
-				Name:   "tx",
-				Config: appconfig.WrapAny(&txconfigv1.Config{}),
+				Name: "tx",
+				Config: appconfig.WrapAny(&txconfigv1.Config{
+					SkipAnteHandler: true,
+				}),
 			},
 			{
 				Name:   genutiltypes.ModuleName,
