@@ -19,6 +19,19 @@ func DeserializeInt64(value []byte) int64 {
 	return int64(integer - 1)
 }
 
+func SerializeUint64(value uint64) []byte {
+	buf := make([]byte, 8)
+	// Adding 1 because 0 will be interpreted as nil, which is an invalid key
+	binary.BigEndian.PutUint64(buf, value+1)
+	return buf
+}
+
+func DeserializeUint64(value []byte) uint64 {
+	integer := binary.BigEndian.Uint64(value)
+	// Subtract 1 because addition in serialization
+	return integer - 1
+}
+
 func SerializeString(value string) []byte {
 	byteArray := []byte(value)
 	return byteArray

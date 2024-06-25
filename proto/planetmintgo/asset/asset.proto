@@ -1,8 +1,0 @@
-syntax = "proto3";
-package planetmintgo.asset;
-
-option go_package = "github.com/planetmint/planetmint-go/x/asset/types";
-
-message Asset {
-  string cid = 1;
-}
