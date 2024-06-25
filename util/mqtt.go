@@ -23,6 +23,7 @@ type MQTTClientI interface {
 	Subscribe(topic string, qos byte, callback mqtt.MessageHandler) mqtt.Token
 	Unsubscribe(topics ...string) mqtt.Token
 	IsConnected() bool
+	IsConnectionOpen() bool
 }
 
 var (
