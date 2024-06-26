@@ -24,7 +24,6 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	hexProposerAddress := hex.EncodeToString(proposerAddress)
 	if isPopHeight(ctx, k, currentBlockHeight) {
 		// select PoP participants
-		monitor.SetContext(ctx)
 		challenger, challengee, err := monitor.SelectPoPParticipantsOutOfActiveActors()
 		if err != nil {
 			util.GetAppLogger().Error(ctx, "error during PoP Participant selection ", err)
