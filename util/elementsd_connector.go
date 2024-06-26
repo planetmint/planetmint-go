@@ -4,7 +4,6 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
-	"strings"
 	"sync"
 
 	"github.com/planetmint/planetmint-go/config"
@@ -17,41 +16,6 @@ var (
 	// so that UTXOs are not spend twice by accident
 	elementsSyncAccess sync.Mutex
 )
-
-func ReissueAsset(reissueTx string) (txID string, err error) {
-	conf := config.GetConfig()
-	url := conf.GetRPCURL()
-	cmdArgs := strings.Split(reissueTx, " ")
-	elementsSyncAccess.Lock()
-	defer elementsSyncAccess.Unlock()
-	result, err := elements.ReissueAsset(url, []string{`"` + cmdArgs[1] + `"`, cmdArgs[2]})
-	if err != nil {
-		return
-	}
-	txID = result.TxID
-	return
-}
-
-func DistributeAsset(address string, amount string, reissuanceAsset string) (txID string, err error) {
-	conf := config.GetConfig()
-	url := conf.GetRPCURL()
-
-	elementsSyncAccess.Lock()
-	defer elementsSyncAccess.Unlock()
-	txID, err = elements.SendToAddress(url, []string{
-		`"` + address + `"`,
-		`"` + amount + `"`,
-		`""`,
-		`""`,
-		"false",
-		"true",
-		"null",
-		`"unset"`,
-		"false",
-		`"` + reissuanceAsset + `"`,
-	})
-	return
-}
 
 func IssueNFTAsset(name string, machineAddress string, domain string) (assetID string, contract string, hexTx string, err error) {
 	conf := config.GetConfig()

@@ -15,22 +15,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestReissueAsset(t *testing.T) {
-	elements.Client = &elementsmocks.MockClient{}
-	_, err := util.ReissueAsset("reissueasset 06c20c8de513527f1ae6c901f74a05126525ac2d7e89306f4a7fd5ec4e674403 900.000")
-	assert.NoError(t, err)
-}
-
-func TestDistributeAsset(t *testing.T) {
-	elements.Client = &elementsmocks.MockClient{}
-
-	_, err := util.DistributeAsset(
-		"tlq1qqt5078sef4aqls29c3j3pwfmukgjug70t37x26gwyhzpdxmtmjmphar88fwsl9qcm559jevve772prhtuyf9xkxdtrhvuce6a",
-		"20",
-		"06c20c8de513527f1ae6c901f74a05126525ac2d7e89306f4a7fd5ec4e674403")
-	assert.NoError(t, err)
-}
-
 func TestIssueNFTAsset(t *testing.T) {
 	elements.Client = &elementsmocks.MockClient{}
 
