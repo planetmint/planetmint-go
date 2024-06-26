@@ -37,7 +37,7 @@ func getAccountNumberAndSequence(clientCtx client.Context) (accountNumber, seque
 	return
 }
 
-func getClientContextAndTxFactory(fromAddress sdk.AccAddress) (clientCtx client.Context, txf tx.Factory, err error) {
+func getClientContextAndTxFactory(fromAddress sdk.AccAddress, withoutFee bool) (clientCtx client.Context, txf tx.Factory, err error) {
 	clientCtx = GetConfig().clientCtx
 	// at least we need an account retriever
 	// it would be better to check for an empty client context, but that does not work at the moment
@@ -60,18 +60,22 @@ func getClientContextAndTxFactory(fromAddress sdk.AccAddress) (clientCtx client.
 	if err != nil {
 		return
 	}
-	txf = getTxFactoryWithAccountNumberAndSequence(clientCtx, accountNumber, sequence)
+	gasPrice := "0.000005"
+	if withoutFee {
+		gasPrice = "0.0"
+	}
+	txf = getTxFactoryWithAccountNumberAndSequence(clientCtx, accountNumber, sequence, gasPrice)
 	return
 }
 
-func getTxFactoryWithAccountNumberAndSequence(clientCtx client.Context, accountNumber, sequence uint64) (txf tx.Factory) {
+func getTxFactoryWithAccountNumberAndSequence(clientCtx client.Context, accountNumber, sequence uint64, gasPrice string) (txf tx.Factory) {
 	return tx.Factory{}.
 		WithAccountNumber(accountNumber).
 		WithAccountRetriever(clientCtx.AccountRetriever).
 		WithChainID(clientCtx.ChainID).
 		WithFeeGranter(clientCtx.FeeGranter).
 		WithGas(GetConfig().txGas).
-		WithGasPrices("0.000005" + GetConfig().feeDenom).
+		WithGasPrices(gasPrice + GetConfig().feeDenom).
 		WithKeybase(clientCtx.Keyring).
 		WithSequence(sequence).
 		WithTxConfig(clientCtx.TxConfig)
@@ -128,10 +132,21 @@ func getClientContext(fromAddress sdk.AccAddress) (clientCtx client.Context, err
 	return
 }
 
+func isMachineAttestationMsg(msgs ...sdk.Msg) (isMachineAttestation bool) {
+	if len(msgs) != 1 {
+		return
+	}
+	if sdk.MsgTypeURL(msgs[0]) == "/planetmintgo.machine.MsgAttestMachine" {
+		isMachineAttestation = true
+	}
+	return
+}
+
 // BuildUnsignedTx builds a transaction to be signed given a set of messages.
 // Once created, the fee, memo, and messages are set.
 func BuildUnsignedTx(fromAddress sdk.AccAddress, msgs ...sdk.Msg) (txJSON string, err error) {
-	clientCtx, txf, err := getClientContextAndTxFactory(fromAddress)
+	withoutFee := isMachineAttestationMsg(msgs...)
+	clientCtx, txf, err := getClientContextAndTxFactory(fromAddress, withoutFee)
 	if err != nil {
 		return
 	}
@@ -197,7 +212,8 @@ func BroadcastTxWithFileLock(fromAddress sdk.AccAddress, msgs ...sdk.Msg) (out *
 	}()
 
 	// get basic chain information
-	clientCtx, txf, err := getClientContextAndTxFactory(fromAddress)
+	withoutFee := isMachineAttestationMsg(msgs...)
+	clientCtx, txf, err := getClientContextAndTxFactory(fromAddress, withoutFee)
 	if err != nil {
 		return
 	}

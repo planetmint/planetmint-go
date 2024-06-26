@@ -7,11 +7,13 @@ import (
 	"math"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	"github.com/planetmint/planetmint-go/lib"
+	"github.com/planetmint/planetmint-go/monitor"
 	"github.com/planetmint/planetmint-go/testutil"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
@@ -162,7 +164,9 @@ func (s *SelectionE2ETestSuite) TestPopSelectionNoActors() {
 }
 
 func (s *SelectionE2ETestSuite) TestPopSelectionOneActors() {
-	err := e2etestutil.AttestMachine(s.network, machines[0].name, machines[0].mnemonic, 0, s.feeDenom)
+	err := monitor.AddParticipant(machines[0].address, time.Now().Unix())
+	s.Require().NoError(err)
+	err = e2etestutil.AttestMachine(s.network, machines[0].name, machines[0].mnemonic, 0, s.feeDenom)
 	s.Require().NoError(err)
 
 	out := s.perpareLocalTest()
@@ -172,7 +176,9 @@ func (s *SelectionE2ETestSuite) TestPopSelectionOneActors() {
 }
 
 func (s *SelectionE2ETestSuite) TestPopSelectionTwoActors() {
-	err := e2etestutil.AttestMachine(s.network, machines[1].name, machines[1].mnemonic, 1, s.feeDenom)
+	err := monitor.AddParticipant(machines[1].address, time.Now().Unix())
+	s.Require().NoError(err)
+	err = e2etestutil.AttestMachine(s.network, machines[1].name, machines[1].mnemonic, 1, s.feeDenom)
 	s.Require().NoError(err)
 
 	out := s.perpareLocalTest()
@@ -283,6 +289,8 @@ func (s *SelectionE2ETestSuite) TestTokenRedeemClaim() {
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
+	s.Require().NoError(s.network.WaitForNextBlock()) // added another waiting block to pass CI test cases (they are a bit slower)
+
 	_, err = clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().ErrorContains(err, "failed to execute message; message index: 0: expected: plmnt19cl05ztgt8ey6v86hjjjn3thfmpu6q2xtveehc; got: plmnt1kp93kns6hs2066d8qw0uz84fw3vlthewt2ck6p: invalid claim address")
 

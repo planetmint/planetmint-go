@@ -110,6 +110,7 @@ func (s *ConsumptionE2ETestSuite) TestValidatorConsumption() {
 	s.Require().NoError(err)
 
 	s.Require().NoError(s.network.WaitForNextBlock())
+	s.Require().NoError(s.network.WaitForNextBlock())
 
 	_, err = clitestutil.GetRawLogFromTxOut(val, out)
 	s.Require().NoError(err)
@@ -132,6 +133,7 @@ func (s *ConsumptionE2ETestSuite) TestNonValidatorConsumptionOverflow() {
 	out, err := lib.BroadcastTxWithFileLock(addr, msgs...)
 	s.Require().NoError(err)
 
+	s.Require().NoError(s.network.WaitForNextBlock())
 	s.Require().NoError(s.network.WaitForNextBlock())
 
 	_, err = clitestutil.GetRawLogFromTxOut(val, out)

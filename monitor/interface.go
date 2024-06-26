@@ -1,0 +1,64 @@
+package monitor
+
+import (
+	"sync"
+
+	"github.com/planetmint/planetmint-go/config"
+	"github.com/syndtr/goleveldb/leveldb"
+)
+
+type MQTTMonitorClientI interface {
+	AddParticipant(address string, lastSeenTS int64) (err error)
+	SelectPoPParticipantsOutOfActiveActors() (challenger string, challengee string, err error)
+	Start() (err error)
+}
+
+var monitorMutex sync.RWMutex
+var mqttMonitorInstance MQTTMonitorClientI
+
+func SetMqttMonitorInstance(monitorInstance MQTTMonitorClientI) {
+	monitorMutex.Lock()
+	mqttMonitorInstance = monitorInstance
+	monitorMutex.Unlock()
+}
+
+func LazyMqttMonitorLoader(homeDir string) {
+	monitorMutex.RLock()
+	tmpInstance := mqttMonitorInstance
+	monitorMutex.RUnlock()
+	if tmpInstance != nil {
+		return
+	}
+	if homeDir == "" {
+		homeDir = "./"
+	}
+	aciveActorsDB, err := leveldb.OpenFile(homeDir+"activeActors.db", nil)
+	if err != nil {
+		panic(err)
+	}
+
+	SetMqttMonitorInstance(NewMqttMonitorService(aciveActorsDB, *config.GetConfig()))
+	err = mqttMonitorInstance.Start()
+	if err != nil {
+		panic(err)
+	}
+}
+
+func SelectPoPParticipantsOutOfActiveActors() (challenger string, challengee string, err error) {
+	monitorMutex.RLock()
+	challenger, challengee, err = mqttMonitorInstance.SelectPoPParticipantsOutOfActiveActors()
+	monitorMutex.RUnlock()
+	return
+}
+
+func Start() (err error) {
+	err = mqttMonitorInstance.Start()
+	return
+}
+
+func AddParticipant(address string, lastSeenTS int64) (err error) {
+	monitorMutex.RLock()
+	err = mqttMonitorInstance.AddParticipant(address, lastSeenTS)
+	monitorMutex.RUnlock()
+	return
+}
