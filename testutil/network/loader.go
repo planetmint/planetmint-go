@@ -19,7 +19,7 @@ import (
 	"github.com/planetmint/planetmint-go/clients"
 	"github.com/planetmint/planetmint-go/monitor"
 	monitormocks "github.com/planetmint/planetmint-go/monitor/mocks"
-	claimmocks "github.com/planetmint/planetmint-go/testutil/mocks"
+	clientmocks "github.com/planetmint/planetmint-go/testutil/mocks"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/util/mocks"
@@ -49,11 +49,20 @@ func Load(t *testing.T, configs ...Config) *Network {
 	elements.Client = &elementsmocks.MockClient{}
 	util.RegisterAssetServiceHTTPClient = &mocks.MockClient{}
 	ctrl := gomock.NewController(t)
-	claimMock := claimmocks.NewMockIRCClient(ctrl)
+	claimMock := clientmocks.NewMockIRCClient(ctrl)
 	claimMock.EXPECT().PostClaim(gomock.Any(), gomock.Any()).AnyTimes().Return(clients.PostClaimResponse{
 		TxID: "0000000000000000000000000000000000000000000000000000000000000000",
 	}, nil)
 	clients.ClaimServiceClient = claimMock
+
+	shamirMock := clientmocks.NewMockIShamirCoordinatorClient(ctrl)
+	shamirMock.EXPECT().SendTokens(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().Return(clients.SendTokensResponse{
+		TxID: "7add40beb27df701e02ee85089c5bc0021bc813823fedb5f1dcb5debda7f3da9",
+	}, nil)
+	shamirMock.EXPECT().ReIssueAsset(gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().Return(clients.ReIssueResponse{
+		TxID: "7add40beb27df701e02ee85089c5bc0021bc813823fedb5f1dcb5debda7f3da9",
+	}, nil)
+	clients.ShamirCoordinatorServiceClient = shamirMock
 
 	// enable application logger in tests
 	appLogger := util.GetAppLogger()
