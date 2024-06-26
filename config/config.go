@@ -25,7 +25,7 @@ mqtt-user = "{{ .PlmntConfig.MqttUser }}"
 mqtt-password = "{{ .PlmntConfig.MqttPassword }}"
 claim-host = "{{ .PlmntConfig.ClaimHost }}"
 mqtt-tls = {{ .PlmntConfig.MqttTLS }}
-issuer-host = {{ .IssuerHost }}
+issuer-host = "{{ .IssuerHost }}"
 `
 
 // Config defines Planetmint's top level configuration
