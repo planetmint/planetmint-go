@@ -31,7 +31,6 @@ certs-path = "{{ .PlmntConfig.CertsPath }}"
 
 // Config defines Planetmint's top level configuration
 type Config struct {
-	ConfigRootDir    string `json:"config-root-dir"   mapstructure:"config-root-dir"`
 	RPCHost          string `json:"rpc-host"          mapstructure:"rpc-host"`
 	RPCPort          int    `json:"rpc-port"          mapstructure:"rpc-port"`
 	RPCUser          string `json:"rpc-user"          mapstructure:"rpc-user"`
@@ -58,7 +57,6 @@ var (
 // DefaultConfig returns planetmint's default configuration.
 func DefaultConfig() *Config {
 	return &Config{
-		ConfigRootDir:    "",
 		RPCHost:          "localhost",
 		RPCPort:          18884,
 		RPCUser:          "user",
