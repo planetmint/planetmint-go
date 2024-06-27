@@ -5,11 +5,13 @@ import (
 	"context"
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
 
 	"github.com/planetmint/planetmint-go/config"
+	"github.com/rddl-network/go-utils/tls"
 )
 
 // TODO: revert to actual rddl-claim-service client after CosmosSDK upgrade to v0.50.x
@@ -22,7 +24,11 @@ func lazyLoadShamirCoordinatorClient() IShamirCoordinatorClient {
 		return ShamirCoordinatorServiceClient
 	}
 	cfg := config.GetConfig()
-	ShamirCoordinatorServiceClient = NewShamirCoordinatorClient(cfg.IssuerHost, &http.Client{})
+	httpsClient, err := tls.Get2WayTLSClient(cfg.CertsPath)
+	if err != nil {
+		defer log.Fatal("fatal error setting up mutual tls client for shamir coordinator")
+	}
+	ShamirCoordinatorServiceClient = NewShamirCoordinatorClient(cfg.IssuerHost, httpsClient)
 	return ShamirCoordinatorServiceClient
 }
 
