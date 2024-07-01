@@ -45,7 +45,6 @@ func (k msgServer) resolveStagedClaims(ctx sdk.Context, start int64, end int64) 
 	}
 
 	popParticipants := make(map[string]uint64)
-	validatorPopReward := k.GetValidatorPoPReward(ctx)
 
 	for _, challenge := range challenges {
 		// if challenge not finished nobody has claims
@@ -60,6 +59,10 @@ func (k msgServer) resolveStagedClaims(ctx sdk.Context, start int64, end int64) 
 		initiatorAddr, err := sdk.AccAddressFromHexUnsafe(challenge.Initiator)
 		if err != nil {
 			util.GetAppLogger().Error(ctx, "error converting initiator address")
+		}
+		validatorPopReward, found := k.getChallengeInitiatorReward(ctx, challenge.GetHeight())
+		if !found {
+			util.GetAppLogger().Error(ctx, "No PoP initiator reward found for height %v", challenge.GetHeight())
 		}
 		popParticipants[initiatorAddr.String()] += validatorPopReward
 	}

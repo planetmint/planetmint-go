@@ -80,7 +80,10 @@ func (k msgServer) issuePoPRewards(ctx sdk.Context, challenge types.Challenge) (
 		stagedCRDDL = stagedCRDDL.AddAmount(sdk.NewIntFromUint64(challengerAmt))
 	}
 
-	validatorPoPreward := k.GetValidatorPoPReward(ctx)
+	validatorPoPreward, found := k.getChallengeInitiatorReward(ctx, challenge.GetHeight())
+	if !found {
+		util.GetAppLogger().Error(ctx, "No PoP initiator reward found for height %v", challenge.GetHeight())
+	}
 	stagedCRDDL = stagedCRDDL.AddAmount(sdk.NewIntFromUint64(validatorPoPreward))
 
 	err = k.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(stagedCRDDL))
