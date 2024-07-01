@@ -44,6 +44,12 @@ func (k msgServer) ReportPopResult(goCtx context.Context, msg *types.MsgReportPo
 		return nil, err
 	}
 
+	_, err = sdk.AccAddressFromHexUnsafe(msg.Challenge.GetInitiator())
+	if err != nil {
+		util.GetAppLogger().Error(ctx, "error converting initiator address")
+		return nil, errorsmod.Wrap(types.ErrInvalidPoPInitiator, "PoP initiator not hex encoded")
+	}
+
 	// update valid PoP Result reports
 	err = k.updateChallenge(ctx, msg)
 	if err != nil {
@@ -74,6 +80,9 @@ func (k msgServer) issuePoPRewards(ctx sdk.Context, challenge types.Challenge) (
 		stagedCRDDL = stagedCRDDL.AddAmount(sdk.NewIntFromUint64(challengerAmt))
 	}
 
+	validatorPoPreward := k.GetValidatorPoPReward(ctx)
+	stagedCRDDL = stagedCRDDL.AddAmount(sdk.NewIntFromUint64(validatorPoPreward))
+
 	err = k.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(stagedCRDDL))
 	if err != nil {
 		return
@@ -86,6 +95,12 @@ func (k msgServer) handlePoP(ctx sdk.Context, challenge types.Challenge) (err er
 	_, challengerAmt, challengeeAmt := util.GetPopReward(challenge.Height, k.GetParams(ctx).PopEpochs)
 
 	err = k.sendRewards(ctx, challenge.GetChallenger(), challengerAmt)
+	if err != nil {
+		return
+	}
+
+	initiatorAddr, _ := sdk.AccAddressFromHexUnsafe(challenge.Initiator)
+	err = k.sendRewards(ctx, initiatorAddr.String(), k.GetValidatorPoPReward(ctx))
 	if err != nil {
 		return
 	}

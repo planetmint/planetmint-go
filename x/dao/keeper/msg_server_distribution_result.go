@@ -45,6 +45,7 @@ func (k msgServer) resolveStagedClaims(ctx sdk.Context, start int64, end int64) 
 	}
 
 	popParticipants := make(map[string]uint64)
+	validatorPopReward := k.GetValidatorPoPReward(ctx)
 
 	for _, challenge := range challenges {
 		// if challenge not finished nobody has claims
@@ -56,6 +57,11 @@ func (k msgServer) resolveStagedClaims(ctx sdk.Context, start int64, end int64) 
 		if challenge.GetSuccess() {
 			popParticipants[challenge.Challengee] += challengeeAmt
 		}
+		initiatorAddr, err := sdk.AccAddressFromHexUnsafe(challenge.Initiator)
+		if err != nil {
+			util.GetAppLogger().Error(ctx, "error converting initiator address")
+		}
+		popParticipants[initiatorAddr.String()] += validatorPopReward
 	}
 
 	// second data structure because map iteration order is not guaranteed in GO

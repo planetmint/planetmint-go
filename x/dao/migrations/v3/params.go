@@ -19,7 +19,6 @@ func MigrateParams(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.Bina
 
 	params.ValidatorPopReward = 1
 
-	// migratedParams := types.NewParams(params.MintAddress, params.TokenDenom, params.StagedDenom, params.ClaimDenom, params.ReissuanceAsset, params.ReissuanceEpochs, params.PopEpochs, params.DistributionOffset, params.DistributionAddressEarlyInv, params.DistributionAddressInvestor, params.DistributionAddressStrategic, params.DistributionAddressDao, params.DistributionAddressPop, params.MqttResponseTimeout, params.ClaimAddress, params.TxGasLimit, 1)
 	bz, err := cdc.Marshal(&params)
 	if err != nil {
 		return err

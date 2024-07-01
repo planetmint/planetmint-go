@@ -48,11 +48,14 @@ func (k Keeper) ComputeDistribution(ctx sdk.Context, lastReissuance int64, block
 	distribution.StrategicAddr = k.GetParams(ctx).DistributionAddressStrategic
 	distribution.PopAddr = k.GetParams(ctx).DistributionAddressPop
 
-	distribution.DaoAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentageDao))
+	// PoP rewards subtracted from DaoAmount and added to PoPAmount for later distribution
+	validatorPoPRewards := k.GetValidatorPoPReward(ctx)
+
+	distribution.DaoAmount = util.UintValueToRDDLTokenString(uint64(float64(amount)*types.PercentageDao) - validatorPoPRewards)
 	distribution.EarlyInvAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentageEarlyInvestor))
 	distribution.InvestorAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentageInvestor))
 	distribution.StrategicAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentageStrategic))
-	distribution.PopAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentagePop))
+	distribution.PopAmount = util.UintValueToRDDLTokenString(uint64(float64(amount)*types.PercentagePop) + validatorPoPRewards)
 
 	return distribution
 }

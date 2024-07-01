@@ -196,7 +196,7 @@ func (s *SelectionE2ETestSuite) VerifyTokens(token string) {
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), token)
-	assert.Equal(s.T(), "amount: \"17979452050\"\ndenom: "+token+"\n", out.String()) // Total supply 2 * 7990867578 (total supply) + 1 * 1997716894 (challenger) = 17979452050
+	assert.Equal(s.T(), "amount: \"17979452053\"\ndenom: "+token+"\n", out.String()) // Total supply 2 * 7990867578 (total supply) + 1 * 1997716894 (challenger) = 17979452050
 
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		machines[0].address,
