@@ -29,7 +29,6 @@ func TestMsgServer(t *testing.T) {
 }
 
 func TestMsgServerReportPoPResult(t *testing.T) {
-	t.Parallel()
 	initiator := sample.Secp256k1AccAddress()
 	initiatorHex := hex.EncodeToString(initiator.Bytes())
 	challenger := sample.Secp256k1AccAddress()
@@ -177,7 +176,6 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
 			res, err := msgServer.ReportPopResult(ctx, &tc.msg)
 
 			if tc.errMsg != "" {
