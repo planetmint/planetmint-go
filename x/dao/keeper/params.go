@@ -42,3 +42,7 @@ func (k Keeper) GetTxGasLimit(ctx sdk.Context) (txGasLimit uint64) {
 func (k Keeper) GetClaimAddress(ctx sdk.Context) (claimAddress string) {
 	return k.GetParams(ctx).ClaimAddress
 }
+
+func (k Keeper) GetValidatorPoPReward(ctx sdk.Context) (validatorPoPReward uint64) {
+	return k.GetParams(ctx).ValidatorPopReward
+}

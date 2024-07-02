@@ -29,4 +29,5 @@ var (
 	ErrConvertClaims            = errorsmod.Register(ModuleName, 20, "convert claim failed")
 	ErrInvalidClaimAddress      = errorsmod.Register(ModuleName, 21, "invalid claim address")
 	ErrInvalidPopReporter       = errorsmod.Register(ModuleName, 22, "invalid PoP reporter")
+	ErrInvalidPoPInitiator      = errorsmod.Register(ModuleName, 23, "invalid PoP initiator")
 )

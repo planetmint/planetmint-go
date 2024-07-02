@@ -25,6 +25,8 @@ const (
 
 	PoPDistributionKey = "Dao/PoPDistribution"
 
+	PoPInitiatorReward = "Dao/PoPInitiatorReward"
+
 	ParamsKey = "Dao/Params"
 )
 

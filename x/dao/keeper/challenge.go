@@ -69,3 +69,19 @@ func (k Keeper) GetChallenges(ctx sdk.Context) (challenges []types.Challenge, er
 	}
 	return
 }
+
+func (k Keeper) storeChallangeInitiatorReward(ctx sdk.Context, height int64, amount uint64) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PoPInitiatorReward))
+	appendValue := util.SerializeUint64(amount)
+	store.Set(util.SerializeInt64(height), appendValue)
+}
+
+func (k Keeper) getChallengeInitiatorReward(ctx sdk.Context, height int64) (amount uint64, found bool) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PoPInitiatorReward))
+	amountBytes := store.Get(util.SerializeInt64(height))
+	if amountBytes == nil {
+		return 0, false
+	}
+	amount = util.DeserializeUint64(amountBytes)
+	return amount, true
+}

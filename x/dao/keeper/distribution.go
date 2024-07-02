@@ -48,13 +48,33 @@ func (k Keeper) ComputeDistribution(ctx sdk.Context, lastReissuance int64, block
 	distribution.StrategicAddr = k.GetParams(ctx).DistributionAddressStrategic
 	distribution.PopAddr = k.GetParams(ctx).DistributionAddressPop
 
-	distribution.DaoAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentageDao))
+	// PoP rewards subtracted from DaoAmount and added to PoPAmount for later distribution
+	validatorPoPRewards, err := k.accumulateValidatorPoPRewardsForDistribution(ctx, lastReissuance, blockHeight)
+	if err != nil {
+		util.GetAppLogger().Error(ctx, "error calculating Validator PoP rewards from height %v to %v", lastReissuance, blockHeight)
+	}
+
+	distribution.DaoAmount = util.UintValueToRDDLTokenString(uint64(float64(amount)*types.PercentageDao) - validatorPoPRewards)
 	distribution.EarlyInvAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentageEarlyInvestor))
 	distribution.InvestorAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentageInvestor))
 	distribution.StrategicAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentageStrategic))
-	distribution.PopAmount = util.UintValueToRDDLTokenString(uint64(float64(amount) * types.PercentagePop))
+	distribution.PopAmount = util.UintValueToRDDLTokenString(uint64(float64(amount)*types.PercentagePop) + validatorPoPRewards)
 
 	return distribution
+}
+
+func (k Keeper) accumulateValidatorPoPRewardsForDistribution(ctx sdk.Context, firstPop int64, lastPop int64) (amount uint64, err error) {
+	challenges, err := k.GetChallengeRange(ctx, firstPop, lastPop)
+	if err != nil {
+		return 0, err
+	}
+	for _, challenge := range challenges {
+		reward, found := k.getChallengeInitiatorReward(ctx, challenge.GetHeight())
+		if found {
+			amount += reward
+		}
+	}
+	return amount, nil
 }
 
 func getUint64FromTxString(ctx sdk.Context, tx string) (amount uint64, err error) {
