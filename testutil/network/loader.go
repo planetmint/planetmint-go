@@ -62,6 +62,11 @@ func Load(t *testing.T, configs ...Config) *Network {
 	shamirMock.EXPECT().ReIssueAsset(gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().Return(clients.ReIssueResponse{
 		TxID: "7add40beb27df701e02ee85089c5bc0021bc813823fedb5f1dcb5debda7f3da9",
 	}, nil)
+	shamirMock.EXPECT().IssueMachineNFT(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().Return(clients.IssueMachineNFTResponse{
+		HexTX:    "0000000000000000000000000000000000000000000000000000000000000000",
+		Contract: "contract",
+		Asset:    "7add40beb27df701e02ee85089c5bc0021bc813823fedb5f1dcb5debda7f3da9",
+	}, nil)
 	clients.ShamirCoordinatorServiceClient = shamirMock
 
 	// enable application logger in tests

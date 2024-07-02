@@ -50,11 +50,21 @@ func ReIssueAsset(ctx context.Context, asset string, amount string) (txID string
 	return res.TxID, nil
 }
 
+func IssueNFTAsset(ctx context.Context, name string, machineAddress string, domain string) (assetID string, contract string, hexTx string, err error) {
+	client := lazyLoadShamirCoordinatorClient()
+	res, err := client.IssueMachineNFT(ctx, name, machineAddress, domain)
+	if err != nil {
+		return
+	}
+	return res.Asset, res.Contract, res.HexTX, nil
+}
+
 type IShamirCoordinatorClient interface {
 	GetMnemonics(ctx context.Context) (res MnemonicsResponse, err error)
 	PostMnemonics(ctx context.Context, secret string) (err error)
 	SendTokens(ctx context.Context, recipient string, amount string, asset string) (res SendTokensResponse, err error)
 	ReIssueAsset(ctx context.Context, asset string, amount string) (res ReIssueResponse, err error)
+	IssueMachineNFT(ctx context.Context, name string, machineAddress string, domain string) (res IssueMachineNFTResponse, err error)
 }
 
 type SendTokensRequest struct {
@@ -79,6 +89,18 @@ type ReIssueResponse struct {
 type MnemonicsResponse struct {
 	Mnemonics []string `binding:"required" json:"mnemonics"`
 	Seed      string   `binding:"required" json:"seed"`
+}
+
+type IssueMachineNFTRequest struct {
+	Name           string `binding:"required" json:"name"`
+	MachineAddress string `binding:"required" json:"machine-address"`
+	Domain         string `binding:"required" json:"domain"`
+}
+
+type IssueMachineNFTResponse struct {
+	Asset    string `binding:"required" json:"asset"`
+	Contract string `binding:"required" json:"contract"`
+	HexTX    string `binding:"required" json:"hex-tx"`
 }
 
 type ShamirCoordinatorClient struct {
@@ -122,6 +144,16 @@ func (scc *ShamirCoordinatorClient) ReIssueAsset(ctx context.Context, asset stri
 		Amount: amount,
 	}
 	err = scc.doRequest(ctx, http.MethodPost, scc.baseURL+"/reissue", &requestBody, &res)
+	return
+}
+
+func (scc *ShamirCoordinatorClient) IssueMachineNFT(ctx context.Context, name string, machineAddress string, domain string) (res IssueMachineNFTResponse, err error) {
+	requestBody := IssueMachineNFTRequest{
+		Name:           name,
+		MachineAddress: machineAddress,
+		Domain:         domain,
+	}
+	err = scc.doRequest(ctx, http.MethodPost, scc.baseURL+"/issue-machine-nft", &requestBody, &res)
 	return
 }
 
