@@ -50,6 +50,21 @@ func (mr *MockIShamirCoordinatorClientMockRecorder) GetMnemonics(ctx interface{}
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMnemonics", reflect.TypeOf((*MockIShamirCoordinatorClient)(nil).GetMnemonics), ctx)
 }
 
+// IssueMachineNFT mocks base method.
+func (m *MockIShamirCoordinatorClient) IssueMachineNFT(ctx context.Context, name, machineAddress, domain string) (clients.IssueMachineNFTResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IssueMachineNFT", ctx, name, machineAddress, domain)
+	ret0, _ := ret[0].(clients.IssueMachineNFTResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// IssueMachineNFT indicates an expected call of IssueMachineNFT.
+func (mr *MockIShamirCoordinatorClientMockRecorder) IssueMachineNFT(ctx, name, machineAddress, domain interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IssueMachineNFT", reflect.TypeOf((*MockIShamirCoordinatorClient)(nil).IssueMachineNFT), ctx, name, machineAddress, domain)
+}
+
 // PostMnemonics mocks base method.
 func (m *MockIShamirCoordinatorClient) PostMnemonics(ctx context.Context, secret string) error {
 	m.ctrl.T.Helper()

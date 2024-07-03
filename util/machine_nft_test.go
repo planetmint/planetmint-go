@@ -9,7 +9,10 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/golang/mock/gomock"
+	"github.com/planetmint/planetmint-go/clients"
 	"github.com/planetmint/planetmint-go/testutil/keeper"
+	clientmocks "github.com/planetmint/planetmint-go/testutil/mocks"
 	"github.com/planetmint/planetmint-go/testutil/moduleobject"
 	"github.com/planetmint/planetmint-go/testutil/sample"
 	"github.com/planetmint/planetmint-go/util"
@@ -47,7 +50,15 @@ func TestRegisterNFT(t *testing.T) {
 }
 
 func TestMachineNFTIssuance(t *testing.T) {
+	ctrl := gomock.NewController(t)
 	elements.Client = &elementsmocks.MockClient{}
+	shamirMock := clientmocks.NewMockIShamirCoordinatorClient(ctrl)
+	shamirMock.EXPECT().IssueMachineNFT(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().Return(clients.IssueMachineNFTResponse{
+		HexTX:    "0000000000000000000000000000000000000000000000000000000000000000",
+		Contract: `{"entity":{"domain":"testnet-assets.rddl.io"}, "issuer_pubkey":"02", "machine_addr":"addr","name":"machine","precicion":8,"version":1}`,
+		Asset:    "0000000000000000000000000000000000000000000000000000000000000000",
+	}, nil)
+	clients.ShamirCoordinatorServiceClient = shamirMock
 	util.RegisterAssetServiceHTTPClient = &mocks.MockClient{}
 	_, ctx := keeper.MachineKeeper(t)
 	params := types.DefaultParams()
