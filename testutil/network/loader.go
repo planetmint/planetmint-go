@@ -64,8 +64,8 @@ func Load(t *testing.T, configs ...Config) *Network {
 	}, nil)
 	shamirMock.EXPECT().IssueMachineNFT(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().Return(clients.IssueMachineNFTResponse{
 		HexTX:    "0000000000000000000000000000000000000000000000000000000000000000",
-		Contract: "contract",
-		Asset:    "7add40beb27df701e02ee85089c5bc0021bc813823fedb5f1dcb5debda7f3da9",
+		Contract: `{"entity":{"domain":"testnet-assets.rddl.io"}, "issuer_pubkey":"02", "machine_addr":"addr","name":"machine","precicion":8,"version":1}`,
+		Asset:    "0000000000000000000000000000000000000000000000000000000000000000",
 	}, nil)
 	clients.ShamirCoordinatorServiceClient = shamirMock
 
