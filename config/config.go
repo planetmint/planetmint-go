@@ -2,7 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"fmt"
 	"sync"
 )
 
@@ -12,12 +11,6 @@ const DefaultConfigTemplate = `
 ###############################################################################
 
 [planetmint]
-rpc-host = "{{ .PlmntConfig.RPCHost }}"
-rpc-port = {{ .PlmntConfig.RPCPort }}
-rpc-user = "{{ .PlmntConfig.RPCUser }}"
-rpc-password = "{{ .PlmntConfig.RPCPassword }}"
-rpc-scheme = "{{ .PlmntConfig.RPCScheme }}"
-rpc-wallet = "{{ .PlmntConfig.RPCWallet }}"
 validator-address = "{{ .PlmntConfig.ValidatorAddress }}"
 mqtt-domain = "{{ .PlmntConfig.MqttDomain }}"
 mqtt-port = {{ .PlmntConfig.MqttPort }}
@@ -31,12 +24,6 @@ certs-path = "{{ .PlmntConfig.CertsPath }}"
 
 // Config defines Planetmint's top level configuration
 type Config struct {
-	RPCHost          string `json:"rpc-host"          mapstructure:"rpc-host"`
-	RPCPort          int    `json:"rpc-port"          mapstructure:"rpc-port"`
-	RPCUser          string `json:"rpc-user"          mapstructure:"rpc-user"`
-	RPCPassword      string `json:"rpc-password"      mapstructure:"rpc-password"`
-	RPCScheme        string `json:"rpc-scheme"        mapstructure:"rpc-scheme"`
-	RPCWallet        string `json:"rpc-wallet"        mapstructure:"rpc-wallet"`
 	ValidatorAddress string `json:"validator-address" mapstructure:"validator-address"`
 	MqttDomain       string `json:"mqtt-domain"       mapstructure:"mqtt-domain"`
 	MqttPort         int    `json:"mqtt-port"         mapstructure:"mqtt-port"`
@@ -57,12 +44,6 @@ var (
 // DefaultConfig returns planetmint's default configuration.
 func DefaultConfig() *Config {
 	return &Config{
-		RPCHost:          "localhost",
-		RPCPort:          18884,
-		RPCUser:          "user",
-		RPCPassword:      "password",
-		RPCScheme:        "http",
-		RPCWallet:        "rpcwallet",
 		ValidatorAddress: "plmnt1w5dww335zhh98pzv783hqre355ck3u4w4hjxcx",
 		MqttDomain:       "testnet-mqtt.rddl.io",
 		MqttPort:         1886,
@@ -81,12 +62,6 @@ func GetConfig() *Config {
 		plmntConfig = DefaultConfig()
 	})
 	return plmntConfig
-}
-
-// GetRPCURL returns the elements RPC URL
-func (config *Config) GetRPCURL() (url string) {
-	url = fmt.Sprintf("%s://%s:%s@%s:%d/wallet/%s", config.RPCScheme, config.RPCUser, config.RPCPassword, config.RPCHost, config.RPCPort, config.RPCWallet)
-	return
 }
 
 // SetPlanetmintConfig sets Planetmint's configuration
