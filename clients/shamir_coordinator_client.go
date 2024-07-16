@@ -70,7 +70,8 @@ type IShamirCoordinatorClient interface {
 type SendTokensRequest struct {
 	Recipient string `binding:"required" json:"recipient"`
 	Amount    string `binding:"required" json:"amount"`
-	Asset     string `binding:"required" json:"asset"`
+	Asset     string `                   json:"asset"`
+	ID        int    `                   json:"id"`
 }
 
 type SendTokensResponse struct {
@@ -80,6 +81,7 @@ type SendTokensResponse struct {
 type ReIssueRequest struct {
 	Asset  string `binding:"required" json:"asset"`
 	Amount string `binding:"required" json:"amount"`
+	ID     int    `                   json:"id"`
 }
 
 type ReIssueResponse struct {
@@ -95,6 +97,7 @@ type IssueMachineNFTRequest struct {
 	Name           string `binding:"required" json:"name"`
 	MachineAddress string `binding:"required" json:"machine-address"`
 	Domain         string `binding:"required" json:"domain"`
+	ID             int    `                   json:"id"`
 }
 
 type IssueMachineNFTResponse struct {
