@@ -17,7 +17,7 @@ func MigrateParams(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.Bina
 		return err
 	}
 
-	params.ValidatorPopReward = 1
+	params.ValidatorPopReward = 100000000
 
 	bz, err := cdc.Marshal(&params)
 	if err != nil {

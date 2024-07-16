@@ -65,7 +65,7 @@ func DefaultParams() Params {
 		2000,
 		"plmnt1m5apfematgm7uueazhk482026ert95x2l2dx78",
 		200000,
-		1,
+		100000000,
 	)
 }
 
