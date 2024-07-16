@@ -4,6 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
@@ -17,7 +18,7 @@ func MigrateParams(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.Bina
 		return err
 	}
 
-	params.ValidatorPopReward = 100000000
+	params.ValidatorPopReward = util.RDDLToken2Uint(1)
 
 	bz, err := cdc.Marshal(&params)
 	if err != nil {
