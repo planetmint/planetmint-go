@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	"context"
+	"encoding/hex"
 	"fmt"
 	"testing"
 
@@ -28,8 +29,8 @@ func TestMsgServer(t *testing.T) {
 }
 
 func TestMsgServerReportPoPResult(t *testing.T) {
-	t.Parallel()
 	initiator := sample.Secp256k1AccAddress()
+	initiatorHex := hex.EncodeToString(initiator.Bytes())
 	challenger := sample.Secp256k1AccAddress()
 	challengee := sample.Secp256k1AccAddress()
 	errInvalidPopData := "Invalid pop data"
@@ -44,7 +45,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
-					Initiator:  initiator.String(),
+					Initiator:  initiatorHex,
 					Challenger: challenger.String(),
 					Challengee: challengee.String(),
 					Height:     1,
@@ -59,7 +60,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
-					Initiator:  initiator.String(),
+					Initiator:  initiatorHex,
 					Challenger: challenger.String(),
 					Challengee: challengee.String(),
 					Height:     2,
@@ -87,7 +88,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
-					Initiator:  initiator.String(),
+					Initiator:  initiatorHex,
 					Challenger: challenger.String(),
 					Challengee: challengee.String(),
 					Height:     4,
@@ -102,7 +103,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
-					Initiator:  initiator.String(),
+					Initiator:  initiatorHex,
 					Challenger: challenger.String(),
 					Challengee: challengee.String(),
 					Height:     5,
@@ -117,7 +118,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
-					Initiator:  initiator.String(),
+					Initiator:  initiatorHex,
 					Challenger: challenger.String(),
 					Challengee: challengee.String(),
 					Height:     6,
@@ -128,7 +129,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			"PoP report data does not match challenge: invalid challenge",
 		},
 		{
-			"Non-Existing PoP",
+			"Initiator not hex encoded",
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
@@ -140,6 +141,21 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 					Finished:   true,
 				},
 			},
+			"PoP initiator not hex encoded: invalid PoP initiator",
+		},
+		{
+			"Non-Existing PoP",
+			types.MsgReportPopResult{
+				Creator: challenger.String(),
+				Challenge: &types.Challenge{
+					Initiator:  initiatorHex,
+					Challenger: challenger.String(),
+					Challengee: challengee.String(),
+					Height:     8,
+					Success:    true,
+					Finished:   true,
+				},
+			},
 			"no challenge found for PoP report: invalid challenge",
 		},
 	}
@@ -147,7 +163,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 	msgServer, ctx, k := setupMsgServer(t)
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	// set up the challenges, do not store the last challenge (special test case)
-	for i := 0; i < 6; i++ {
+	for i := 0; i < len(testCases)-1; i++ {
 		msg := testCases[i].msg
 		challenge := msg.GetChallenge()
 		k.StoreChallenge(sdkCtx, *challenge)
@@ -155,16 +171,19 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 	// adjust challenge 4 to satisfy the test case
 	testCases[3].msg.Challenge.Challengee = testCases[3].msg.Challenge.Challenger
 	testCases[4].msg.Challenge.Challenger = testCases[4].msg.Challenge.Challengee
-	testCases[5].msg.Challenge.Initiator = testCases[5].msg.Challenge.Challenger
+	testCases[5].msg.Challenge.Initiator = hex.EncodeToString(challenger.Bytes())
 
 	for _, tc := range testCases {
-		res, err := msgServer.ReportPopResult(ctx, &tc.msg)
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			res, err := msgServer.ReportPopResult(ctx, &tc.msg)
 
-		if tc.errMsg != "" {
-			assert.EqualError(t, err, tc.errMsg)
-		} else {
-			assert.Equal(t, &types.MsgReportPopResultResponse{}, res)
-		}
+			if tc.errMsg != "" {
+				assert.EqualError(t, err, tc.errMsg)
+			} else {
+				assert.Equal(t, &types.MsgReportPopResultResponse{}, res)
+			}
+		})
 	}
 }
 func TestMsgServerMintToken(t *testing.T) {
