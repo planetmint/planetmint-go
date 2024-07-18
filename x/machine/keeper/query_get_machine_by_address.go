@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/planetmint/planetmint-go/errormsg"
 	"github.com/planetmint/planetmint-go/x/machine/types"
@@ -20,7 +21,7 @@ func (k Keeper) GetMachineByAddress(goCtx context.Context, req *types.QueryGetMa
 
 	machineIndex, found := k.GetMachineIndexByAddress(ctx, req.Address)
 	if !found {
-		return nil, status.Error(codes.NotFound, "machine not found")
+		return nil, status.Error(codes.NotFound, fmt.Sprintf("machine not found by address: %s", req.Address))
 	}
 
 	machine, found := k.GetMachine(ctx, machineIndex)
