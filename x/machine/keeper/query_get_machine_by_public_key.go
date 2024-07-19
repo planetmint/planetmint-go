@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/planetmint/planetmint-go/errormsg"
 	"github.com/planetmint/planetmint-go/x/machine/types"
@@ -21,7 +20,7 @@ func (k Keeper) GetMachineByPublicKey(goCtx context.Context, req *types.QueryGet
 
 	machineIndex, found := k.GetMachineIndexByPubKey(ctx, req.PublicKey)
 	if !found {
-		return nil, status.Error(codes.NotFound, fmt.Sprintf("machine not found by public key: %s", req.PublicKey))
+		return nil, status.Error(codes.NotFound, "machine not found by public key: "+req.PublicKey)
 	}
 
 	machine, found := k.GetMachine(ctx, machineIndex)

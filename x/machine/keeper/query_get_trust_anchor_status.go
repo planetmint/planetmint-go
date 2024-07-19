@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/planetmint/planetmint-go/errormsg"
 	"github.com/planetmint/planetmint-go/x/machine/types"
@@ -21,7 +20,7 @@ func (k Keeper) GetTrustAnchorStatus(goCtx context.Context, req *types.QueryGetT
 
 	_, activated, found := k.GetTrustAnchor(ctx, req.Machineid)
 	if !found {
-		return nil, status.Error(codes.NotFound, fmt.Sprintf("trust anchor not found by machine id: %s", req.Machineid))
+		return nil, status.Error(codes.NotFound, "trust anchor not found by machine id: "+req.Machineid)
 	}
 
 	return &types.QueryGetTrustAnchorStatusResponse{Machineid: req.Machineid, Isactivated: activated}, nil
