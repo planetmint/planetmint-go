@@ -20,7 +20,7 @@ func (k Keeper) GetTrustAnchorStatus(goCtx context.Context, req *types.QueryGetT
 
 	_, activated, found := k.GetTrustAnchor(ctx, req.Machineid)
 	if !found {
-		return nil, status.Error(codes.NotFound, "trust anchor not found")
+		return nil, status.Error(codes.NotFound, "trust anchor not found by machine id: "+req.Machineid)
 	}
 
 	return &types.QueryGetTrustAnchorStatusResponse{Machineid: req.Machineid, Isactivated: activated}, nil

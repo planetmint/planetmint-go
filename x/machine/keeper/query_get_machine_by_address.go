@@ -20,7 +20,7 @@ func (k Keeper) GetMachineByAddress(goCtx context.Context, req *types.QueryGetMa
 
 	machineIndex, found := k.GetMachineIndexByAddress(ctx, req.Address)
 	if !found {
-		return nil, status.Error(codes.NotFound, "machine not found")
+		return nil, status.Error(codes.NotFound, "machine not found by address: "+req.Address)
 	}
 
 	machine, found := k.GetMachine(ctx, machineIndex)

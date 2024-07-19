@@ -20,7 +20,7 @@ func (k Keeper) GetMachineByPublicKey(goCtx context.Context, req *types.QueryGet
 
 	machineIndex, found := k.GetMachineIndexByPubKey(ctx, req.PublicKey)
 	if !found {
-		return nil, status.Error(codes.NotFound, "machine not found")
+		return nil, status.Error(codes.NotFound, "machine not found by public key: "+req.PublicKey)
 	}
 
 	machine, found := k.GetMachine(ctx, machineIndex)

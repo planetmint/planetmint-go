@@ -29,7 +29,7 @@ func TestGetMachineByAddress(t *testing.T) {
 		}, {
 			desc:    "MachineNotFound",
 			request: &types.QueryGetMachineByAddressRequest{Address: "invalid address"},
-			err:     status.Error(codes.NotFound, "machine not found"),
+			err:     status.Error(codes.NotFound, "machine not found by address: invalid address"),
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
