@@ -35,7 +35,7 @@ func TestGetTrustAnchorQuery(t *testing.T) {
 		{
 			desc:    "NotFound",
 			request: &types.QueryGetTrustAnchorStatusRequest{Machineid: "invalid MachineID"},
-			err:     status.Error(codes.NotFound, "trust anchor not found"),
+			err:     status.Error(codes.NotFound, "trust anchor not found by machine id: invalid MachineID"),
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {

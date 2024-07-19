@@ -39,7 +39,7 @@ func TestGetMachineByPublicKey(t *testing.T) {
 		}, {
 			desc:    "MachineNotFound",
 			request: &types.QueryGetMachineByPublicKeyRequest{PublicKey: "invalid key"},
-			err:     status.Error(codes.NotFound, "machine not found"),
+			err:     status.Error(codes.NotFound, "machine not found by public key: invalid key"),
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
