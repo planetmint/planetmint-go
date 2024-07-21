@@ -28,6 +28,8 @@ const (
 	LiquidAssetKey = "Machine/LiquidAsset/"
 
 	ParamsKey = "Machine/Params"
+
+	ActivatedTACounterKey = "ActivatedTACounter"
 )
 
 func KeyPrefix(p string) []byte {

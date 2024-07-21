@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"encoding/binary"
 	"errors"
 
 	"github.com/planetmint/planetmint-go/util"
@@ -16,6 +17,8 @@ func (k Keeper) StoreTrustAnchor(ctx sdk.Context, ta types.TrustAnchor, activate
 	var appendValue []byte
 	if activated {
 		appendValue = []byte{1}
+		counter := k.GetActivatedTACounter(ctx)
+		k.setActivatedTACounter(ctx, counter+1)
 	} else {
 		appendValue = []byte{0}
 	}
@@ -45,4 +48,21 @@ func (k Keeper) GetTrustAnchor(ctx sdk.Context, pubKey string) (val types.TrustA
 		return val, true, true
 	}
 	return val, false, true
+}
+
+func (k Keeper) setActivatedTACounter(ctx sdk.Context, counter uint64) {
+	taCounterStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TAIndexKey))
+	bz := make([]byte, 8)
+	binary.BigEndian.PutUint64(bz, counter)
+	taCounterStore.Set([]byte(types.ActivatedTACounterKey), bz)
+}
+
+func (k Keeper) GetActivatedTACounter(ctx sdk.Context) (counter uint64) {
+	taCounterStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TAIndexKey))
+	bz := taCounterStore.Get([]byte(types.ActivatedTACounterKey))
+	if bz == nil {
+		return 0
+	}
+	counter = binary.BigEndian.Uint64(bz)
+	return
 }
