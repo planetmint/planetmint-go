@@ -74,6 +74,6 @@ func TestActivatedTACounter(t *testing.T) {
 	t.Parallel()
 	keeper, ctx := keepertest.MachineKeeper(t)
 	createNTrustAnchor(t, keeper, ctx, 100)
-	counter := keeper.GetActivatedTACounter(ctx)
+	counter := keeper.GetActivatedTACount(ctx)
 	assert.Equal(t, uint64(50), counter)
 }
