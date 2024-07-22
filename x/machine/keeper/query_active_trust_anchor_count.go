@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) ActiveTrustAnchorCount(goCtx context.Context, req *types.QueryActiveTrustAnchorCountRequest) (*types.QueryActiveTrustAnchorCountResponse, error) {
+func (k Keeper) ActiveTrustAnchorCount(_ context.Context, req *types.QueryActiveTrustAnchorCountRequest) (*types.QueryActiveTrustAnchorCountResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
