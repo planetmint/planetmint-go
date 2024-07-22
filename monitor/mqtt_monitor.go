@@ -180,6 +180,11 @@ func (mms *MqttMonitor) SelectPoPParticipantsOutOfActiveActors() (challenger str
 	return
 }
 
+func (mms *MqttMonitor) GetActiveActorCount() (count uint64) {
+	count = uint64(mms.getNumDBElements())
+	return
+}
+
 func (mms *MqttMonitor) MqttMsgHandler(_ mqtt.Client, msg mqtt.Message) {
 	if mms.IsTerminated() {
 		return

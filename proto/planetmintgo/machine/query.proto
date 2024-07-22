@@ -43,6 +43,12 @@ service Query {
     option (google.api.http).get = "/planetmint/machine/liquid_assets/{machineID}";
   
   }
+  
+  // Queries a list of ActiveTrustAnchorCount items.
+  rpc ActiveTrustAnchorCount (QueryActiveTrustAnchorCountRequest) returns (QueryActiveTrustAnchorCountResponse) {
+    option (google.api.http).get = "/planetmint/machine/active_trust_anchor_count";
+  
+  }
 }
 // QueryParamsRequest is request type for the Query/Params RPC method.
 message QueryParamsRequest {}
@@ -85,5 +91,11 @@ message QueryGetLiquidAssetsByMachineidRequest {
 
 message QueryGetLiquidAssetsByMachineidResponse {
   LiquidAsset liquidAssetEntry = 1;
+}
+
+message QueryActiveTrustAnchorCountRequest {}
+
+message QueryActiveTrustAnchorCountResponse {
+  uint64 count = 1;
 }
 

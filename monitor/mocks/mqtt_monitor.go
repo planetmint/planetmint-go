@@ -27,6 +27,10 @@ func (m *MockMQTTMonitorClientI) SelectPoPParticipantsOutOfActiveActors() (strin
 	return challenger, challengee, nil
 }
 
+func (m *MockMQTTMonitorClientI) GetActiveActorCount() (count uint64) {
+	return uint64(len(m.myStringList))
+}
+
 // Start mocks base method.
 func (m *MockMQTTMonitorClientI) Start() error {
 	return nil

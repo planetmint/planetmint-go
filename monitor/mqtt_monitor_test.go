@@ -106,3 +106,25 @@ func TestIsLegitMachineAddress(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, active, true)
 }
+
+func TestGetActiveActorCount(t *testing.T) {
+	cfg := config.GetConfig()
+	db, err := leveldb.Open(storage.NewMemStorage(), nil)
+	assert.NoError(t, err)
+	defer db.Close()
+
+	mqttMonitor := monitor.NewMqttMonitorService(db, *cfg)
+	err = mqttMonitor.Start()
+	assert.NoError(t, err)
+
+	currentTime := time.Now()
+	unixTime := currentTime.Unix()
+	err = mqttMonitor.AddParticipant(challengerInput, unixTime)
+	assert.NoError(t, err)
+	err = mqttMonitor.AddParticipant(challengeeInput, unixTime)
+	assert.NoError(t, err)
+	mqttMonitor.CleanupDB()
+
+	count := mqttMonitor.GetActiveActorCount()
+	assert.Equal(t, uint64(2), count)
+}
