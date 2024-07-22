@@ -29,7 +29,7 @@ const (
 
 	ParamsKey = "Machine/Params"
 
-	ActivatedTACounterKey = "ActivatedTACounter"
+	ActivatedTACounterPrefix = "ActivatedTACounter"
 )
 
 func KeyPrefix(p string) []byte {

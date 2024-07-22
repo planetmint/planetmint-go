@@ -51,15 +51,15 @@ func (k Keeper) GetTrustAnchor(ctx sdk.Context, pubKey string) (val types.TrustA
 }
 
 func (k Keeper) setActivatedTACount(ctx sdk.Context, counter uint64) {
-	taCounterStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TAIndexKey))
+	taCounterStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ActivatedTACounterPrefix))
 	bz := make([]byte, 8)
 	binary.BigEndian.PutUint64(bz, counter)
-	taCounterStore.Set([]byte(types.ActivatedTACounterKey), bz)
+	taCounterStore.Set([]byte{1}, bz)
 }
 
 func (k Keeper) GetActivatedTACount(ctx sdk.Context) (counter uint64) {
-	taCounterStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TAIndexKey))
-	bz := taCounterStore.Get([]byte(types.ActivatedTACounterKey))
+	taCounterStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ActivatedTACounterPrefix))
+	bz := taCounterStore.Get([]byte{1})
 	if bz == nil {
 		return 0
 	}
