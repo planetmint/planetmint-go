@@ -47505,6 +47505,39 @@ paths:
           type: boolean
       tags:
         - Query
+  /planetmint/machine/activated_trust_anchor_count:
+    get:
+      summary: Queries a list of ActivatedTrustAnchorCount items.
+      operationId: PlanetmintgoMachineActivatedTrustAnchorCount
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              count:
+                type: string
+                format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
   /planetmint/machine/active_trust_anchor_count:
     get:
       summary: Queries a list of ActiveTrustAnchorCount items.
@@ -77230,6 +77263,12 @@ definitions:
       dao_machine_funding_denom:
         type: string
     description: Params defines the parameters for the module.
+  planetmintgo.machine.QueryActivatedTrustAnchorCountResponse:
+    type: object
+    properties:
+      count:
+        type: string
+        format: uint64
   planetmintgo.machine.QueryActiveTrustAnchorCountResponse:
     type: object
     properties:
