@@ -44,6 +44,11 @@ service Query {
   
   }
   
+  // Queries a list of ActiveTrustAnchorCount items.
+  rpc ActiveTrustAnchorCount (QueryActiveTrustAnchorCountRequest) returns (QueryActiveTrustAnchorCountResponse) {
+    option (google.api.http).get = "/planetmint/machine/active_trust_anchor_count";
+  }
+  
   // Queries a list of ActivatedTrustAnchorCount items.
   rpc ActivatedTrustAnchorCount (QueryActivatedTrustAnchorCountRequest) returns (QueryActivatedTrustAnchorCountResponse) {
     option (google.api.http).get = "/planetmint/machine/activated_trust_anchor_count";
@@ -91,6 +96,12 @@ message QueryGetLiquidAssetsByMachineidRequest {
 
 message QueryGetLiquidAssetsByMachineidResponse {
   LiquidAsset liquidAssetEntry = 1;
+}
+
+message QueryActiveTrustAnchorCountRequest {}
+
+message QueryActiveTrustAnchorCountResponse {
+  uint64 count = 1;
 }
 
 message QueryActivatedTrustAnchorCountRequest {}

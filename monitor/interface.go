@@ -10,6 +10,7 @@ import (
 type MQTTMonitorClientI interface {
 	AddParticipant(address string, lastSeenTS int64) (err error)
 	SelectPoPParticipantsOutOfActiveActors() (challenger string, challengee string, err error)
+	GetActiveActorCount() (count uint64)
 	Start() (err error)
 }
 
@@ -61,4 +62,10 @@ func AddParticipant(address string, lastSeenTS int64) (err error) {
 	err = mqttMonitorInstance.AddParticipant(address, lastSeenTS)
 	monitorMutex.RUnlock()
 	return
+}
+
+func GetActiveActorCount() (count uint64) {
+	monitorMutex.RLock()
+	defer monitorMutex.RUnlock()
+	return mqttMonitorInstance.GetActiveActorCount()
 }
