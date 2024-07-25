@@ -3,18 +3,17 @@ package v3
 import (
 	"encoding/binary"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/planetmint/planetmint-go/x/machine/types"
 )
 
-func MigrateStore(ctx sdk.Context, storeKey storetypes.StoreKey, _ codec.BinaryCodec) error {
-	store := prefix.NewStore(ctx.KVStore(storeKey), types.KeyPrefix(types.TrustAnchorKey))
+func MigrateStore(ctx sdk.Context, taStoreKey storetypes.StoreKey, storeKey storetypes.StoreKey) error {
+	store := ctx.KVStore(taStoreKey)
 
 	count := uint64(0)
-	iterator := store.Iterator(nil, nil)
+	iterator := sdk.KVStorePrefixIterator(store, []byte(types.TrustAnchorKey))
 	defer iterator.Close()
 	for ; iterator.Valid(); iterator.Next() {
 		if iterator.Value()[0] == 1 {
