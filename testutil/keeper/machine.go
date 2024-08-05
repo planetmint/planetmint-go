@@ -3,6 +3,7 @@ package keeper
 import (
 	"testing"
 
+	"github.com/golang/mock/gomock"
 	"github.com/planetmint/planetmint-go/x/machine/keeper"
 	"github.com/planetmint/planetmint-go/x/machine/types"
 
@@ -17,6 +18,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
+	machinetestutil "github.com/planetmint/planetmint-go/x/machine/testutil"
 	"github.com/stretchr/testify/require"
 )
 
@@ -50,6 +52,12 @@ func MachineKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		"MachineParams",
 	)
 
+	ctrl := gomock.NewController(t)
+	bk := machinetestutil.NewMockBankKeeper(ctrl)
+
+	bk.EXPECT().MintCoins(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	bk.EXPECT().BurnCoins(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+
 	k := keeper.NewKeeper(
 		cdc,
 		storeKey,
@@ -62,6 +70,7 @@ func MachineKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		paramsSubspace,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 		"",
+		bk,
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())

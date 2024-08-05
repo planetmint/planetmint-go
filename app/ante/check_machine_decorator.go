@@ -36,6 +36,11 @@ func (cm CheckMachineDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate 
 			if ok {
 				ctx, err = cm.handlePopResult(ctx, popMsg)
 			}
+		case "planetmintgo.machine.MsgMintProduction":
+			mintProdMsg, ok := msg.(*machinetypes.MsgMintProduction)
+			if ok {
+				ctx, err = cm.handleMintProduction(ctx, mintProdMsg)
+			}
 		default:
 			continue
 		}
@@ -72,6 +77,14 @@ func (cm CheckMachineDecorator) handleAttestMachine(ctx sdk.Context, attestMsg *
 
 func (cm CheckMachineDecorator) handlePopResult(ctx sdk.Context, popMsg *daotypes.MsgReportPopResult) (sdk.Context, error) {
 	_, found := cm.mk.GetMachineIndexByAddress(ctx, popMsg.GetCreator())
+	if !found {
+		return ctx, errorsmod.Wrapf(machinetypes.ErrMachineNotFound, ErrorAnteContext)
+	}
+	return ctx, nil
+}
+
+func (cm CheckMachineDecorator) handleMintProduction(ctx sdk.Context, mintProdMsg *machinetypes.MsgMintProduction) (sdk.Context, error) {
+	_, found := cm.mk.GetMachineIndexByAddress(ctx, mintProdMsg.GetCreator())
 	if !found {
 		return ctx, errorsmod.Wrapf(machinetypes.ErrMachineNotFound, ErrorAnteContext)
 	}

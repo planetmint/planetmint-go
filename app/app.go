@@ -199,6 +199,7 @@ var (
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		daomoduletypes.ModuleName:      {authtypes.Minter, authtypes.Burner, authtypes.Staking},
+		machinemoduletypes.ModuleName:  {authtypes.Minter, authtypes.Burner},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )
@@ -550,6 +551,7 @@ func New(
 		app.GetSubspace(machinemoduletypes.ModuleName),
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 		homePath,
+		app.BankKeeper,
 	)
 	machineModule := machinemodule.NewAppModule(appCodec, app.MachineKeeper, app.AccountKeeper, app.BankKeeper)
 

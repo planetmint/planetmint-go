@@ -23,6 +23,7 @@ type (
 		paramstore                    paramtypes.Subspace
 		authority                     string
 		rootDir                       string
+		bankKeeper                    types.BankKeeper
 	}
 )
 
@@ -38,6 +39,7 @@ func NewKeeper(
 	ps paramtypes.Subspace,
 	authority string,
 	rootDir string,
+	bankKeeper types.BankKeeper,
 ) *Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -56,6 +58,7 @@ func NewKeeper(
 		paramstore:                    ps,
 		authority:                     authority,
 		rootDir:                       rootDir,
+		bankKeeper:                    bankKeeper,
 	}
 }
 
