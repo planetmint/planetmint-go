@@ -24,4 +24,5 @@ var (
 	ErrInvalidAddress               = errorsmod.Register(ModuleName, 16, "invalid address")
 	ErrTransferFailed               = errorsmod.Register(ModuleName, 17, "transfer failed")
 	ErrMintFailed                   = errorsmod.Register(ModuleName, 18, "minting failed")
+	ErrBurnFailed                   = errorsmod.Register(ModuleName, 19, "burning failed")
 )

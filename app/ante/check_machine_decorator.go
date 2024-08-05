@@ -31,15 +31,20 @@ func (cm CheckMachineDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate 
 			if ok {
 				ctx, err = cm.handleAttestMachine(ctx, attestMsg)
 			}
-		case "planetmintgo.dao.MsgReportPoPResult":
+		case "/planetmintgo.dao.MsgReportPoPResult":
 			popMsg, ok := msg.(*daotypes.MsgReportPopResult)
 			if ok {
 				ctx, err = cm.handlePopResult(ctx, popMsg)
 			}
-		case "planetmintgo.machine.MsgMintProduction":
+		case "/planetmintgo.machine.MsgMintProduction":
 			mintProdMsg, ok := msg.(*machinetypes.MsgMintProduction)
 			if ok {
 				ctx, err = cm.handleMintProduction(ctx, mintProdMsg)
+			}
+		case "/planetmintgo.machine.MsgBurnConsumption":
+			burnConsMsg, ok := msg.(*machinetypes.MsgBurnConsumption)
+			if ok {
+				ctx, err = cm.handleBurnConsumption(ctx, burnConsMsg)
 			}
 		default:
 			continue
@@ -85,6 +90,14 @@ func (cm CheckMachineDecorator) handlePopResult(ctx sdk.Context, popMsg *daotype
 
 func (cm CheckMachineDecorator) handleMintProduction(ctx sdk.Context, mintProdMsg *machinetypes.MsgMintProduction) (sdk.Context, error) {
 	_, found := cm.mk.GetMachineIndexByAddress(ctx, mintProdMsg.GetCreator())
+	if !found {
+		return ctx, errorsmod.Wrapf(machinetypes.ErrMachineNotFound, ErrorAnteContext)
+	}
+	return ctx, nil
+}
+
+func (cm CheckMachineDecorator) handleBurnConsumption(ctx sdk.Context, burnConsMsg *machinetypes.MsgBurnConsumption) (sdk.Context, error) {
+	_, found := cm.mk.GetMachineIndexByAddress(ctx, burnConsMsg.GetCreator())
 	if !found {
 		return ctx, errorsmod.Wrapf(machinetypes.ErrMachineNotFound, ErrorAnteContext)
 	}
