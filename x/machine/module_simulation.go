@@ -43,6 +43,10 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgMintProduction int = 100
 
+	opWeightMsgBurnConsumption = "op_weight_msg_burn_consumption"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgBurnConsumption int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -128,6 +132,17 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		machinesimulation.SimulateMsgMintProduction(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
+	var weightMsgBurnConsumption int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgBurnConsumption, &weightMsgBurnConsumption, nil,
+		func(_ *rand.Rand) {
+			weightMsgBurnConsumption = defaultWeightMsgBurnConsumption
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgBurnConsumption,
+		machinesimulation.SimulateMsgBurnConsumption(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
 	// this line is used by starport scaffolding # simapp/module/operation
 
 	return operations
@@ -173,6 +188,14 @@ func (am AppModule) ProposalMsgs(_ module.SimulationState) []simtypes.WeightedPr
 			defaultWeightMsgMintProduction,
 			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
 				machinesimulation.SimulateMsgMintProduction(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgBurnConsumption,
+			defaultWeightMsgBurnConsumption,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				machinesimulation.SimulateMsgBurnConsumption(am.accountKeeper, am.bankKeeper, am.keeper)
 				return nil
 			},
 		),

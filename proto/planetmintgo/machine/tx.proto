@@ -21,6 +21,7 @@ service Msg {
   rpc NotarizeLiquidAsset (MsgNotarizeLiquidAsset) returns (MsgNotarizeLiquidAssetResponse);
   rpc UpdateParams        (MsgUpdateParams       ) returns (MsgUpdateParamsResponse       );
   rpc MintProduction      (MsgMintProduction     ) returns (MsgMintProductionResponse     );
+  rpc BurnConsumption     (MsgBurnConsumption    ) returns (MsgBurnConsumptionResponse    );
 }
 message MsgAttestMachine {
   string  creator = 1;
@@ -63,4 +64,11 @@ message MsgMintProduction {
 }
 
 message MsgMintProductionResponse {}
+
+message MsgBurnConsumption {
+           string                   creator     = 1;
+  repeated cosmos.base.v1beta1.Coin consumption = 2 [(gogoproto.nullable) = false];
+}
+
+message MsgBurnConsumptionResponse {}
 
