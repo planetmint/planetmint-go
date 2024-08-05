@@ -28,6 +28,7 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdRegisterTrustAnchor())
 	cmd.AddCommand(CmdNotarizeLiquidAsset())
 	cmd.AddCommand(CmdUpdateParams())
+	cmd.AddCommand(CmdMintProduction())
 	// this line is used by starport scaffolding # 1
 
 	return cmd

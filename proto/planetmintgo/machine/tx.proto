@@ -10,6 +10,7 @@ import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
 import "cosmos/msg/v1/msg.proto";
+import "cosmos/base/v1beta1/coin.proto";
 
 option go_package = "github.com/planetmint/planetmint-go/x/machine/types";
 
@@ -19,6 +20,7 @@ service Msg {
   rpc RegisterTrustAnchor (MsgRegisterTrustAnchor) returns (MsgRegisterTrustAnchorResponse);
   rpc NotarizeLiquidAsset (MsgNotarizeLiquidAsset) returns (MsgNotarizeLiquidAssetResponse);
   rpc UpdateParams        (MsgUpdateParams       ) returns (MsgUpdateParamsResponse       );
+  rpc MintProduction      (MsgMintProduction     ) returns (MsgMintProductionResponse     );
 }
 message MsgAttestMachine {
   string  creator = 1;
@@ -54,4 +56,11 @@ message MsgUpdateParams {
 }
 
 message MsgUpdateParamsResponse {}
+
+message MsgMintProduction {
+           string                   creator    = 1;
+  repeated cosmos.base.v1beta1.Coin production = 2 [(gogoproto.nullable) = false];
+}
+
+message MsgMintProductionResponse {}
 

@@ -77242,6 +77242,8 @@ definitions:
         type: string
   planetmintgo.machine.MsgAttestMachineResponse:
     type: object
+  planetmintgo.machine.MsgMintProductionResponse:
+    type: object
   planetmintgo.machine.MsgNotarizeLiquidAssetResponse:
     type: object
   planetmintgo.machine.MsgRegisterTrustAnchorResponse:
