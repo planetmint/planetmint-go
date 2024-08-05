@@ -23,4 +23,5 @@ var (
 	ErrAssetRegistryRepsonse        = errorsmod.Register(ModuleName, 15, "request response issue")
 	ErrInvalidAddress               = errorsmod.Register(ModuleName, 16, "invalid address")
 	ErrTransferFailed               = errorsmod.Register(ModuleName, 17, "transfer failed")
+	ErrMintFailed                   = errorsmod.Register(ModuleName, 18, "minting failed")
 )
