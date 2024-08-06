@@ -15,3 +15,9 @@ func TestE2EMachineTestSuite(t *testing.T) {
 	cfg.NumValidators = 3
 	suite.Run(t, NewE2ETestSuite(cfg))
 }
+
+func TestE2EProsumeTestSuite(t *testing.T) {
+	cfg := network.LoaderDefaultConfig()
+	cfg.NumValidators = 3
+	suite.Run(t, NewProsumeE2ETestSuite(cfg))
+}
