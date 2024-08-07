@@ -96,7 +96,7 @@ func AttestMachine(network *network.Network, name string, mnemonic string, num i
 		return err
 	}
 
-	machine := moduleobject.Machine(name, pubKey, prvKey, addr.String())
+	machine := moduleobject.Machine(name, pubKey, prvKey, addr.String(), mnemonic)
 	attestMsg := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
 	_, err = lib.BroadcastTxWithFileLock(addr, attestMsg)
 	if err != nil {

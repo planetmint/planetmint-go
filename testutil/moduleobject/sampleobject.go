@@ -16,11 +16,19 @@ import (
 	"github.com/cosmos/go-bip39"
 )
 
-func ExtendedKeyPair(cfg chaincfg.Params) (string, string) {
+func ExtendedKeyPair(cfg chaincfg.Params, mnemonics ...string) (string, string) {
 	seed, err := bip39.NewSeedWithErrorChecking(sample.Mnemonic, keyring.DefaultBIP39Passphrase)
 	if err != nil {
 		panic(err)
 	}
+
+	if len(mnemonics) == 1 {
+		seed, err = bip39.NewSeedWithErrorChecking(mnemonics[0], keyring.DefaultBIP39Passphrase)
+		if err != nil {
+			panic(err)
+		}
+	}
+
 	xprivKey, err := hdkeychain.NewMaster(seed, &cfg)
 	if err != nil {
 		panic(err)
@@ -34,10 +42,10 @@ func ExtendedKeyPair(cfg chaincfg.Params) (string, string) {
 
 // Machine creates a new machine object
 // TODO: make address deterministic for test cases
-func Machine(name, pubKey string, prvKey string, address string) machinetypes.Machine {
+func Machine(name, pubKey string, prvKey string, address string, mnemonics ...string) machinetypes.Machine {
 	metadata := Metadata()
-	_, liquidPubKey := ExtendedKeyPair(config.LiquidNetParams)
-	_, planetmintPubKey := ExtendedKeyPair(config.PlmntNetParams)
+	_, liquidPubKey := ExtendedKeyPair(config.LiquidNetParams, mnemonics...)
+	_, planetmintPubKey := ExtendedKeyPair(config.PlmntNetParams, mnemonics...)
 
 	prvKeyBytes, _ := hex.DecodeString(prvKey)
 	sk := &secp256k1.PrivKey{Key: prvKeyBytes}
