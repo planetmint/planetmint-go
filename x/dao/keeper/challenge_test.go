@@ -25,6 +25,7 @@ func createNChallenge(keeper *keeper.Keeper, ctx sdk.Context, n int, popEpochs i
 		items[i].Success = false
 		items[i].Finished = false
 		keeper.StoreChallenge(ctx, items[i])
+		keeper.StoreChallangeInitiatorReward(ctx, blockHeight, types.DefaultParams().ValidatorPopReward)
 	}
 	return items
 }
