@@ -39,7 +39,7 @@ func (sud SetUpContextDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate
 		// Set a gas meter with limit 0 as to prevent an infinite gas meter attack
 		// during runTx.
 		newCtx = SetGasMeter(simulate, ctx, 0)
-		return newCtx, errorsmod.Wrapf(sdkerrors.ErrTxDecode, "Tx must be GasTx")
+		return newCtx, errorsmod.Wrap(sdkerrors.ErrTxDecode, "Tx must be GasTx")
 	}
 
 	gasLimit := sud.dk.GetTxGasLimit(ctx)
@@ -70,7 +70,7 @@ func (sud SetUpContextDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate
 					"out of gas in location: %v; gasWanted: %d, gasUsed: %d",
 					rType.Descriptor, gasTx.GetGas(), newCtx.GasMeter().GasConsumed())
 
-				err = errorsmod.Wrapf(sdkerrors.ErrOutOfGas, log)
+				err = errorsmod.Wrap(sdkerrors.ErrOutOfGas, log)
 			default:
 				panic(r)
 			}

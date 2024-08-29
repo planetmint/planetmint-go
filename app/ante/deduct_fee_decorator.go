@@ -166,7 +166,7 @@ func (dfd DeductFeeDecorator) deductFees(bankKeeper authtypes.BankKeeper, ctx sd
 
 	err := bankKeeper.SendCoinsFromAccountToModule(ctx, acc.GetAddress(), authtypes.FeeCollectorName, fees)
 	if err != nil {
-		return errorsmod.Wrapf(sdkerrors.ErrInsufficientFunds, err.Error())
+		return errorsmod.Wrap(sdkerrors.ErrInsufficientFunds, err.Error())
 	}
 
 	return nil

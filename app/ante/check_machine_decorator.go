@@ -51,21 +51,21 @@ func (cm CheckMachineDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate 
 func (cm CheckMachineDecorator) handleNotarizeAsset(ctx sdk.Context, notarizeMsg *assettypes.MsgNotarizeAsset) (sdk.Context, error) {
 	_, found := cm.mk.GetMachineIndexByAddress(ctx, notarizeMsg.GetCreator())
 	if !found {
-		return ctx, errorsmod.Wrapf(machinetypes.ErrMachineNotFound, ErrorAnteContext)
+		return ctx, errorsmod.Wrap(machinetypes.ErrMachineNotFound, ErrorAnteContext)
 	}
 	return ctx, nil
 }
 
 func (cm CheckMachineDecorator) handleAttestMachine(ctx sdk.Context, attestMsg *machinetypes.MsgAttestMachine) (sdk.Context, error) {
 	if attestMsg.GetCreator() != attestMsg.Machine.GetAddress() {
-		return ctx, errorsmod.Wrapf(machinetypes.ErrMachineIsNotCreator, ErrorAnteContext)
+		return ctx, errorsmod.Wrap(machinetypes.ErrMachineIsNotCreator, ErrorAnteContext)
 	}
 	_, activated, found := cm.mk.GetTrustAnchor(ctx, attestMsg.Machine.MachineId)
 	if !found {
-		return ctx, errorsmod.Wrapf(machinetypes.ErrTrustAnchorNotFound, ErrorAnteContext)
+		return ctx, errorsmod.Wrap(machinetypes.ErrTrustAnchorNotFound, ErrorAnteContext)
 	}
 	if activated {
-		return ctx, errorsmod.Wrapf(machinetypes.ErrTrustAnchorAlreadyInUse, ErrorAnteContext)
+		return ctx, errorsmod.Wrap(machinetypes.ErrTrustAnchorAlreadyInUse, ErrorAnteContext)
 	}
 	return ctx, nil
 }
@@ -73,7 +73,7 @@ func (cm CheckMachineDecorator) handleAttestMachine(ctx sdk.Context, attestMsg *
 func (cm CheckMachineDecorator) handlePopResult(ctx sdk.Context, popMsg *daotypes.MsgReportPopResult) (sdk.Context, error) {
 	_, found := cm.mk.GetMachineIndexByAddress(ctx, popMsg.GetCreator())
 	if !found {
-		return ctx, errorsmod.Wrapf(machinetypes.ErrMachineNotFound, ErrorAnteContext)
+		return ctx, errorsmod.Wrap(machinetypes.ErrMachineNotFound, ErrorAnteContext)
 	}
 	return ctx, nil
 }

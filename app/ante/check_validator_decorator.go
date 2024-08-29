@@ -53,7 +53,7 @@ func (cv CheckValidatorDecorator) handleMsg(ctx sdk.Context, msg sdk.Msg) (_ sdk
 	signer := msg.GetSigners()[0]
 	_, found := cv.sk.GetValidator(ctx, sdk.ValAddress(signer))
 	if !found {
-		return ctx, errorsmod.Wrapf(types.ErrRestrictedMsg, ErrorAnteContext)
+		return ctx, errorsmod.Wrap(types.ErrRestrictedMsg, ErrorAnteContext)
 	}
 	return ctx, nil
 }
