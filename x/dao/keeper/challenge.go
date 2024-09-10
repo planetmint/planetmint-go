@@ -70,7 +70,7 @@ func (k Keeper) GetChallenges(ctx sdk.Context) (challenges []types.Challenge, er
 	return
 }
 
-func (k Keeper) storeChallangeInitiatorReward(ctx sdk.Context, height int64, amount uint64) {
+func (k Keeper) StoreChallangeInitiatorReward(ctx sdk.Context, height int64, amount uint64) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PoPInitiatorReward))
 	appendValue := util.SerializeUint64(amount)
 	store.Set(util.SerializeInt64(height), appendValue)

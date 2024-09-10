@@ -58,7 +58,7 @@ func (k msgServer) validateReissuanceProposal(ctx sdk.Context, msg *types.MsgRei
 	isValid := k.IsValidReissuanceProposal(ctx, msg)
 	if !isValid {
 		util.GetAppLogger().Info(ctx, reissueTag+"rejected reissuance proposal")
-		return errorsmod.Wrapf(types.ErrReissuanceProposal, reissueTag)
+		return errorsmod.Wrap(types.ErrReissuanceProposal, reissueTag)
 	}
 	util.GetAppLogger().Debug(ctx, reissueTag+"accepted reissuance proposal: "+msg.String())
 	return
