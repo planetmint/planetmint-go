@@ -3,6 +3,7 @@ package trustwallet
 import (
 	"bytes"
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -46,11 +47,11 @@ func (s *OSCMessageSender) SendMessage(message []byte) (OSCResponse, error) {
 	)
 
 	if err != nil {
-		return OSCResponse{}, fmt.Errorf("failed to send message: %v", err)
+		return OSCResponse{}, fmt.Errorf("failed to send message: %w", err)
 	}
 
 	if outputLength == 0 {
-		return OSCResponse{}, fmt.Errorf("no response received")
+		return OSCResponse{}, errors.New("no response received")
 	}
 
 	// Extract the information from the output buffer
@@ -108,61 +109,65 @@ func (t *Connector) sendOSCMessage(address string, args ...interface{}) (OSCResp
 	t.mu.Lock()
 	defer t.mu.Unlock()
 
-	message := encodeOSCMessage(address, args...)
+	message, err := encodeOSCMessage(address, args...)
+	if err != nil {
+		return OSCResponse{}, err
+	}
+
 	return t.oscSender.SendMessage(message)
 }
 
 func (t *Connector) ValiseGet() (string, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/getSeed", PrefixIhw))
+	response, err := t.sendOSCMessage(PrefixIhw + "/getSeed")
 	if err != nil {
 		return "", err
 	}
 	if len(response.Data) > 0 {
 		return response.Data[0], nil
 	}
-	return "", fmt.Errorf("no data returned")
+	return "", errors.New("no data returned")
 }
 
 func (t *Connector) CreateMnemonic() (string, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/mnemonicToSeed", PrefixIhw), int32(1))
+	response, err := t.sendOSCMessage(PrefixIhw+"/mnemonicToSeed", int32(1))
 	if err != nil {
 		return "", err
 	}
 	if len(response.Data) > 0 {
 		return response.Data[0], nil
 	}
-	return "", fmt.Errorf("no data returned")
+	return "", errors.New("no data returned")
 }
 
 func (t *Connector) InjectPlanetminkeyToSE050(slot int) (bool, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/se050InjectSECPKeys", PrefixIhw), int32(slot))
+	response, err := t.sendOSCMessage(PrefixIhw+"/se050InjectSECPKeys", int32(slot))
 	if err != nil {
 		return false, err
 	}
 	if len(response.Data) > 0 {
 		return response.Data[0] == "0", nil
 	}
-	return false, fmt.Errorf("no data returned")
+	return false, errors.New("no data returned")
 }
 
 func (t *Connector) RecoverFromMnemonic(mnemonic string) (string, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/mnemonicToSeed", PrefixIhw), int32(1), mnemonic)
+	response, err := t.sendOSCMessage(PrefixIhw+"/mnemonicToSeed", int32(1), mnemonic)
 	if err != nil {
 		return "", err
 	}
 	if len(response.Data) > 0 {
 		return response.Data[0], nil
 	}
-	return "", fmt.Errorf("no data returned")
+	return "", errors.New("no data returned")
 }
 
 func (t *Connector) GetPlanetmintKeys() (*PlanetMintKeys, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/getPlntmntKeys", PrefixIhw))
+	response, err := t.sendOSCMessage(PrefixIhw + "/getPlntmntKeys")
 	if err != nil {
 		return nil, err
 	}
 	if len(response.Data) < 4 {
-		return nil, fmt.Errorf("trust wallet not initialized. Please initialize the wallet")
+		return nil, errors.New("trust wallet not initialized. Please initialize the wallet")
 	}
 	return &PlanetMintKeys{
 		PlanetmintAddress:        response.Data[0],
@@ -173,58 +178,58 @@ func (t *Connector) GetPlanetmintKeys() (*PlanetMintKeys, error) {
 }
 
 func (t *Connector) GetSeedSE050() (string, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/se050GetSeed", PrefixIhw))
+	response, err := t.sendOSCMessage(PrefixIhw + "/se050GetSeed")
 	if err != nil {
 		return "", err
 	}
 	if len(response.Data) > 0 {
 		return response.Data[0], nil
 	}
-	return "", fmt.Errorf("no data returned")
+	return "", errors.New("no data returned")
 }
 
 func (t *Connector) SignHashWithPlanetmint(dataToSign string) (string, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/ecdsaSignPlmnt", PrefixIhw), dataToSign)
+	response, err := t.sendOSCMessage(PrefixIhw+"/ecdsaSignPlmnt", dataToSign)
 	if err != nil {
 		return "", err
 	}
 	if len(response.Data) > 1 {
 		return response.Data[1], nil
 	}
-	return "", fmt.Errorf("no signature returned")
+	return "", errors.New("no signature returned")
 }
 
 func (t *Connector) SignHashWithRDDL(dataToSign string) (string, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/ecdsaSignRddl", PrefixIhw), dataToSign)
+	response, err := t.sendOSCMessage(PrefixIhw+"/ecdsaSignRddl", dataToSign)
 	if err != nil {
 		return "", err
 	}
 	if len(response.Data) > 1 {
 		return response.Data[1], nil
 	}
-	return "", fmt.Errorf("no signature returned")
+	return "", errors.New("no signature returned")
 }
 
 func (t *Connector) CreateOptegaKeypair(ctx int) (string, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/optigaTrustXCreateSecret", PrefixIhw), int32(ctx), "")
+	response, err := t.sendOSCMessage(PrefixIhw+"/optigaTrustXCreateSecret", int32(ctx), "")
 	if err != nil {
 		return "", err
 	}
 	if len(response.Data) > 1 {
 		return response.Data[1], nil
 	}
-	return "", fmt.Errorf("no public key returned")
+	return "", errors.New("no public key returned")
 }
 
 func (t *Connector) SignWithOptega(ctx int, dataToSign, pubkey string) (string, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/optigaTrustXSignMessage", PrefixIhw), int32(ctx), dataToSign, pubkey, "")
+	response, err := t.sendOSCMessage(PrefixIhw+"/optigaTrustXSignMessage", int32(ctx), dataToSign, pubkey, "")
 	if err != nil {
 		return "", err
 	}
 	if len(response.Data) > 1 {
 		return response.Data[1], nil
 	}
-	return "", fmt.Errorf("no signature returned")
+	return "", errors.New("no signature returned")
 }
 
 func (t *Connector) UnwrapPublicKey(publicKey string) (bool, string) {
@@ -238,65 +243,65 @@ func (t *Connector) UnwrapPublicKey(publicKey string) (bool, string) {
 }
 
 func (t *Connector) CalculateHash(dataToSign string) (string, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/se050CalculateHash", PrefixIhw), dataToSign)
+	response, err := t.sendOSCMessage(PrefixIhw+"/se050CalculateHash", dataToSign)
 	if err != nil {
 		return "", err
 	}
 	if len(response.Data) > 1 {
 		return response.Data[1], nil
 	}
-	return "", fmt.Errorf("no hash returned")
+	return "", errors.New("no hash returned")
 }
 
 func (t *Connector) CreateSE050KeypairNIST(ctx int) (string, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/se050CreateKeyPair", PrefixIhw), int32(ctx), int32(1))
+	response, err := t.sendOSCMessage(PrefixIhw+"/se050CreateKeyPair", int32(ctx), int32(1))
 	if err != nil {
 		return "", err
 	}
 	if len(response.Data) > 1 {
 		return response.Data[1], nil
 	}
-	return "", fmt.Errorf("no public key returned")
+	return "", errors.New("no public key returned")
 }
 
 func (t *Connector) GetPublicKeyFromSE050(ctx int) (string, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/se050GetPublicKey", PrefixIhw), int32(ctx))
+	response, err := t.sendOSCMessage(PrefixIhw+"/se050GetPublicKey", int32(ctx))
 	if err != nil {
 		return "", err
 	}
 	if len(response.Data) > 1 {
 		valid, pubKey := t.UnwrapPublicKey(response.Data[1])
 		if !valid {
-			return "", fmt.Errorf("inject PlanetMintKey failed: No key found")
+			return "", errors.New("inject PlanetMintKey failed: No key found")
 		}
 		return pubKey, nil
 	}
-	return "", fmt.Errorf("no public key returned")
+	return "", errors.New("no public key returned")
 }
 
 func (t *Connector) SignWithSE050(dataToSign string, ctx int) (string, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/se050SignData", PrefixIhw), dataToSign, int32(ctx))
+	response, err := t.sendOSCMessage(PrefixIhw+"/se050SignData", dataToSign, int32(ctx))
 	if err != nil {
 		return "", err
 	}
 	if len(response.Data) > 1 {
 		return response.Data[1], nil
 	}
-	return "", fmt.Errorf("no signature returned")
+	return "", errors.New("no signature returned")
 }
 
 func (t *Connector) VerifySE050Signature(dataToSign, signature string, ctx int) (bool, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/se050VerifySignature", PrefixIhw), dataToSign, signature, int32(ctx))
+	response, err := t.sendOSCMessage(PrefixIhw+"/se050VerifySignature", dataToSign, signature, int32(ctx))
 	if err != nil {
 		return false, err
 	}
 	if len(response.Data) > 1 {
 		return strconv.ParseBool(response.Data[1])
 	}
-	return false, fmt.Errorf("no verification result returned")
+	return false, errors.New("no verification result returned")
 }
 
-func encodeOSCMessage(address string, args ...interface{}) []byte {
+func encodeOSCMessage(address string, args ...interface{}) (returnBytes []byte, err error) {
 	var buffer bytes.Buffer
 
 	// Write address
@@ -309,13 +314,17 @@ func encodeOSCMessage(address string, args ...interface{}) []byte {
 	for _, arg := range args {
 		switch arg.(type) {
 		case int32:
-			buffer.WriteByte('i')
+			err = buffer.WriteByte('i')
 		case float32:
-			buffer.WriteByte('f')
+			err = buffer.WriteByte('f')
 		case string:
-			buffer.WriteByte('s')
+			err = buffer.WriteByte('s')
+		}
+		if err != nil {
+			return buffer.Bytes(), err
 		}
 	}
+
 	buffer.WriteByte(0)
 	alignBuffer(&buffer)
 
@@ -323,17 +332,23 @@ func encodeOSCMessage(address string, args ...interface{}) []byte {
 	for _, arg := range args {
 		switch v := arg.(type) {
 		case int32:
-			binary.Write(&buffer, binary.BigEndian, v)
+			err = binary.Write(&buffer, binary.BigEndian, v)
 		case float32:
-			binary.Write(&buffer, binary.BigEndian, v)
+			err = binary.Write(&buffer, binary.BigEndian, v)
 		case string:
-			buffer.WriteString(v)
-			buffer.WriteByte(0)
+			_, err = buffer.WriteString(v)
+			if err != nil {
+				return buffer.Bytes(), err
+			}
+			err = buffer.WriteByte(0)
 			alignBuffer(&buffer)
+		}
+		if err != nil {
+			return buffer.Bytes(), err
 		}
 	}
 
-	return buffer.Bytes()
+	return buffer.Bytes(), nil
 }
 
 func alignBuffer(buffer *bytes.Buffer) {

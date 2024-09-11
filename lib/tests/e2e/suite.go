@@ -91,7 +91,8 @@ func (s *E2ETestSuite) TestBankSendBroadcastTxWithFileLock() {
 func (s *E2ETestSuite) TestOccSigning() {
 	val := s.network.Validators[0]
 
-	setKeys()
+	_, err := setKeys()
+	s.Require().NoError(err)
 
 	k, err := val.ClientCtx.Keyring.Key(sample.Name)
 	s.Require().NoError(err)

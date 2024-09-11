@@ -1,6 +1,7 @@
 package trustwallet
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"time"
@@ -30,20 +31,16 @@ func occDo(data []byte, bufferDelayMs int, portName string, outBuffer []byte) (i
 	mode := &serial.Mode{BaudRate: 115200}
 	s, err := serial.Open(portName, mode)
 	if err != nil {
-		return 0, fmt.Errorf("unable to open serial port: %v", err)
+		return 0, fmt.Errorf("unable to open serial port: %w", err)
 	}
 	defer s.Close()
 
-	fmt.Println("serial connected to port.")
-
 	// Encode payload using SLIP
-	if err := encodeSLIP(payloadUnencoded, &payloadSlipEncoded); err != nil {
-		return 0, fmt.Errorf("unable to encode SLIP: %v", err)
-	}
+	encodeSLIP(payloadUnencoded, &payloadSlipEncoded)
 
 	// Send encoded payload over serial
 	if _, err := s.Write(payloadSlipEncoded); err != nil {
-		return 0, fmt.Errorf("unable to write to serial port: %v", err)
+		return 0, fmt.Errorf("unable to write to serial port: %w", err)
 	}
 
 	time.Sleep(time.Duration(bufferDelayMs) * time.Millisecond)
@@ -56,7 +53,7 @@ func occDo(data []byte, bufferDelayMs int, portName string, outBuffer []byte) (i
 
 	for {
 		n, err := s.Read(readBuffer)
-		if err != nil && err != io.EOF {
+		if err != nil && !errors.Is(err, io.EOF) {
 			time.Sleep(10 * time.Millisecond)
 			continue
 		}
@@ -69,9 +66,8 @@ func occDo(data []byte, bufferDelayMs int, portName string, outBuffer []byte) (i
 		if readBuffer[0] == SlipEnd {
 			if slipMsgFramer == 1 {
 				break
-			} else {
-				slipMsgFramer++
 			}
+			slipMsgFramer++
 		}
 		time.Sleep(1 * time.Millisecond)
 	}
@@ -79,7 +75,7 @@ func occDo(data []byte, bufferDelayMs int, portName string, outBuffer []byte) (i
 	// Decode SLIP response
 	decodedResponse, err := decodeSLIP(encodedResponse)
 	if err != nil {
-		return 0, fmt.Errorf("unable to decode SLIP: %v", err)
+		return 0, fmt.Errorf("unable to decode SLIP: %w", err)
 	}
 
 	// Copy decoded response to outBuffer
@@ -90,7 +86,7 @@ func occDo(data []byte, bufferDelayMs int, portName string, outBuffer []byte) (i
 }
 
 // encodeSLIP encodes data using SLIP protocol.
-func encodeSLIP(data []byte, encoded *[]byte) error {
+func encodeSLIP(data []byte, encoded *[]byte) {
 	*encoded = append(*encoded, SlipEnd)
 	for _, b := range data {
 		switch b {
@@ -103,14 +99,13 @@ func encodeSLIP(data []byte, encoded *[]byte) error {
 		}
 	}
 	*encoded = append(*encoded, SlipEnd)
-	return nil
 }
 
 // decodeSLIP decodes SLIP-encoded data.
 func decodeSLIP(encoded []byte) ([]byte, error) {
 	// Check for empty input
 	if len(encoded) == 0 {
-		return nil, fmt.Errorf("encoded data is empty")
+		return nil, errors.New("encoded data is empty")
 	}
 
 	// Remove first and last SLIP_END bytes
