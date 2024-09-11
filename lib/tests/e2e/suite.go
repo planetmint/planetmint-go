@@ -6,6 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/planetmint/planetmint-go/lib"
+	"github.com/planetmint/planetmint-go/lib/trustwallet"
 	clitestutil "github.com/planetmint/planetmint-go/testutil/cli"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
@@ -85,4 +86,38 @@ func (s *E2ETestSuite) TestBankSendBroadcastTxWithFileLock() {
 	txResponse, err = lib.GetTxResponseFromOut(out)
 	s.Require().NoError(err)
 	assert.Equal(s.T(), "[]", txResponse.RawLog)
+}
+
+func (s *E2ETestSuite) TestOccSigning() {
+	val := s.network.Validators[0]
+
+	setKeys()
+
+	k, err := val.ClientCtx.Keyring.Key(sample.Name)
+	s.Require().NoError(err)
+
+	addr, err := k.GetAddress()
+	s.Require().NoError(err)
+
+	coin := sdk.NewCoins(sdk.NewInt64Coin("stake", 10))
+	msg := banktypes.NewMsgSend(addr, val.Address, coin)
+
+	libConfig := lib.GetConfig()
+	libConfig.SetSerialPort("/dev/ttyACM0")
+
+	out, err := lib.BroadcastTxWithFileLock(addr, msg)
+	s.Require().NoError(err)
+
+	txResponse, err := lib.GetTxResponseFromOut(out)
+	s.Require().NoError(err)
+	s.Require().Equal("[]", txResponse.RawLog)
+	s.Require().Equal(uint32(0), txResponse.Code)
+}
+
+func setKeys() (string, error) {
+	connector, err := trustwallet.NewTrustWalletConnector("/dev/ttyACM0")
+	if err != nil {
+		return "", err
+	}
+	return connector.RecoverFromMnemonic(sample.Mnemonic)
 }
