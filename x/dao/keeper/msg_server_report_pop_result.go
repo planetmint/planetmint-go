@@ -35,7 +35,7 @@ func (k msgServer) ReportPopResult(goCtx context.Context, msg *types.MsgReportPo
 
 	err := util.ValidateStruct(*msg.Challenge)
 	if err != nil {
-		return nil, errorsmod.Wrapf(types.ErrInvalidChallenge, err.Error())
+		return nil, errorsmod.Wrap(types.ErrInvalidChallenge, err.Error())
 	}
 
 	// verify that the report origin is the challenger
@@ -64,7 +64,7 @@ func (k msgServer) ReportPopResult(goCtx context.Context, msg *types.MsgReportPo
 
 	err = k.issuePoPRewards(ctx, *msg.Challenge)
 	if err != nil {
-		return nil, errorsmod.Wrapf(types.ErrFailedPoPRewardsIssuance, err.Error())
+		return nil, errorsmod.Wrap(types.ErrFailedPoPRewardsIssuance, err.Error())
 	}
 
 	return &types.MsgReportPopResultResponse{}, nil

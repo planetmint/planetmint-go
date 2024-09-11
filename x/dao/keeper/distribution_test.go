@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	keepertest "github.com/planetmint/planetmint-go/testutil/keeper"
+	"github.com/planetmint/planetmint-go/util"
 	"github.com/stretchr/testify/assert"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -90,4 +91,41 @@ func TestTokenDistribution(t *testing.T) {
 	expSum = reissuanceValue * Amount2ndBatch // add the [0] of the
 	assert.True(t, expSum-sum < 0.000001)
 	assert.Equal(t, float64(reissuances), Amount1stBatch+Amount2ndBatch)
+}
+
+func TestValidatorRewardReallocation(t *testing.T) {
+	t.Parallel()
+	k, ctx := keepertest.DaoKeeper(t)
+
+	// create reissuances
+	_ = createNReissuances(k, ctx, 1000, types.DefaultParams().PopEpochs)
+	distribution, err := k.GetDistributionForReissuedTokens(ctx, 780)
+	assert.NoError(t, err)
+
+	// create challenges
+	_ = createNChallenge(k, ctx, 250, types.DefaultParams().PopEpochs)
+	distributionWithPopReallocation, err := k.GetDistributionForReissuedTokens(ctx, 780)
+	assert.NoError(t, err)
+
+	// compare
+	pops := 780 / types.DefaultParams().PopEpochs
+	distributionDaoAmount, err := util.RDDLTokenStringToFloat(distribution.DaoAmount)
+	assert.NoError(t, err)
+	distributionPopAmount, err := util.RDDLTokenStringToFloat(distribution.PopAmount)
+	assert.NoError(t, err)
+
+	distributionWithValidatorPopRewardDao, err := util.RDDLTokenStringToFloat(distributionWithPopReallocation.DaoAmount)
+	assert.NoError(t, err)
+	distributionWithValidatorPopRewardPop, err := util.RDDLTokenStringToFloat(distributionWithPopReallocation.PopAmount)
+	assert.NoError(t, err)
+
+	// Some of DaoAmount is transferred to PopAmount
+	assert.Greater(t, distributionDaoAmount, distributionWithValidatorPopRewardDao)
+	assert.Greater(t, distributionWithValidatorPopRewardPop, distributionPopAmount)
+
+	diffPopAmount := distributionWithValidatorPopRewardPop - distributionPopAmount
+	diffDaoAmount := distributionDaoAmount - distributionWithValidatorPopRewardDao
+	assert.Equal(t, diffPopAmount, diffDaoAmount)
+	assert.Equal(t, pops, int64(diffPopAmount))
+	assert.Equal(t, pops, int64(diffDaoAmount))
 }

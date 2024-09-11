@@ -25,7 +25,7 @@ func (k msgServer) InitPop(goCtx context.Context, msg *types.MsgInitPop) (*types
 	k.StoreChallenge(ctx, challenge)
 
 	amount := k.GetValidatorPoPReward(ctx)
-	k.storeChallangeInitiatorReward(ctx, msg.GetHeight(), amount)
+	k.StoreChallangeInitiatorReward(ctx, msg.GetHeight(), amount)
 
 	validatorIdentity, err := util.GetValidatorCometBFTIdentity(ctx, k.RootDir)
 	if err != nil {
