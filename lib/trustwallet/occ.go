@@ -9,12 +9,12 @@ import (
 )
 
 const (
-	SLIP_END     = 0xC0
-	SLIP_ESC     = 0xDB
-	SLIP_ESC_END = 0xDC
-	SLIP_ESC_ESC = 0xDD
-	nsPerUs      = 1000
-	nsPerMs      = 8000 * nsPerUs
+	SlipEnd    = 0xC0
+	SlipEsc    = 0xDB
+	SlipEscEnd = 0xDC
+	SlipEscEsc = 0xDD
+	nsPerUs    = 1000
+	nsPerMs    = 8000 * nsPerUs
 )
 
 // occDo performs the operations to send and receive data over serial port.
@@ -66,7 +66,7 @@ func occDo(data []byte, bufferDelayMs int, portName string, outBuffer []byte) (i
 
 		encodedResponse = append(encodedResponse, readBuffer[0])
 
-		if readBuffer[0] == SLIP_END {
+		if readBuffer[0] == SlipEnd {
 			if slipMsgFramer == 1 {
 				break
 			} else {
@@ -91,18 +91,18 @@ func occDo(data []byte, bufferDelayMs int, portName string, outBuffer []byte) (i
 
 // encodeSLIP encodes data using SLIP protocol.
 func encodeSLIP(data []byte, encoded *[]byte) error {
-	*encoded = append(*encoded, SLIP_END)
+	*encoded = append(*encoded, SlipEnd)
 	for _, b := range data {
 		switch b {
-		case SLIP_END:
-			*encoded = append(*encoded, SLIP_ESC, SLIP_ESC_END)
-		case SLIP_ESC:
-			*encoded = append(*encoded, SLIP_ESC, SLIP_ESC_ESC)
+		case SlipEnd:
+			*encoded = append(*encoded, SlipEsc, SlipEscEnd)
+		case SlipEsc:
+			*encoded = append(*encoded, SlipEsc, SlipEscEsc)
 		default:
 			*encoded = append(*encoded, b)
 		}
 	}
-	*encoded = append(*encoded, SLIP_END)
+	*encoded = append(*encoded, SlipEnd)
 	return nil
 }
 
@@ -114,10 +114,10 @@ func decodeSLIP(encoded []byte) ([]byte, error) {
 	}
 
 	// Remove first and last SLIP_END bytes
-	if encoded[0] == SLIP_END {
+	if encoded[0] == SlipEnd {
 		encoded = encoded[1:]
 	}
-	if encoded[len(encoded)-1] == SLIP_END {
+	if encoded[len(encoded)-1] == SlipEnd {
 		encoded = encoded[:len(encoded)-1]
 	}
 
@@ -126,13 +126,13 @@ func decodeSLIP(encoded []byte) ([]byte, error) {
 
 	for _, b := range encoded {
 		switch {
-		case b == SLIP_ESC && !esc:
+		case b == SlipEsc && !esc:
 			esc = true
-		case b == SLIP_ESC_END && esc:
-			decoded = append(decoded, SLIP_END)
+		case b == SlipEscEnd && esc:
+			decoded = append(decoded, SlipEnd)
 			esc = false
-		case b == SLIP_ESC_ESC && esc:
-			decoded = append(decoded, SLIP_ESC)
+		case b == SlipEscEsc && esc:
+			decoded = append(decoded, SlipEsc)
 			esc = false
 		default:
 			decoded = append(decoded, b)

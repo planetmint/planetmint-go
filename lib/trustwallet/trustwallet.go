@@ -10,9 +10,9 @@ import (
 )
 
 const (
-	PREFIX_IHW      = "/IHW"
-	BUFFER_SIZE     = 1024
-	BUFFER_DELAY_MS = 200
+	PrefixIhw     = "/IHW"
+	BufferSize    = 1024
+	BufferDelayMs = 200
 )
 
 type OSCResponse struct {
@@ -29,8 +29,8 @@ type OSCMessageSender struct {
 func NewOSCMessageSender(portName string) (*OSCMessageSender, error) {
 	return &OSCMessageSender{
 		portName:      []byte(portName),
-		bufferSize:    BUFFER_SIZE,
-		bufferDelayMs: BUFFER_DELAY_MS,
+		bufferSize:    BufferSize,
+		bufferDelayMs: BufferDelayMs,
 	}, nil
 }
 
@@ -113,7 +113,7 @@ func (t *Connector) sendOSCMessage(address string, args ...interface{}) (OSCResp
 }
 
 func (t *Connector) ValiseGet() (string, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/getSeed", PREFIX_IHW))
+	response, err := t.sendOSCMessage(fmt.Sprintf("%s/getSeed", PrefixIhw))
 	if err != nil {
 		return "", err
 	}
@@ -124,7 +124,7 @@ func (t *Connector) ValiseGet() (string, error) {
 }
 
 func (t *Connector) CreateMnemonic() (string, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/mnemonicToSeed", PREFIX_IHW), int32(1))
+	response, err := t.sendOSCMessage(fmt.Sprintf("%s/mnemonicToSeed", PrefixIhw), int32(1))
 	if err != nil {
 		return "", err
 	}
@@ -135,7 +135,7 @@ func (t *Connector) CreateMnemonic() (string, error) {
 }
 
 func (t *Connector) InjectPlanetminkeyToSE050(slot int) (bool, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/se050InjectSECPKeys", PREFIX_IHW), int32(slot))
+	response, err := t.sendOSCMessage(fmt.Sprintf("%s/se050InjectSECPKeys", PrefixIhw), int32(slot))
 	if err != nil {
 		return false, err
 	}
@@ -146,7 +146,7 @@ func (t *Connector) InjectPlanetminkeyToSE050(slot int) (bool, error) {
 }
 
 func (t *Connector) RecoverFromMnemonic(mnemonic string) (string, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/mnemonicToSeed", PREFIX_IHW), int32(1), mnemonic)
+	response, err := t.sendOSCMessage(fmt.Sprintf("%s/mnemonicToSeed", PrefixIhw), int32(1), mnemonic)
 	if err != nil {
 		return "", err
 	}
@@ -157,12 +157,12 @@ func (t *Connector) RecoverFromMnemonic(mnemonic string) (string, error) {
 }
 
 func (t *Connector) GetPlanetmintKeys() (*PlanetMintKeys, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/getPlntmntKeys", PREFIX_IHW))
+	response, err := t.sendOSCMessage(fmt.Sprintf("%s/getPlntmntKeys", PrefixIhw))
 	if err != nil {
 		return nil, err
 	}
 	if len(response.Data) < 4 {
-		return nil, fmt.Errorf("Trust Wallet not initialized. Please initialize the wallet")
+		return nil, fmt.Errorf("trust wallet not initialized. Please initialize the wallet")
 	}
 	return &PlanetMintKeys{
 		PlanetmintAddress:        response.Data[0],
@@ -173,7 +173,7 @@ func (t *Connector) GetPlanetmintKeys() (*PlanetMintKeys, error) {
 }
 
 func (t *Connector) GetSeedSE050() (string, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/se050GetSeed", PREFIX_IHW))
+	response, err := t.sendOSCMessage(fmt.Sprintf("%s/se050GetSeed", PrefixIhw))
 	if err != nil {
 		return "", err
 	}
@@ -184,7 +184,7 @@ func (t *Connector) GetSeedSE050() (string, error) {
 }
 
 func (t *Connector) SignHashWithPlanetmint(dataToSign string) (string, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/ecdsaSignPlmnt", PREFIX_IHW), dataToSign)
+	response, err := t.sendOSCMessage(fmt.Sprintf("%s/ecdsaSignPlmnt", PrefixIhw), dataToSign)
 	if err != nil {
 		return "", err
 	}
@@ -195,7 +195,7 @@ func (t *Connector) SignHashWithPlanetmint(dataToSign string) (string, error) {
 }
 
 func (t *Connector) SignHashWithRDDL(dataToSign string) (string, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/ecdsaSignRddl", PREFIX_IHW), dataToSign)
+	response, err := t.sendOSCMessage(fmt.Sprintf("%s/ecdsaSignRddl", PrefixIhw), dataToSign)
 	if err != nil {
 		return "", err
 	}
@@ -206,7 +206,7 @@ func (t *Connector) SignHashWithRDDL(dataToSign string) (string, error) {
 }
 
 func (t *Connector) CreateOptegaKeypair(ctx int) (string, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/optigaTrustXCreateSecret", PREFIX_IHW), int32(ctx), "")
+	response, err := t.sendOSCMessage(fmt.Sprintf("%s/optigaTrustXCreateSecret", PrefixIhw), int32(ctx), "")
 	if err != nil {
 		return "", err
 	}
@@ -217,7 +217,7 @@ func (t *Connector) CreateOptegaKeypair(ctx int) (string, error) {
 }
 
 func (t *Connector) SignWithOptega(ctx int, dataToSign, pubkey string) (string, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/optigaTrustXSignMessage", PREFIX_IHW), int32(ctx), dataToSign, pubkey, "")
+	response, err := t.sendOSCMessage(fmt.Sprintf("%s/optigaTrustXSignMessage", PrefixIhw), int32(ctx), dataToSign, pubkey, "")
 	if err != nil {
 		return "", err
 	}
@@ -238,7 +238,7 @@ func (t *Connector) UnwrapPublicKey(publicKey string) (bool, string) {
 }
 
 func (t *Connector) CalculateHash(dataToSign string) (string, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/se050CalculateHash", PREFIX_IHW), dataToSign)
+	response, err := t.sendOSCMessage(fmt.Sprintf("%s/se050CalculateHash", PrefixIhw), dataToSign)
 	if err != nil {
 		return "", err
 	}
@@ -249,7 +249,7 @@ func (t *Connector) CalculateHash(dataToSign string) (string, error) {
 }
 
 func (t *Connector) CreateSE050KeypairNIST(ctx int) (string, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/se050CreateKeyPair", PREFIX_IHW), int32(ctx), int32(1))
+	response, err := t.sendOSCMessage(fmt.Sprintf("%s/se050CreateKeyPair", PrefixIhw), int32(ctx), int32(1))
 	if err != nil {
 		return "", err
 	}
@@ -260,7 +260,7 @@ func (t *Connector) CreateSE050KeypairNIST(ctx int) (string, error) {
 }
 
 func (t *Connector) GetPublicKeyFromSE050(ctx int) (string, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/se050GetPublicKey", PREFIX_IHW), int32(ctx))
+	response, err := t.sendOSCMessage(fmt.Sprintf("%s/se050GetPublicKey", PrefixIhw), int32(ctx))
 	if err != nil {
 		return "", err
 	}
@@ -275,7 +275,7 @@ func (t *Connector) GetPublicKeyFromSE050(ctx int) (string, error) {
 }
 
 func (t *Connector) SignWithSE050(dataToSign string, ctx int) (string, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/se050SignData", PREFIX_IHW), dataToSign, int32(ctx))
+	response, err := t.sendOSCMessage(fmt.Sprintf("%s/se050SignData", PrefixIhw), dataToSign, int32(ctx))
 	if err != nil {
 		return "", err
 	}
@@ -286,7 +286,7 @@ func (t *Connector) SignWithSE050(dataToSign string, ctx int) (string, error) {
 }
 
 func (t *Connector) VerifySE050Signature(dataToSign, signature string, ctx int) (bool, error) {
-	response, err := t.sendOSCMessage(fmt.Sprintf("%s/se050VerifySignature", PREFIX_IHW), dataToSign, signature, int32(ctx))
+	response, err := t.sendOSCMessage(fmt.Sprintf("%s/se050VerifySignature", PrefixIhw), dataToSign, signature, int32(ctx))
 	if err != nil {
 		return false, err
 	}
