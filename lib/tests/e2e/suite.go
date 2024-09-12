@@ -89,6 +89,7 @@ func (s *E2ETestSuite) TestBankSendBroadcastTxWithFileLock() {
 }
 
 func (s *E2ETestSuite) TestOccSigning() {
+	s.T().SkipNow()
 	val := s.network.Validators[0]
 
 	_, err := setKeys()
@@ -115,6 +116,7 @@ func (s *E2ETestSuite) TestOccSigning() {
 	s.Require().Equal(uint32(0), txResponse.Code)
 }
 
+// set sample mnemonic on trust wallet
 func setKeys() (string, error) {
 	connector, err := trustwallet.NewTrustWalletConnector("/dev/ttyACM0")
 	if err != nil {
