@@ -9,6 +9,10 @@ After that we construct three messages to send `10plmnt` each to three addresses
 We then build and sign the transaction and eventually send this transaction via RPC.
 For debugging purposes we print the transaction that we send as JSON.
 
+## Support for Trust Wallet over serial connection
+
+The config has a setting for a `serialPort`. If it is set then `BroadcastTxWithFileLock()` will sign transactions with the TrustWallet. Be aware that the public key must be available on the keyring in order to construct transactions signing data.
+
 ```
 package main
 
