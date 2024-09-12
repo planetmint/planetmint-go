@@ -8,6 +8,10 @@ import (
 	"sync"
 )
 
+var (
+	keys *PlanetMintKeys
+)
+
 type Connector struct {
 	oscSender *OSCMessageSender
 	mu        sync.Mutex
@@ -80,19 +84,23 @@ func (t *Connector) RecoverFromMnemonic(mnemonic string) (string, error) {
 }
 
 func (t *Connector) GetPlanetmintKeys() (*PlanetMintKeys, error) {
-	response, err := t.sendOSCMessage(PrefixIhw + "/getPlntmntKeys")
-	if err != nil {
-		return nil, err
+	if keys == nil {
+		response, err := t.sendOSCMessage(PrefixIhw + "/getPlntmntKeys")
+		if err != nil {
+			return nil, err
+		}
+		if len(response.Data) < 4 {
+			return nil, errors.New("trust wallet not initialized. Please initialize the wallet")
+		}
+
+		keys = &PlanetMintKeys{
+			PlanetmintAddress:        response.Data[1],
+			ExtendedLiquidPubkey:     response.Data[2],
+			ExtendedPlanetmintPubkey: response.Data[3],
+			RawPlanetmintPubkey:      response.Data[4],
+		}
 	}
-	if len(response.Data) < 4 {
-		return nil, errors.New("trust wallet not initialized. Please initialize the wallet")
-	}
-	return &PlanetMintKeys{
-		PlanetmintAddress:        response.Data[0],
-		ExtendedLiquidPubkey:     response.Data[1],
-		ExtendedPlanetmintPubkey: response.Data[2],
-		RawPlanetmintPubkey:      response.Data[3],
-	}, nil
+	return keys, nil
 }
 
 func (t *Connector) GetSeedSE050() (string, error) {

@@ -88,12 +88,18 @@ func (s *E2ETestSuite) TestBankSendBroadcastTxWithFileLock() {
 	assert.Equal(s.T(), "[]", txResponse.RawLog)
 }
 
+func (s *E2ETestSuite) TestLoadKeys() {
+	s.T().SkipNow()
+	_, err := setKeys()
+	if err == nil {
+		loadKeys()
+	}
+	s.network.WaitForNextBlock()
+}
+
 func (s *E2ETestSuite) TestOccSigning() {
 	s.T().SkipNow()
 	val := s.network.Validators[0]
-
-	_, err := setKeys()
-	s.Require().NoError(err)
 
 	k, err := val.ClientCtx.Keyring.Key(sample.Name)
 	s.Require().NoError(err)
@@ -123,4 +129,10 @@ func setKeys() (string, error) {
 		return "", err
 	}
 	return connector.RecoverFromMnemonic(sample.Mnemonic)
+}
+
+func loadKeys() error {
+	connector, err := trustwallet.NewTrustWalletConnector("/dev/ttyACM0")
+	connector.GetPlanetmintKeys()
+	return err
 }

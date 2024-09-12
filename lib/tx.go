@@ -17,6 +17,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
@@ -302,21 +304,26 @@ func writeClientCtxOutputToBuffer(clientCtx client.Context) (out *bytes.Buffer, 
 	return
 }
 
+var (
+	_ cryptotypes.PubKey = &secp256k1.PubKey{}
+)
+
 func signWithTrustWallet(txf tx.Factory, clientCtx client.Context, txBuilder client.TxBuilder) error {
 	connector, err := trustwallet.NewTrustWalletConnector(GetConfig().serialPort)
 	if err != nil {
 		return err
 	}
 
-	kb, err := clientCtx.Keyring.Key(clientCtx.FromName)
+	keys, err := connector.GetPlanetmintKeys()
 	if err != nil {
 		return err
 	}
 
-	pubkey, err := kb.GetPubKey()
+	pubkeyBytes, err := hex.DecodeString(keys.RawPlanetmintPubkey)
 	if err != nil {
 		return err
 	}
+	pk := secp256k1.PubKey{Key: pubkeyBytes}
 
 	signMode := txf.SignMode()
 	if signMode == signing.SignMode_SIGN_MODE_UNSPECIFIED {
@@ -328,8 +335,8 @@ func signWithTrustWallet(txf tx.Factory, clientCtx client.Context, txBuilder cli
 		ChainID:       txf.ChainID(),
 		AccountNumber: txf.AccountNumber(),
 		Sequence:      txf.Sequence(),
-		PubKey:        pubkey,
-		Address:       sdk.AccAddress(pubkey.Address()).String(),
+		PubKey:        &pk,
+		Address:       sdk.AccAddress(pk.Address()).String(),
 	}
 
 	sigData := signing.SingleSignatureData{
@@ -338,7 +345,7 @@ func signWithTrustWallet(txf tx.Factory, clientCtx client.Context, txBuilder cli
 	}
 
 	sig := signing.SignatureV2{
-		PubKey:   pubkey,
+		PubKey:   &pk,
 		Data:     &sigData,
 		Sequence: txf.Sequence(),
 	}
@@ -370,7 +377,7 @@ func signWithTrustWallet(txf tx.Factory, clientCtx client.Context, txBuilder cli
 		Signature: signature,
 	}
 	sig = signing.SignatureV2{
-		PubKey:   pubkey,
+		PubKey:   &pk,
 		Data:     &sigData,
 		Sequence: txf.Sequence(),
 	}
