@@ -92,9 +92,9 @@ func (s *E2ETestSuite) TestLoadKeys() {
 	s.T().SkipNow()
 	_, err := setKeys()
 	if err == nil {
-		loadKeys()
+		s.Require().NoError(loadKeys())
 	}
-	s.network.WaitForNextBlock()
+	s.Require().NoError(s.network.WaitForNextBlock())
 }
 
 func (s *E2ETestSuite) TestOccSigning() {
@@ -133,6 +133,9 @@ func setKeys() (string, error) {
 
 func loadKeys() error {
 	connector, err := trustwallet.NewTrustWalletConnector("/dev/ttyACM0")
-	connector.GetPlanetmintKeys()
+	if err != nil {
+		return err
+	}
+	_, err = connector.GetPlanetmintKeys()
 	return err
 }
