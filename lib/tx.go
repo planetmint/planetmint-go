@@ -18,7 +18,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
@@ -303,10 +302,6 @@ func writeClientCtxOutputToBuffer(clientCtx client.Context) (out *bytes.Buffer, 
 	out.Write(output.Bytes())
 	return
 }
-
-var (
-	_ cryptotypes.PubKey = &secp256k1.PubKey{}
-)
 
 func signWithTrustWallet(txf tx.Factory, clientCtx client.Context, txBuilder client.TxBuilder) error {
 	connector, err := trustwallet.NewTrustWalletConnector(GetConfig().serialPort)
