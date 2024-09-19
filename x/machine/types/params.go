@@ -26,7 +26,7 @@ func NewParams(assetRegistryScheme string, assetRegistryDomain string, assetRegi
 
 // DefaultParams returns a default set of parameters
 func DefaultParams() Params {
-	return NewParams("https", "testnet-assets.rddl.io", "register_asset", 8800, "plmnt")
+	return NewParams("https", "default-param-set.rddl.io", "default_param_set_register_asset", 8800, "plmnt")
 }
 
 // ParamSetPairs get the params.ParamSet
