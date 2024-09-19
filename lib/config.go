@@ -17,6 +17,7 @@ type Config struct {
 	rootDir        string
 	rpcEndpoint    string
 	txGas          uint64
+	serialPort     string
 }
 
 // lib wide global singleton
@@ -37,6 +38,7 @@ func DefaultConfig() *Config {
 		rootDir:        "~/.planetmint-go/",
 		rpcEndpoint:    "http://127.0.0.1:26657",
 		txGas:          200000,
+		serialPort:     "",
 	}
 }
 
@@ -114,5 +116,12 @@ func (config *Config) SetTxGas(txGas uint64) *Config {
 	changeLock.Lock()
 	defer changeLock.Unlock()
 	config.txGas = txGas
+	return config
+}
+
+func (config *Config) SetSerialPort(port string) *Config {
+	changeLock.Lock()
+	defer changeLock.Unlock()
+	config.serialPort = port
 	return config
 }

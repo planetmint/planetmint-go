@@ -2,20 +2,27 @@ package lib
 
 import (
 	"bytes"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"strconv"
 	"sync"
 	"syscall"
 
+	"github.com/cometbft/cometbft/crypto"
 	comethttp "github.com/cometbft/cometbft/rpc/client/http"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/tx/signing"
+	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/planetmint/planetmint-go/lib/trustwallet"
 )
 
 var (
@@ -168,25 +175,7 @@ func broadcastTx(clientCtx client.Context, txf tx.Factory, msgs ...sdk.Msg) (out
 	if err != nil {
 		return
 	}
-	output, ok := clientCtx.Output.(*bytes.Buffer)
-	if !ok {
-		err = ErrTypeAssertionFailed
-		return
-	}
-	defer output.Reset()
-
-	result := make(map[string]interface{})
-	err = json.Unmarshal(output.Bytes(), &result)
-	if err != nil {
-		return
-	}
-
-	// Make a copy because we `defer output.Reset()`
-	out = &bytes.Buffer{}
-	// This is still copying references: *out = *output
-	// Make a real copy: https://stackoverflow.com/a/69758157
-	out.Write(output.Bytes())
-	return
+	return writeClientCtxOutputToBuffer(clientCtx)
 }
 
 // BroadcastTxWithFileLock broadcasts a transaction via gRPC and synchronises requests via a file lock.
@@ -233,7 +222,11 @@ func BroadcastTxWithFileLock(fromAddress sdk.AccAddress, msgs ...sdk.Msg) (out *
 
 	// Set new sequence number
 	txf = txf.WithSequence(sequence)
-	out, err = broadcastTx(clientCtx, txf, msgs...)
+	if GetConfig().serialPort != "" {
+		out, err = broadcastTxWithTrustWalletSignature(clientCtx, txf, msgs...)
+	} else {
+		out, err = broadcastTx(clientCtx, txf, msgs...)
+	}
 	if err != nil {
 		return
 	}
@@ -259,4 +252,136 @@ func BroadcastTxWithFileLock(fromAddress sdk.AccAddress, msgs ...sdk.Msg) (out *
 	_, err = file.WriteString(strconv.FormatUint(sequence, 10) + "\n")
 
 	return
+}
+
+func broadcastTxWithTrustWalletSignature(clientCtx client.Context, txf tx.Factory, msgs ...sdk.Msg) (out *bytes.Buffer, err error) {
+	txBuilder, err := txf.BuildUnsignedTx(msgs...)
+	if err != nil {
+		return
+	}
+
+	if err = signWithTrustWallet(txf, clientCtx, txBuilder); err != nil {
+		return
+	}
+
+	txBytes, err := clientCtx.TxConfig.TxEncoder()(txBuilder.GetTx())
+	if err != nil {
+		return
+	}
+
+	res, err := clientCtx.BroadcastTx(txBytes)
+	if err != nil {
+		return
+	}
+
+	if err = clientCtx.PrintProto(res); err != nil {
+		return
+	}
+
+	return writeClientCtxOutputToBuffer(clientCtx)
+}
+
+func writeClientCtxOutputToBuffer(clientCtx client.Context) (out *bytes.Buffer, err error) {
+	output, ok := clientCtx.Output.(*bytes.Buffer)
+	if !ok {
+		err = ErrTypeAssertionFailed
+		return
+	}
+	defer output.Reset()
+
+	result := make(map[string]interface{})
+	err = json.Unmarshal(output.Bytes(), &result)
+	if err != nil {
+		return
+	}
+
+	// Make a copy because we `defer output.Reset()`
+	out = &bytes.Buffer{}
+	// This is still copying references: *out = *output
+	// Make a real copy: https://stackoverflow.com/a/69758157
+	out.Write(output.Bytes())
+	return
+}
+
+func signWithTrustWallet(txf tx.Factory, clientCtx client.Context, txBuilder client.TxBuilder) error {
+	connector, err := trustwallet.NewTrustWalletConnector(GetConfig().serialPort)
+	if err != nil {
+		return err
+	}
+
+	keys, err := connector.GetPlanetmintKeys()
+	if err != nil {
+		return err
+	}
+
+	pubkeyBytes, err := hex.DecodeString(keys.RawPlanetmintPubkey)
+	if err != nil {
+		return err
+	}
+	pk := secp256k1.PubKey{Key: pubkeyBytes}
+
+	signMode := txf.SignMode()
+	if signMode == signing.SignMode_SIGN_MODE_UNSPECIFIED {
+		// use the SignModeHandler's default mode if unspecified
+		signMode = clientCtx.TxConfig.SignModeHandler().DefaultMode()
+	}
+
+	signerData := authsigning.SignerData{
+		ChainID:       txf.ChainID(),
+		AccountNumber: txf.AccountNumber(),
+		Sequence:      txf.Sequence(),
+		PubKey:        &pk,
+		Address:       sdk.AccAddress(pk.Address()).String(),
+	}
+
+	sigData := signing.SingleSignatureData{
+		SignMode:  signMode,
+		Signature: nil,
+	}
+
+	sig := signing.SignatureV2{
+		PubKey:   &pk,
+		Data:     &sigData,
+		Sequence: txf.Sequence(),
+	}
+
+	if err := txBuilder.SetSignatures(sig); err != nil {
+		return err
+	}
+
+	bytesToSign, err := clientCtx.TxConfig.SignModeHandler().GetSignBytes(signMode, signerData, txBuilder.GetTx())
+	if err != nil {
+		return err
+	}
+
+	hashBytesToSign := crypto.Sha256(bytesToSign)
+	hexHash := hex.EncodeToString(hashBytesToSign)
+
+	hexSig, err := connector.SignHashWithPlanetmint(hexHash)
+	if err != nil {
+		return err
+	}
+
+	signature, err := hex.DecodeString(hexSig)
+	if err != nil {
+		return err
+	}
+
+	sigData = signing.SingleSignatureData{
+		SignMode:  signMode,
+		Signature: signature,
+	}
+	sig = signing.SignatureV2{
+		PubKey:   &pk,
+		Data:     &sigData,
+		Sequence: txf.Sequence(),
+	}
+
+	if err = txBuilder.SetSignatures(sig); err != nil {
+		return fmt.Errorf("unable to set signatures on payload: %w", err)
+	}
+
+	// Run optional preprocessing if specified. By default, this is unset
+	// and will return nil.
+	return txf.PreprocessTx(clientCtx.FromName, txBuilder)
 }
