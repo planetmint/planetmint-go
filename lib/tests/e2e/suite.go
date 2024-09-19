@@ -92,7 +92,8 @@ func (s *E2ETestSuite) TestLoadKeys() {
 	s.T().SkipNow()
 	_, err := setKeys()
 	if err == nil {
-		s.Require().NoError(loadKeys())
+		_, err = loadKeys()
+		s.Require().NoError(err)
 	}
 	s.Require().NoError(s.network.WaitForNextBlock())
 }
@@ -101,11 +102,10 @@ func (s *E2ETestSuite) TestOccSigning() {
 	s.T().SkipNow()
 	val := s.network.Validators[0]
 
-	k, err := val.ClientCtx.Keyring.Key(sample.Name)
+	keys, err := loadKeys()
 	s.Require().NoError(err)
 
-	addr, err := k.GetAddress()
-	s.Require().NoError(err)
+	addr := sdk.MustAccAddressFromBech32(keys.PlanetmintAddress)
 
 	coin := sdk.NewCoins(sdk.NewInt64Coin("stake", 10))
 	msg := banktypes.NewMsgSend(addr, val.Address, coin)
@@ -131,11 +131,10 @@ func setKeys() (string, error) {
 	return connector.RecoverFromMnemonic(sample.Mnemonic)
 }
 
-func loadKeys() error {
+func loadKeys() (*trustwallet.PlanetMintKeys, error) {
 	connector, err := trustwallet.NewTrustWalletConnector("/dev/ttyACM0")
 	if err != nil {
-		return err
+		return nil, err
 	}
-	_, err = connector.GetPlanetmintKeys()
-	return err
+	return connector.GetPlanetmintKeys()
 }
