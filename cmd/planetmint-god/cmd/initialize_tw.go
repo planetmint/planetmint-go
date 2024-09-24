@@ -2,10 +2,10 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/go-bip39"
 	"github.com/planetmint/planetmint-go/lib/trustwallet"
@@ -16,13 +16,30 @@ const (
 	flagSerialPort = "serial-port"
 )
 
-func InitializeTrustWalletCmd() *cobra.Command {
+func TrustWalletCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "initialize-trust-wallet [mnemonic_word_1][,[mnemonic_word_2],...[mnemonic_word_12],...[mnemonic_word_24]]",
+		Use:                        "trust-wallet [command]",
+		Short:                      "Trust Wallet subcommands",
+		DisableFlagParsing:         true,
+		SuggestionsMinimumDistance: 2,
+		RunE:                       client.ValidateCmd,
+	}
+
+	cmd.AddCommand(
+		initializeCmd(),
+		keysCmd(),
+	)
+
+	return cmd
+}
+
+func initializeCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "initialize [mnemonic_word_1][,[mnemonic_word_2],...[mnemonic_word_12],...[mnemonic_word_24]]",
 		Short: "Initialize a Trust Wallet",
 		Long: `Initialize a Trust Wallet with a mnemonic phrase (optional). If no mnemonic is provided then one is created for you. 
 Provided mnemonics must be 12 or 24 words long and adhere to bip39.`,
-		RunE: initializeTrustWalletCmdFunc,
+		RunE: initializeCmdFunc,
 		Args: cobra.RangeArgs(0, 1),
 	}
 
@@ -32,7 +49,7 @@ Provided mnemonics must be 12 or 24 words long and adhere to bip39.`,
 	return cmd
 }
 
-func initializeTrustWalletCmdFunc(cmd *cobra.Command, args []string) error {
+func initializeCmdFunc(cmd *cobra.Command, args []string) error {
 	serialPort, err := cmd.Flags().GetString(flagSerialPort)
 	if err != nil {
 		return err
@@ -45,21 +62,21 @@ func initializeTrustWalletCmdFunc(cmd *cobra.Command, args []string) error {
 
 	// create mnemonic if non is given
 	if len(args) == 0 {
-		fmt.Println("Initializing Trust Wallet. This may take a few seconds...")
+		cmd.Println("Initializing Trust Wallet. This may take a few seconds...")
 		mnemonic, err := connector.CreateMnemonic()
 		if err != nil {
 			return err
 		}
 
-		fmt.Println("Created mnemonic:")
-		fmt.Println(mnemonic + "\n")
-		fmt.Println("IMPORTANT: Store your mnemonic securely in an offline location, such as a hardware wallet, encrypted USB, or paper stored in a safe, never online or on cloud storage!")
+		cmd.Println("Created mnemonic:")
+		cmd.Println(mnemonic + "\n")
+		cmd.Println("IMPORTANT: Store your mnemonic securely in an offline location, such as a hardware wallet, encrypted USB, or paper stored in a safe, never online or on cloud storage!")
 
 		return nil
 	}
 
 	// recover from given mnemonic
-	fmt.Println("Recovering Trust Wallet from mnemonic...")
+	cmd.Println("Recovering Trust Wallet from mnemonic...")
 	words := strings.Split(args[0], ",")
 	if len(words) != 12 && len(words) != 24 {
 		return errors.New("expected length of mnemonic is 12 or 24, got: " + strconv.Itoa(len(words)))
@@ -72,7 +89,53 @@ func initializeTrustWalletCmdFunc(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(response)
+	cmd.Println(response)
+
+	return nil
+}
+
+func keysCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "keys",
+		Short: "Retrieve keys from Trust Wallet",
+		Long: `Retrieve keys from Trust Wallet. Includes: 
+planetmint address,
+extended planetmint public key,
+extended liquid public key,
+raw planetmint key (hex encoded)`,
+		RunE: keysCmdFunc,
+		Args: cobra.ExactArgs(0),
+	}
+
+	cmd.Flags().String(flagSerialPort, "/dev/ttyACM0", "The serial port your Trust Wallet is connected to")
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func keysCmdFunc(cmd *cobra.Command, _ []string) error {
+	serialPort, err := cmd.Flags().GetString(flagSerialPort)
+	if err != nil {
+		return err
+	}
+
+	connector, err := trustwallet.NewTrustWalletConnector(serialPort)
+	if err != nil {
+		return err
+	}
+
+	cmd.Println("Retrieving keys from Trust Wallet. This may take a few seconds...")
+	cmd.Println()
+
+	keys, err := connector.GetPlanetmintKeys()
+	if err != nil {
+		return err
+	}
+
+	cmd.Println("Planetmint address:      " + keys.PlanetmintAddress)
+	cmd.Println("Planetmint public key:   " + keys.ExtendedPlanetmintPubkey)
+	cmd.Println("Liquid public key:       " + keys.ExtendedLiquidPubkey)
+	cmd.Println("Raw Planetmint key(hex): " + keys.RawPlanetmintPubkey)
 
 	return nil
 }
