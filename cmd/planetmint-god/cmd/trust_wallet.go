@@ -35,7 +35,7 @@ func TrustWalletCmd() *cobra.Command {
 
 func initializeCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "initialize [mnemonic_word_1][,[mnemonic_word_2],...[mnemonic_word_12],...[mnemonic_word_24]]",
+		Use:   "initialize \"[mnemonic]\"",
 		Short: "Initialize a Trust Wallet",
 		Long: `Initialize a Trust Wallet with a mnemonic phrase (optional). If no mnemonic is provided then one is created for you. 
 Provided mnemonics must be 12 or 24 words long and adhere to bip39.`,
@@ -77,7 +77,7 @@ func initializeCmdFunc(cmd *cobra.Command, args []string) error {
 
 	// recover from given mnemonic
 	cmd.Println("Recovering Trust Wallet from mnemonic...")
-	words := strings.Split(args[0], ",")
+	words := strings.Split(args[0], " ")
 	if len(words) != 12 && len(words) != 24 {
 		return errors.New("expected length of mnemonic is 12 or 24, got: " + strconv.Itoa(len(words)))
 	}
