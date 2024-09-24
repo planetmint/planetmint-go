@@ -132,10 +132,8 @@ func keysCmdFunc(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 
-	cmd.Println("Planetmint address:      " + keys.PlanetmintAddress)
-	cmd.Println("Planetmint public key:   " + keys.ExtendedPlanetmintPubkey)
-	cmd.Println("Liquid public key:       " + keys.ExtendedLiquidPubkey)
-	cmd.Println("Raw Planetmint key(hex): " + keys.RawPlanetmintPubkey)
+	cmd.Println("- address: " + keys.PlanetmintAddress)
+	cmd.Printf("  pubkey: [{\"@type\":\"PlanetmintExtended\",\"key\":\"%s\"},{\"@type\":\"PlanetmintHex\",\"key\":\"%s\"},{\"@type\":\"LiquidExtended\",\"key\":\"%s\"}]\n", keys.ExtendedPlanetmintPubkey, keys.RawPlanetmintPubkey, keys.ExtendedLiquidPubkey)
 
 	return nil
 }
