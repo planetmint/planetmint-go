@@ -134,6 +134,7 @@ func keysCmdFunc(cmd *cobra.Command, _ []string) error {
 
 	cmd.Println("- address: " + keys.PlanetmintAddress)
 	cmd.Printf("  pubkey: [{\"@type\":\"PlanetmintExtended\",\"key\":\"%s\"},{\"@type\":\"PlanetmintHex\",\"key\":\"%s\"},{\"@type\":\"LiquidExtended\",\"key\":\"%s\"}]\n", keys.ExtendedPlanetmintPubkey, keys.RawPlanetmintPubkey, keys.ExtendedLiquidPubkey)
+	cmd.Println("  type: hardware")
 
 	return nil
 }
