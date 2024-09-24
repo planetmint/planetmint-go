@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/cosmos/go-bip39"
 	"github.com/planetmint/planetmint-go/lib/trustwallet"
 	"github.com/spf13/cobra"
 )
@@ -27,7 +28,7 @@ func initializeTrustWalletCmdFunc(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	// if no mnemonic is given create one otherwise try to recover from given mnemonic
+	// if no mnemonic is given create one
 	if len(args) == 0 {
 		fmt.Println("initializing Trust Wallet")
 		mnemonic, err := connector.CreateMnemonic()
@@ -35,21 +36,24 @@ func initializeTrustWalletCmdFunc(cmd *cobra.Command, args []string) error {
 			return err
 		}
 		fmt.Println(mnemonic)
-	} else {
-		fmt.Println("recovering Trust Wallet from mnemonic...")
-		words := strings.Split(args[0], ",")
-		if len(words) != 12 && len(words) != 24 {
-			return fmt.Errorf("expected length of mnemonic is 12 or 24, got: %d", len(words))
-		}
-		// TODO: check if provided words are valid
-		mnemonic := strings.Join(words, " ")
-		fmt.Println("Mnemonic: ", mnemonic) // TODO: remove before merging
-		response, err := connector.RecoverFromMnemonic(mnemonic)
-		if err != nil {
-			return err
-		}
-		fmt.Println(response)
+
+		return nil
 	}
+
+	fmt.Println("recovering Trust Wallet from mnemonic...")
+	words := strings.Split(args[0], ",")
+	if len(words) != 12 && len(words) != 24 {
+		return fmt.Errorf("expected length of mnemonic is 12 or 24, got: %d", len(words))
+	}
+	mnemonic := strings.Join(words, " ")
+	if !bip39.IsMnemonicValid(mnemonic) {
+		return fmt.Errorf("invalid mnemonic, please check provided words")
+	}
+	response, err := connector.RecoverFromMnemonic(mnemonic)
+	if err != nil {
+		return err
+	}
+	fmt.Println(response)
 
 	return nil
 }
