@@ -44,7 +44,7 @@ func (t *Connector) ValiseGet() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if len(response.Data) > 0 {
+	if len(response.Data) > 1 {
 		return response.Data[1], nil
 	}
 	return "", errors.New("no data returned")
@@ -55,7 +55,7 @@ func (t *Connector) CreateMnemonic() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if len(response.Data) > 0 {
+	if len(response.Data) > 1 {
 		return response.Data[1], nil
 	}
 	return "", errors.New("no data returned")
@@ -66,7 +66,7 @@ func (t *Connector) InjectPlanetminkeyToSE050(slot int) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	if len(response.Data) > 0 {
+	if len(response.Data) > 1 {
 		return response.Data[1] == "0", nil
 	}
 	return false, errors.New("no data returned")
@@ -77,7 +77,7 @@ func (t *Connector) RecoverFromMnemonic(mnemonic string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if len(response.Data) > 0 {
+	if len(response.Data) > 1 {
 		return response.Data[1], nil
 	}
 	return "", errors.New("no data returned")
@@ -108,7 +108,7 @@ func (t *Connector) GetSeedSE050() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if len(response.Data) > 0 {
+	if len(response.Data) > 1 {
 		return response.Data[1], nil
 	}
 	return "", errors.New("no data returned")
