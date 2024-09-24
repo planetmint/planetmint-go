@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -41,26 +43,30 @@ func initializeTrustWalletCmdFunc(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	// if no mnemonic is given create one
+	// create mnemonic if non is given
 	if len(args) == 0 {
-		fmt.Println("initializing Trust Wallet")
+		fmt.Println("Initializing Trust Wallet. This may take a few seconds...")
 		mnemonic, err := connector.CreateMnemonic()
 		if err != nil {
 			return err
 		}
-		fmt.Println(mnemonic)
+
+		fmt.Println("Created mnemonic:")
+		fmt.Println(mnemonic + "\n")
+		fmt.Println("IMPORTANT: Store your mnemonic securely in an offline location, such as a hardware wallet, encrypted USB, or paper stored in a safe, never online or on cloud storage!")
 
 		return nil
 	}
 
-	fmt.Println("recovering Trust Wallet from mnemonic...")
+	// recover from given mnemonic
+	fmt.Println("Recovering Trust Wallet from mnemonic...")
 	words := strings.Split(args[0], ",")
 	if len(words) != 12 && len(words) != 24 {
-		return fmt.Errorf("expected length of mnemonic is 12 or 24, got: %d", len(words))
+		return errors.New("expected length of mnemonic is 12 or 24, got: " + strconv.Itoa(len(words)))
 	}
 	mnemonic := strings.Join(words, " ")
 	if !bip39.IsMnemonicValid(mnemonic) {
-		return fmt.Errorf("invalid mnemonic, please check provided words")
+		return errors.New("invalid mnemonic, please check provided words")
 	}
 	response, err := connector.RecoverFromMnemonic(mnemonic)
 	if err != nil {
