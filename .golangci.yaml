@@ -141,3 +141,6 @@ issues:
     - path: monitor/.*\.go
       linters:
         - durationcheck
+    - path: cmd/planetmint-god/cmd/.*\.go
+      linters:
+        - forbidigo
