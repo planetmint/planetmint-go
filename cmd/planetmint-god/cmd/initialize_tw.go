@@ -4,26 +4,39 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/go-bip39"
 	"github.com/planetmint/planetmint-go/lib/trustwallet"
 	"github.com/spf13/cobra"
 )
 
+const (
+	flagSerialPort = "serial-port"
+)
+
 func InitializeTrustWalletCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "initialize-trust-wallet [mnemonic_word_1][,[mnemonic_word_2],...[mnemonic_word_12],...[mnemonic_word_24]]",
-		Short: "Initialize a trust wallet",
-		Long:  "TODO: add long description",
-		RunE:  initializeTrustWalletCmdFunc,
-		Args:  cobra.RangeArgs(0, 1),
+		Short: "Initialize a Trust Wallet",
+		Long: `Initialize a Trust Wallet with a mnemonic phrase (optional). If no mnemonic is provided then one is created for you. 
+Provided mnemonics must be 12 or 24 words long and adhere to bip39.`,
+		RunE: initializeTrustWalletCmdFunc,
+		Args: cobra.RangeArgs(0, 1),
 	}
+
+	cmd.Flags().String(flagSerialPort, "/dev/ttyACM0", "The serial port your Trust Wallet is connected to")
+	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd
 }
 
 func initializeTrustWalletCmdFunc(cmd *cobra.Command, args []string) error {
-	// TODO: read portName from config
-	connector, err := trustwallet.NewTrustWalletConnector("/dev/ttyACM0")
+	serialPort, err := cmd.Flags().GetString(flagSerialPort)
+	if err != nil {
+		return err
+	}
+
+	connector, err := trustwallet.NewTrustWalletConnector(serialPort)
 	if err != nil {
 		return err
 	}
