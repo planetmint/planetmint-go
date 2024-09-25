@@ -47,15 +47,14 @@ var (
 // DefaultConfig returns planetmint's default configuration.
 func DefaultConfig() *Config {
 	return &Config{
-		MqttDomain:       "testnet-mqtt.rddl.io",
-		MqttPort:         1886,
-		MqttUser:         "user",
-		MqttPassword:     "password",
-		ClaimHost:        "https://testnet-p2r.rddl.io",
-		MqttTLS:          true,
-		IssuerHost:       "https://testnet-issuer.rddl.io",
-		CertsPath:        "./certs/",
-		validatorAddress: "plmnt1w5dww335zhh98pzv783hqre355ck3u4w4hjxcx",
+		MqttDomain:   "testnet-mqtt.rddl.io",
+		MqttPort:     1886,
+		MqttUser:     "user",
+		MqttPassword: "password",
+		ClaimHost:    "https://testnet-p2r.rddl.io",
+		MqttTLS:      true,
+		IssuerHost:   "https://testnet-issuer.rddl.io",
+		CertsPath:    "./certs/",
 	}
 }
 

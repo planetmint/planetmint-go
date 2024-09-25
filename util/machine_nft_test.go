@@ -11,6 +11,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/golang/mock/gomock"
 	"github.com/planetmint/planetmint-go/clients"
+	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/testutil/keeper"
 	clientmocks "github.com/planetmint/planetmint-go/testutil/mocks"
 	"github.com/planetmint/planetmint-go/testutil/moduleobject"
@@ -50,6 +51,8 @@ func TestRegisterNFT(t *testing.T) {
 }
 
 func TestMachineNFTIssuance(t *testing.T) {
+	cfg := config.GetConfig()
+	cfg.SetValidatorAddress("plmnt10mq5nj8jhh27z7ejnz2ql3nh0qhzjnfvy50877")
 	ctrl := gomock.NewController(t)
 	elements.Client = &elementsmocks.MockClient{}
 	shamirMock := clientmocks.NewMockIShamirCoordinatorClient(ctrl)
