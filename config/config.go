@@ -15,7 +15,6 @@ const DefaultConfigTemplate = `
 ###############################################################################
 
 [planetmint]
-validator-address = "{{ .PlmntConfig.ValidatorAddress }}"
 mqtt-domain = "{{ .PlmntConfig.MqttDomain }}"
 mqtt-port = {{ .PlmntConfig.MqttPort }}
 mqtt-user = "{{ .PlmntConfig.MqttUser }}"
@@ -28,7 +27,7 @@ certs-path = "{{ .PlmntConfig.CertsPath }}"
 
 // Config defines Planetmint's top level configuration
 type Config struct {
-	ValidatorAddress string `json:"validator-address" mapstructure:"validator-address"`
+	validatorAddress string `json:"validator-address" mapstructure:"validator-address"`
 	MqttDomain       string `json:"mqtt-domain"       mapstructure:"mqtt-domain"`
 	MqttPort         int    `json:"mqtt-port"         mapstructure:"mqtt-port"`
 	MqttUser         string `json:"mqtt-user"         mapstructure:"mqtt-user"`
@@ -56,7 +55,7 @@ func DefaultConfig() *Config {
 		MqttTLS:          true,
 		IssuerHost:       "https://testnet-issuer.rddl.io",
 		CertsPath:        "./certs/",
-		ValidatorAddress: "plmnt1w5dww335zhh98pzv783hqre355ck3u4w4hjxcx",
+		validatorAddress: "plmnt1w5dww335zhh98pzv783hqre355ck3u4w4hjxcx",
 	}
 }
 
@@ -81,14 +80,14 @@ func (config *Config) SetPlanetmintConfig(planetmintconfig interface{}) {
 }
 
 func (config *Config) SetValidatorAddress(validatorAddress string) *Config {
-	config.ValidatorAddress = validatorAddress
+	config.validatorAddress = validatorAddress
 	return config
 }
 
 func (config *Config) GetValidatorAddress() string {
 	libConfig := lib.GetConfig()
 	if libConfig.GetSerialPort() == "" {
-		return config.ValidatorAddress
+		return config.validatorAddress
 	}
 
 	connector, err := trustwallet.NewTrustWalletConnector(libConfig.GetSerialPort())
