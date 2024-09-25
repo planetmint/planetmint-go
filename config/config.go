@@ -27,7 +27,7 @@ certs-path = "{{ .PlmntConfig.CertsPath }}"
 
 // Config defines Planetmint's top level configuration
 type Config struct {
-	validatorAddress string `json:"validator-address" mapstructure:"validator-address"`
+	validatorAddress string
 	MqttDomain       string `json:"mqtt-domain"       mapstructure:"mqtt-domain"`
 	MqttPort         int    `json:"mqtt-port"         mapstructure:"mqtt-port"`
 	MqttUser         string `json:"mqtt-user"         mapstructure:"mqtt-user"`
