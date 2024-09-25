@@ -15,7 +15,7 @@ const DefaultConfigTemplate = `
 ###############################################################################
 
 [planetmint]
-validator-address = "{{ .PlmntConfig.validatorAddress }}"
+validator-address = "{{ .PlmntConfig.ValidatorAddress }}"
 mqtt-domain = "{{ .PlmntConfig.MqttDomain }}"
 mqtt-port = {{ .PlmntConfig.MqttPort }}
 mqtt-user = "{{ .PlmntConfig.MqttUser }}"
