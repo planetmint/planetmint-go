@@ -28,6 +28,7 @@ certs-path = "{{ .PlmntConfig.CertsPath }}"
 
 // Config defines Planetmint's top level configuration
 type Config struct {
+	validatorAddress string `json:"validator-address" mapstructure:"validator-address"` //nolint:govet
 	MqttDomain       string `json:"mqtt-domain"       mapstructure:"mqtt-domain"`
 	MqttPort         int    `json:"mqtt-port"         mapstructure:"mqtt-port"`
 	MqttUser         string `json:"mqtt-user"         mapstructure:"mqtt-user"`
@@ -36,7 +37,6 @@ type Config struct {
 	MqttTLS          bool   `json:"mqtt-tls"          mapstructure:"mqtt-tls"`
 	IssuerHost       string `json:"issuer-host"       mapstructure:"issuer-host"`
 	CertsPath        string `json:"certs-path"        mapstructure:"certs-path"`
-	validatorAddress string `json:"validator-address"        mapstructure:"validator-address"`
 }
 
 // cosmos-sdk wide global singleton
