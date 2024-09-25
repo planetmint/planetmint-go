@@ -3,6 +3,10 @@ package config
 import (
 	"encoding/json"
 	"sync"
+
+	"github.com/planetmint/planetmint-go/lib"
+	"github.com/planetmint/planetmint-go/lib/trustwallet"
+	"github.com/rddl-network/go-utils/logger"
 )
 
 const DefaultConfigTemplate = `
@@ -11,7 +15,7 @@ const DefaultConfigTemplate = `
 ###############################################################################
 
 [planetmint]
-validator-address = "{{ .PlmntConfig.ValidatorAddress }}"
+validator-address = "{{ .PlmntConfig.validatorAddress }}"
 mqtt-domain = "{{ .PlmntConfig.MqttDomain }}"
 mqtt-port = {{ .PlmntConfig.MqttPort }}
 mqtt-user = "{{ .PlmntConfig.MqttUser }}"
@@ -24,7 +28,6 @@ certs-path = "{{ .PlmntConfig.CertsPath }}"
 
 // Config defines Planetmint's top level configuration
 type Config struct {
-	ValidatorAddress string `json:"validator-address" mapstructure:"validator-address"`
 	MqttDomain       string `json:"mqtt-domain"       mapstructure:"mqtt-domain"`
 	MqttPort         int    `json:"mqtt-port"         mapstructure:"mqtt-port"`
 	MqttUser         string `json:"mqtt-user"         mapstructure:"mqtt-user"`
@@ -33,6 +36,7 @@ type Config struct {
 	MqttTLS          bool   `json:"mqtt-tls"          mapstructure:"mqtt-tls"`
 	IssuerHost       string `json:"issuer-host"       mapstructure:"issuer-host"`
 	CertsPath        string `json:"certs-path"        mapstructure:"certs-path"`
+	validatorAddress string `json:"validator-address"        mapstructure:"validator-address"`
 }
 
 // cosmos-sdk wide global singleton
@@ -44,7 +48,6 @@ var (
 // DefaultConfig returns planetmint's default configuration.
 func DefaultConfig() *Config {
 	return &Config{
-		ValidatorAddress: "plmnt1w5dww335zhh98pzv783hqre355ck3u4w4hjxcx",
 		MqttDomain:       "testnet-mqtt.rddl.io",
 		MqttPort:         1886,
 		MqttUser:         "user",
@@ -53,6 +56,7 @@ func DefaultConfig() *Config {
 		MqttTLS:          true,
 		IssuerHost:       "https://testnet-issuer.rddl.io",
 		CertsPath:        "./certs/",
+		validatorAddress: "plmnt1w5dww335zhh98pzv783hqre355ck3u4w4hjxcx",
 	}
 }
 
@@ -74,4 +78,30 @@ func (config *Config) SetPlanetmintConfig(planetmintconfig interface{}) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func (config *Config) SetValidatorAddress(validatorAddress string) *Config {
+	config.validatorAddress = validatorAddress
+	return config
+}
+
+func (config *Config) GetValidatorAddress() string {
+	libConfig := lib.GetConfig()
+	if libConfig.GetSerialPort() == "" {
+		return config.validatorAddress
+	}
+
+	connector, err := trustwallet.NewTrustWalletConnector(libConfig.GetSerialPort())
+	if err != nil {
+		logger.GetLogger(logger.ERROR).Error("msg", err.Error())
+		return ""
+	}
+
+	keys, err := connector.GetPlanetmintKeys()
+	if err != nil {
+		logger.GetLogger(logger.ERROR).Error("msg", err.Error())
+		return ""
+	}
+
+	return keys.PlanetmintAddress
 }

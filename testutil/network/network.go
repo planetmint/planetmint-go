@@ -596,7 +596,7 @@ func New(l Logger, baseDir string, cfg Config) (*Network, error) {
 		l.Log("started validator", idx)
 		if idx == 0 {
 			conf := config.GetConfig()
-			conf.ValidatorAddress = network.Validators[0].Address.String()
+			conf.SetValidatorAddress(network.Validators[0].Address.String())
 			// set missing validator client context values for sending txs
 			var output bytes.Buffer
 			network.Validators[0].ClientCtx.BroadcastMode = "sync"

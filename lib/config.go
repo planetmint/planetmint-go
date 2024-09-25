@@ -125,3 +125,7 @@ func (config *Config) SetSerialPort(port string) *Config {
 	config.serialPort = port
 	return config
 }
+
+func (config *Config) GetSerialPort() string {
+	return config.serialPort
+}
