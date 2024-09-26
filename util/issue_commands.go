@@ -87,9 +87,9 @@ func SendLiquidAssetRegistration(goCtx context.Context, notarizedAsset machinety
 	buildSignBroadcastTx(goCtx, loggingContext, sendingValidatorAddress, msg)
 }
 
-func SendInitPoP(goCtx context.Context, proposer string, challenger string, challengee string, blockHeight int64) {
+func SendInitPoP(goCtx context.Context, challenger string, challengee string, blockHeight int64) {
 	sendingValidatorAddress := config.GetConfig().ValidatorAddress
-	msg := daotypes.NewMsgInitPop(sendingValidatorAddress, proposer, challenger, challengee, blockHeight)
+	msg := daotypes.NewMsgInitPop(sendingValidatorAddress, sendingValidatorAddress, challenger, challengee, blockHeight)
 	loggingContext := "PoP"
 	buildSignBroadcastTx(goCtx, loggingContext, sendingValidatorAddress, msg)
 }
