@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"os"
 	"sync"
 
 	"github.com/planetmint/planetmint-go/lib"
@@ -25,17 +26,18 @@ issuer-host = "{{ .PlmntConfig.IssuerHost }}"
 certs-path = "{{ .PlmntConfig.CertsPath }}"
 `
 
+const ValAddr = "VALIDATOR_ADDRESS"
+
 // Config defines Planetmint's top level configuration
 type Config struct {
-	MqttDomain       string `json:"mqtt-domain"   mapstructure:"mqtt-domain"`
-	MqttPort         int    `json:"mqtt-port"     mapstructure:"mqtt-port"`
-	MqttUser         string `json:"mqtt-user"     mapstructure:"mqtt-user"`
-	MqttPassword     string `json:"mqtt-password" mapstructure:"mqtt-password"`
-	ClaimHost        string `json:"claim-host"    mapstructure:"claim-host"`
-	MqttTLS          bool   `json:"mqtt-tls"      mapstructure:"mqtt-tls"`
-	IssuerHost       string `json:"issuer-host"   mapstructure:"issuer-host"`
-	CertsPath        string `json:"certs-path"    mapstructure:"certs-path"`
-	validatorAddress string
+	MqttDomain   string `json:"mqtt-domain"   mapstructure:"mqtt-domain"`
+	MqttPort     int    `json:"mqtt-port"     mapstructure:"mqtt-port"`
+	MqttUser     string `json:"mqtt-user"     mapstructure:"mqtt-user"`
+	MqttPassword string `json:"mqtt-password" mapstructure:"mqtt-password"`
+	ClaimHost    string `json:"claim-host"    mapstructure:"claim-host"`
+	MqttTLS      bool   `json:"mqtt-tls"      mapstructure:"mqtt-tls"`
+	IssuerHost   string `json:"issuer-host"   mapstructure:"issuer-host"`
+	CertsPath    string `json:"certs-path"    mapstructure:"certs-path"`
 }
 
 // cosmos-sdk wide global singleton
@@ -78,17 +80,12 @@ func (config *Config) SetPlanetmintConfig(planetmintconfig interface{}) {
 	}
 }
 
-func (config *Config) SetValidatorAddress(validatorAddress string) *Config {
-	config.validatorAddress = validatorAddress
-	return config
-}
-
 func (config *Config) GetValidatorAddress() string {
-	libConfig := lib.GetConfig()
-	if libConfig.GetSerialPort() == "" {
-		return config.validatorAddress
+	if os.Getenv(ValAddr) != "" {
+		return os.Getenv(ValAddr)
 	}
 
+	libConfig := lib.GetConfig()
 	connector, err := trustwallet.NewTrustWalletConnector(libConfig.GetSerialPort())
 	if err != nil {
 		logger.GetLogger(logger.ERROR).Error("msg", err.Error())

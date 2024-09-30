@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"math/rand"
+	"os"
 	"strconv"
 	"sync"
 	"testing"
@@ -51,8 +52,7 @@ func TestRegisterNFT(t *testing.T) {
 }
 
 func TestMachineNFTIssuance(t *testing.T) {
-	cfg := config.GetConfig()
-	cfg.SetValidatorAddress("plmnt10mq5nj8jhh27z7ejnz2ql3nh0qhzjnfvy50877")
+	os.Setenv(config.ValAddr, "plmnt10mq5nj8jhh27z7ejnz2ql3nh0qhzjnfvy50877")
 	ctrl := gomock.NewController(t)
 	elements.Client = &elementsmocks.MockClient{}
 	shamirMock := clientmocks.NewMockIShamirCoordinatorClient(ctrl)
