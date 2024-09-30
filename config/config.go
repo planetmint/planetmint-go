@@ -82,12 +82,26 @@ func (config *Config) SetPlanetmintConfig(planetmintconfig interface{}) {
 }
 
 func (config *Config) GetValidatorAddress() string {
-	// TODO: to be reomved see: https://github.com/planetmint/planetmint-go/issues/454
 	if os.Getenv(ValAddr) != "" {
 		return os.Getenv(ValAddr)
 	}
 
 	libConfig := lib.GetConfig()
+	if libConfig.GetSerialPort() == "" {
+		defaultRecord, err := libConfig.GetDefaultValidatorRecord()
+		if err != nil {
+			logger.GetLogger(logger.ERROR).Error("msg", err.Error())
+			return ""
+		}
+		addr, err := defaultRecord.GetAddress()
+		if err != nil {
+			logger.GetLogger(logger.ERROR).Error("msg", err.Error())
+			return ""
+		}
+
+		return addr.String()
+	}
+
 	connector, err := trustwallet.NewTrustWalletConnector(libConfig.GetSerialPort())
 	if err != nil {
 		logger.GetLogger(logger.ERROR).Error("msg", err.Error())
