@@ -26,6 +26,7 @@ issuer-host = "{{ .PlmntConfig.IssuerHost }}"
 certs-path = "{{ .PlmntConfig.CertsPath }}"
 `
 
+// ValAddr to be reomved see: https://github.com/planetmint/planetmint-go/issues/454
 const ValAddr = "VALIDATOR_ADDRESS"
 
 // Config defines Planetmint's top level configuration
@@ -81,6 +82,7 @@ func (config *Config) SetPlanetmintConfig(planetmintconfig interface{}) {
 }
 
 func (config *Config) GetValidatorAddress() string {
+	// TODO: to be reomved see: https://github.com/planetmint/planetmint-go/issues/454
 	if os.Getenv(ValAddr) != "" {
 		return os.Getenv(ValAddr)
 	}
