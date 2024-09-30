@@ -132,8 +132,12 @@ func (config *Config) GetSerialPort() string {
 	return config.serialPort
 }
 
+func (config *Config) getLibKeyring() (keyring.Keyring, error) {
+	return keyring.New("lib", keyring.BackendTest, config.rootDir, os.Stdin, config.encodingConfig.Marshaler, []keyring.Option{}...)
+}
+
 func (config *Config) GetDefaultValidatorRecord() (*keyring.Record, error) {
-	keyring, err := keyring.New("lib", keyring.BackendTest, config.rootDir, os.Stdin, config.encodingConfig.Marshaler, []keyring.Option{}...)
+	keyring, err := config.getLibKeyring()
 	if err != nil {
 		return nil, err
 	}

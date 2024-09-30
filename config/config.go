@@ -82,11 +82,14 @@ func (config *Config) SetPlanetmintConfig(planetmintconfig interface{}) {
 }
 
 func (config *Config) GetValidatorAddress() string {
+	// Case: testing
 	if os.Getenv(ValAddr) != "" {
 		return os.Getenv(ValAddr)
 	}
 
 	libConfig := lib.GetConfig()
+
+	// Case: No Trust Wallet connected
 	if libConfig.GetSerialPort() == "" {
 		defaultRecord, err := libConfig.GetDefaultValidatorRecord()
 		if err != nil {
@@ -102,6 +105,7 @@ func (config *Config) GetValidatorAddress() string {
 		return addr.String()
 	}
 
+	// Case: Trust Wallet connected
 	connector, err := trustwallet.NewTrustWalletConnector(libConfig.GetSerialPort())
 	if err != nil {
 		logger.GetLogger(logger.ERROR).Error("msg", err.Error())
