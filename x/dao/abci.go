@@ -35,7 +35,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 
 		// Init PoP - independent from challenger and challengee
 		// The keeper will send the MQTT initializing message to challenger && challengee
-		util.SendInitPoP(ctx, hexProposerAddress, challenger, challengee, currentBlockHeight)
+		util.SendInitPoP(ctx, challenger, challengee, currentBlockHeight)
 	}
 
 	if isReissuanceHeight(ctx, k, currentBlockHeight) {

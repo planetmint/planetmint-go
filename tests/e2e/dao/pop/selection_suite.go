@@ -213,6 +213,14 @@ func (s *SelectionE2ETestSuite) VerifyTokens(token string) {
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), token)
 	assert.Equal(s.T(), "amount: \"11986301368\"\ndenom: "+token+"\n", out.String()) // 2 * 5993150684 = 11986301368
+
+	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
+		val.Address.String(),
+		fmt.Sprintf(s.errormsg, bank.FlagDenom, token),
+	})
+	s.Require().NoError(err)
+	assert.Contains(s.T(), out.String(), token)
+	assert.Equal(s.T(), "amount: \"300000000\"\ndenom: "+token+"\n", out.String()) // 3 * 300000000
 }
 
 func (s *SelectionE2ETestSuite) TestTokenDistribution1() {

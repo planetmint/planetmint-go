@@ -56,7 +56,7 @@ func (k msgServer) resolveStagedClaims(ctx sdk.Context, start int64, end int64) 
 		if challenge.GetSuccess() {
 			popParticipants[challenge.Challengee] += challengeeAmt
 		}
-		initiatorAddr, err := sdk.AccAddressFromHexUnsafe(challenge.Initiator)
+		initiatorAddr, err := sdk.AccAddressFromBech32(challenge.Initiator)
 		if err != nil {
 			util.GetAppLogger().Error(ctx, "error converting initiator address")
 		}
