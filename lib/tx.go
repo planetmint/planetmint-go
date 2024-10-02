@@ -96,7 +96,7 @@ func getClientContext(fromAddress sdk.AccAddress) (clientCtx client.Context, err
 	codec := encodingConfig.Marshaler
 	keyringOptions := []keyring.Option{}
 
-	keyring, err := keyring.New("lib", keyring.BackendTest, rootDir, input, codec, keyringOptions...)
+	keyring, err := GetConfig().getLibKeyring()
 	if err != nil {
 		return
 	}

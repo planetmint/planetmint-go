@@ -1,9 +1,11 @@
 package lib
 
 import (
+	"os"
 	"sync"
 
 	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/planetmint/planetmint-go/lib/params"
 )
@@ -124,4 +126,26 @@ func (config *Config) SetSerialPort(port string) *Config {
 	defer changeLock.Unlock()
 	config.serialPort = port
 	return config
+}
+
+func (config *Config) GetSerialPort() string {
+	return config.serialPort
+}
+
+func (config *Config) getLibKeyring() (keyring.Keyring, error) {
+	return keyring.New("lib", keyring.BackendTest, config.rootDir, os.Stdin, config.encodingConfig.Marshaler, []keyring.Option{}...)
+}
+
+func (config *Config) GetDefaultValidatorRecord() (*keyring.Record, error) {
+	keyring, err := config.getLibKeyring()
+	if err != nil {
+		return nil, err
+	}
+
+	records, err := keyring.List()
+	if err != nil {
+		return nil, err
+	}
+
+	return records[0], nil
 }

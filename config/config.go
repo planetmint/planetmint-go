@@ -2,7 +2,12 @@ package config
 
 import (
 	"encoding/json"
+	"os"
 	"sync"
+
+	"github.com/planetmint/planetmint-go/lib"
+	"github.com/planetmint/planetmint-go/lib/trustwallet"
+	"github.com/rddl-network/go-utils/logger"
 )
 
 const DefaultConfigTemplate = `
@@ -11,7 +16,6 @@ const DefaultConfigTemplate = `
 ###############################################################################
 
 [planetmint]
-validator-address = "{{ .PlmntConfig.ValidatorAddress }}"
 mqtt-domain = "{{ .PlmntConfig.MqttDomain }}"
 mqtt-port = {{ .PlmntConfig.MqttPort }}
 mqtt-user = "{{ .PlmntConfig.MqttUser }}"
@@ -22,17 +26,19 @@ issuer-host = "{{ .PlmntConfig.IssuerHost }}"
 certs-path = "{{ .PlmntConfig.CertsPath }}"
 `
 
+// ValAddr to be reomved see: https://github.com/planetmint/planetmint-go/issues/454
+const ValAddr = "VALIDATOR_ADDRESS"
+
 // Config defines Planetmint's top level configuration
 type Config struct {
-	ValidatorAddress string `json:"validator-address" mapstructure:"validator-address"`
-	MqttDomain       string `json:"mqtt-domain"       mapstructure:"mqtt-domain"`
-	MqttPort         int    `json:"mqtt-port"         mapstructure:"mqtt-port"`
-	MqttUser         string `json:"mqtt-user"         mapstructure:"mqtt-user"`
-	MqttPassword     string `json:"mqtt-password"     mapstructure:"mqtt-password"`
-	ClaimHost        string `json:"claim-host"        mapstructure:"claim-host"`
-	MqttTLS          bool   `json:"mqtt-tls"          mapstructure:"mqtt-tls"`
-	IssuerHost       string `json:"issuer-host"       mapstructure:"issuer-host"`
-	CertsPath        string `json:"certs-path"        mapstructure:"certs-path"`
+	MqttDomain   string `json:"mqtt-domain"   mapstructure:"mqtt-domain"`
+	MqttPort     int    `json:"mqtt-port"     mapstructure:"mqtt-port"`
+	MqttUser     string `json:"mqtt-user"     mapstructure:"mqtt-user"`
+	MqttPassword string `json:"mqtt-password" mapstructure:"mqtt-password"`
+	ClaimHost    string `json:"claim-host"    mapstructure:"claim-host"`
+	MqttTLS      bool   `json:"mqtt-tls"      mapstructure:"mqtt-tls"`
+	IssuerHost   string `json:"issuer-host"   mapstructure:"issuer-host"`
+	CertsPath    string `json:"certs-path"    mapstructure:"certs-path"`
 }
 
 // cosmos-sdk wide global singleton
@@ -44,15 +50,14 @@ var (
 // DefaultConfig returns planetmint's default configuration.
 func DefaultConfig() *Config {
 	return &Config{
-		ValidatorAddress: "plmnt1w5dww335zhh98pzv783hqre355ck3u4w4hjxcx",
-		MqttDomain:       "testnet-mqtt.rddl.io",
-		MqttPort:         1886,
-		MqttUser:         "user",
-		MqttPassword:     "password",
-		ClaimHost:        "https://testnet-p2r.rddl.io",
-		MqttTLS:          true,
-		IssuerHost:       "https://testnet-issuer.rddl.io",
-		CertsPath:        "./certs/",
+		MqttDomain:   "testnet-mqtt.rddl.io",
+		MqttPort:     1886,
+		MqttUser:     "user",
+		MqttPassword: "password",
+		ClaimHost:    "https://testnet-p2r.rddl.io",
+		MqttTLS:      true,
+		IssuerHost:   "https://testnet-issuer.rddl.io",
+		CertsPath:    "./certs/",
 	}
 }
 
@@ -74,4 +79,44 @@ func (config *Config) SetPlanetmintConfig(planetmintconfig interface{}) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func (config *Config) GetValidatorAddress() string {
+	// Case: testing
+	if os.Getenv(ValAddr) != "" {
+		return os.Getenv(ValAddr)
+	}
+
+	libConfig := lib.GetConfig()
+
+	// Case: No Trust Wallet connected
+	if libConfig.GetSerialPort() == "" {
+		defaultRecord, err := libConfig.GetDefaultValidatorRecord()
+		if err != nil {
+			logger.GetLogger(logger.ERROR).Error("msg", err.Error())
+			return ""
+		}
+		addr, err := defaultRecord.GetAddress()
+		if err != nil {
+			logger.GetLogger(logger.ERROR).Error("msg", err.Error())
+			return ""
+		}
+
+		return addr.String()
+	}
+
+	// Case: Trust Wallet connected
+	connector, err := trustwallet.NewTrustWalletConnector(libConfig.GetSerialPort())
+	if err != nil {
+		logger.GetLogger(logger.ERROR).Error("msg", err.Error())
+		return ""
+	}
+
+	keys, err := connector.GetPlanetmintKeys()
+	if err != nil {
+		logger.GetLogger(logger.ERROR).Error("msg", err.Error())
+		return ""
+	}
+
+	return keys.PlanetmintAddress
 }

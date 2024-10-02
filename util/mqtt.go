@@ -49,7 +49,7 @@ func LazyLoadMQTTClient() {
 	}
 
 	opts := mqtt.NewClientOptions().AddBroker(uri)
-	opts.SetClientID(conf.ValidatorAddress)
+	opts.SetClientID(conf.GetValidatorAddress())
 	opts.SetUsername(conf.MqttUser)
 	opts.SetPassword(conf.MqttPassword)
 	if conf.MqttTLS {
