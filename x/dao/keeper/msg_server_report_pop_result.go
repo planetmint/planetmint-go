@@ -44,7 +44,7 @@ func (k msgServer) ReportPopResult(goCtx context.Context, msg *types.MsgReportPo
 		return nil, err
 	}
 
-	_, err = sdk.AccAddressFromHexUnsafe(msg.Challenge.GetInitiator())
+	_, err = sdk.AccAddressFromBech32(msg.Challenge.GetInitiator())
 	if err != nil {
 		util.GetAppLogger().Error(ctx, "error converting initiator address")
 		return nil, errorsmod.Wrap(types.ErrInvalidPoPInitiator, "PoP initiator not hex encoded")
@@ -102,7 +102,7 @@ func (k msgServer) handlePoP(ctx sdk.Context, challenge types.Challenge) (err er
 		return
 	}
 
-	initiatorAddr, _ := sdk.AccAddressFromHexUnsafe(challenge.Initiator)
+	initiatorAddr, _ := sdk.AccAddressFromBech32(challenge.Initiator)
 	err = k.sendRewards(ctx, initiatorAddr.String(), k.GetValidatorPoPReward(ctx))
 	if err != nil {
 		return

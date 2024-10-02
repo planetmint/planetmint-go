@@ -2,7 +2,6 @@ package keeper_test
 
 import (
 	"context"
-	"encoding/hex"
 	"fmt"
 	"testing"
 
@@ -29,8 +28,7 @@ func TestMsgServer(t *testing.T) {
 }
 
 func TestMsgServerReportPoPResult(t *testing.T) {
-	initiator := sample.Secp256k1AccAddress()
-	initiatorHex := hex.EncodeToString(initiator.Bytes())
+	initiator := sample.Secp256k1AccAddress().String()
 	challenger := sample.Secp256k1AccAddress()
 	challengee := sample.Secp256k1AccAddress()
 	errInvalidPopData := "Invalid pop data"
@@ -45,7 +43,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
-					Initiator:  initiatorHex,
+					Initiator:  initiator,
 					Challenger: challenger.String(),
 					Challengee: challengee.String(),
 					Height:     1,
@@ -60,7 +58,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
-					Initiator:  initiatorHex,
+					Initiator:  initiator,
 					Challenger: challenger.String(),
 					Challengee: challengee.String(),
 					Height:     2,
@@ -88,7 +86,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
-					Initiator:  initiatorHex,
+					Initiator:  initiator,
 					Challenger: challenger.String(),
 					Challengee: challengee.String(),
 					Height:     4,
@@ -103,7 +101,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
-					Initiator:  initiatorHex,
+					Initiator:  initiator,
 					Challenger: challenger.String(),
 					Challengee: challengee.String(),
 					Height:     5,
@@ -118,7 +116,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
-					Initiator:  initiatorHex,
+					Initiator:  initiator,
 					Challenger: challenger.String(),
 					Challengee: challengee.String(),
 					Height:     6,
@@ -129,29 +127,14 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			"PoP report data does not match challenge: invalid challenge",
 		},
 		{
-			"Initiator not hex encoded",
-			types.MsgReportPopResult{
-				Creator: challenger.String(),
-				Challenge: &types.Challenge{
-					Initiator:  initiator.String(),
-					Challenger: challenger.String(),
-					Challengee: challengee.String(),
-					Height:     7,
-					Success:    true,
-					Finished:   true,
-				},
-			},
-			"PoP initiator not hex encoded: invalid PoP initiator",
-		},
-		{
 			"Non-Existing PoP",
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
-					Initiator:  initiatorHex,
+					Initiator:  initiator,
 					Challenger: challenger.String(),
 					Challengee: challengee.String(),
-					Height:     8,
+					Height:     7,
 					Success:    true,
 					Finished:   true,
 				},
@@ -171,7 +154,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 	// adjust challenge 4 to satisfy the test case
 	testCases[3].msg.Challenge.Challengee = testCases[3].msg.Challenge.Challenger
 	testCases[4].msg.Challenge.Challenger = testCases[4].msg.Challenge.Challengee
-	testCases[5].msg.Challenge.Initiator = hex.EncodeToString(challenger.Bytes())
+	testCases[5].msg.Challenge.Initiator = challenger.String()
 
 	for _, tc := range testCases {
 		tc := tc
