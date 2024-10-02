@@ -1,6 +1,7 @@
 package monitor_test
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -15,6 +16,7 @@ import (
 func init() {
 	// Use MQTT mock client
 	monitor.MonitorMQTTClient = &mocks.MockMQTTClient{}
+	os.Setenv(config.ValAddr, "plmnt10mq5nj8jhh27z7ejnz2ql3nh0qhzjnfvy50877")
 }
 
 const (
