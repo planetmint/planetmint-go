@@ -256,7 +256,7 @@ func IsLegitMachineAddress(address string) (active bool, err error) {
 
 	// Check the status code
 	if resp.StatusCode != http.StatusOK {
-		log.Print("[app] [Monitor] Error: unexpected status code: " + string(body))
+		log.Print("[app] [Monitor] unexpected status code: " + string(body))
 		return
 	}
 
