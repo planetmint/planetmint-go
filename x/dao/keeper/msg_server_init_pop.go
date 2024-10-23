@@ -8,10 +8,6 @@ import (
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
-var (
-	initPopTag = "init pop tag: "
-)
-
 func (k msgServer) InitPop(goCtx context.Context, msg *types.MsgInitPop) (*types.MsgInitPopResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
