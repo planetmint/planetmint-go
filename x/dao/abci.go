@@ -12,7 +12,7 @@ import (
 )
 
 func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) {
-	proposerAddress := req.Header.GetProposerAddress()
+	proposerAddress := ctx.BlockHeader().ProposerAddress
 
 	// Check if node is block proposer
 	// take the following actions only once, that's why we filter for the Block Proposer
