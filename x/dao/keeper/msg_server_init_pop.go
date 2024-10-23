@@ -4,7 +4,6 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/planetmint/planetmint-go/errormsg"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
@@ -27,12 +26,7 @@ func (k msgServer) InitPop(goCtx context.Context, msg *types.MsgInitPop) (*types
 	amount := k.GetValidatorPoPReward(ctx)
 	k.StoreChallangeInitiatorReward(ctx, msg.GetHeight(), amount)
 
-	validatorIdentity, err := util.GetValidatorCometBFTIdentity(ctx, k.RootDir)
-	if err != nil {
-		util.GetAppLogger().Error(ctx, initPopTag+errormsg.CouldNotGetValidatorIdentity+": "+err.Error())
-		return nil, err
-	}
-	if msg.Initiator == validatorIdentity {
+	if util.IsValidatorBlockProposer(ctx, k.RootDir) {
 		go util.SendMqttPopInitMessagesToServer(ctx, challenge)
 	}
 

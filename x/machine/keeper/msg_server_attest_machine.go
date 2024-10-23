@@ -50,7 +50,7 @@ func (k msgServer) AttestMachine(goCtx context.Context, msg *types.MsgAttestMach
 		return nil, types.ErrMachineTypeUndefined
 	}
 	params := k.GetParams(ctx)
-	if util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress, k.rootDir) {
+	if util.IsValidatorBlockProposer(ctx, k.rootDir) {
 		util.GetAppLogger().Info(ctx, "Issuing Machine NFT: "+msg.Machine.String())
 		scheme := params.AssetRegistryScheme
 		domain := params.AssetRegistryDomain
