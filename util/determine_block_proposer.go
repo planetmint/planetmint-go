@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/planetmint/planetmint-go/errormsg"
+
 	cometcfg "github.com/cometbft/cometbft/config"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -48,12 +50,13 @@ func GetValidatorCometBFTIdentity(ctx sdk.Context, rootDir string) (validatorIde
 	return
 }
 
-func IsValidatorBlockProposer(ctx sdk.Context, proposerAddress []byte, rootDir string) (result bool) {
+func IsValidatorBlockProposer(ctx sdk.Context, rootDir string) (result bool) {
 	validatorIdentity, err := GetValidatorCometBFTIdentity(ctx, rootDir)
 	if err != nil {
+		GetAppLogger().Error(ctx, errormsg.CouldNotGetValidatorIdentity+": "+err.Error())
 		return
 	}
-	hexProposerAddress := hex.EncodeToString(proposerAddress)
+	hexProposerAddress := hex.EncodeToString(ctx.BlockHeader().ProposerAddress)
 	result = hexProposerAddress == validatorIdentity
 	return
 }

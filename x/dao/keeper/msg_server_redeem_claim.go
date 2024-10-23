@@ -39,7 +39,7 @@ func (k msgServer) CreateRedeemClaim(goCtx context.Context, msg *types.MsgCreate
 		redeemClaim,
 	)
 
-	if util.IsValidatorBlockProposer(ctx, ctx.BlockHeader().ProposerAddress, k.RootDir) {
+	if util.IsValidatorBlockProposer(ctx, k.RootDir) {
 		go postClaimToService(goCtx, msg.GetBeneficiary(), burnCoins.Amount.Uint64(), id)
 	}
 
