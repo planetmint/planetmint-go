@@ -7,6 +7,16 @@ import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
+var (
+	callLog  []Call
+	logMutex sync.Mutex
+)
+
+type Call struct {
+	FuncName string
+	Params   []interface{}
+}
+
 // MockMQTTClient is the mock mqtt client
 type MockMQTTClient struct {
 	ConnectFunc          func() mqtt.Token
@@ -100,6 +110,7 @@ func GetUnsubscribeFunc(_ ...string) mqtt.Token {
 
 // Connect is the mock client's `Disconnect` func
 func (m *MockMQTTClient) Connect() mqtt.Token {
+	m.logCall("Connect")
 	m.connectedMutex.Lock()
 	m.connected = true
 	m.connectedMutex.Unlock()
@@ -108,23 +119,28 @@ func (m *MockMQTTClient) Connect() mqtt.Token {
 
 // Disconnect is the mock client's `Disconnect` func
 func (m *MockMQTTClient) Disconnect(quiesce uint) {
+	m.logCall("Disconnect")
 	GetDisconnectFunc(quiesce)
 }
 
 // Publish is the mock client's `Publish` func
 func (m *MockMQTTClient) Publish(topic string, qos byte, retained bool, payload interface{}) mqtt.Token {
+	m.logCall("Publish", topic, qos, retained, payload)
 	return GetPublishFunc(topic, qos, retained, payload)
 }
 
 func (m *MockMQTTClient) Subscribe(topic string, qos byte, callback mqtt.MessageHandler) mqtt.Token {
+	m.logCall("Subscribe", topic, qos, callback)
 	return GetSubscribeFunc(topic, qos, callback)
 }
 
 func (m *MockMQTTClient) Unsubscribe(topics ...string) mqtt.Token {
+	m.logCall("Unsubscribe", topics)
 	return GetUnsubscribeFunc(topics...)
 }
 
 func (m *MockMQTTClient) IsConnected() bool {
+	m.logCall("IsConnected")
 	m.connectedMutex.Lock()
 	connected := m.connected
 	m.connectedMutex.Unlock()
@@ -132,8 +148,21 @@ func (m *MockMQTTClient) IsConnected() bool {
 }
 
 func (m *MockMQTTClient) IsConnectionOpen() bool {
+	m.logCall("IsConnectedOpen")
 	m.connectedMutex.Lock()
 	connected := m.connected
 	m.connectedMutex.Unlock()
 	return connected
+}
+
+func GetCallLog() []Call {
+	logMutex.Lock()
+	defer logMutex.Unlock()
+	return callLog
+}
+
+func (m *MockMQTTClient) logCall(funcName string, params ...interface{}) {
+	logMutex.Lock()
+	defer logMutex.Unlock()
+	callLog = append(callLog, Call{FuncName: funcName, Params: params})
 }
