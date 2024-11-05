@@ -6,6 +6,7 @@ import (
 	"log"
 	"math"
 	"os"
+	"regexp"
 	"strconv"
 	"time"
 
@@ -19,6 +20,7 @@ import (
 	e2etestutil "github.com/planetmint/planetmint-go/testutil/e2e"
 	"github.com/planetmint/planetmint-go/testutil/network"
 	"github.com/planetmint/planetmint-go/testutil/sample"
+	"github.com/planetmint/planetmint-go/util/mocks"
 	daocli "github.com/planetmint/planetmint-go/x/dao/client/cli"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
 	"github.com/stretchr/testify/assert"
@@ -323,6 +325,28 @@ func (s *SelectionE2ETestSuite) TestTokenRedeemClaim() {
 	qOut, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdRedeemClaimByLiquidTxHash(), []string{"0000000000000000000000000000000000000000000000000000000000000000"})
 	s.Require().NoError(err)
 	assert.Equal(s.T(), "redeemClaim:\n  amount: \"5993150682\"\n  beneficiary: liquidAddress\n  confirmed: true\n  creator: plmnt1kp93kns6hs2066d8qw0uz84fw3vlthewt2ck6p\n  id: \"0\"\n  liquidTxHash: \"0000000000000000000000000000000000000000000000000000000000000000\"\n", qOut.String())
+
+	// Make sure "Publish" has been called with PoPInit cmnd
+	calls := mocks.GetCallLog()
+
+	var popInitCalls []mocks.Call
+	regex := regexp.MustCompile(`cmnd\/[a-zA-Z0-9]{15,50}\/PoPInit`)
+	for _, call := range calls {
+		if call.FuncName != "Publish" {
+			continue
+		}
+
+		cmnd, ok := call.Params[0].(string)
+		if !ok {
+			assert.True(s.T(), ok) // fails test case if !ok
+			continue
+		}
+
+		if regex.MatchString(cmnd) {
+			popInitCalls = append(popInitCalls, call)
+		}
+	}
+	assert.Greater(s.T(), len(popInitCalls), 0)
 }
 
 func (s *SelectionE2ETestSuite) createValAccount(cfg network.Config) (address sdk.AccAddress, err error) {
