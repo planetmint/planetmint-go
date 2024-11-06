@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"sort"
 	"strconv"
 
 	errorsmod "cosmossdk.io/errors"
@@ -26,6 +27,10 @@ func (k msgServer) DistributionResult(goCtx context.Context, msg *types.MsgDistr
 	distribution.EarlyInvAddr = msg.EarlyInvestorTxID
 	distribution.StrategicTxID = msg.StrategicTxID
 
+	if err := k.clearUnresolvedClaims(ctx, distribution.FirstPop); err != nil {
+		util.GetAppLogger().Error(ctx, "error while clearing unresolved claims for heights %d-%d: %v", distribution.FirstPop, distribution.LastPop, err)
+	}
+
 	err := k.resolveStagedClaims(ctx, distribution.FirstPop, distribution.LastPop)
 	if err != nil {
 		util.GetAppLogger().Error(ctx, "%s for provided PoP heights: %d %d", types.ErrResolvingStagedClaims.Error(), distribution.FirstPop, distribution.LastPop)
@@ -37,14 +42,48 @@ func (k msgServer) DistributionResult(goCtx context.Context, msg *types.MsgDistr
 	return &types.MsgDistributionResultResponse{}, nil
 }
 
-func (k msgServer) resolveStagedClaims(ctx sdk.Context, start int64, end int64) (err error) {
-	// lookup all challenges since the last distribution
-	challenges, err := k.GetChallengeRange(ctx, start, end)
+// clearUnresolvedClaims checks for all Challenge participants starting from a given height.
+// An accounts stagedDenom amount should always be 0 except for claims that have not yet been reissued.
+// Calculate the difference for a set of participants and clear out all past unresolved staged claims.
+func (k msgServer) clearUnresolvedClaims(ctx sdk.Context, start int64) (err error) {
+	// calculate total amounts for current and future claims
+	currentAmounts, err := k.getClaims(ctx, start, ctx.BlockHeight())
 	if err != nil {
 		return err
 	}
 
-	popParticipants := make(map[string]uint64)
+	totalAmounts := make(map[string]uint64)
+	for participantAddress := range currentAmounts {
+		stagedBalance := k.bankKeeper.GetBalance(ctx, sdk.MustAccAddressFromBech32(participantAddress), k.GetParams(ctx).StagedDenom)
+		totalAmounts[participantAddress] = stagedBalance.Amount.Uint64()
+	}
+
+	// calculate difference to account balance
+	for participantAddress := range totalAmounts {
+		totalAmounts[participantAddress] -= currentAmounts[participantAddress]
+	}
+
+	return k.convertOrderedClaim(ctx, totalAmounts)
+}
+
+// resolveStagedClaims converts staged claims to claims in an ordered fashion for a given range
+func (k msgServer) resolveStagedClaims(ctx sdk.Context, start int64, end int64) (err error) {
+	popParticipantAmounts, err := k.getClaims(ctx, start, end)
+	if err != nil {
+		return err
+	}
+
+	return k.convertOrderedClaim(ctx, popParticipantAmounts)
+}
+
+func (k msgServer) getClaims(ctx sdk.Context, start int64, end int64) (claims map[string]uint64, err error) {
+	// lookup all challenges for a given range
+	challenges, err := k.GetChallengeRange(ctx, start, end)
+	if err != nil {
+		return
+	}
+
+	claims = make(map[string]uint64)
 
 	for _, challenge := range challenges {
 		// if challenge not finished nobody has claims
@@ -52,9 +91,9 @@ func (k msgServer) resolveStagedClaims(ctx sdk.Context, start int64, end int64) 
 			continue
 		}
 		_, challengerAmt, challengeeAmt := util.GetPopReward(challenge.Height, k.GetParams(ctx).PopEpochs)
-		popParticipants[challenge.Challenger] += challengerAmt
+		claims[challenge.Challenger] += challengerAmt
 		if challenge.GetSuccess() {
-			popParticipants[challenge.Challengee] += challengeeAmt
+			claims[challenge.Challengee] += challengeeAmt
 		}
 		initiatorAddr, err := sdk.AccAddressFromBech32(challenge.Initiator)
 		if err != nil {
@@ -64,16 +103,22 @@ func (k msgServer) resolveStagedClaims(ctx sdk.Context, start int64, end int64) 
 		if !found {
 			util.GetAppLogger().Error(ctx, "No PoP initiator reward found for height %v", challenge.GetHeight())
 		}
-		popParticipants[initiatorAddr.String()] += validatorPopReward
+		claims[initiatorAddr.String()] += validatorPopReward
 	}
 
+	return
+}
+
+func (k msgServer) convertOrderedClaim(ctx sdk.Context, claims map[string]uint64) (err error) {
 	// second data structure because map iteration order is not guaranteed in GO
 	keys := make([]string, 0)
-	for p := range popParticipants {
-		keys = append(keys, p)
+	for accountAddress := range claims {
+		keys = append(keys, accountAddress)
 	}
-	for _, p := range keys {
-		err = k.convertAccountClaim(ctx, p, popParticipants[p])
+
+	sort.Strings(keys)
+	for _, accountAddress := range keys {
+		err = k.convertAccountClaim(ctx, accountAddress, claims[accountAddress])
 		if err != nil {
 			return err
 		}
