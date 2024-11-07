@@ -10,9 +10,11 @@ import (
 	"strconv"
 	"time"
 
+	sdkmath "cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/planetmint/planetmint-go/lib"
 	"github.com/planetmint/planetmint-go/monitor"
 	"github.com/planetmint/planetmint-go/testutil"
@@ -84,6 +86,17 @@ func (s *SelectionE2ETestSuite) SetupSuite() {
 	daoGenState.Params.MqttResponseTimeout = 200
 	daoGenState.Params.ClaimAddress = valAddr.String()
 	s.cfg.GenesisState[daotypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&daoGenState)
+
+	// setting up stagedClaims that are not part of PoP issuance (i.e.: past unresolved claims)
+	machineBalances := []banktypes.Balance{
+		{Address: machines[0].address, Coins: sdk.NewCoins(sdk.NewCoin(daoGenState.Params.StagedDenom, sdkmath.NewInt(10000)))},
+		{Address: machines[1].address, Coins: sdk.NewCoins(sdk.NewCoin(daoGenState.Params.StagedDenom, sdkmath.NewInt(10000)))},
+	}
+
+	var bankGenState banktypes.GenesisState
+	s.cfg.Codec.MustUnmarshalJSON(s.cfg.GenesisState[banktypes.ModuleName], &bankGenState)
+	bankGenState.Balances = append(bankGenState.Balances, machineBalances...)
+	s.cfg.GenesisState[banktypes.ModuleName] = s.cfg.Codec.MustMarshalJSON(&bankGenState)
 
 	s.network = network.Load(s.T(), s.cfg)
 }
@@ -198,7 +211,7 @@ func (s *SelectionE2ETestSuite) VerifyTokens(token string) {
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), token)
-	assert.Equal(s.T(), "amount: \"18279452050\"\ndenom: "+token+"\n", out.String()) // Total supply 2 * 7990867578 (total supply) + 1 * 1997716894 (challenger) + 3 * 100000000 (validator) = 17979452050
+	assert.Equal(s.T(), "amount: \"18279472050\"\ndenom: "+token+"\n", out.String()) // Total supply 2 * 7990867578 (total supply) + 1 * 1997716894 (challenger) + 3 * 100000000 (validator) + 2 * 10000 (past unresolved claims) = 17979472050
 
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		machines[0].address,
@@ -206,7 +219,7 @@ func (s *SelectionE2ETestSuite) VerifyTokens(token string) {
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), token)
-	assert.Equal(s.T(), "amount: \"5993150682\"\ndenom: "+token+"\n", out.String()) // 3 * 1997716894 = 5993150682
+	assert.Equal(s.T(), "amount: \"5993160682\"\ndenom: "+token+"\n", out.String()) // 3 * 1997716894 + 1 * 10000= 5993160682
 
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		machines[1].address,
@@ -214,7 +227,7 @@ func (s *SelectionE2ETestSuite) VerifyTokens(token string) {
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), token)
-	assert.Equal(s.T(), "amount: \"11986301368\"\ndenom: "+token+"\n", out.String()) // 2 * 5993150684 = 11986301368
+	assert.Equal(s.T(), "amount: \"11986311368\"\ndenom: "+token+"\n", out.String()) // 2 * 5993150684 + 1 * 10000 = 11986311368
 
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		val.Address.String(),
@@ -320,11 +333,11 @@ func (s *SelectionE2ETestSuite) TestTokenRedeemClaim() {
 	// QueryRedeemClaim
 	qOut, err := clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdShowRedeemClaim(), []string{"liquidAddress", "0"})
 	s.Require().NoError(err)
-	assert.Equal(s.T(), "redeemClaim:\n  amount: \"5993150682\"\n  beneficiary: liquidAddress\n  confirmed: true\n  creator: plmnt1kp93kns6hs2066d8qw0uz84fw3vlthewt2ck6p\n  id: \"0\"\n  liquidTxHash: \"0000000000000000000000000000000000000000000000000000000000000000\"\n", qOut.String())
+	assert.Equal(s.T(), "redeemClaim:\n  amount: \"5993160682\"\n  beneficiary: liquidAddress\n  confirmed: true\n  creator: plmnt1kp93kns6hs2066d8qw0uz84fw3vlthewt2ck6p\n  id: \"0\"\n  liquidTxHash: \"0000000000000000000000000000000000000000000000000000000000000000\"\n", qOut.String())
 
 	qOut, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdRedeemClaimByLiquidTxHash(), []string{"0000000000000000000000000000000000000000000000000000000000000000"})
 	s.Require().NoError(err)
-	assert.Equal(s.T(), "redeemClaim:\n  amount: \"5993150682\"\n  beneficiary: liquidAddress\n  confirmed: true\n  creator: plmnt1kp93kns6hs2066d8qw0uz84fw3vlthewt2ck6p\n  id: \"0\"\n  liquidTxHash: \"0000000000000000000000000000000000000000000000000000000000000000\"\n", qOut.String())
+	assert.Equal(s.T(), "redeemClaim:\n  amount: \"5993160682\"\n  beneficiary: liquidAddress\n  confirmed: true\n  creator: plmnt1kp93kns6hs2066d8qw0uz84fw3vlthewt2ck6p\n  id: \"0\"\n  liquidTxHash: \"0000000000000000000000000000000000000000000000000000000000000000\"\n", qOut.String())
 
 	// Make sure "Publish" has been called with PoPInit cmnd
 	calls := mocks.GetCallLog()
