@@ -11,6 +11,12 @@ import (
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
+// type Claims struct {
+// 	challenger map[string]uint64
+// 	challengee map[string]uint64
+// 	initiator  map[string]uint64
+// }
+
 func (k msgServer) DistributionResult(goCtx context.Context, msg *types.MsgDistributionResult) (*types.MsgDistributionResultResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -41,6 +47,8 @@ func (k msgServer) DistributionResult(goCtx context.Context, msg *types.MsgDistr
 
 	return &types.MsgDistributionResultResponse{}, nil
 }
+
+// TODO: only do this for challenger/challengee
 
 // clearUnresolvedClaims checks for all Challenge participants starting from a given height.
 // An accounts stagedDenom amount should always be 0 except for claims that have not yet been reissued.
@@ -86,15 +94,6 @@ func (k msgServer) getClaims(ctx sdk.Context, start int64, end int64) (claims ma
 	claims = make(map[string]uint64)
 
 	for _, challenge := range challenges {
-		// if challenge not finished nobody has claims
-		if !challenge.GetFinished() {
-			continue
-		}
-		_, challengerAmt, challengeeAmt := util.GetPopReward(challenge.Height, k.GetParams(ctx).PopEpochs)
-		claims[challenge.Challenger] += challengerAmt
-		if challenge.GetSuccess() {
-			claims[challenge.Challengee] += challengeeAmt
-		}
 		initiatorAddr, err := sdk.AccAddressFromBech32(challenge.Initiator)
 		if err != nil {
 			util.GetAppLogger().Error(ctx, "error converting initiator address")
@@ -104,6 +103,16 @@ func (k msgServer) getClaims(ctx sdk.Context, start int64, end int64) (claims ma
 			util.GetAppLogger().Error(ctx, "No PoP initiator reward found for height %v", challenge.GetHeight())
 		}
 		claims[initiatorAddr.String()] += validatorPopReward
+
+		// if challenge not finished only initiator has claims
+		if !challenge.GetFinished() {
+			continue
+		}
+		_, challengerAmt, challengeeAmt := util.GetPopReward(challenge.Height, k.GetParams(ctx).PopEpochs)
+		claims[challenge.Challenger] += challengerAmt
+		if challenge.GetSuccess() {
+			claims[challenge.Challengee] += challengeeAmt
+		}
 	}
 
 	return

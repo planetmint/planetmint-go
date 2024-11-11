@@ -211,7 +211,7 @@ func (s *SelectionE2ETestSuite) VerifyTokens(token string) {
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), token)
-	assert.Equal(s.T(), "amount: \"18279472050\"\ndenom: "+token+"\n", out.String()) // Total supply 2 * 7990867578 (total supply) + 1 * 1997716894 (challenger) + 3 * 100000000 (validator) + 2 * 10000 (past unresolved claims) = 17979472050
+	assert.Equal(s.T(), "amount: \"18479472050\"\ndenom: "+token+"\n", out.String()) // Total supply 2 * 7990867578 (total supply) + 1 * 1997716894 (challenger) + 6 * 100000000 (validator) + 2 * 10000 (past unresolved claims) = 18579472050
 
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		machines[0].address,
@@ -235,7 +235,7 @@ func (s *SelectionE2ETestSuite) VerifyTokens(token string) {
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), token)
-	assert.Equal(s.T(), "amount: \"300000000\"\ndenom: "+token+"\n", out.String()) // 3 * 300000000
+	assert.Equal(s.T(), "amount: \"500000000\"\ndenom: "+token+"\n", out.String()) // 5 * 100000000
 }
 
 func (s *SelectionE2ETestSuite) TestTokenDistribution1() {
