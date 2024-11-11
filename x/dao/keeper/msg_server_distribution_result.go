@@ -11,11 +11,11 @@ import (
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
-// type Claims struct {
-// 	challenger map[string]uint64
-// 	challengee map[string]uint64
-// 	initiator  map[string]uint64
-// }
+type Claims struct {
+	challenger map[string]uint64
+	challengee map[string]uint64
+	initiator  map[string]uint64
+}
 
 func (k msgServer) DistributionResult(goCtx context.Context, msg *types.MsgDistributionResult) (*types.MsgDistributionResultResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
@@ -48,16 +48,23 @@ func (k msgServer) DistributionResult(goCtx context.Context, msg *types.MsgDistr
 	return &types.MsgDistributionResultResponse{}, nil
 }
 
-// TODO: only do this for challenger/challengee
-
 // clearUnresolvedClaims checks for all Challenge participants starting from a given height.
 // An accounts stagedDenom amount should always be 0 except for claims that have not yet been reissued.
 // Calculate the difference for a set of participants and clear out all past unresolved staged claims.
 func (k msgServer) clearUnresolvedClaims(ctx sdk.Context, start int64) (err error) {
 	// calculate total amounts for current and future claims
-	currentAmounts, err := k.getClaims(ctx, start, ctx.BlockHeight())
+	claims, err := k.getClaims(ctx, start, ctx.BlockHeight())
 	if err != nil {
 		return err
+	}
+
+	currentAmounts := make(map[string]uint64)
+	for address, amount := range claims.challenger {
+		currentAmounts[address] = amount
+	}
+
+	for address, amount := range claims.challengee {
+		currentAmounts[address] = amount
 	}
 
 	totalAmounts := make(map[string]uint64)
@@ -81,17 +88,27 @@ func (k msgServer) resolveStagedClaims(ctx sdk.Context, start int64, end int64) 
 		return err
 	}
 
-	return k.convertOrderedClaim(ctx, popParticipantAmounts)
+	if err = k.convertOrderedClaim(ctx, popParticipantAmounts.initiator); err != nil {
+		return err
+	}
+
+	if err = k.convertOrderedClaim(ctx, popParticipantAmounts.challenger); err != nil {
+		return err
+	}
+
+	return k.convertOrderedClaim(ctx, popParticipantAmounts.challengee)
 }
 
-func (k msgServer) getClaims(ctx sdk.Context, start int64, end int64) (claims map[string]uint64, err error) {
+func (k msgServer) getClaims(ctx sdk.Context, start int64, end int64) (claims Claims, err error) {
 	// lookup all challenges for a given range
 	challenges, err := k.GetChallengeRange(ctx, start, end)
 	if err != nil {
 		return
 	}
 
-	claims = make(map[string]uint64)
+	claims.initiator = make(map[string]uint64)
+	claims.challenger = make(map[string]uint64)
+	claims.challengee = make(map[string]uint64)
 
 	for _, challenge := range challenges {
 		initiatorAddr, err := sdk.AccAddressFromBech32(challenge.Initiator)
@@ -102,16 +119,16 @@ func (k msgServer) getClaims(ctx sdk.Context, start int64, end int64) (claims ma
 		if !found {
 			util.GetAppLogger().Error(ctx, "No PoP initiator reward found for height %v", challenge.GetHeight())
 		}
-		claims[initiatorAddr.String()] += validatorPopReward
+		claims.initiator[initiatorAddr.String()] += validatorPopReward
 
 		// if challenge not finished only initiator has claims
 		if !challenge.GetFinished() {
 			continue
 		}
 		_, challengerAmt, challengeeAmt := util.GetPopReward(challenge.Height, k.GetParams(ctx).PopEpochs)
-		claims[challenge.Challenger] += challengerAmt
+		claims.challenger[challenge.Challenger] += challengerAmt
 		if challenge.GetSuccess() {
-			claims[challenge.Challengee] += challengeeAmt
+			claims.challengee[challenge.Challengee] += challengeeAmt
 		}
 	}
 

@@ -211,7 +211,13 @@ func (s *SelectionE2ETestSuite) VerifyTokens(token string) {
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), token)
-	assert.Equal(s.T(), "amount: \"18479472050\"\ndenom: "+token+"\n", out.String()) // Total supply 2 * 7990867578 (total supply) + 1 * 1997716894 (challenger) + 6 * 100000000 (validator) + 2 * 10000 (past unresolved claims) = 18579472050
+
+	// Account for 1 additional unfinished PoP when checking balances after distribution
+	if token == s.claimDenom {
+		assert.Equal(s.T(), "amount: \"18579472050\"\ndenom: "+token+"\n", out.String()) // Total supply 2 * 7990867578 (total supply) + 1 * 1997716894 (challenger) + 6 * 100000000 (validator) + 2 * 10000 (past unresolved claims) = 18579472050
+	} else {
+		assert.Equal(s.T(), "amount: \"18479472050\"\ndenom: "+token+"\n", out.String()) // Total supply 2 * 7990867578 (total supply) + 1 * 1997716894 (challenger) + 5 * 100000000 (validator) + 2 * 10000 (past unresolved claims) = 18479472050
+	}
 
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		machines[0].address,
@@ -219,7 +225,7 @@ func (s *SelectionE2ETestSuite) VerifyTokens(token string) {
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), token)
-	assert.Equal(s.T(), "amount: \"5993160682\"\ndenom: "+token+"\n", out.String()) // 3 * 1997716894 + 1 * 10000= 5993160682
+	assert.Equal(s.T(), "amount: \"5993160682\"\ndenom: "+token+"\n", out.String()) // 3 * 1997716894 + 1 * 10000 = 5993160682
 
 	out, err = clitestutil.ExecTestCLICmd(val.ClientCtx, bank.GetBalancesCmd(), []string{
 		machines[1].address,
@@ -235,7 +241,13 @@ func (s *SelectionE2ETestSuite) VerifyTokens(token string) {
 	})
 	s.Require().NoError(err)
 	assert.Contains(s.T(), out.String(), token)
-	assert.Equal(s.T(), "amount: \"500000000\"\ndenom: "+token+"\n", out.String()) // 5 * 100000000
+
+	// Account for 1 additional unfinished PoP when checking balances after distribution
+	if token == s.claimDenom {
+		assert.Equal(s.T(), "amount: \"600000000\"\ndenom: "+token+"\n", out.String()) // 6 * 100000000
+	} else {
+		assert.Equal(s.T(), "amount: \"500000000\"\ndenom: "+token+"\n", out.String()) // 5 * 100000000
+	}
 }
 
 func (s *SelectionE2ETestSuite) TestTokenDistribution1() {
