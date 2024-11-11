@@ -29,17 +29,17 @@ func (k msgServer) InitPop(goCtx context.Context, msg *types.MsgInitPop) (*types
 	// TODO: expand err value in log
 	initiatorAddr, err := sdk.AccAddressFromBech32(msg.GetInitiator())
 	if err != nil {
-		util.GetAppLogger().Error(ctx, "error converting initiator address")
+		util.GetAppLogger().Error(ctx, "error converting initiator address: %v", err)
 	}
 
 	valReward := sdk.NewCoins(sdk.NewCoin(k.GetParams(ctx).StagedDenom, sdk.NewIntFromUint64(amount)))
 	err = k.bankKeeper.MintCoins(ctx, types.ModuleName, valReward)
 	if err != nil {
-		util.GetAppLogger().Error(ctx, "error minting initiator rewards")
+		util.GetAppLogger().Error(ctx, "error minting initiator rewards: %v", err)
 	}
 
 	if err := k.sendRewards(ctx, initiatorAddr.String(), amount); err != nil {
-		util.GetAppLogger().Error(ctx, "failed to send rewards")
+		util.GetAppLogger().Error(ctx, "failed to send rewards: %v", err)
 	}
 
 	return &types.MsgInitPopResponse{}, nil
