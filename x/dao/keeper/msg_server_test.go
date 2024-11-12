@@ -157,7 +157,6 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 	testCases[5].msg.Challenge.Initiator = challenger.String()
 
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			res, err := msgServer.ReportPopResult(ctx, &tc.msg)
 

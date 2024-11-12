@@ -1,6 +1,6 @@
 module github.com/planetmint/planetmint-go/lib
 
-go 1.20
+go 1.22
 
 require (
 	github.com/cometbft/cometbft v0.37.4
