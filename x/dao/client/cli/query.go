@@ -21,23 +21,18 @@ func GetQueryCmd(_ string) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	cmd.AddCommand(CmdQueryParams())
-
-	cmd.AddCommand(CmdGetMintRequests())
-
-	cmd.AddCommand(CmdGetReissuance())
-
-	cmd.AddCommand(CmdGetReissuances())
-
-	cmd.AddCommand(CmdGetChallenge())
-
-	cmd.AddCommand(CmdChallenges())
-
-	cmd.AddCommand(CmdGetDistribution())
-
-	cmd.AddCommand(CmdListRedeemClaim())
-	cmd.AddCommand(CmdShowRedeemClaim())
-	cmd.AddCommand(CmdRedeemClaimByLiquidTxHash())
+	cmd.AddCommand(
+		GetCmdChallenge(),
+		GetCmdChallenges(),
+		GetCmdDistribution(),
+		GetCmdListRedeemClaim(),
+		GetCmdMintRequests(),
+		GetCmdQueryParams(),
+		GetCmdRedeemClaimByLiquidTxHash(),
+		GetCmdReissuance(),
+		GetCmdReissuances(),
+		GetCmdShowRedeemClaim(),
+	)
 
 	// this line is used by starport scaffolding # 1
 

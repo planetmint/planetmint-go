@@ -11,7 +11,7 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdChallenges() *cobra.Command {
+func GetCmdChallenges() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "challenges",
 		Short: "Query for challenges",

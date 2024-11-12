@@ -91,7 +91,7 @@ func (s *AssetDistributionE2ETestSuite) TestAssetDistribution() {
 	}
 
 	for _, tc := range testCases {
-		_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetDistribution(), []string{
+		_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.GetCmdDistribution(), []string{
 			strconv.FormatInt(tc.requestHeight, 10),
 		})
 		if tc.expectedErr == "" {

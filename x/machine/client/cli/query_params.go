@@ -8,7 +8,7 @@ import (
 	"github.com/planetmint/planetmint-go/x/machine/types"
 )
 
-func CmdQueryParams() *cobra.Command {
+func GetCmdQueryParams() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "params",
 		Short: "Query the current machine parameters information",

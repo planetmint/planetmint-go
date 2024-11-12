@@ -12,7 +12,7 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdGetChallenge() *cobra.Command {
+func GetCmdChallenge() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "challenge [height]",
 		Short: "Query for challenge by height",

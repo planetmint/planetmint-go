@@ -12,7 +12,7 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdGetByAddress() *cobra.Command {
+func GetCmdByAddress() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "address [address] [num-elements]",
 		Short: "Query for assets by address",

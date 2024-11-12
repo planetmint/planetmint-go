@@ -11,7 +11,7 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdGetTrustAnchor() *cobra.Command {
+func GetCmdTrustAnchor() *cobra.Command {
 	// Group trust-anchor queries under a subcommand
 	cmd := &cobra.Command{
 		Use:                        "trust-anchor",

@@ -12,7 +12,7 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdGetReissuance() *cobra.Command {
+func GetCmdReissuance() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "reissuance [height]",
 		Short: "Query for reissuance by height",

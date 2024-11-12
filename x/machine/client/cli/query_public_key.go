@@ -11,7 +11,7 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdGetMachineByPublicKey() *cobra.Command {
+func GetCmdMachineByPublicKey() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "public-key [public-key]",
 		Short: "Query for machines by public key",
