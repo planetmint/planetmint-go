@@ -207,6 +207,6 @@ func (s *E2ETestSuite) TestReissuance() {
 
 	// - because we waited on the reissuance result, see above
 	intValue := strconv.FormatInt(latestHeight-wait, 10)
-	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.CmdGetReissuance(), []string{intValue})
+	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, daocli.GetCmdReissuance(), []string{intValue})
 	s.Require().NoError(err)
 }

@@ -11,7 +11,7 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdGetMachineByAddress() *cobra.Command {
+func GetCmdMachineByAddress() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "address [address]",
 		Short: "Query for machines by address",

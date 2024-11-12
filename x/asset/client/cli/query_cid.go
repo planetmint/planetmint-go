@@ -11,7 +11,7 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdGetByCID() *cobra.Command {
+func GetCmdByCID() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "cid [cid]",
 		Short: "Query for assets by CID",

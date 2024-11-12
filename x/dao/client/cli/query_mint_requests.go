@@ -11,7 +11,7 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdGetMintRequests() *cobra.Command {
+func GetCmdMintRequests() *cobra.Command {
 	// Group mint-requests queries under a subcommand
 	cmd := &cobra.Command{
 		Use:                        "mint-requests",

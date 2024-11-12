@@ -14,7 +14,7 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdGetDistribution() *cobra.Command {
+func GetCmdDistribution() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "distribution [height]",
 		Short: "Query for distributions by height",

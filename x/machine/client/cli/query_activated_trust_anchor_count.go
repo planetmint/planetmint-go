@@ -11,7 +11,7 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdActivatedTrustAnchorCount() *cobra.Command {
+func GetCmdActivatedTrustAnchorCount() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "activated-trust-anchor-count",
 		Short: "Query activated-trust-anchor-count",

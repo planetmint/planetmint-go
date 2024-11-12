@@ -10,7 +10,7 @@ import (
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
-func CmdListRedeemClaim() *cobra.Command {
+func GetCmdListRedeemClaim() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-redeem-claim",
 		Short: "list all redeem-claim",
@@ -46,7 +46,7 @@ func CmdListRedeemClaim() *cobra.Command {
 	return cmd
 }
 
-func CmdShowRedeemClaim() *cobra.Command {
+func GetCmdShowRedeemClaim() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "show-redeem-claim [beneficiary] [id]",
 		Short: "shows a redeem-claim",
@@ -86,7 +86,7 @@ func CmdShowRedeemClaim() *cobra.Command {
 
 var _ = strconv.Itoa(0)
 
-func CmdRedeemClaimByLiquidTxHash() *cobra.Command {
+func GetCmdRedeemClaimByLiquidTxHash() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "redeem-claim-by-liquid-tx-hash [liquid-tx-hash]",
 		Short: "Query redeem-claim-by-liquid-tx-hash",

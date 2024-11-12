@@ -85,7 +85,7 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 		if !tc.expectCheckTxErr {
 			assert.Equal(s.T(), int(0), int(txResponse.Code))
 			args := []string{sample.Asset()}
-			asset, err := clitestutil.ExecTestCLICmd(val.ClientCtx, assetcli.CmdGetByCID(), args)
+			asset, err := clitestutil.ExecTestCLICmd(val.ClientCtx, assetcli.GetCmdByCID(), args)
 			s.Require().NoError(err)
 			assert.Contains(s.T(), asset.String(), sample.Asset())
 		} else {

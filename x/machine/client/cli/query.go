@@ -24,16 +24,15 @@ func GetQueryCmd(_ string) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	cmd.AddCommand(CmdQueryParams())
-	cmd.AddCommand(CmdGetMachineByPublicKey())
-
-	cmd.AddCommand(CmdGetTrustAnchor())
-	cmd.AddCommand(CmdGetMachineByAddress())
-
-	cmd.AddCommand(CmdGetLiquidAssetsByMachineid())
-
-	cmd.AddCommand(CmdActiveTrustAnchorCount())
-	cmd.AddCommand(CmdActivatedTrustAnchorCount())
+	cmd.AddCommand(
+		GetCmdActivatedTrustAnchorCount(),
+		GetCmdActiveTrustAnchorCount(),
+		GetCmdLiquidAssetsByMachineid(),
+		GetCmdMachineByAddress(),
+		GetCmdMachineByPublicKey(),
+		GetCmdQueryParams(),
+		GetCmdTrustAnchor(),
+	)
 
 	// this line is used by starport scaffolding # 1
 

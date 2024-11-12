@@ -11,7 +11,7 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdGetReissuances() *cobra.Command {
+func GetCmdReissuances() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "reissuances",
 		Short: "Query for reissuances",

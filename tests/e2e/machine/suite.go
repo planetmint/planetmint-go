@@ -111,7 +111,7 @@ func (s *E2ETestSuite) TestAttestMachine() {
 		pubKey,
 	}
 
-	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdGetMachineByPublicKey(), args)
+	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.GetCmdMachineByPublicKey(), args)
 	s.Require().NoError(err)
 	txResponse, err := lib.GetTxResponseFromOut(out)
 	s.Require().NoError(err)
@@ -230,6 +230,6 @@ func (s *E2ETestSuite) TestMachineAllowanceAttestation() {
 		pubKey,
 	}
 
-	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.CmdGetMachineByPublicKey(), args)
+	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.GetCmdMachineByPublicKey(), args)
 	s.Require().NoError(err)
 }

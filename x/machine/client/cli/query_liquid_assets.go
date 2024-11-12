@@ -11,7 +11,7 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdGetLiquidAssetsByMachineid() *cobra.Command {
+func GetCmdLiquidAssetsByMachineid() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "liquid-assets [machine-id]",
 		Short: "Query for liquid assets by machine ID",
