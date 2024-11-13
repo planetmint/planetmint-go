@@ -925,10 +925,10 @@ github.com/rakyll/statik v0.1.7/go.mod h1:AlZONWzMtEnMs7W4e/1LURLiI49pIMmp6V9Ung
 github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a/go.mod h1:bCqnVzQkZxMG4s8nGwiZ5l3QUCyqpo9Y+/ZMZ9VjZe4=
 github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 h1:N/ElC8H3+5XpJzTSTfLsJV/mx9Q9g7kxmchpfZyxgzM=
 github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475/go.mod h1:bCqnVzQkZxMG4s8nGwiZ5l3QUCyqpo9Y+/ZMZ9VjZe4=
-github.com/rddl-network/elements-rpc v1.0.0 h1:geFcsaD1t2ONxRC13semPpiOwsJl0ZCfkFT9UIKPZFk=
-github.com/rddl-network/elements-rpc v1.0.0/go.mod h1:E35cJMXZqe1iEo/AvjwSWn25mHZ4+y4gV8qj0lWle5c=
-github.com/rddl-network/go-utils v0.1.1 h1:41ZrDMM2ree7/OfhKYK4j/SQnyVvms4YirTKneibeyk=
-github.com/rddl-network/go-utils v0.1.1/go.mod h1:xKO/ZSAEHwcYe8bNUZjcQCIX+6OMXzEXu1WQ1HqXqZA=
+github.com/rddl-network/elements-rpc v1.2.1 h1:clE3daxNPJJ1EDiAkTSlXUM2+gakmLHxWOazZ4t2W48=
+github.com/rddl-network/elements-rpc v1.2.1/go.mod h1:9a71Z7xja4rFMXa+ssUMLAF9VIZVPz2jZRB1hTS9Ey4=
+github.com/rddl-network/go-utils v0.2.3 h1:STiiyZVkFjovjMAyKK1IsqvVED14mRHoXFIDVbwxlFQ=
+github.com/rddl-network/go-utils v0.2.3/go.mod h1:jLOkVBK/xjfVyY0d4gs1pkafTXF3mYA7ZIE68QXau5o=
 github.com/rogpeppe/fastuuid v0.0.0-20150106093220-6724a57986af/go.mod h1:XWv6SoW27p1b0cqNHllgS5HIMJraePCO15w5zCzIWYg=
 github.com/rogpeppe/fastuuid v1.2.0/go.mod h1:jVj6XXZzXRy/MSR5jhDC/2q6DgLz+nrA6LYCDYWNEvQ=
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
