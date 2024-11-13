@@ -32,7 +32,7 @@ func NewE2ETestSuite(cfg network.Config) *E2ETestSuite {
 func (s *E2ETestSuite) SetupSuite() {
 	s.T().Log("setting up e2e lib test suite")
 
-	s.network = network.New(s.T())
+	s.network = network.Load(s.T(), s.cfg)
 }
 
 // TearDownSuite clean up after testing
