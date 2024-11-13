@@ -60,11 +60,11 @@ func (k msgServer) clearUnresolvedClaims(ctx sdk.Context, start int64) (err erro
 
 	currentAmounts := make(map[string]uint64)
 	for address, amount := range claims.challenger {
-		currentAmounts[address] = amount
+		currentAmounts[address] += amount
 	}
 
 	for address, amount := range claims.challengee {
-		currentAmounts[address] = amount
+		currentAmounts[address] += amount
 	}
 
 	totalAmounts := make(map[string]uint64)
