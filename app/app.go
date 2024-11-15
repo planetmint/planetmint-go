@@ -109,6 +109,7 @@ import (
 	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
 	"github.com/spf13/cast"
 
+	"github.com/planetmint/planetmint-go/monitor"
 	machinemodule "github.com/planetmint/planetmint-go/x/machine"
 	machinemodulekeeper "github.com/planetmint/planetmint-go/x/machine/keeper"
 	machinemoduletypes "github.com/planetmint/planetmint-go/x/machine/types"
@@ -806,6 +807,8 @@ func New(
 	app.ScopedTransferKeeper = scopedTransferKeeper
 	// this line is used by starport scaffolding # stargate/app/beforeInitReturn
 
+	monitor.LazyMqttMonitorLoader(logger, homePath)
+
 	return app
 }
 
@@ -952,6 +955,12 @@ func (app *App) RegisterTendermintService(clientCtx client.Context) {
 // RegisterNodeService implements the Application.RegisterNodeService method.
 func (app *App) RegisterNodeService(clientCtx client.Context) {
 	nodeservice.RegisterNodeService(clientCtx, app.GRPCQueryRouter())
+	// HACK: start mqtt monitor as late as possible (hint: look in vendor directory for startup order)
+	mqttMonitorInstance := monitor.GetMqttMonitorInstance()
+	err := mqttMonitorInstance.Start()
+	if err != nil {
+		panic(err)
+	}
 }
 
 // initParamsKeeper init params keeper and its subspaces
