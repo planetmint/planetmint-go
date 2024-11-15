@@ -14,6 +14,8 @@ import (
 
 const (
 	flagSerialPort = "serial-port"
+
+	SerialPort = "/dev/ttyACM0"
 )
 
 func TrustWalletCmd() *cobra.Command {
@@ -43,7 +45,7 @@ Provided mnemonics must be 12 or 24 words long and adhere to bip39.`,
 		Args: cobra.RangeArgs(0, 1),
 	}
 
-	cmd.Flags().String(flagSerialPort, "/dev/ttyACM0", "The serial port your Trust Wallet is connected to")
+	cmd.Flags().String(flagSerialPort, SerialPort, "The serial port your Trust Wallet is connected to")
 	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd
@@ -107,7 +109,7 @@ raw planetmint key (hex encoded)`,
 		Args: cobra.ExactArgs(0),
 	}
 
-	cmd.Flags().String(flagSerialPort, "/dev/ttyACM0", "The serial port your Trust Wallet is connected to")
+	cmd.Flags().String(flagSerialPort, SerialPort, "The serial port your Trust Wallet is connected to")
 	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd
