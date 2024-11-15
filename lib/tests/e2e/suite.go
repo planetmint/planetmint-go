@@ -15,6 +15,10 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
+const (
+	SerialPort = "/dev/ttyACM0"
+)
+
 // E2ETestSuite struct definition of machine suite
 type E2ETestSuite struct {
 	suite.Suite
@@ -111,7 +115,7 @@ func (s *E2ETestSuite) TestOccSigning() {
 	msg := banktypes.NewMsgSend(addr, val.Address, coin)
 
 	libConfig := lib.GetConfig()
-	libConfig.SetSerialPort("/dev/ttyACM0")
+	libConfig.SetSerialPort(SerialPort)
 
 	out, err := lib.BroadcastTxWithFileLock(addr, msg)
 	s.Require().NoError(err)
@@ -124,7 +128,7 @@ func (s *E2ETestSuite) TestOccSigning() {
 
 // set sample mnemonic on trust wallet
 func setKeys() (string, error) {
-	connector, err := trustwallet.NewTrustWalletConnector("/dev/ttyACM0")
+	connector, err := trustwallet.NewTrustWalletConnector(SerialPort)
 	if err != nil {
 		return "", err
 	}
@@ -132,7 +136,7 @@ func setKeys() (string, error) {
 }
 
 func loadKeys() (*trustwallet.PlanetMintKeys, error) {
-	connector, err := trustwallet.NewTrustWalletConnector("/dev/ttyACM0")
+	connector, err := trustwallet.NewTrustWalletConnector(SerialPort)
 	if err != nil {
 		return nil, err
 	}

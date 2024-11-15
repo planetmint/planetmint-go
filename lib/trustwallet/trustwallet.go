@@ -8,6 +8,12 @@ import (
 	"sync"
 )
 
+const (
+	NoDataReturned      = "no data returned"
+	NoPublicKeyReturned = "no public key returned"
+	NoSignatureReturned = "no signature returned"
+)
+
 var (
 	keys *PlanetMintKeys
 )
@@ -47,7 +53,7 @@ func (t *Connector) ValiseGet() (string, error) {
 	if len(response.Data) > 1 {
 		return response.Data[1], nil
 	}
-	return "", errors.New("no data returned")
+	return "", errors.New(NoDataReturned)
 }
 
 func (t *Connector) CreateMnemonic() (string, error) {
@@ -58,7 +64,7 @@ func (t *Connector) CreateMnemonic() (string, error) {
 	if len(response.Data) > 1 {
 		return response.Data[1], nil
 	}
-	return "", errors.New("no data returned")
+	return "", errors.New(NoDataReturned)
 }
 
 func (t *Connector) InjectPlanetminkeyToSE050(slot int) (bool, error) {
@@ -69,7 +75,7 @@ func (t *Connector) InjectPlanetminkeyToSE050(slot int) (bool, error) {
 	if len(response.Data) > 1 {
 		return response.Data[1] == "0", nil
 	}
-	return false, errors.New("no data returned")
+	return false, errors.New(NoDataReturned)
 }
 
 func (t *Connector) RecoverFromMnemonic(mnemonic string) (string, error) {
@@ -80,7 +86,7 @@ func (t *Connector) RecoverFromMnemonic(mnemonic string) (string, error) {
 	if len(response.Data) > 1 {
 		return response.Data[1], nil
 	}
-	return "", errors.New("no data returned")
+	return "", errors.New(NoDataReturned)
 }
 
 func (t *Connector) GetPlanetmintKeys() (*PlanetMintKeys, error) {
@@ -111,7 +117,7 @@ func (t *Connector) GetSeedSE050() (string, error) {
 	if len(response.Data) > 1 {
 		return response.Data[1], nil
 	}
-	return "", errors.New("no data returned")
+	return "", errors.New(NoDataReturned)
 }
 
 func (t *Connector) SignHashWithPlanetmint(dataToSign string) (string, error) {
@@ -122,7 +128,7 @@ func (t *Connector) SignHashWithPlanetmint(dataToSign string) (string, error) {
 	if len(response.Data) > 1 {
 		return response.Data[1], nil
 	}
-	return "", errors.New("no signature returned")
+	return "", errors.New(NoSignatureReturned)
 }
 
 func (t *Connector) SignHashWithRDDL(dataToSign string) (string, error) {
@@ -133,7 +139,7 @@ func (t *Connector) SignHashWithRDDL(dataToSign string) (string, error) {
 	if len(response.Data) > 1 {
 		return response.Data[1], nil
 	}
-	return "", errors.New("no signature returned")
+	return "", errors.New(NoSignatureReturned)
 }
 
 func (t *Connector) CreateOptegaKeypair(ctx int) (string, error) {
@@ -144,7 +150,7 @@ func (t *Connector) CreateOptegaKeypair(ctx int) (string, error) {
 	if len(response.Data) > 1 {
 		return response.Data[1], nil
 	}
-	return "", errors.New("no public key returned")
+	return "", errors.New(NoPublicKeyReturned)
 }
 
 func (t *Connector) SignWithOptega(ctx int, dataToSign, pubkey string) (string, error) {
@@ -155,7 +161,7 @@ func (t *Connector) SignWithOptega(ctx int, dataToSign, pubkey string) (string, 
 	if len(response.Data) > 1 {
 		return response.Data[1], nil
 	}
-	return "", errors.New("no signature returned")
+	return "", errors.New(NoSignatureReturned)
 }
 
 func (t *Connector) UnwrapPublicKey(publicKey string) (bool, string) {
@@ -187,7 +193,7 @@ func (t *Connector) CreateSE050KeypairNIST(ctx int) (string, error) {
 	if len(response.Data) > 1 {
 		return response.Data[1], nil
 	}
-	return "", errors.New("no public key returned")
+	return "", errors.New(NoPublicKeyReturned)
 }
 
 func (t *Connector) GetPublicKeyFromSE050(ctx int) (string, error) {
@@ -202,7 +208,7 @@ func (t *Connector) GetPublicKeyFromSE050(ctx int) (string, error) {
 		}
 		return pubKey, nil
 	}
-	return "", errors.New("no public key returned")
+	return "", errors.New(NoPublicKeyReturned)
 }
 
 func (t *Connector) SignWithSE050(dataToSign string, ctx int) (string, error) {
@@ -213,7 +219,7 @@ func (t *Connector) SignWithSE050(dataToSign string, ctx int) (string, error) {
 	if len(response.Data) > 1 {
 		return response.Data[1], nil
 	}
-	return "", errors.New("no signature returned")
+	return "", errors.New(NoSignatureReturned)
 }
 
 func (t *Connector) VerifySE050Signature(dataToSign, signature string, ctx int) (bool, error) {
