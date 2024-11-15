@@ -109,6 +109,7 @@ import (
 	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
 	"github.com/spf13/cast"
 
+	"github.com/planetmint/planetmint-go/monitor"
 	machinemodule "github.com/planetmint/planetmint-go/x/machine"
 	machinemodulekeeper "github.com/planetmint/planetmint-go/x/machine/keeper"
 	machinemoduletypes "github.com/planetmint/planetmint-go/x/machine/types"
@@ -805,6 +806,8 @@ func New(
 	app.ScopedIBCKeeper = scopedIBCKeeper
 	app.ScopedTransferKeeper = scopedTransferKeeper
 	// this line is used by starport scaffolding # stargate/app/beforeInitReturn
+
+	monitor.LazyMqttMonitorLoader(homePath)
 
 	return app
 }

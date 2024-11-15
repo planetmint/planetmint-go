@@ -7,7 +7,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
-	"github.com/planetmint/planetmint-go/monitor"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
 
@@ -50,7 +49,6 @@ func NewKeeper(
 	if !ps.HasKeyTable() {
 		ps = ps.WithKeyTable(types.ParamKeyTable())
 	}
-	monitor.LazyMqttMonitorLoader(rootDir)
 	return &Keeper{
 		cdc:                   cdc,
 		storeKey:              storeKey,
