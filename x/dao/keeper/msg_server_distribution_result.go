@@ -67,6 +67,10 @@ func (k msgServer) clearUnresolvedClaims(ctx sdk.Context, start int64) (err erro
 		currentAmounts[address] += amount
 	}
 
+	for address, amount := range claims.initiator {
+		currentAmounts[address] += amount
+	}
+
 	totalAmounts := make(map[string]uint64)
 	for participantAddress := range currentAmounts {
 		stagedBalance := k.bankKeeper.GetBalance(ctx, sdk.MustAccAddressFromBech32(participantAddress), k.GetParams(ctx).StagedDenom)
