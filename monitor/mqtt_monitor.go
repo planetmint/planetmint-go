@@ -292,7 +292,7 @@ func IsLegitMachineAddress(address string) (active bool, err error) {
 }
 
 func (mms *MqttMonitor) onConnectionLost(_ mqtt.Client, err error) {
-	Log("Connection lost: " + err.Error())
+	Log("connection lost: " + err.Error())
 	// Handle connection loss here (e.g., reconnect attempts, logging)
 	if !mms.IsTerminated() {
 		mms.lostConnectionMutex.Lock()
@@ -353,7 +353,7 @@ func (mms *MqttMonitor) MonitorActiveParticipants() {
 	}
 
 	if mms.maxRetries == 0 {
-		Log("Reached maximum reconnection attempts. Exiting. New client will be activated soon.")
+		Log("reached maximum reconnection attempts. Exiting. New client will be activated soon.")
 	}
 
 	mms.clientMutex.Lock()
