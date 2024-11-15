@@ -955,6 +955,12 @@ func (app *App) RegisterTendermintService(clientCtx client.Context) {
 // RegisterNodeService implements the Application.RegisterNodeService method.
 func (app *App) RegisterNodeService(clientCtx client.Context) {
 	nodeservice.RegisterNodeService(clientCtx, app.GRPCQueryRouter())
+	// HACK: start mqtt monitor as late as possible (hint: look in vendor directory for startup order)
+	mqttMonitorInstance := monitor.GetMqttMonitorInstance()
+	err := mqttMonitorInstance.Start()
+	if err != nil {
+		panic(err)
+	}
 }
 
 // initParamsKeeper init params keeper and its subspaces

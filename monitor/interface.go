@@ -25,6 +25,12 @@ func SetMqttMonitorInstance(monitorInstance MQTTMonitorClientI) {
 	monitorMutex.Unlock()
 }
 
+func GetMqttMonitorInstance() (monitorInstance MQTTMonitorClientI) {
+	monitorMutex.Lock()
+	defer monitorMutex.Unlock()
+	return mqttMonitorInstance
+}
+
 func LazyMqttMonitorLoader(logger log.Logger, homeDir string) {
 	monitorMutex.RLock()
 	tmpInstance := mqttMonitorInstance
@@ -44,10 +50,6 @@ func LazyMqttMonitorLoader(logger log.Logger, homeDir string) {
 	}
 
 	SetMqttMonitorInstance(NewMqttMonitorService(aciveActorsDB, *config.GetConfig()))
-	err = mqttMonitorInstance.Start()
-	if err != nil {
-		panic(err)
-	}
 }
 
 func SelectPoPParticipantsOutOfActiveActors() (challenger string, challengee string, err error) {
