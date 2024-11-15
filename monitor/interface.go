@@ -79,5 +79,5 @@ func Log(msg string) {
 	if mqttLogger == nil {
 		return
 	}
-	mqttLogger.Info(msg)
+	mqttLogger.Info("[app] [Monitor] " + msg)
 }

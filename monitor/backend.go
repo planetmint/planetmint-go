@@ -21,7 +21,7 @@ func (mms *MqttMonitor) AddParticipant(address string, lastSeenTS int64) (err er
 
 	lastSeenBytes, err := json.Marshal(lastSeen)
 	if err != nil {
-		Log("[app] [Monitor] Error serializing ConversionRequest: " + err.Error())
+		Log("Error serializing ConversionRequest: " + err.Error())
 		return
 	}
 
@@ -34,9 +34,9 @@ func (mms *MqttMonitor) AddParticipant(address string, lastSeenTS int64) (err er
 	err = mms.db.Put([]byte(address), lastSeenBytes, nil)
 	mms.dbMutex.Unlock()
 	if err != nil {
-		Log("[app] [Monitor] error storing addresses in DB: " + err.Error())
+		Log("error storing addresses in DB: " + err.Error())
 	} else {
-		Log("[app] [Monitor] stored address in DB: " + address)
+		Log("stored address in DB: " + address)
 	}
 
 	return
@@ -60,9 +60,9 @@ func (mms *MqttMonitor) getAmountOfElements() (amount int64, err error) {
 
 	// Check for any errors encountered during iteration
 	if err := iter.Error(); err != nil {
-		Log("[app] [Monitor] " + err.Error())
+		Log("" + err.Error())
 	} else {
-		Log("[app] [Monitor] elements: " + strconv.FormatInt(amount, 10))
+		Log("elements: " + strconv.FormatInt(amount, 10))
 	}
 
 	return
@@ -72,14 +72,14 @@ func (mms *MqttMonitor) getDataFromIter(iter iterator.Iterator) (lastSeen LastSe
 	value := iter.Value()
 	err = json.Unmarshal(value, &lastSeen)
 	if err != nil {
-		Log("[app] [Monitor] Failed to unmarshal entry: " + string(key) + " - " + err.Error())
+		Log("Failed to unmarshal entry: " + string(key) + " - " + err.Error())
 	}
 	return
 }
 
 func (mms *MqttMonitor) CleanupDB() {
 	// Create an iterator for the database
-	Log("[app] [Monitor] Starting clean-up process")
+	Log("Starting clean-up process")
 	iter := mms.db.NewIterator(nil, nil)
 	defer iter.Release() // Make sure to release the iterator at the end
 
@@ -88,7 +88,7 @@ func (mms *MqttMonitor) CleanupDB() {
 		// Use iter.Key() and iter.Value() to access the key and value
 		lastSeen, err := mms.getDataFromIter(iter)
 		if err != nil {
-			Log("[app] [Monitor] Failed to unmarshal entry: " + string(iter.Key()) + " - " + err.Error())
+			Log("Failed to unmarshal entry: " + string(iter.Key()) + " - " + err.Error())
 			continue
 		}
 		timeThreshold := time.Now().Add(-1 * mms.CleanupPeriodicityInMinutes * time.Minute).Unix()
@@ -96,15 +96,15 @@ func (mms *MqttMonitor) CleanupDB() {
 			// If the entry is older than 12 hours, delete it
 			err := mms.deleteEntry(iter.Key())
 			if err != nil {
-				Log("[app] [Monitor] Failed to delete entry: " + err.Error())
+				Log("Failed to delete entry: " + err.Error())
 			} else {
-				Log("[app] [Monitor] Delete entry: " + string(iter.Key()))
+				Log("Delete entry: " + string(iter.Key()))
 			}
 		}
 	}
 
 	// Check for any errors encountered during iteration
 	if err := iter.Error(); err != nil {
-		Log("[app] [Monitor] error during cleanup : " + err.Error())
+		Log("error during cleanup : " + err.Error())
 	}
 }
