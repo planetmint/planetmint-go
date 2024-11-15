@@ -3,6 +3,7 @@ package monitor
 import (
 	"sync"
 
+	"github.com/cometbft/cometbft/libs/log"
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/syndtr/goleveldb/leveldb"
 )
@@ -15,6 +16,7 @@ type MQTTMonitorClientI interface {
 }
 
 var monitorMutex sync.RWMutex
+var mqttLogger log.Logger
 var mqttMonitorInstance MQTTMonitorClientI
 
 func SetMqttMonitorInstance(monitorInstance MQTTMonitorClientI) {
@@ -23,12 +25,15 @@ func SetMqttMonitorInstance(monitorInstance MQTTMonitorClientI) {
 	monitorMutex.Unlock()
 }
 
-func LazyMqttMonitorLoader(homeDir string) {
+func LazyMqttMonitorLoader(logger log.Logger, homeDir string) {
 	monitorMutex.RLock()
 	tmpInstance := mqttMonitorInstance
 	monitorMutex.RUnlock()
 	if tmpInstance != nil {
 		return
+	}
+	if logger != nil {
+		mqttLogger = logger
 	}
 	if homeDir == "" {
 		homeDir = "./"
@@ -68,4 +73,11 @@ func GetActiveActorCount() (count uint64) {
 	monitorMutex.RLock()
 	defer monitorMutex.RUnlock()
 	return mqttMonitorInstance.GetActiveActorCount()
+}
+
+func Log(msg string) {
+	if mqttLogger == nil {
+		return
+	}
+	mqttLogger.Info(msg)
 }

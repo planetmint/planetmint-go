@@ -807,7 +807,7 @@ func New(
 	app.ScopedTransferKeeper = scopedTransferKeeper
 	// this line is used by starport scaffolding # stargate/app/beforeInitReturn
 
-	monitor.LazyMqttMonitorLoader(homePath)
+	monitor.LazyMqttMonitorLoader(logger, homePath)
 
 	return app
 }

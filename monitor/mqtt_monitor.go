@@ -5,7 +5,6 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"io"
-	"log"
 	"math/rand"
 	"net"
 	"net/http"
@@ -14,7 +13,6 @@ import (
 	"sync"
 	"time"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/util"
@@ -30,8 +28,6 @@ type MqttMonitor struct {
 	config                      config.Config
 	numberOfElementsMutex       sync.RWMutex
 	numberOfElements            int64
-	sdkContext                  *sdk.Context
-	contextMutex                sync.Mutex
 	isTerminated                bool
 	terminationMutex            sync.RWMutex
 	maxRetries                  time.Duration
@@ -93,7 +89,7 @@ func (mms *MqttMonitor) lazyLoadMonitorMQTTClient() util.MQTTClientI {
 		opts.SetTLSConfig(tlsConfig)
 	}
 
-	log.Println("[app] [Monitor] create new client")
+	Log("[app] [Monitor] create new client")
 	client := mqtt.NewClient(opts)
 	return client
 }
@@ -145,8 +141,8 @@ func (mms *MqttMonitor) SelectPoPParticipantsOutOfActiveActors() (challenger str
 		return
 	}
 	randomChallenger, randomChallengee := mms.getRandomNumbers()
-	log.Println("[app] [Monitor] number of elements: " + strconv.Itoa(numElements))
-	log.Println("[app] [Monitor] selected IDs: " + strconv.Itoa(randomChallenger) + " " + strconv.Itoa(randomChallengee))
+	Log("[app] [Monitor] number of elements: " + strconv.Itoa(numElements))
+	Log("[app] [Monitor] selected IDs: " + strconv.Itoa(randomChallenger) + " " + strconv.Itoa(randomChallengee))
 	iter := mms.db.NewIterator(nil, nil)
 	defer iter.Release()
 	count := 0
@@ -156,7 +152,7 @@ func (mms *MqttMonitor) SelectPoPParticipantsOutOfActiveActors() (challenger str
 		if count == randomChallenger {
 			lastSeen, err = mms.getDataFromIter(iter)
 			if err != nil {
-				log.Println("[app] [Monitor] could not get Data from ID" + strconv.Itoa(randomChallenger))
+				Log("[app] [Monitor] could not get Data from ID" + strconv.Itoa(randomChallenger))
 				return
 			}
 			challenger = lastSeen.Address
@@ -164,7 +160,7 @@ func (mms *MqttMonitor) SelectPoPParticipantsOutOfActiveActors() (challenger str
 		} else if count == randomChallengee {
 			lastSeen, err = mms.getDataFromIter(iter)
 			if err != nil {
-				log.Println("[app] [Monitor] could not get Data from ID" + strconv.Itoa(randomChallengee))
+				Log("[app] [Monitor] could not get Data from ID" + strconv.Itoa(randomChallengee))
 				return
 			}
 			challengee = lastSeen.Address
@@ -176,7 +172,7 @@ func (mms *MqttMonitor) SelectPoPParticipantsOutOfActiveActors() (challenger str
 			break
 		}
 	}
-	log.Println("[app] [Monitor] challenger, challengee: " + challenger + " " + challengee)
+	Log("[app] [Monitor] challenger, challengee: " + challenger + " " + challengee)
 	return
 }
 
@@ -214,9 +210,9 @@ func (mms *MqttMonitor) MqttMsgHandler(_ mqtt.Client, msg mqtt.Message) {
 	err = mms.AddParticipant(address, unixTime)
 
 	if err != nil {
-		log.Println("[app] [Monitor] error adding active actor to DB: " + address + " " + err.Error())
+		Log("[app] [Monitor] error adding active actor to DB: " + address + " " + err.Error())
 	} else {
-		log.Println("[app] [Monitor] added active actor to DB: " + address)
+		Log("[app] [Monitor] added active actor to DB: " + address)
 	}
 }
 
@@ -230,7 +226,7 @@ func IsLegitMachineAddress(address string) (active bool, err error) {
 	ctx := context.Background()
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
-		log.Println("[app] [Monitor] cannot send machine query request " + err.Error())
+		Log("[app] [Monitor] cannot send machine query request " + err.Error())
 		return
 	}
 
@@ -240,7 +236,7 @@ func IsLegitMachineAddress(address string) (active bool, err error) {
 	// Send the request
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("[app] [Monitor] cannot connect to server: " + err.Error())
+		Log("[app] [Monitor] cannot connect to server: " + err.Error())
 		return
 	}
 
@@ -250,13 +246,13 @@ func IsLegitMachineAddress(address string) (active bool, err error) {
 	// Read the response body
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("[app] [Monitor] cannot read response: " + err.Error())
+		Log("[app] [Monitor] cannot read response: " + err.Error())
 		return
 	}
 
 	// Check the status code
 	if resp.StatusCode != http.StatusOK {
-		log.Print("[app] [Monitor] unexpected status code: " + string(body))
+		Log("[app] [Monitor] unexpected status code: " + string(body))
 		return
 	}
 
@@ -264,29 +260,29 @@ func IsLegitMachineAddress(address string) (active bool, err error) {
 	var data map[string]interface{}
 	err = json.Unmarshal(body, &data)
 	if err != nil {
-		log.Println("[app] [Monitor] cannot unmarshal response " + err.Error())
+		Log("[app] [Monitor] cannot unmarshal response " + err.Error())
 		return
 	}
 
 	// Check if the "info" key exists
 	machineValue, ok := data["machine"]
 	if !ok {
-		log.Println("[app] [Monitor] response does not contain the required machine")
+		Log("[app] [Monitor] response does not contain the required machine")
 		return
 	}
 	machineMap, ok := machineValue.(map[string]interface{})
 	if !ok {
-		log.Println("[app] [Monitor] cannot convert machine map")
+		Log("[app] [Monitor] cannot convert machine map")
 		return
 	}
 	addressMap, ok := machineMap["address"]
 	if !ok {
-		log.Println("[app] [Monitor] response does not contain the required name")
+		Log("[app] [Monitor] response does not contain the required name")
 		return
 	}
 	value, ok := addressMap.(string)
 	if !ok || value != address {
-		log.Println("[app] [Monitor] return machine is not the required one")
+		Log("[app] [Monitor] return machine is not the required one")
 		return
 	}
 
@@ -296,7 +292,7 @@ func IsLegitMachineAddress(address string) (active bool, err error) {
 }
 
 func (mms *MqttMonitor) onConnectionLost(_ mqtt.Client, err error) {
-	log.Println("[app] [Monitor] Connection lost: " + err.Error())
+	Log("[app] [Monitor] Connection lost: " + err.Error())
 	// Handle connection loss here (e.g., reconnect attempts, logging)
 	if !mms.IsTerminated() {
 		mms.lostConnectionMutex.Lock()
@@ -308,7 +304,7 @@ func (mms *MqttMonitor) onConnectionLost(_ mqtt.Client, err error) {
 func (mms *MqttMonitor) MonitorActiveParticipants() {
 	mms.clientMutex.Lock()
 	if mms.localMqttClient != nil {
-		log.Println("[app] [Monitor] client is still working")
+		Log("[app] [Monitor] client is still working")
 		mms.clientMutex.Unlock()
 		return
 	}
@@ -320,7 +316,7 @@ func (mms *MqttMonitor) MonitorActiveParticipants() {
 	mms.SetMaxRetries()
 	for !mms.IsTerminated() && mms.maxRetries > 0 {
 		if token := mqttClient.Connect(); token.Wait() && token.Error() != nil {
-			log.Println("[app] [Monitor] error connecting to mqtt: " + token.Error().Error())
+			Log("[app] [Monitor] error connecting to mqtt: " + token.Error().Error())
 			mms.maxRetries--
 			time.Sleep(time.Second * 5)
 			continue
@@ -329,24 +325,24 @@ func (mms *MqttMonitor) MonitorActiveParticipants() {
 		mms.lostConnection = false
 		mms.lostConnectionMutex.Unlock()
 
-		log.Println("[app] [Monitor] established connection")
+		Log("[app] [Monitor] established connection")
 
 		var messageHandler mqtt.MessageHandler = mms.MqttMsgHandler
 
 		// Subscribe to a topic
 		subscriptionTopic := "tele/#"
 		if token := mqttClient.Subscribe(subscriptionTopic, 0, messageHandler); token.Wait() && token.Error() != nil {
-			log.Println("[app] [Monitor] error registering the mqtt subscription: " + token.Error().Error())
+			Log("[app] [Monitor] error registering the mqtt subscription: " + token.Error().Error())
 			continue
 		}
-		log.Println("[app] [Monitor] subscribed to tele/# channels")
+		Log("[app] [Monitor] subscribed to tele/# channels")
 
 		for !mms.IsTerminated() {
 			mms.lostConnectionMutex.Lock()
 			lostConnectionEvent := mms.lostConnection
 			mms.lostConnectionMutex.Unlock()
 			if !mqttClient.IsConnected() || !mqttClient.IsConnectionOpen() || lostConnectionEvent {
-				log.Println("[app] [Monitor] retry establishing a connection")
+				Log("[app] [Monitor] retry establishing a connection")
 				break // Exit inner loop on disconnect
 			}
 
@@ -357,7 +353,7 @@ func (mms *MqttMonitor) MonitorActiveParticipants() {
 	}
 
 	if mms.maxRetries == 0 {
-		log.Println("[app] [Monitor] Reached maximum reconnection attempts. Exiting. New client will be activated soon.")
+		Log("[app] [Monitor] Reached maximum reconnection attempts. Exiting. New client will be activated soon.")
 	}
 
 	mms.clientMutex.Lock()
@@ -374,13 +370,4 @@ func SendUpdateMessage(mqttClient util.MQTTClientI) {
 
 func (mms *MqttMonitor) SetMaxRetries() {
 	mms.maxRetries = 5
-}
-
-func (mms *MqttMonitor) Log(msg string) {
-	mms.contextMutex.Lock()
-	localContext := mms.sdkContext
-	mms.contextMutex.Unlock()
-	if localContext != nil {
-		util.GetAppLogger().Info(*localContext, msg)
-	}
 }
