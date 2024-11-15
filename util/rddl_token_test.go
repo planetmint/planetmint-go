@@ -10,6 +10,13 @@ const (
 	rddlTokenAmount string = "998.85844748"
 )
 
+func Test2FloatConvertion1RDDL(t *testing.T) {
+	t.Parallel()
+	var expectedValue uint64 = 100000000
+	value := RDDLToken2Uint(1)
+	assert.Equal(t, expectedValue, value)
+}
+
 func Test2FloatConvertion(t *testing.T) {
 	t.Parallel()
 	var expectedValue uint64 = 99885844748
