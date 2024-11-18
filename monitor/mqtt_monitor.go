@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
+	"errors"
 	"io"
 	"math/rand"
 	"net"
@@ -302,63 +303,102 @@ func (mms *MqttMonitor) onConnectionLost(_ mqtt.Client, err error) {
 }
 
 func (mms *MqttMonitor) MonitorActiveParticipants() {
-	mms.clientMutex.Lock()
-	if mms.localMqttClient != nil {
-		Log("client is still working")
-		mms.clientMutex.Unlock()
+	mqttClient, err := mms.initializeClient()
+	if err != nil {
+		Log(err.Error())
 		return
 	}
-	mms.localMqttClient = mms.lazyLoadMonitorMQTTClient()
-	mqttClient := mms.localMqttClient
-	mms.clientMutex.Unlock()
 
 	// Maximum reconnection attempts (adjust as needed)
 	mms.SetMaxRetries()
+
 	for !mms.IsTerminated() && mms.maxRetries > 0 {
-		if token := mqttClient.Connect(); token.Wait() && token.Error() != nil {
-			Log("error connecting to mqtt: " + token.Error().Error())
-			mms.maxRetries--
-			time.Sleep(time.Second * 5)
+		if !mms.connectClient(mqttClient) {
 			continue
 		}
-		mms.lostConnectionMutex.Lock()
-		mms.lostConnection = false
-		mms.lostConnectionMutex.Unlock()
 
-		Log("established connection")
-
-		var messageHandler mqtt.MessageHandler = mms.MqttMsgHandler
-
-		// Subscribe to a topic
-		subscriptionTopic := "tele/#"
-		if token := mqttClient.Subscribe(subscriptionTopic, 0, messageHandler); token.Wait() && token.Error() != nil {
-			Log("error registering the mqtt subscription: " + token.Error().Error())
+		if !mms.subscribeToTopic(mqttClient) {
 			continue
 		}
-		Log("subscribed to tele/# channels")
 
-		for !mms.IsTerminated() {
-			mms.lostConnectionMutex.Lock()
-			lostConnectionEvent := mms.lostConnection
-			mms.lostConnectionMutex.Unlock()
-			if !mqttClient.IsConnected() || !mqttClient.IsConnectionOpen() || lostConnectionEvent {
-				Log("retry establishing a connection")
-				break // Exit inner loop on disconnect
-			}
-
-			SendUpdateMessage(mqttClient)
-			mms.SetMaxRetries()
-			time.Sleep(60 * time.Second) // Adjust sleep time based on your needs
-		}
+		mms.monitorConnection(mqttClient)
 	}
 
+	mms.handleConnectionTermination()
+}
+
+func (mms *MqttMonitor) initializeClient() (mqttClient util.MQTTClientI, err error) {
+	mms.clientMutex.Lock()
+	defer mms.clientMutex.Unlock()
+
+	if mms.localMqttClient != nil {
+		return nil, errors.New("client is still working")
+	}
+
+	mms.localMqttClient = mms.lazyLoadMonitorMQTTClient()
+	return mms.localMqttClient, nil
+}
+
+func (mms *MqttMonitor) connectClient(mqttClient util.MQTTClientI) bool {
+	if token := mqttClient.Connect(); token.Wait() && token.Error() != nil {
+		Log("error connecting to mqtt: " + token.Error().Error())
+		mms.maxRetries--
+		time.Sleep(time.Second * 5)
+		return false
+	}
+
+	mms.setConnectionStatus(false)
+	Log("established connection")
+	return true
+}
+
+func (mms *MqttMonitor) subscribeToTopic(mqttClient util.MQTTClientI) bool {
+	messageHandler := mqtt.MessageHandler(mms.MqttMsgHandler)
+	subscriptionTopic := "tele/#"
+
+	if token := mqttClient.Subscribe(subscriptionTopic, 0, messageHandler); token.Wait() && token.Error() != nil {
+		Log("error registering the mqtt subscription: " + token.Error().Error())
+		return false
+	}
+
+	Log("subscribed to tele/# channels")
+	return true
+}
+
+func (mms *MqttMonitor) monitorConnection(mqttClient util.MQTTClientI) {
+	for !mms.IsTerminated() {
+		if mms.isConnectionLost(mqttClient) {
+			Log("retry establishing a connection")
+			break
+		}
+
+		SendUpdateMessage(mqttClient)
+		mms.SetMaxRetries()
+		time.Sleep(60 * time.Second)
+	}
+}
+
+func (mms *MqttMonitor) isConnectionLost(mqttClient util.MQTTClientI) bool {
+	mms.lostConnectionMutex.Lock()
+	defer mms.lostConnectionMutex.Unlock()
+
+	return !mqttClient.IsConnected() || !mqttClient.IsConnectionOpen() || mms.lostConnection
+}
+
+func (mms *MqttMonitor) setConnectionStatus(lost bool) {
+	mms.lostConnectionMutex.Lock()
+	defer mms.lostConnectionMutex.Unlock()
+	mms.lostConnection = lost
+}
+
+func (mms *MqttMonitor) handleConnectionTermination() {
 	if mms.maxRetries == 0 {
 		Log("reached maximum reconnection attempts. Exiting. New client will be activated soon.")
 	}
 
 	mms.clientMutex.Lock()
+	defer mms.clientMutex.Unlock()
 	mms.localMqttClient = nil
-	mms.clientMutex.Unlock()
 }
 
 func SendUpdateMessage(mqttClient util.MQTTClientI) {
