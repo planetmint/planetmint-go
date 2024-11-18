@@ -40,7 +40,7 @@ require (
 
 require github.com/rddl-network/rddl-claim-service v0.3.2
 
-require github.com/rddl-network/shamir-coordinator-service v0.7.7 // indirect
+require github.com/rddl-network/shamir-coordinator-service v0.7.7
 
 require (
 	cloud.google.com/go v0.111.0 // indirect

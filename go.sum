@@ -939,8 +939,6 @@ github.com/rddl-network/go-utils v0.2.3 h1:STiiyZVkFjovjMAyKK1IsqvVED14mRHoXFIDV
 github.com/rddl-network/go-utils v0.2.3/go.mod h1:jLOkVBK/xjfVyY0d4gs1pkafTXF3mYA7ZIE68QXau5o=
 github.com/rddl-network/rddl-claim-service v0.3.2 h1:Cp8FV40y9mwTbjVNlFrZ02QT+HZWD1pSsWaE5MLYAmc=
 github.com/rddl-network/rddl-claim-service v0.3.2/go.mod h1:RLg6AcNL790WuAl3AYoxFGkuuwKP3t3IiBfhOYOcwdo=
-github.com/rddl-network/rddl-claim-service/client v0.0.5 h1:BPCuN++ygg7GOc6cH+R+uLf8LZgTIGh6iudvqf7JmJA=
-github.com/rddl-network/rddl-claim-service/client v0.0.5/go.mod h1:vvg5NnXqnxPo0n6VAd3TwJrK/C9ho4JgwFIcoPpvovc=
 github.com/rddl-network/rddl-claim-service/client v0.0.6 h1:GLqj8RMozFPVUvPQGRLBH2yGV+VHRuUCXTWaf+4wxFo=
 github.com/rddl-network/rddl-claim-service/client v0.0.6/go.mod h1:CFAfupB5XogWqVsb6ndsLU97feGs4oUqlGI4WRff3zU=
 github.com/rddl-network/shamir-coordinator-service v0.7.7 h1:hszDZZnqBdeiOEBWlnSK2lKIJEbWclX6cchYDazpvIU=
