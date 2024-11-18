@@ -941,6 +941,10 @@ github.com/rddl-network/rddl-claim-service v0.3.2 h1:Cp8FV40y9mwTbjVNlFrZ02QT+HZ
 github.com/rddl-network/rddl-claim-service v0.3.2/go.mod h1:RLg6AcNL790WuAl3AYoxFGkuuwKP3t3IiBfhOYOcwdo=
 github.com/rddl-network/rddl-claim-service/client v0.0.5 h1:BPCuN++ygg7GOc6cH+R+uLf8LZgTIGh6iudvqf7JmJA=
 github.com/rddl-network/rddl-claim-service/client v0.0.5/go.mod h1:vvg5NnXqnxPo0n6VAd3TwJrK/C9ho4JgwFIcoPpvovc=
+github.com/rddl-network/shamir-coordinator-service v0.7.7 h1:hszDZZnqBdeiOEBWlnSK2lKIJEbWclX6cchYDazpvIU=
+github.com/rddl-network/shamir-coordinator-service v0.7.7/go.mod h1:g3JnQlzKQWtnp4ZA7VtD/4N0GKpFWrW0ANHqged7M/g=
+github.com/rddl-network/shamir-coordinator-service/client v0.0.9 h1:l5ZOMw+hU8azsE3wqWYIUvKkcgN8vD/kD7yskQ2purU=
+github.com/rddl-network/shamir-coordinator-service/client v0.0.9/go.mod h1:4SF+n6pMf0gCKCRknEtsMpF+mMMoagpzQohbGCw4t0Q=
 github.com/rogpeppe/fastuuid v0.0.0-20150106093220-6724a57986af/go.mod h1:XWv6SoW27p1b0cqNHllgS5HIMJraePCO15w5zCzIWYg=
 github.com/rogpeppe/fastuuid v1.2.0/go.mod h1:jVj6XXZzXRy/MSR5jhDC/2q6DgLz+nrA6LYCDYWNEvQ=
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=

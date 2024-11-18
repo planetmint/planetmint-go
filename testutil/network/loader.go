@@ -26,6 +26,7 @@ import (
 	elements "github.com/rddl-network/elements-rpc"
 	elementsmocks "github.com/rddl-network/elements-rpc/utils/mocks"
 	rcctypes "github.com/rddl-network/rddl-claim-service/types"
+	scctypes "github.com/rddl-network/shamir-coordinator-service/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -57,13 +58,13 @@ func Load(t *testing.T, configs ...Config) *Network {
 	clients.ClaimServiceClient = claimMock
 
 	shamirMock := clientmocks.NewMockIShamirCoordinatorClient(ctrl)
-	shamirMock.EXPECT().SendTokens(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().Return(clients.SendTokensResponse{
+	shamirMock.EXPECT().SendTokens(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().Return(scctypes.SendTokensResponse{
 		TxID: "7add40beb27df701e02ee85089c5bc0021bc813823fedb5f1dcb5debda7f3da9",
 	}, nil)
-	shamirMock.EXPECT().ReIssueAsset(gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().Return(clients.ReIssueResponse{
+	shamirMock.EXPECT().ReIssueAsset(gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().Return(scctypes.ReIssueResponse{
 		TxID: "7add40beb27df701e02ee85089c5bc0021bc813823fedb5f1dcb5debda7f3da9",
 	}, nil)
-	shamirMock.EXPECT().IssueMachineNFT(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().Return(clients.IssueMachineNFTResponse{
+	shamirMock.EXPECT().IssueMachineNFT(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().Return(scctypes.IssueMachineNFTResponse{
 		HexTX:    "0000000000000000000000000000000000000000000000000000000000000000",
 		Contract: `{"entity":{"domain":"testnet-assets.rddl.io"}, "issuer_pubkey":"02", "machine_addr":"addr","name":"machine","precicion":8,"version":1}`,
 		Asset:    "0000000000000000000000000000000000000000000000000000000000000000",

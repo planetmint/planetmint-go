@@ -21,6 +21,7 @@ import (
 	"github.com/planetmint/planetmint-go/x/machine/types"
 	elements "github.com/rddl-network/elements-rpc"
 	elementsmocks "github.com/rddl-network/elements-rpc/utils/mocks"
+	scctypes "github.com/rddl-network/shamir-coordinator-service/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -55,7 +56,7 @@ func TestMachineNFTIssuance(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	elements.Client = &elementsmocks.MockClient{}
 	shamirMock := clientmocks.NewMockIShamirCoordinatorClient(ctrl)
-	shamirMock.EXPECT().IssueMachineNFT(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().Return(clients.IssueMachineNFTResponse{
+	shamirMock.EXPECT().IssueMachineNFT(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().Return(scctypes.IssueMachineNFTResponse{
 		HexTX:    "0000000000000000000000000000000000000000000000000000000000000000",
 		Contract: `{"entity":{"domain":"testnet-assets.rddl.io"}, "issuer_pubkey":"02", "machine_addr":"addr","name":"machine","precicion":8,"version":1}`,
 		Asset:    "0000000000000000000000000000000000000000000000000000000000000000",

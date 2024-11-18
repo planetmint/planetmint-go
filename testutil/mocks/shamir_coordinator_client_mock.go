@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	clients "github.com/planetmint/planetmint-go/clients"
+	"github.com/rddl-network/shamir-coordinator-service/types"
 )
 
 // MockIShamirCoordinatorClient is a mock of IShamirCoordinatorClient interface.
@@ -36,10 +36,10 @@ func (m *MockIShamirCoordinatorClient) EXPECT() *MockIShamirCoordinatorClientMoc
 }
 
 // GetMnemonics mocks base method.
-func (m *MockIShamirCoordinatorClient) GetMnemonics(ctx context.Context) (clients.MnemonicsResponse, error) {
+func (m *MockIShamirCoordinatorClient) GetMnemonics(ctx context.Context) (types.MnemonicsResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetMnemonics", ctx)
-	ret0, _ := ret[0].(clients.MnemonicsResponse)
+	ret0, _ := ret[0].(types.MnemonicsResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -51,10 +51,10 @@ func (mr *MockIShamirCoordinatorClientMockRecorder) GetMnemonics(ctx interface{}
 }
 
 // IssueMachineNFT mocks base method.
-func (m *MockIShamirCoordinatorClient) IssueMachineNFT(ctx context.Context, name, machineAddress, domain string) (clients.IssueMachineNFTResponse, error) {
+func (m *MockIShamirCoordinatorClient) IssueMachineNFT(ctx context.Context, name, machineAddress, domain string) (types.IssueMachineNFTResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IssueMachineNFT", ctx, name, machineAddress, domain)
-	ret0, _ := ret[0].(clients.IssueMachineNFTResponse)
+	ret0, _ := ret[0].(types.IssueMachineNFTResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -80,10 +80,10 @@ func (mr *MockIShamirCoordinatorClientMockRecorder) PostMnemonics(ctx, secret in
 }
 
 // ReIssueAsset mocks base method.
-func (m *MockIShamirCoordinatorClient) ReIssueAsset(ctx context.Context, asset, amount string) (clients.ReIssueResponse, error) {
+func (m *MockIShamirCoordinatorClient) ReIssueAsset(ctx context.Context, asset, amount string) (types.ReIssueResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ReIssueAsset", ctx, asset, amount)
-	ret0, _ := ret[0].(clients.ReIssueResponse)
+	ret0, _ := ret[0].(types.ReIssueResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -95,10 +95,10 @@ func (mr *MockIShamirCoordinatorClientMockRecorder) ReIssueAsset(ctx, asset, amo
 }
 
 // SendTokens mocks base method.
-func (m *MockIShamirCoordinatorClient) SendTokens(ctx context.Context, recipient, amount, asset string) (clients.SendTokensResponse, error) {
+func (m *MockIShamirCoordinatorClient) SendTokens(ctx context.Context, recipient, amount, asset string) (types.SendTokensResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SendTokens", ctx, recipient, amount, asset)
-	ret0, _ := ret[0].(clients.SendTokensResponse)
+	ret0, _ := ret[0].(types.SendTokensResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

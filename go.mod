@@ -40,6 +40,8 @@ require (
 
 require github.com/rddl-network/rddl-claim-service v0.3.2
 
+require github.com/rddl-network/shamir-coordinator-service v0.7.7 // indirect
+
 require (
 	cloud.google.com/go v0.111.0 // indirect
 	cloud.google.com/go/compute v1.23.3 // indirect
@@ -156,6 +158,7 @@ require (
 	github.com/rakyll/statik v0.1.7 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/rddl-network/rddl-claim-service/client v0.0.5
+	github.com/rddl-network/shamir-coordinator-service/client v0.0.9
 	github.com/rogpeppe/go-internal v1.11.0 // indirect
 	github.com/rs/cors v1.8.3 // indirect
 	github.com/rs/zerolog v1.31.0 // indirect
