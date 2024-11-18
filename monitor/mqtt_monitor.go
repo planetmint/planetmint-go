@@ -296,9 +296,7 @@ func (mms *MqttMonitor) onConnectionLost(_ mqtt.Client, err error) {
 	Log("connection lost: " + err.Error())
 	// Handle connection loss here (e.g., reconnect attempts, logging)
 	if !mms.IsTerminated() {
-		mms.lostConnectionMutex.Lock()
-		mms.lostConnection = true
-		mms.lostConnectionMutex.Unlock()
+		mms.setConnectionStatus(true)
 	}
 }
 
