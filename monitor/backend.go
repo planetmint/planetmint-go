@@ -31,8 +31,8 @@ func (mms *MqttMonitor) AddParticipant(address string, lastSeenTS int64) (err er
 		mms.setNumDBElements(mms.getNumDBElements() + 1)
 	}
 	mms.dbMutex.Lock()
+	defer mms.dbMutex.Unlock()
 	err = mms.db.Put([]byte(address), lastSeenBytes, nil)
-	mms.dbMutex.Unlock()
 	if err != nil {
 		Log("error storing addresses in DB: " + err.Error())
 	} else {
@@ -45,9 +45,8 @@ func (mms *MqttMonitor) AddParticipant(address string, lastSeenTS int64) (err er
 func (mms *MqttMonitor) deleteEntry(key []byte) (err error) {
 	mms.setNumDBElements(mms.getNumDBElements() - 1)
 	mms.dbMutex.Lock()
-	err = mms.db.Delete(key, nil)
-	mms.dbMutex.Unlock()
-	return
+	defer mms.dbMutex.Unlock()
+	return mms.db.Delete(key, nil)
 }
 
 func (mms *MqttMonitor) getAmountOfElements() (amount int64, err error) {

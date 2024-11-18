@@ -21,8 +21,8 @@ var mqttMonitorInstance MQTTMonitorClientI
 
 func SetMqttMonitorInstance(monitorInstance MQTTMonitorClientI) {
 	monitorMutex.Lock()
+	defer monitorMutex.Unlock()
 	mqttMonitorInstance = monitorInstance
-	monitorMutex.Unlock()
 }
 
 func GetMqttMonitorInstance() (monitorInstance MQTTMonitorClientI) {
@@ -54,9 +54,8 @@ func LazyMqttMonitorLoader(logger log.Logger, homeDir string) {
 
 func SelectPoPParticipantsOutOfActiveActors() (challenger string, challengee string, err error) {
 	monitorMutex.RLock()
-	challenger, challengee, err = mqttMonitorInstance.SelectPoPParticipantsOutOfActiveActors()
-	monitorMutex.RUnlock()
-	return
+	defer monitorMutex.RUnlock()
+	return mqttMonitorInstance.SelectPoPParticipantsOutOfActiveActors()
 }
 
 func Start() (err error) {
@@ -66,9 +65,8 @@ func Start() (err error) {
 
 func AddParticipant(address string, lastSeenTS int64) (err error) {
 	monitorMutex.RLock()
-	err = mqttMonitorInstance.AddParticipant(address, lastSeenTS)
-	monitorMutex.RUnlock()
-	return
+	defer monitorMutex.RUnlock()
+	return mqttMonitorInstance.AddParticipant(address, lastSeenTS)
 }
 
 func GetActiveActorCount() (count uint64) {

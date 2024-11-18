@@ -40,15 +40,14 @@ type MqttMonitor struct {
 
 func (mms *MqttMonitor) Terminate() {
 	mms.terminationMutex.Lock()
+	defer mms.terminationMutex.Unlock()
 	mms.isTerminated = true
-	mms.terminationMutex.Unlock()
 }
 
 func (mms *MqttMonitor) IsTerminated() (isTerminated bool) {
 	mms.terminationMutex.RLock()
-	isTerminated = mms.isTerminated
-	mms.terminationMutex.RUnlock()
-	return
+	defer mms.terminationMutex.RUnlock()
+	return mms.isTerminated
 }
 
 func (mms *MqttMonitor) getNumDBElements() int64 {
