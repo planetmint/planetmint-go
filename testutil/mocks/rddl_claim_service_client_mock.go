@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	clients "github.com/planetmint/planetmint-go/clients"
+	"github.com/rddl-network/rddl-claim-service/types"
 )
 
 // MockIRCClient is a mock of IRCClient interface.
@@ -36,10 +36,10 @@ func (m *MockIRCClient) EXPECT() *MockIRCClientMockRecorder {
 }
 
 // GetClaim mocks base method.
-func (m *MockIRCClient) GetClaim(ctx context.Context, id int) (clients.GetClaimResponse, error) {
+func (m *MockIRCClient) GetClaim(ctx context.Context, id int) (types.GetClaimResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetClaim", ctx, id)
-	ret0, _ := ret[0].(clients.GetClaimResponse)
+	ret0, _ := ret[0].(types.GetClaimResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -51,10 +51,10 @@ func (mr *MockIRCClientMockRecorder) GetClaim(ctx, id interface{}) *gomock.Call 
 }
 
 // PostClaim mocks base method.
-func (m *MockIRCClient) PostClaim(ctx context.Context, req clients.PostClaimRequest) (clients.PostClaimResponse, error) {
+func (m *MockIRCClient) PostClaim(ctx context.Context, req types.PostClaimRequest) (types.PostClaimResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PostClaim", ctx, req)
-	ret0, _ := ret[0].(clients.PostClaimResponse)
+	ret0, _ := ret[0].(types.PostClaimResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

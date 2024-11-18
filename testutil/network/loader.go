@@ -25,6 +25,7 @@ import (
 	"github.com/planetmint/planetmint-go/util/mocks"
 	elements "github.com/rddl-network/elements-rpc"
 	elementsmocks "github.com/rddl-network/elements-rpc/utils/mocks"
+	rcctypes "github.com/rddl-network/rddl-claim-service/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -50,7 +51,7 @@ func Load(t *testing.T, configs ...Config) *Network {
 	util.RegisterAssetServiceHTTPClient = &mocks.MockClient{}
 	ctrl := gomock.NewController(t)
 	claimMock := clientmocks.NewMockIRCClient(ctrl)
-	claimMock.EXPECT().PostClaim(gomock.Any(), gomock.Any()).AnyTimes().Return(clients.PostClaimResponse{
+	claimMock.EXPECT().PostClaim(gomock.Any(), gomock.Any()).AnyTimes().Return(rcctypes.PostClaimResponse{
 		TxID: "0000000000000000000000000000000000000000000000000000000000000000",
 	}, nil)
 	clients.ClaimServiceClient = claimMock
