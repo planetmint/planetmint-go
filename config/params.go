@@ -5,7 +5,12 @@ import (
 )
 
 // LiquidNetParams defines the network parameters for the Liquid network.
-var LiquidNetParams chaincfg.Params
+var LiquidNetParams = func() chaincfg.Params {
+	params := chaincfg.MainNetParams
+	params.Name = "liquidv1"
+	params.HDCoinType = 1776
+	return params
+}()
 
 // PlmntNetParams defines the network parameters for the Planetmint network.
 var PlmntNetParams = chaincfg.Params{
@@ -21,17 +26,9 @@ var PlmntNetParams = chaincfg.Params{
 }
 
 func init() {
-	// Not allowed to register LiquidNetParams, because it's just another
-	// Bitcoin network with different coin type.
-	// See https://github.com/satoshilabs/slips/blob/master/slip-0044.md
-	LiquidNetParams = chaincfg.MainNetParams
-	LiquidNetParams.Name = "liquidv1"
-	LiquidNetParams.HDCoinType = 1776
-
 	// Need to register PlmntNetParams, otherwise we get an "unknown hd
 	// private extended key bytes" error.
-	err := chaincfg.Register(&PlmntNetParams)
-	if err != nil {
+	if err := chaincfg.Register(&PlmntNetParams); err != nil {
 		panic(err)
 	}
 }
