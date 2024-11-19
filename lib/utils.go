@@ -60,7 +60,7 @@ func createSequenceDirectory() (path string, err error) {
 		return
 	}
 	homeDir := usr.HomeDir
-	path = filepath.Join(GetConfig().rootDir, "sequence")
+	path = filepath.Join(GetConfig().RootDir, "sequence")
 	// expand tilde to user's home directory
 	if strings.HasPrefix(path, "~/") {
 		path = filepath.Join(homeDir, path[2:])

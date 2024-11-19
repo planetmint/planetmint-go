@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"errors"
 	"os"
 	"sync"
 
@@ -10,134 +11,168 @@ import (
 	"github.com/planetmint/planetmint-go/lib/params"
 )
 
-// Config defines library top level configuration.
-type Config struct {
-	chainID        string
-	clientCtx      client.Context
-	encodingConfig params.EncodingConfig
-	feeDenom       string
-	rootDir        string
-	rpcEndpoint    string
-	txGas          uint64
-	serialPort     string
-}
-
-// lib wide global singleton
 var (
-	libConfig  *Config
-	sdkConfig  *sdk.Config
-	initConfig sync.Once
-	changeLock sync.Mutex
+	// ErrInvalidConfig is returned when configuration validation fails
+	ErrInvalidConfig = errors.New("invalid configuration")
+
+	// Global singleton instances
+	instance  *Config
+	mu        sync.RWMutex
+	once      sync.Once
+	sdkConfig *sdk.Config
 )
 
-// DefaultConfig returns library default configuration.
-func DefaultConfig() *Config {
+// Config defines the top-level configuration for the Planetmint library.
+// All fields are exported to allow external access while maintaining
+// thread-safe modifications through methods.
+type Config struct {
+	ChainID        string
+	ClientCtx      client.Context
+	EncodingConfig params.EncodingConfig
+	FeeDenom       string
+	RPCEndpoint    string
+	RootDir        string
+	SerialPort     string
+	TxGas          uint64
+}
+
+// NewConfig creates a new Config instance with default values.
+func NewConfig() *Config {
 	return &Config{
-		chainID:        "planetmint-testnet-1",
-		clientCtx:      client.Context{},
-		encodingConfig: params.EncodingConfig{},
-		feeDenom:       "plmnt",
-		rootDir:        "~/.planetmint-go/",
-		rpcEndpoint:    "http://127.0.0.1:26657",
-		txGas:          200000,
-		serialPort:     "",
+		ChainID:        "planetmint-testnet-1",
+		ClientCtx:      client.Context{},
+		EncodingConfig: params.EncodingConfig{},
+		FeeDenom:       "plmnt",
+		RPCEndpoint:    "http://127.0.0.1:26657",
+		RootDir:        "~/.planetmint-go/",
+		TxGas:          200000,
 	}
 }
 
-// GetConfig returns the config instance for the SDK.
+// GetConfig returns the singleton Config instance, initializing it if necessary.
 func GetConfig() *Config {
-	initConfig.Do(func() {
-		libConfig = DefaultConfig()
+	once.Do(func() {
+		instance = NewConfig()
 		sdkConfig = sdk.GetConfig()
-		libConfig.SetBech32PrefixForAccount("plmnt")
 
+		// Initialize default configuration
+		instance.SetBech32PrefixForAccount("plmnt")
 		encodingConfig := MakeEncodingConfig()
-		libConfig.SetEncodingConfig(encodingConfig)
+		instance.SetEncodingConfig(encodingConfig)
 	})
-	return libConfig
+	return instance
 }
 
-// SetBech32PrefixForAccount sets the bech32 account prefix.
-func (config *Config) SetBech32PrefixForAccount(bech32Prefix string) *Config {
-	changeLock.Lock()
-	defer changeLock.Unlock()
-	sdkConfig.SetBech32PrefixForAccount(bech32Prefix, "pub")
-	return config
+// Validate checks if the configuration is valid.
+func (c *Config) Validate() error {
+	mu.RLock()
+	defer mu.RUnlock()
+
+	if c.ChainID == "" {
+		return errors.New("chain ID cannot be empty")
+	}
+	if c.RPCEndpoint == "" {
+		return errors.New("RPC endpoint cannot be empty")
+	}
+	if c.TxGas == 0 {
+		return errors.New("transaction gas cannot be zero")
+	}
+	return nil
 }
 
-// SetEncodingConfig sets the encoding config and must not be nil.
-func (config *Config) SetEncodingConfig(encodingConfig params.EncodingConfig) *Config {
-	changeLock.Lock()
-	defer changeLock.Unlock()
-	config.encodingConfig = encodingConfig
-	return config
+// Builder methods
+
+func (c *Config) SetBech32PrefixForAccount(prefix string) *Config {
+	mu.Lock()
+	defer mu.Unlock()
+	sdkConfig.SetBech32PrefixForAccount(prefix, "pub")
+	return c
 }
 
-// SetChainID sets the chain ID parameter.
-func (config *Config) SetChainID(chainID string) *Config {
-	changeLock.Lock()
-	defer changeLock.Unlock()
-	config.chainID = chainID
-	return config
+func (c *Config) SetEncodingConfig(config params.EncodingConfig) *Config {
+	mu.Lock()
+	defer mu.Unlock()
+	c.EncodingConfig = config
+	return c
 }
 
-// SetClientCtx sets the client context parameter.
-func (config *Config) SetClientCtx(clientCtx client.Context) *Config {
-	changeLock.Lock()
-	defer changeLock.Unlock()
-	config.clientCtx = clientCtx
-	return config
+func (c *Config) SetChainID(chainID string) *Config {
+	mu.Lock()
+	defer mu.Unlock()
+	c.ChainID = chainID
+	return c
 }
 
-// SetFeeDenom sets the fee denominator parameter.
-func (config *Config) SetFeeDenom(feeDenom string) *Config {
-	changeLock.Lock()
-	defer changeLock.Unlock()
-	config.feeDenom = feeDenom
-	return config
+func (c *Config) SetClientCtx(ctx client.Context) *Config {
+	mu.Lock()
+	defer mu.Unlock()
+	c.ClientCtx = ctx
+	return c
 }
 
-// SetRoot sets the root directory where to find the keyring.
-func (config *Config) SetRoot(root string) *Config {
-	changeLock.Lock()
-	defer changeLock.Unlock()
-	config.rootDir = root
-	return config
+func (c *Config) SetFeeDenom(denom string) *Config {
+	mu.Lock()
+	defer mu.Unlock()
+	c.FeeDenom = denom
+	return c
 }
 
-// SetRPCEndpoint sets the RPC endpoint to send requests to.
-func (config *Config) SetRPCEndpoint(rpcEndpoint string) *Config {
-	changeLock.Lock()
-	defer changeLock.Unlock()
-	config.rpcEndpoint = rpcEndpoint
-	return config
+func (c *Config) SetRoot(root string) *Config {
+	mu.Lock()
+	defer mu.Unlock()
+	c.RootDir = root
+	return c
 }
 
-// SetTxGas sets the amount of Gas for the TX that is send to the network
-func (config *Config) SetTxGas(txGas uint64) *Config {
-	changeLock.Lock()
-	defer changeLock.Unlock()
-	config.txGas = txGas
-	return config
+func (c *Config) SetRPCEndpoint(endpoint string) *Config {
+	mu.Lock()
+	defer mu.Unlock()
+	c.RPCEndpoint = endpoint
+	return c
 }
 
-func (config *Config) SetSerialPort(port string) *Config {
-	changeLock.Lock()
-	defer changeLock.Unlock()
-	config.serialPort = port
-	return config
+func (c *Config) SetTxGas(gas uint64) *Config {
+	mu.Lock()
+	defer mu.Unlock()
+	c.TxGas = gas
+	return c
 }
 
-func (config *Config) GetSerialPort() string {
-	return config.serialPort
+func (c *Config) SetSerialPort(port string) *Config {
+	mu.Lock()
+	defer mu.Unlock()
+	c.SerialPort = port
+	return c
 }
 
-func (config *Config) getLibKeyring() (keyring.Keyring, error) {
-	return keyring.New("lib", keyring.BackendTest, config.rootDir, os.Stdin, config.encodingConfig.Marshaler, []keyring.Option{}...)
+// Getter methods
+
+func (c *Config) GetSerialPort() string {
+	mu.RLock()
+	defer mu.RUnlock()
+	return c.SerialPort
 }
 
-func (config *Config) GetDefaultValidatorRecord() (*keyring.Record, error) {
-	keyring, err := config.getLibKeyring()
+// Keyring operations
+
+// GetLibKeyring returns a new keyring instance configured with the current settings.
+func (c *Config) GetLibKeyring() (keyring.Keyring, error) {
+	mu.RLock()
+	defer mu.RUnlock()
+
+	return keyring.New(
+		"lib",
+		keyring.BackendTest,
+		c.RootDir,
+		os.Stdin,
+		c.EncodingConfig.Marshaler,
+		[]keyring.Option{}...,
+	)
+}
+
+// GetDefaultValidatorRecord returns the first validator record from the keyring.
+func (c *Config) GetDefaultValidatorRecord() (*keyring.Record, error) {
+	keyring, err := c.GetLibKeyring()
 	if err != nil {
 		return nil, err
 	}
@@ -145,6 +180,10 @@ func (config *Config) GetDefaultValidatorRecord() (*keyring.Record, error) {
 	records, err := keyring.List()
 	if err != nil {
 		return nil, err
+	}
+
+	if len(records) == 0 {
+		return nil, errors.New("no keyring records found")
 	}
 
 	return records[0], nil
