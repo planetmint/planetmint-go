@@ -45,7 +45,7 @@ func getAccountNumberAndSequence(clientCtx client.Context) (accountNumber, seque
 }
 
 func getClientContextAndTxFactory(fromAddress sdk.AccAddress, withoutFee bool) (clientCtx client.Context, txf tx.Factory, err error) {
-	clientCtx = GetConfig().clientCtx
+	clientCtx = GetConfig().ClientCtx
 	// at least we need an account retriever
 	// it would be better to check for an empty client context, but that does not work at the moment
 	if clientCtx.AccountRetriever == nil {
@@ -81,22 +81,22 @@ func getTxFactoryWithAccountNumberAndSequence(clientCtx client.Context, accountN
 		WithAccountRetriever(clientCtx.AccountRetriever).
 		WithChainID(clientCtx.ChainID).
 		WithFeeGranter(clientCtx.FeeGranter).
-		WithGas(GetConfig().txGas).
-		WithGasPrices(gasPrice + GetConfig().feeDenom).
+		WithGas(GetConfig().TxGas).
+		WithGasPrices(gasPrice + GetConfig().FeeDenom).
 		WithKeybase(clientCtx.Keyring).
 		WithSequence(sequence).
 		WithTxConfig(clientCtx.TxConfig)
 }
 
 func getClientContext(fromAddress sdk.AccAddress) (clientCtx client.Context, err error) {
-	encodingConfig := GetConfig().encodingConfig
+	encodingConfig := GetConfig().EncodingConfig
 
-	rootDir := GetConfig().rootDir
+	rootDir := GetConfig().RootDir
 	input := os.Stdin
 	codec := encodingConfig.Marshaler
 	keyringOptions := []keyring.Option{}
 
-	keyring, err := GetConfig().getLibKeyring()
+	keyring, err := GetConfig().GetLibKeyring()
 	if err != nil {
 		return
 	}
@@ -106,7 +106,7 @@ func getClientContext(fromAddress sdk.AccAddress) (clientCtx client.Context, err
 		return
 	}
 
-	remote := GetConfig().rpcEndpoint
+	remote := GetConfig().RPCEndpoint
 	wsClient, err := comethttp.New(remote, "/websocket")
 	if err != nil {
 		return
@@ -117,7 +117,7 @@ func getClientContext(fromAddress sdk.AccAddress) (clientCtx client.Context, err
 	clientCtx = client.Context{
 		AccountRetriever:  authtypes.AccountRetriever{},
 		BroadcastMode:     "sync",
-		ChainID:           GetConfig().chainID,
+		ChainID:           GetConfig().ChainID,
 		Client:            wsClient,
 		Codec:             codec,
 		From:              fromAddress.String(),
@@ -222,7 +222,7 @@ func BroadcastTxWithFileLock(fromAddress sdk.AccAddress, msgs ...sdk.Msg) (out *
 
 	// Set new sequence number
 	txf = txf.WithSequence(sequence)
-	if GetConfig().serialPort != "" {
+	if GetConfig().SerialPort != "" {
 		out, err = broadcastTxWithTrustWalletSignature(clientCtx, txf, msgs...)
 	} else {
 		out, err = broadcastTx(clientCtx, txf, msgs...)
@@ -304,7 +304,7 @@ func writeClientCtxOutputToBuffer(clientCtx client.Context) (out *bytes.Buffer, 
 }
 
 func signWithTrustWallet(txf tx.Factory, clientCtx client.Context, txBuilder client.TxBuilder) error {
-	connector, err := trustwallet.NewTrustWalletConnector(GetConfig().serialPort)
+	connector, err := trustwallet.NewTrustWalletConnector(GetConfig().SerialPort)
 	if err != nil {
 		return err
 	}
