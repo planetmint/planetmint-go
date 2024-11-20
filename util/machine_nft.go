@@ -12,7 +12,7 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/planetmint/planetmint-go/clients"
+	"github.com/planetmint/planetmint-go/clients/shamir/coordinator"
 	"github.com/planetmint/planetmint-go/x/machine/types"
 )
 
@@ -33,7 +33,7 @@ func IssueMachineNFT(goCtx context.Context, machine *types.Machine, scheme strin
 	// asset registration is in order to have the contact published
 	var notarizedAsset types.LiquidAsset
 	notarizedAsset.Registered = true
-	assetID, contract, hex, err := clients.IssueNFTAsset(goCtx, machine.Name, machine.Address, domain)
+	assetID, contract, hex, err := coordinator.IssueNFTAsset(goCtx, machine.Name, machine.Address, domain)
 	if err != nil {
 		GetAppLogger().Error(ctx, err, "")
 		return err

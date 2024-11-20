@@ -10,7 +10,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/golang/mock/gomock"
-	"github.com/planetmint/planetmint-go/clients"
+	"github.com/planetmint/planetmint-go/clients/shamir/coordinator"
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/testutil/keeper"
 	clientmocks "github.com/planetmint/planetmint-go/testutil/mocks"
@@ -61,7 +61,7 @@ func TestMachineNFTIssuance(t *testing.T) {
 		Contract: `{"entity":{"domain":"testnet-assets.rddl.io"}, "issuer_pubkey":"02", "machine_addr":"addr","name":"machine","precicion":8,"version":1}`,
 		Asset:    "0000000000000000000000000000000000000000000000000000000000000000",
 	}, nil)
-	clients.ShamirCoordinatorServiceClient = shamirMock
+	coordinator.ShamirCoordinatorServiceClient = shamirMock
 	util.RegisterAssetServiceHTTPClient = &mocks.MockClient{}
 	_, ctx := keeper.MachineKeeper(t)
 	params := types.DefaultParams()

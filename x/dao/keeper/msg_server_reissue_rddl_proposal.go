@@ -6,7 +6,7 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/planetmint/planetmint-go/clients"
+	"github.com/planetmint/planetmint-go/clients/shamir/coordinator"
 	"github.com/planetmint/planetmint-go/errormsg"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
@@ -44,7 +44,7 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 
 	util.GetAppLogger().Info(ctx, reissueTag+"asset: "+msg.GetCommand())
 	cmdArgs := strings.Split(msg.Command, " ")
-	txID, err := clients.ReIssueAsset(goCtx, cmdArgs[1], cmdArgs[2])
+	txID, err := coordinator.ReIssueAsset(goCtx, cmdArgs[1], cmdArgs[2])
 	if err != nil {
 		util.GetAppLogger().Error(ctx, err, reissueTag+"asset reissuance failed")
 	}

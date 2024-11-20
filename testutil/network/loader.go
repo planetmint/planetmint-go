@@ -16,7 +16,8 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/golang/mock/gomock"
 	"github.com/planetmint/planetmint-go/app"
-	"github.com/planetmint/planetmint-go/clients"
+	"github.com/planetmint/planetmint-go/clients/claim"
+	"github.com/planetmint/planetmint-go/clients/shamir/coordinator"
 	"github.com/planetmint/planetmint-go/monitor"
 	monitormocks "github.com/planetmint/planetmint-go/monitor/mocks"
 	clientmocks "github.com/planetmint/planetmint-go/testutil/mocks"
@@ -55,7 +56,7 @@ func Load(t *testing.T, configs ...Config) *Network {
 	claimMock.EXPECT().PostClaim(gomock.Any(), gomock.Any()).AnyTimes().Return(rcctypes.PostClaimResponse{
 		TxID: "0000000000000000000000000000000000000000000000000000000000000000",
 	}, nil)
-	clients.ClaimServiceClient = claimMock
+	claim.ClaimServiceClient = claimMock
 
 	shamirMock := clientmocks.NewMockIShamirCoordinatorClient(ctrl)
 	shamirMock.EXPECT().SendTokens(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().Return(scctypes.SendTokensResponse{
@@ -69,7 +70,7 @@ func Load(t *testing.T, configs ...Config) *Network {
 		Contract: `{"entity":{"domain":"testnet-assets.rddl.io"}, "issuer_pubkey":"02", "machine_addr":"addr","name":"machine","precicion":8,"version":1}`,
 		Asset:    "0000000000000000000000000000000000000000000000000000000000000000",
 	}, nil)
-	clients.ShamirCoordinatorServiceClient = shamirMock
+	coordinator.ShamirCoordinatorServiceClient = shamirMock
 
 	// enable application logger in tests
 	appLogger := util.GetAppLogger()

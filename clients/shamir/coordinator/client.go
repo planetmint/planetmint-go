@@ -1,4 +1,4 @@
-package clients
+package coordinator
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 
 var ShamirCoordinatorServiceClient client.IShamirCoordinatorClient
 
-func lazyLoadShamirCoordinatorClient() client.IShamirCoordinatorClient {
+func lazyLoad() client.IShamirCoordinatorClient {
 	if ShamirCoordinatorServiceClient != nil {
 		return ShamirCoordinatorServiceClient
 	}
@@ -25,7 +25,7 @@ func lazyLoadShamirCoordinatorClient() client.IShamirCoordinatorClient {
 }
 
 func SendTokens(ctx context.Context, recipient string, amount string, asset string) (txID string, err error) {
-	client := lazyLoadShamirCoordinatorClient()
+	client := lazyLoad()
 	res, err := client.SendTokens(ctx, recipient, amount, asset)
 	if err != nil {
 		return
@@ -34,7 +34,7 @@ func SendTokens(ctx context.Context, recipient string, amount string, asset stri
 }
 
 func ReIssueAsset(ctx context.Context, asset string, amount string) (txID string, err error) {
-	client := lazyLoadShamirCoordinatorClient()
+	client := lazyLoad()
 	res, err := client.ReIssueAsset(ctx, asset, amount)
 	if err != nil {
 		return
@@ -43,7 +43,7 @@ func ReIssueAsset(ctx context.Context, asset string, amount string) (txID string
 }
 
 func IssueNFTAsset(ctx context.Context, name string, machineAddress string, domain string) (assetID string, contract string, hexTx string, err error) {
-	client := lazyLoadShamirCoordinatorClient()
+	client := lazyLoad()
 	res, err := client.IssueMachineNFT(ctx, name, machineAddress, domain)
 	if err != nil {
 		return

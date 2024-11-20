@@ -5,7 +5,7 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/planetmint/planetmint-go/clients"
+	"github.com/planetmint/planetmint-go/clients/shamir/coordinator"
 	"github.com/planetmint/planetmint-go/errormsg"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
@@ -43,23 +43,23 @@ func (k msgServer) DistributionRequest(goCtx context.Context, msg *types.MsgDist
 	reissuanceAsset := k.GetParams(ctx).ReissuanceAsset
 	util.GetAppLogger().Info(ctx, distributionRequestTag+"entering asset distribution mode")
 	// issue 5 distributions:
-	earlyInvestorTx, err := clients.SendTokens(goCtx, msg.Distribution.EarlyInvAddr, msg.Distribution.EarlyInvAmount, reissuanceAsset)
+	earlyInvestorTx, err := coordinator.SendTokens(goCtx, msg.Distribution.EarlyInvAddr, msg.Distribution.EarlyInvAmount, reissuanceAsset)
 	if err != nil {
 		util.GetAppLogger().Error(ctx, err, distributionRequestTag+"could not distribute asset to early investors")
 	}
-	investorTx, err := clients.SendTokens(goCtx, msg.Distribution.InvestorAddr, msg.Distribution.InvestorAmount, reissuanceAsset)
+	investorTx, err := coordinator.SendTokens(goCtx, msg.Distribution.InvestorAddr, msg.Distribution.InvestorAmount, reissuanceAsset)
 	if err != nil {
 		util.GetAppLogger().Error(ctx, err, distributionRequestTag+"could not distribute asset to investors")
 	}
-	strategicTx, err := clients.SendTokens(goCtx, msg.Distribution.StrategicAddr, msg.Distribution.StrategicAmount, reissuanceAsset)
+	strategicTx, err := coordinator.SendTokens(goCtx, msg.Distribution.StrategicAddr, msg.Distribution.StrategicAmount, reissuanceAsset)
 	if err != nil {
 		util.GetAppLogger().Error(ctx, err, distributionRequestTag+"could not distribute asset to strategic investments")
 	}
-	popTx, err := clients.SendTokens(goCtx, msg.Distribution.PopAddr, msg.Distribution.PopAmount, reissuanceAsset)
+	popTx, err := coordinator.SendTokens(goCtx, msg.Distribution.PopAddr, msg.Distribution.PopAmount, reissuanceAsset)
 	if err != nil {
 		util.GetAppLogger().Error(ctx, err, distributionRequestTag+"could not distribute asset to PoP")
 	}
-	daoTx, err := clients.SendTokens(goCtx, msg.Distribution.DaoAddr, msg.Distribution.DaoAmount, reissuanceAsset)
+	daoTx, err := coordinator.SendTokens(goCtx, msg.Distribution.DaoAddr, msg.Distribution.DaoAmount, reissuanceAsset)
 	if err != nil {
 		util.GetAppLogger().Error(ctx, err, distributionRequestTag+"could not distribute asset to DAO")
 	}
