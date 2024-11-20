@@ -51,7 +51,7 @@ func (k Keeper) ComputeDistribution(ctx sdk.Context, lastReissuance int64, block
 	// PoP rewards subtracted from DaoAmount and added to PoPAmount for later distribution
 	validatorPoPRewards, err := k.accumulateValidatorPoPRewardsForDistribution(ctx, lastReissuance, blockHeight)
 	if err != nil {
-		util.GetAppLogger().Error(ctx, "error calculating Validator PoP rewards from height %v to %v", lastReissuance, blockHeight)
+		util.GetAppLogger().Error(ctx, err, "calculating Validator PoP rewards from height %v to %v", lastReissuance, blockHeight)
 	}
 
 	distribution.DaoAmount = util.UintValueToRDDLTokenString(uint64(float64(amount)*types.PercentageDao) - validatorPoPRewards)

@@ -129,7 +129,7 @@ func (k Keeper) GetLastReissuance(ctx sdk.Context) (val types.Reissuance, found 
 func (k Keeper) ComputeReissuanceValue(ctx sdk.Context, startHeight int64, endHeight int64) (reissuanceValue uint64, firstIncludedPop int64, lastIncludedPop int64, err error) {
 	challenges, err := k.GetChallengeRange(ctx, startHeight, endHeight)
 	if err != nil {
-		util.GetAppLogger().Error(ctx, "unable to compute get challenges")
+		util.GetAppLogger().Error(ctx, err, "unable to compute get challenges")
 		return
 	}
 	var overallAmount uint64
@@ -141,7 +141,7 @@ func (k Keeper) ComputeReissuanceValue(ctx sdk.Context, startHeight int64, endHe
 			popReissuanceString := GetReissuanceAsStringValue(obj.GetHeight(), k.GetParams(ctx).PopEpochs)
 			amount, err := util.RDDLTokenStringToUint(popReissuanceString)
 			if err != nil {
-				util.GetAppLogger().Error(ctx, "unable to compute PoP reissuance value: "+popString)
+				util.GetAppLogger().Error(ctx, err, "unable to compute PoP reissuance value: "+popString)
 				continue
 			}
 			util.GetAppLogger().Debug(ctx, "PoP is part of the reissuance: "+popString)

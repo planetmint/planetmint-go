@@ -34,7 +34,7 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 
 	validatorIdentity, err := util.GetValidatorCometBFTIdentity(ctx, k.RootDir)
 	if err != nil {
-		util.GetAppLogger().Error(ctx, reissueTag+errormsg.CouldNotGetValidatorIdentity+": "+err.Error())
+		util.GetAppLogger().Error(ctx, err, reissueTag+errormsg.CouldNotGetValidatorIdentity)
 		return nil, err
 	}
 	if msg.Proposer != validatorIdentity {
@@ -46,7 +46,7 @@ func (k msgServer) ReissueRDDLProposal(goCtx context.Context, msg *types.MsgReis
 	cmdArgs := strings.Split(msg.Command, " ")
 	txID, err := clients.ReIssueAsset(goCtx, cmdArgs[1], cmdArgs[2])
 	if err != nil {
-		util.GetAppLogger().Error(ctx, reissueTag+"asset reissuance failed: "+err.Error())
+		util.GetAppLogger().Error(ctx, err, reissueTag+"asset reissuance failed")
 	}
 	util.SendReissuanceResult(goCtx, msg.GetProposer(), txID, msg.GetBlockHeight())
 

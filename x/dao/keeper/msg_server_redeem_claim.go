@@ -31,7 +31,7 @@ func (k msgServer) CreateRedeemClaim(goCtx context.Context, msg *types.MsgCreate
 
 	err := k.burnClaimAmount(ctx, sdk.MustAccAddressFromBech32(msg.Creator), sdk.NewCoins(burnCoins))
 	if err != nil {
-		util.GetAppLogger().Error(ctx, createRedeemClaimTag+"could not burn claim")
+		util.GetAppLogger().Error(ctx, err, createRedeemClaimTag+"could not burn claim")
 	}
 
 	id := k.CreateNewRedeemClaim(
@@ -131,7 +131,7 @@ func postClaimToService(goCtx context.Context, beneficiary string, amount uint64
 	util.GetAppLogger().Info(ctx, fmt.Sprintf("Issuing RDDL claim: %s/%d", beneficiary, id))
 	txID, err := clients.PostClaim(goCtx, beneficiary, amount, id)
 	if err != nil {
-		util.GetAppLogger().Error(ctx, createRedeemClaimTag+"could not issue claim to beneficiary: "+beneficiary)
+		util.GetAppLogger().Error(ctx, err, createRedeemClaimTag+"could not issue claim to beneficiary: "+beneficiary)
 	}
 	util.SendUpdateRedeemClaim(goCtx, beneficiary, id, txID)
 }

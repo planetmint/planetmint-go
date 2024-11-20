@@ -71,7 +71,7 @@ func SendMqttPopInitMessagesToServer(ctx sdk.Context, challenge types.Challenge)
 	}
 	err := sendMqttPopInitMessages(challenge)
 	if err != nil {
-		GetAppLogger().Error(ctx, "MQTT error: "+err.Error())
+		GetAppLogger().Error(ctx, err, "MQTT")
 		return
 	}
 	GetAppLogger().Info(ctx, "MQTT message successfully sent: "+challenge.String())

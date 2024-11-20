@@ -122,7 +122,7 @@ func (k msgServer) handleNFTIssuance(goCtx context.Context, machine *types.Machi
 	)
 
 	if err != nil {
-		logger.Error(ctx, "Machine NFT issuance failed: "+err.Error())
+		logger.Error(ctx, err, "Machine NFT issuance failed")
 		return err
 	}
 
@@ -134,7 +134,7 @@ func (k msgServer) sendInitialFundingTokensToMachine(goCtx context.Context, mach
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	machineAddress, err := sdk.AccAddressFromBech32(machineAddressString)
 	if err != nil {
-		util.GetAppLogger().Error(ctx, "error: for provided address "+machineAddress.String())
+		util.GetAppLogger().Error(ctx, err, "for provided address "+machineAddress.String())
 		return
 	}
 
