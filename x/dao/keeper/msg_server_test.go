@@ -54,7 +54,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			"",
 		},
 		{
-			"success not set",
+			"success not set a",
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
@@ -68,21 +68,21 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			"", // no error because Go defaults bool to false
 		},
 		{
-			"initiator not set",
+			"success not set b",
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
+					Initiator:  initiator,
 					Challenger: challenger.String(),
 					Challengee: challengee.String(),
 					Height:     3,
-					Success:    true,
 					Finished:   true,
 				},
 			},
-			"Initiator is not set: invalid challenge",
+			"", // no error because Go defaults bool to false
 		},
 		{
-			errInvalidPopData,
+			"success not set c",
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
@@ -90,6 +90,48 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 					Challenger: challenger.String(),
 					Challengee: challengee.String(),
 					Height:     4,
+					Finished:   true,
+				},
+			},
+			"", // no error because Go defaults bool to false
+		},
+		{
+			"success not set d",
+			types.MsgReportPopResult{
+				Creator: initiator,
+				Challenge: &types.Challenge{
+					Initiator:  initiator,
+					Challenger: "",
+					Challengee: "",
+					Height:     5,
+					Finished:   true,
+				},
+			},
+			"Challenger is not set: invalid challenge", // no error because Go defaults bool to false
+		},
+		{
+			"initiator not set",
+			types.MsgReportPopResult{
+				Creator: challenger.String(),
+				Challenge: &types.Challenge{
+					Challenger: challenger.String(),
+					Challengee: challengee.String(),
+					Height:     6,
+					Success:    true,
+					Finished:   true,
+				},
+			},
+			"Initiator is not set: invalid challenge",
+		},
+		{
+			errInvalidPopData + "_a",
+			types.MsgReportPopResult{
+				Creator: challenger.String(),
+				Challenge: &types.Challenge{
+					Initiator:  initiator,
+					Challenger: challenger.String(),
+					Challengee: challengee.String(),
+					Height:     7,
 					Success:    true,
 					Finished:   true,
 				},
@@ -97,14 +139,14 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			"PoP report data does not match challenge: invalid challenge",
 		},
 		{
-			errInvalidPopData,
+			errInvalidPopData + " b",
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
 					Initiator:  initiator,
-					Challenger: challenger.String(),
+					Challenger: challengee.String(),
 					Challengee: challengee.String(),
-					Height:     5,
+					Height:     8,
 					Success:    false,
 					Finished:   false,
 				},
@@ -112,14 +154,14 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			"PoP reporter is not the challenger: invalid PoP reporter",
 		},
 		{
-			errInvalidPopData,
+			errInvalidPopData + " c",
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
 					Initiator:  initiator,
 					Challenger: challenger.String(),
 					Challengee: challengee.String(),
-					Height:     6,
+					Height:     9,
 					Success:    true,
 					Finished:   true,
 				},
@@ -134,7 +176,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 					Initiator:  initiator,
 					Challenger: challenger.String(),
 					Challengee: challengee.String(),
-					Height:     7,
+					Height:     10,
 					Success:    true,
 					Finished:   true,
 				},
@@ -152,9 +194,9 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 		k.StoreChallenge(sdkCtx, *challenge)
 	}
 	// adjust challenge 4 to satisfy the test case
-	testCases[3].msg.Challenge.Challengee = testCases[3].msg.Challenge.Challenger
-	testCases[4].msg.Challenge.Challenger = testCases[4].msg.Challenge.Challengee
-	testCases[5].msg.Challenge.Initiator = challenger.String()
+	testCases[6].msg.Challenge.Challengee = testCases[6].msg.Challenge.Challenger
+	testCases[7].msg.Challenge.Challenger = testCases[7].msg.Challenge.Challengee
+	testCases[8].msg.Challenge.Initiator = challenger.String()
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -167,6 +209,40 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			}
 		})
 	}
+	localDistributionOrder := types.DistributionOrder{
+		DaoAddr:         "",
+		DaoAmount:       "",
+		DaoTxID:         "",
+		InvestorAddr:    "",
+		InvestorAmount:  "",
+		InvestorTxID:    "",
+		PopAddr:         "",
+		PopAmount:       "",
+		PopTxID:         "",
+		FirstPop:        0,
+		LastPop:         5,
+		Proposer:        "",
+		EarlyInvAddr:    "",
+		EarlyInvAmount:  "",
+		EarlyInvTxID:    "",
+		StrategicAddr:   "",
+		StrategicAmount: "",
+		StrategicTxID:   "",
+	}
+	k.StoreDistributionOrder(sdkCtx, localDistributionOrder)
+	msg := types.MsgDistributionResult{
+		Creator:           initiator,
+		LastPop:           5,
+		DaoTxID:           "0x000001",
+		InvestorTxID:      "0x000002",
+		PopTxID:           "0x000003",
+		EarlyInvestorTxID: "0x000004",
+		StrategicTxID:     "0x000005",
+	}
+
+	res, err := msgServer.DistributionResult(ctx, &msg)
+	assert.Equal(t, nil, err)
+	assert.Equal(t, &types.MsgDistributionResultResponse{}, res)
 }
 func TestMsgServerMintToken(t *testing.T) {
 	t.Parallel()
