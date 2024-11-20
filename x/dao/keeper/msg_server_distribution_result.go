@@ -125,11 +125,13 @@ func (k msgServer) getClaims(ctx sdk.Context, start int64, end int64) (claims Cl
 		if err != nil {
 			util.GetAppLogger().Error(ctx, "error converting initiator address")
 		}
-		validatorPopReward, found := k.getChallengeInitiatorReward(ctx, challenge.GetHeight())
-		if !found {
-			util.GetAppLogger().Error(ctx, "No PoP initiator reward found for height %v", challenge.GetHeight())
+		else {
+			validatorPopReward, found := k.getChallengeInitiatorReward(ctx, challenge.GetHeight())
+			if !found {
+				util.GetAppLogger().Error(ctx, "No PoP initiator reward found for height %v", challenge.GetHeight())
+			}
+			claims.initiator[initiatorAddr.String()] += validatorPopReward
 		}
-		claims.initiator[initiatorAddr.String()] += validatorPopReward
 
 		// if challenge not finished only initiator has claims
 		if !challenge.GetFinished() {
