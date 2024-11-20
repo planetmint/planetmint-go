@@ -73,7 +73,13 @@ func (k msgServer) clearUnresolvedClaims(ctx sdk.Context, start int64) (err erro
 
 	totalAmounts := make(map[string]uint64)
 	for participantAddress := range currentAmounts {
-		stagedBalance := k.bankKeeper.GetBalance(ctx, sdk.MustAccAddressFromBech32(participantAddress), k.GetParams(ctx).StagedDenom)
+		// the challenger and challengee can be empty
+		participantAddressHex, err := sdk.AccAddressFromBech32(participantAddress)
+		if err != nil {
+			// try to convert as many claims as possible
+			continue
+		}
+		stagedBalance := k.bankKeeper.GetBalance(ctx, participantAddressHex, k.GetParams(ctx).StagedDenom)
 		totalAmounts[participantAddress] = stagedBalance.Amount.Uint64()
 	}
 
@@ -118,12 +124,13 @@ func (k msgServer) getClaims(ctx sdk.Context, start int64, end int64) (claims Cl
 		initiatorAddr, err := sdk.AccAddressFromBech32(challenge.Initiator)
 		if err != nil {
 			util.GetAppLogger().Error(ctx, "error converting initiator address")
+		} else {
+			validatorPopReward, found := k.getChallengeInitiatorReward(ctx, challenge.GetHeight())
+			if !found {
+				util.GetAppLogger().Error(ctx, "No PoP initiator reward found for height %v", challenge.GetHeight())
+			}
+			claims.initiator[initiatorAddr.String()] += validatorPopReward
 		}
-		validatorPopReward, found := k.getChallengeInitiatorReward(ctx, challenge.GetHeight())
-		if !found {
-			util.GetAppLogger().Error(ctx, "No PoP initiator reward found for height %v", challenge.GetHeight())
-		}
-		claims.initiator[initiatorAddr.String()] += validatorPopReward
 
 		// if challenge not finished only initiator has claims
 		if !challenge.GetFinished() {
@@ -150,7 +157,8 @@ func (k msgServer) convertOrderedClaim(ctx sdk.Context, claims map[string]uint64
 	for _, accountAddress := range keys {
 		err = k.convertAccountClaim(ctx, accountAddress, claims[accountAddress])
 		if err != nil {
-			return err
+			// try to convert as many claims as possible
+			continue
 		}
 	}
 
