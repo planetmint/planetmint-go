@@ -22,18 +22,18 @@ func buildSignBroadcastTx(goCtx context.Context, loggingContext string, sendingV
 		addr := sdk.MustAccAddressFromBech32(sendingValidatorAddress)
 		txJSON, err := lib.BuildUnsignedTx(addr, msg)
 		if err != nil {
-			GetAppLogger().Error(ctx, loggingContext+" build unsigned tx failed: "+err.Error())
+			GetAppLogger().Error(ctx, err, loggingContext+" build unsigned tx failed for: %v, %v", addr, msg)
 			return
 		}
 		GetAppLogger().Debug(ctx, loggingContext+" unsigned tx: "+txJSON)
 		out, err := lib.BroadcastTxWithFileLock(addr, msg)
 		if err != nil {
-			GetAppLogger().Error(ctx, loggingContext+" broadcast tx failed: "+err.Error())
+			GetAppLogger().Error(ctx, err, loggingContext+" broadcast tx failed: %v, %v", addr, msg)
 			return
 		}
 		txResponse, err := lib.GetTxResponseFromOut(out)
 		if err != nil {
-			GetAppLogger().Error(ctx, loggingContext+" getting tx response from out failed: "+err.Error())
+			GetAppLogger().Error(ctx, err, loggingContext+" getting tx response from out failed: %v", out)
 			return
 		}
 		if txResponse.Code == 0 {
@@ -42,10 +42,10 @@ func buildSignBroadcastTx(goCtx context.Context, loggingContext string, sendingV
 		}
 		txResponseJSON, err := yaml.YAMLToJSON([]byte(txResponse.String()))
 		if err != nil {
-			GetAppLogger().Error(ctx, loggingContext+" converting tx response from yaml to json failed: "+err.Error())
+			GetAppLogger().Error(ctx, err, loggingContext+" converting tx response from yaml to json failed: %v", txResponse)
 			return
 		}
-		GetAppLogger().Error(ctx, loggingContext+" broadcast tx failed: "+string(txResponseJSON))
+		GetAppLogger().Info(ctx, loggingContext+" broadcast tx failed: "+string(txResponseJSON))
 	}()
 }
 

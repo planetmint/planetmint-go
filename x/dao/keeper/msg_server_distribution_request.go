@@ -32,7 +32,7 @@ func (k msgServer) DistributionRequest(goCtx context.Context, msg *types.MsgDist
 
 	validatorIdentity, err := util.GetValidatorCometBFTIdentity(ctx, k.RootDir)
 	if err != nil {
-		util.GetAppLogger().Error(ctx, distributionRequestTag+errormsg.CouldNotGetValidatorIdentity+": "+err.Error())
+		util.GetAppLogger().Error(ctx, err, distributionRequestTag+errormsg.CouldNotGetValidatorIdentity)
 		return nil, err
 	}
 	if msg.Distribution.GetProposer() != validatorIdentity {
@@ -45,23 +45,23 @@ func (k msgServer) DistributionRequest(goCtx context.Context, msg *types.MsgDist
 	// issue 5 distributions:
 	earlyInvestorTx, err := clients.SendTokens(goCtx, msg.Distribution.EarlyInvAddr, msg.Distribution.EarlyInvAmount, reissuanceAsset)
 	if err != nil {
-		util.GetAppLogger().Error(ctx, distributionRequestTag+"could not distribute asset to early investors: "+err.Error())
+		util.GetAppLogger().Error(ctx, err, distributionRequestTag+"could not distribute asset to early investors")
 	}
 	investorTx, err := clients.SendTokens(goCtx, msg.Distribution.InvestorAddr, msg.Distribution.InvestorAmount, reissuanceAsset)
 	if err != nil {
-		util.GetAppLogger().Error(ctx, distributionRequestTag+"could not distribute asset to investors: "+err.Error())
+		util.GetAppLogger().Error(ctx, err, distributionRequestTag+"could not distribute asset to investors")
 	}
 	strategicTx, err := clients.SendTokens(goCtx, msg.Distribution.StrategicAddr, msg.Distribution.StrategicAmount, reissuanceAsset)
 	if err != nil {
-		util.GetAppLogger().Error(ctx, distributionRequestTag+"could not distribute asset to strategic investments: "+err.Error())
+		util.GetAppLogger().Error(ctx, err, distributionRequestTag+"could not distribute asset to strategic investments")
 	}
 	popTx, err := clients.SendTokens(goCtx, msg.Distribution.PopAddr, msg.Distribution.PopAmount, reissuanceAsset)
 	if err != nil {
-		util.GetAppLogger().Error(ctx, distributionRequestTag+"could not distribute asset to PoP: "+err.Error())
+		util.GetAppLogger().Error(ctx, err, distributionRequestTag+"could not distribute asset to PoP")
 	}
 	daoTx, err := clients.SendTokens(goCtx, msg.Distribution.DaoAddr, msg.Distribution.DaoAmount, reissuanceAsset)
 	if err != nil {
-		util.GetAppLogger().Error(ctx, distributionRequestTag+"could not distribute asset to DAO: "+err.Error())
+		util.GetAppLogger().Error(ctx, err, distributionRequestTag+"could not distribute asset to DAO")
 	}
 
 	util.SendDistributionResult(goCtx, msg.Distribution.LastPop, daoTx, investorTx, popTx, earlyInvestorTx, strategicTx)

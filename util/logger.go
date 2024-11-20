@@ -69,8 +69,8 @@ func (logger *AppLogger) Debug(ctx sdk.Context, msg string, keyvals ...interface
 	ctx.Logger().Debug(globalApplicationLoggerTag + msg)
 }
 
-func (logger *AppLogger) Error(ctx sdk.Context, msg string, keyvals ...interface{}) {
+func (logger *AppLogger) Error(ctx sdk.Context, err error, msg string, keyvals ...interface{}) {
 	msg = format(msg, keyvals...)
-	logger.testingLog(globalApplicationLoggerTag + msg)
-	ctx.Logger().Error(globalApplicationLoggerTag + msg)
+	logger.testingLog(globalApplicationLoggerTag + msg + ": " + err.Error())
+	ctx.Logger().Error(globalApplicationLoggerTag + msg + ": " + err.Error())
 }

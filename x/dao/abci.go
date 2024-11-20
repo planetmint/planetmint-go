@@ -26,7 +26,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 		// select PoP participants
 		challenger, challengee, err := monitor.SelectPoPParticipantsOutOfActiveActors()
 		if err != nil {
-			util.GetAppLogger().Error(ctx, "error during PoP Participant selection ", err)
+			util.GetAppLogger().Error(ctx, err, "error during PoP Participant selection")
 		}
 		if err != nil || challenger == "" || challengee == "" {
 			challenger = ""
@@ -44,14 +44,14 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 			util.SendInitReissuance(ctx, hexProposerAddress, reissuance.GetCommand(), currentBlockHeight,
 				reissuance.GetFirstIncludedPop(), reissuance.GetLastIncludedPop())
 		} else {
-			util.GetAppLogger().Error(ctx, "error while computing the RDDL reissuance ", err)
+			util.GetAppLogger().Error(ctx, err, "error while computing the RDDL reissuance")
 		}
 	}
 
 	if isDistributionHeight(ctx, k, currentBlockHeight) {
 		distribution, err := k.GetDistributionForReissuedTokens(ctx, currentBlockHeight)
 		if err != nil {
-			util.GetAppLogger().Error(ctx, "error while computing the RDDL distribution ", err)
+			util.GetAppLogger().Error(ctx, err, "error while computing the RDDL distribution")
 		}
 		distribution.Proposer = hexProposerAddress
 		util.SendDistributionRequest(ctx, distribution)

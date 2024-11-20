@@ -31,19 +31,19 @@ func GetValidatorCometBFTIdentity(ctx sdk.Context, rootDir string) (validatorIde
 
 	jsonFile, err := os.Open(jsonFilePath)
 	if err != nil {
-		GetAppLogger().Error(ctx, "error while opening config", err.Error())
+		GetAppLogger().Error(ctx, err, "error while opening config: %v", jsonFilePath)
 		return
 	}
 	jsonBytes, err := io.ReadAll(jsonFile)
 	if err != nil {
-		GetAppLogger().Error(ctx, "error while reading file", err.Error())
+		GetAppLogger().Error(ctx, err, "error while reading file: %v", jsonFile)
 		return
 	}
 
 	var keyFile KeyFile
 	err = json.Unmarshal(jsonBytes, &keyFile)
 	if err != nil {
-		GetAppLogger().Error(ctx, "error while unmarshaling key file", err.Error())
+		GetAppLogger().Error(ctx, err, "error while unmarshaling key file")
 		return
 	}
 	validatorIdentity = strings.ToLower(keyFile.Address)
@@ -53,7 +53,7 @@ func GetValidatorCometBFTIdentity(ctx sdk.Context, rootDir string) (validatorIde
 func IsValidatorBlockProposer(ctx sdk.Context, rootDir string) (result bool) {
 	validatorIdentity, err := GetValidatorCometBFTIdentity(ctx, rootDir)
 	if err != nil {
-		GetAppLogger().Error(ctx, errormsg.CouldNotGetValidatorIdentity+": "+err.Error())
+		GetAppLogger().Error(ctx, err, errormsg.CouldNotGetValidatorIdentity)
 		return
 	}
 	hexProposerAddress := hex.EncodeToString(ctx.BlockHeader().ProposerAddress)

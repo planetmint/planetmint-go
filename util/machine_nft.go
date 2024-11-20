@@ -35,7 +35,7 @@ func IssueMachineNFT(goCtx context.Context, machine *types.Machine, scheme strin
 	notarizedAsset.Registered = true
 	assetID, contract, hex, err := clients.IssueNFTAsset(goCtx, machine.Name, machine.Address, domain)
 	if err != nil {
-		GetAppLogger().Error(ctx, err.Error())
+		GetAppLogger().Error(ctx, err, "")
 		return err
 	}
 	assetRegistryEndpoint := fmt.Sprintf("%s://%s/%s", scheme, domain, path)
@@ -43,7 +43,7 @@ func IssueMachineNFT(goCtx context.Context, machine *types.Machine, scheme strin
 	GetAppLogger().Info(ctx, "Liquid Token Issuance assetID: "+assetID+" contract: "+contract+" tx: "+hex)
 	err = RegisterAsset(goCtx, assetID, contract, assetRegistryEndpoint)
 	if err != nil {
-		GetAppLogger().Error(ctx, err.Error())
+		GetAppLogger().Error(ctx, err, "")
 		notarizedAsset.Registered = false
 	}
 	// issue message with:

@@ -2,6 +2,8 @@ package keeper
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"sort"
 	"strconv"
 
@@ -22,9 +24,9 @@ func (k msgServer) DistributionResult(goCtx context.Context, msg *types.MsgDistr
 
 	distribution, found := k.LookupDistributionOrder(ctx, msg.GetLastPop())
 	if !found {
-		errorMessage := types.ErrDistributionNotFound.Error() + " for provided block height " + strconv.FormatInt(msg.GetLastPop(), 10)
-		util.GetAppLogger().Error(ctx, errorMessage)
-		return nil, errorsmod.Wrap(types.ErrDistributionNotFound, errorMessage)
+		err := errors.New(types.ErrDistributionNotFound.Error() + " for provided block height " + strconv.FormatInt(msg.GetLastPop(), 10))
+		util.GetAppLogger().Error(ctx, err, "")
+		return nil, errorsmod.Wrap(types.ErrDistributionNotFound, err.Error())
 	}
 
 	distribution.DaoTxID = msg.DaoTxID
@@ -34,12 +36,12 @@ func (k msgServer) DistributionResult(goCtx context.Context, msg *types.MsgDistr
 	distribution.StrategicTxID = msg.StrategicTxID
 
 	if err := k.clearUnresolvedClaims(ctx, distribution.FirstPop); err != nil {
-		util.GetAppLogger().Error(ctx, "error while clearing unresolved claims for heights %d-%d: %v", distribution.FirstPop, distribution.LastPop, err)
+		util.GetAppLogger().Error(ctx, err, "error while clearing unresolved claims for heights %d-%d", distribution.FirstPop, distribution.LastPop)
 	}
 
 	err := k.resolveStagedClaims(ctx, distribution.FirstPop, distribution.LastPop)
 	if err != nil {
-		util.GetAppLogger().Error(ctx, "%s for provided PoP heights: %d %d", types.ErrResolvingStagedClaims.Error(), distribution.FirstPop, distribution.LastPop)
+		util.GetAppLogger().Error(ctx, err, "%s for provided PoP heights: %d %d", types.ErrResolvingStagedClaims.Error(), distribution.FirstPop, distribution.LastPop)
 		return nil, errorsmod.Wrap(types.ErrConvertClaims, err.Error())
 	}
 	util.GetAppLogger().Info(ctx, "staged claims successfully for provided PoP heights: %d %d", distribution.FirstPop, distribution.LastPop)
@@ -123,11 +125,12 @@ func (k msgServer) getClaims(ctx sdk.Context, start int64, end int64) (claims Cl
 	for _, challenge := range challenges {
 		initiatorAddr, err := sdk.AccAddressFromBech32(challenge.Initiator)
 		if err != nil {
-			util.GetAppLogger().Error(ctx, "error converting initiator address")
+			util.GetAppLogger().Error(ctx, err, "error converting initiator address: %v", challenge.Initiator)
 		} else {
 			validatorPopReward, found := k.getChallengeInitiatorReward(ctx, challenge.GetHeight())
 			if !found {
-				util.GetAppLogger().Error(ctx, "No PoP initiator reward found for height %v", challenge.GetHeight())
+				err = fmt.Errorf("no PoP initiator reward found for height %v", challenge.GetHeight())
+				util.GetAppLogger().Error(ctx, err, "")
 			}
 			claims.initiator[initiatorAddr.String()] += validatorPopReward
 		}

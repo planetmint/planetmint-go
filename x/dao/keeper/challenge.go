@@ -46,7 +46,7 @@ func (k Keeper) getChallengeRangeFromStore(ctx sdk.Context, iterator db.Iterator
 	for ; iterator.Valid(); iterator.Next() {
 		var challenge types.Challenge
 		if err := challenge.Unmarshal(iterator.Value()); err != nil {
-			util.GetAppLogger().Error(ctx, "unable to unmarshal challenge "+err.Error())
+			util.GetAppLogger().Error(ctx, err, "unable to unmarshal challenge")
 			return nil, err // or continue TODO make decision
 		}
 		val = append(val, challenge)
@@ -62,7 +62,7 @@ func (k Keeper) GetChallenges(ctx sdk.Context) (challenges []types.Challenge, er
 	for ; iterator.Valid(); iterator.Next() {
 		var event types.Challenge
 		if err = event.Unmarshal(iterator.Value()); err != nil {
-			util.GetAppLogger().Error(ctx, "unable to unmarshal challenge "+err.Error())
+			util.GetAppLogger().Error(ctx, err, "unable to unmarshal challenge")
 			return nil, err // or continue TODO make decision
 		}
 		challenges = append(challenges, event)
