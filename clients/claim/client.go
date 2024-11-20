@@ -2,6 +2,8 @@ package claim
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/planetmint/planetmint-go/config"
@@ -9,22 +11,38 @@ import (
 	"github.com/rddl-network/rddl-claim-service/types"
 )
 
-var ClaimServiceClient client.IRCClient
+var (
+	RCClient client.IRCClient
+)
 
 func lazyLoad() client.IRCClient {
-	if ClaimServiceClient != nil {
-		return ClaimServiceClient
+	if RCClient != nil {
+		return RCClient
 	}
 	cfg := config.GetConfig()
-	ClaimServiceClient = client.NewRCClient(cfg.ClaimHost, &http.Client{})
-	return ClaimServiceClient
+	RCClient = client.NewRCClient(cfg.ClaimHost, &http.Client{})
+	return RCClient
 }
 
 func PostClaim(ctx context.Context, beneficiary string, amount uint64, id uint64) (txID string, err error) {
-	client := lazyLoad()
-	res, err := client.PostClaim(ctx, types.PostClaimRequest{Beneficiary: beneficiary, Amount: amount, ClaimID: int(id)})
-	if err != nil {
-		return
+	if beneficiary == "" {
+		return txID, errors.New("beneficiary cannot be empty")
 	}
-	return res.TxID, nil
+
+	if amount == 0 {
+		return txID, errors.New("amount must be greater than 0")
+	}
+
+	req := types.PostClaimRequest{
+		Beneficiary: beneficiary,
+		Amount:      amount,
+		ClaimID:     int(id),
+	}
+
+	client := lazyLoad()
+	resp, err := client.PostClaim(ctx, req)
+	if err != nil {
+		return txID, fmt.Errorf("failed to post claim: %w", err)
+	}
+	return resp.TxID, nil
 }

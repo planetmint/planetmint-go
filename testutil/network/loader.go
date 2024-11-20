@@ -56,7 +56,7 @@ func Load(t *testing.T, configs ...Config) *Network {
 	claimMock.EXPECT().PostClaim(gomock.Any(), gomock.Any()).AnyTimes().Return(rcctypes.PostClaimResponse{
 		TxID: "0000000000000000000000000000000000000000000000000000000000000000",
 	}, nil)
-	claim.ClaimServiceClient = claimMock
+	claim.RCClient = claimMock
 
 	shamirMock := clientmocks.NewMockIShamirCoordinatorClient(ctrl)
 	shamirMock.EXPECT().SendTokens(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().Return(scctypes.SendTokensResponse{

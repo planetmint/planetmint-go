@@ -2,14 +2,16 @@ package coordinator
 
 import (
 	"context"
-	"log"
+	"errors"
 
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/rddl-network/go-utils/tls"
 	"github.com/rddl-network/shamir-coordinator-service/client"
 )
 
-var ShamirCoordinatorServiceClient client.IShamirCoordinatorClient
+var (
+	ShamirCoordinatorServiceClient client.IShamirCoordinatorClient
+)
 
 func lazyLoad() client.IShamirCoordinatorClient {
 	if ShamirCoordinatorServiceClient != nil {
@@ -18,7 +20,8 @@ func lazyLoad() client.IShamirCoordinatorClient {
 	cfg := config.GetConfig()
 	httpsClient, err := tls.Get2WayTLSClient(cfg.CertsPath)
 	if err != nil {
-		defer log.Fatal("fatal error setting up mutual tls client for shamir coordinator")
+		err := errors.New("fatal error setting up mutual tls client for shamir coordinator")
+		panic(err)
 	}
 	ShamirCoordinatorServiceClient = client.NewShamirCoordinatorClient(cfg.IssuerHost, httpsClient)
 	return ShamirCoordinatorServiceClient
@@ -26,27 +29,27 @@ func lazyLoad() client.IShamirCoordinatorClient {
 
 func SendTokens(ctx context.Context, recipient string, amount string, asset string) (txID string, err error) {
 	client := lazyLoad()
-	res, err := client.SendTokens(ctx, recipient, amount, asset)
+	resp, err := client.SendTokens(ctx, recipient, amount, asset)
 	if err != nil {
 		return
 	}
-	return res.TxID, nil
+	return resp.TxID, nil
 }
 
 func ReIssueAsset(ctx context.Context, asset string, amount string) (txID string, err error) {
 	client := lazyLoad()
-	res, err := client.ReIssueAsset(ctx, asset, amount)
+	resp, err := client.ReIssueAsset(ctx, asset, amount)
 	if err != nil {
 		return
 	}
-	return res.TxID, nil
+	return resp.TxID, nil
 }
 
 func IssueNFTAsset(ctx context.Context, name string, machineAddress string, domain string) (assetID string, contract string, hexTx string, err error) {
 	client := lazyLoad()
-	res, err := client.IssueMachineNFT(ctx, name, machineAddress, domain)
+	resp, err := client.IssueMachineNFT(ctx, name, machineAddress, domain)
 	if err != nil {
 		return
 	}
-	return res.Asset, res.Contract, res.HexTX, nil
+	return resp.Asset, resp.Contract, resp.HexTX, nil
 }
