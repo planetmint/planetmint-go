@@ -58,7 +58,7 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 			types.MsgReportPopResult{
 				Creator: challenger.String(),
 				Challenge: &types.Challenge{
-					Initiator:  initiator,
+					Initiator:  "1adb868b2b9623510dbe3d7419e4d2b5e712e08d",
 					Challenger: challenger.String(),
 					Challengee: challengee.String(),
 					Height:     2,
