@@ -29,7 +29,7 @@ require (
 	github.com/rddl-network/rddl-claim-service v0.3.2
 	github.com/rddl-network/rddl-claim-service/client v0.0.6
 	github.com/rddl-network/shamir-coordinator-service v0.7.7
-	github.com/rddl-network/shamir-coordinator-service/client v0.0.10
+	github.com/rddl-network/shamir-coordinator-service/client v0.1.0
 	github.com/spf13/cast v1.6.0
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/pflag v1.0.5

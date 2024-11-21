@@ -10,12 +10,12 @@ import (
 )
 
 var (
-	ShamirCoordinatorServiceClient client.IShamirCoordinatorClient
+	SCClient client.ISCClient
 )
 
-func lazyLoad() client.IShamirCoordinatorClient {
-	if ShamirCoordinatorServiceClient != nil {
-		return ShamirCoordinatorServiceClient
+func lazyLoad() client.ISCClient {
+	if SCClient != nil {
+		return SCClient
 	}
 	cfg := config.GetConfig()
 	httpsClient, err := tls.Get2WayTLSClient(cfg.CertsPath)
@@ -23,8 +23,8 @@ func lazyLoad() client.IShamirCoordinatorClient {
 		err := errors.New("fatal error setting up mutual tls client for shamir coordinator")
 		panic(err)
 	}
-	ShamirCoordinatorServiceClient = client.NewShamirCoordinatorClient(cfg.IssuerHost, httpsClient)
-	return ShamirCoordinatorServiceClient
+	SCClient = client.NewSCClient(cfg.IssuerHost, httpsClient)
+	return SCClient
 }
 
 func SendTokens(ctx context.Context, recipient string, amount string, asset string) (txID string, err error) {
