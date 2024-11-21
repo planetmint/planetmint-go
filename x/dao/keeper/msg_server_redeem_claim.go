@@ -7,7 +7,7 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/planetmint/planetmint-go/clients"
+	"github.com/planetmint/planetmint-go/clients/claim"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/dao/types"
 )
@@ -129,7 +129,7 @@ func (k msgServer) burnClaimAmount(ctx sdk.Context, addr sdk.AccAddress, burnCoi
 func postClaimToService(goCtx context.Context, beneficiary string, amount uint64, id uint64) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	util.GetAppLogger().Info(ctx, fmt.Sprintf("Issuing RDDL claim: %s/%d", beneficiary, id))
-	txID, err := clients.PostClaim(goCtx, beneficiary, amount, id)
+	txID, err := claim.PostClaim(goCtx, beneficiary, amount, id)
 	if err != nil {
 		util.GetAppLogger().Error(ctx, err, createRedeemClaimTag+"could not issue claim to beneficiary: "+beneficiary)
 	}

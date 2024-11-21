@@ -12,31 +12,31 @@ import (
 	"github.com/rddl-network/shamir-coordinator-service/types"
 )
 
-// MockIShamirCoordinatorClient is a mock of IShamirCoordinatorClient interface.
-type MockIShamirCoordinatorClient struct {
+// MockISCClient is a mock of ISCClient interface.
+type MockISCClient struct {
 	ctrl     *gomock.Controller
-	recorder *MockIShamirCoordinatorClientMockRecorder
+	recorder *MockISCClientMockRecorder
 }
 
-// MockIShamirCoordinatorClientMockRecorder is the mock recorder for MockIShamirCoordinatorClient.
-type MockIShamirCoordinatorClientMockRecorder struct {
-	mock *MockIShamirCoordinatorClient
+// MockISCClientMockRecorder is the mock recorder for MockISCClient.
+type MockISCClientMockRecorder struct {
+	mock *MockISCClient
 }
 
-// NewMockIShamirCoordinatorClient creates a new mock instance.
-func NewMockIShamirCoordinatorClient(ctrl *gomock.Controller) *MockIShamirCoordinatorClient {
-	mock := &MockIShamirCoordinatorClient{ctrl: ctrl}
-	mock.recorder = &MockIShamirCoordinatorClientMockRecorder{mock}
+// NewMockISCClient creates a new mock instance.
+func NewMockISCClient(ctrl *gomock.Controller) *MockISCClient {
+	mock := &MockISCClient{ctrl: ctrl}
+	mock.recorder = &MockISCClientMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockIShamirCoordinatorClient) EXPECT() *MockIShamirCoordinatorClientMockRecorder {
+func (m *MockISCClient) EXPECT() *MockISCClientMockRecorder {
 	return m.recorder
 }
 
 // GetMnemonics mocks base method.
-func (m *MockIShamirCoordinatorClient) GetMnemonics(ctx context.Context) (types.MnemonicsResponse, error) {
+func (m *MockISCClient) GetMnemonics(ctx context.Context) (types.MnemonicsResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetMnemonics", ctx)
 	ret0, _ := ret[0].(types.MnemonicsResponse)
@@ -45,13 +45,13 @@ func (m *MockIShamirCoordinatorClient) GetMnemonics(ctx context.Context) (types.
 }
 
 // GetMnemonics indicates an expected call of GetMnemonics.
-func (mr *MockIShamirCoordinatorClientMockRecorder) GetMnemonics(ctx interface{}) *gomock.Call {
+func (mr *MockISCClientMockRecorder) GetMnemonics(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMnemonics", reflect.TypeOf((*MockIShamirCoordinatorClient)(nil).GetMnemonics), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMnemonics", reflect.TypeOf((*MockISCClient)(nil).GetMnemonics), ctx)
 }
 
 // IssueMachineNFT mocks base method.
-func (m *MockIShamirCoordinatorClient) IssueMachineNFT(ctx context.Context, name, machineAddress, domain string) (types.IssueMachineNFTResponse, error) {
+func (m *MockISCClient) IssueMachineNFT(ctx context.Context, name, machineAddress, domain string) (types.IssueMachineNFTResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IssueMachineNFT", ctx, name, machineAddress, domain)
 	ret0, _ := ret[0].(types.IssueMachineNFTResponse)
@@ -60,13 +60,13 @@ func (m *MockIShamirCoordinatorClient) IssueMachineNFT(ctx context.Context, name
 }
 
 // IssueMachineNFT indicates an expected call of IssueMachineNFT.
-func (mr *MockIShamirCoordinatorClientMockRecorder) IssueMachineNFT(ctx, name, machineAddress, domain interface{}) *gomock.Call {
+func (mr *MockISCClientMockRecorder) IssueMachineNFT(ctx, name, machineAddress, domain interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IssueMachineNFT", reflect.TypeOf((*MockIShamirCoordinatorClient)(nil).IssueMachineNFT), ctx, name, machineAddress, domain)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IssueMachineNFT", reflect.TypeOf((*MockISCClient)(nil).IssueMachineNFT), ctx, name, machineAddress, domain)
 }
 
 // PostMnemonics mocks base method.
-func (m *MockIShamirCoordinatorClient) PostMnemonics(ctx context.Context, secret string) error {
+func (m *MockISCClient) PostMnemonics(ctx context.Context, secret string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PostMnemonics", ctx, secret)
 	ret0, _ := ret[0].(error)
@@ -74,13 +74,13 @@ func (m *MockIShamirCoordinatorClient) PostMnemonics(ctx context.Context, secret
 }
 
 // PostMnemonics indicates an expected call of PostMnemonics.
-func (mr *MockIShamirCoordinatorClientMockRecorder) PostMnemonics(ctx, secret interface{}) *gomock.Call {
+func (mr *MockISCClientMockRecorder) PostMnemonics(ctx, secret interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostMnemonics", reflect.TypeOf((*MockIShamirCoordinatorClient)(nil).PostMnemonics), ctx, secret)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostMnemonics", reflect.TypeOf((*MockISCClient)(nil).PostMnemonics), ctx, secret)
 }
 
 // ReIssueAsset mocks base method.
-func (m *MockIShamirCoordinatorClient) ReIssueAsset(ctx context.Context, asset, amount string) (types.ReIssueResponse, error) {
+func (m *MockISCClient) ReIssueAsset(ctx context.Context, asset, amount string) (types.ReIssueResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ReIssueAsset", ctx, asset, amount)
 	ret0, _ := ret[0].(types.ReIssueResponse)
@@ -89,13 +89,13 @@ func (m *MockIShamirCoordinatorClient) ReIssueAsset(ctx context.Context, asset, 
 }
 
 // ReIssueAsset indicates an expected call of ReIssueAsset.
-func (mr *MockIShamirCoordinatorClientMockRecorder) ReIssueAsset(ctx, asset, amount interface{}) *gomock.Call {
+func (mr *MockISCClientMockRecorder) ReIssueAsset(ctx, asset, amount interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReIssueAsset", reflect.TypeOf((*MockIShamirCoordinatorClient)(nil).ReIssueAsset), ctx, asset, amount)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReIssueAsset", reflect.TypeOf((*MockISCClient)(nil).ReIssueAsset), ctx, asset, amount)
 }
 
 // SendTokens mocks base method.
-func (m *MockIShamirCoordinatorClient) SendTokens(ctx context.Context, recipient, amount, asset string) (types.SendTokensResponse, error) {
+func (m *MockISCClient) SendTokens(ctx context.Context, recipient, amount, asset string) (types.SendTokensResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SendTokens", ctx, recipient, amount, asset)
 	ret0, _ := ret[0].(types.SendTokensResponse)
@@ -104,7 +104,7 @@ func (m *MockIShamirCoordinatorClient) SendTokens(ctx context.Context, recipient
 }
 
 // SendTokens indicates an expected call of SendTokens.
-func (mr *MockIShamirCoordinatorClientMockRecorder) SendTokens(ctx, recipient, amount, asset interface{}) *gomock.Call {
+func (mr *MockISCClientMockRecorder) SendTokens(ctx, recipient, amount, asset interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendTokens", reflect.TypeOf((*MockIShamirCoordinatorClient)(nil).SendTokens), ctx, recipient, amount, asset)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendTokens", reflect.TypeOf((*MockISCClient)(nil).SendTokens), ctx, recipient, amount, asset)
 }
