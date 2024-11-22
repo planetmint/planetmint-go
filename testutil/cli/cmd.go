@@ -35,7 +35,7 @@ func ExecTestCLICmd(clientCtx client.Context, cmd *cobra.Command, extraArgs []st
 		return
 	}
 
-	txResponse, err := lib.GetTxResponseFromOut(output)
+	txResponse, err := lib.ParseTxResponse(output)
 	if err != nil {
 		return
 	}
@@ -49,7 +49,7 @@ func ExecTestCLICmd(clientCtx client.Context, cmd *cobra.Command, extraArgs []st
 
 // GetRawLogFromTxOut queries the TxHash of out from the chain and returns the RawLog from the answer.
 func GetRawLogFromTxOut(val *network.Validator, out *bytes.Buffer) (rawLog string, err error) {
-	txResponse, err := lib.GetTxResponseFromOut(out)
+	txResponse, err := lib.ParseTxResponse(out)
 	if err != nil {
 		return
 	}
@@ -72,7 +72,7 @@ func GetRawLogFromTxOut(val *network.Validator, out *bytes.Buffer) (rawLog strin
 		return
 	}
 
-	txRes, err := lib.GetTxResponseFromOut(out)
+	txRes, err := lib.ParseTxResponse(out)
 	if err != nil {
 		return
 	}

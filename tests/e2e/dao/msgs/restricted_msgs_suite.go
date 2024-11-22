@@ -54,7 +54,7 @@ func (s *RestrictedMsgsE2ESuite) TestRestrictedMsgsValidator() {
 	out, err := lib.BroadcastTxWithFileLock(val.Address, msg)
 	s.Require().NoError(err)
 
-	txResponse, err := lib.GetTxResponseFromOut(out)
+	txResponse, err := lib.ParseTxResponse(out)
 	s.Require().NoError(err)
 	s.Require().Equal(int(0), int(txResponse.Code))
 }
@@ -71,7 +71,7 @@ func (s *RestrictedMsgsE2ESuite) TestRestrictedMsgsNonValidator() {
 		out, err := lib.BroadcastTxWithFileLock(addr, msg)
 		s.Require().NoError(err)
 
-		txResponse, err := lib.GetTxResponseFromOut(out)
+		txResponse, err := lib.ParseTxResponse(out)
 		s.Require().NoError(err)
 		s.Require().Equal(int(18), int(txResponse.Code))
 		s.Require().NoError(s.network.WaitForNextBlock())

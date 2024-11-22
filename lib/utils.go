@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"encoding/hex"
 	"encoding/json"
-	"errors"
+	"fmt"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -18,64 +18,63 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
-func getSequenceFromFile(seqFile *os.File) (sequence uint64, err error) {
-	var sequenceString string
-	lineCount := int64(0)
+func readSequenceFromFile(seqFile *os.File) (sequence uint64, err error) {
 	scanner := bufio.NewScanner(seqFile)
-	for scanner.Scan() {
-		sequenceString = scanner.Text()
-		lineCount++
+
+	// read the first line
+	if !scanner.Scan() {
+		if err := scanner.Err(); err != nil {
+			return 0, fmt.Errorf("reading sequence file: %w", err)
+		}
+		return 0, fmt.Errorf("sequence file empty: %s", seqFile.Name())
 	}
-	err = scanner.Err()
-	if err != nil {
-		return
+
+	sequenceString := scanner.Text()
+
+	// check for additional lines
+	if scanner.Scan() {
+		return 0, fmt.Errorf("malformed sequence file %s: contains multiple lines", seqFile.Name())
 	}
-	if lineCount == 0 {
-		err = errors.New("Sequence file empty " + seqFile.Name() + ": no lines")
-		return
-	} else if lineCount != 1 {
-		err = errors.New("Malformed " + seqFile.Name() + ": wrong number of lines")
-		return
-	}
+
 	sequence, err = strconv.ParseUint(sequenceString, 10, 64)
 	if err != nil {
-		return
+		return 0, fmt.Errorf("parsing sequence number: %w", err)
 	}
+
 	return
 }
 
 func getSequenceFromChain(clientCtx client.Context) (sequence uint64, err error) {
-	// get sequence number from chain
 	account, err := clientCtx.AccountRetriever.GetAccount(clientCtx, clientCtx.FromAddress)
 	if err != nil {
-		return
+		return 0, fmt.Errorf("retrieving account: %w", err)
 	}
-	sequence = account.GetSequence()
-	return
+	return account.GetSequence(), nil
 }
 
-func createSequenceDirectory() (path string, err error) {
+func getOrCreateSequenceDirectory() (path string, err error) {
 	usr, err := user.Current()
 	if err != nil {
-		return
+		return "", fmt.Errorf("getting current user: %w", err)
 	}
-	homeDir := usr.HomeDir
+
 	path = filepath.Join(GetConfig().RootDir, "sequence")
+
 	// expand tilde to user's home directory
 	if strings.HasPrefix(path, "~/") {
-		path = filepath.Join(homeDir, path[2:])
+		path = filepath.Join(usr.HomeDir, path[2:])
 	}
-	_, err = os.Stat(path)
-	// directory already exists
-	if !os.IsNotExist(err) {
-		return
+
+	// create directory if it doesn't exist
+	if err := os.MkdirAll(path, os.ModePerm); err != nil {
+		return "", fmt.Errorf("creating sequence directory: %w", err)
 	}
-	err = os.Mkdir(path, os.ModePerm)
+
 	return
 }
 
 func openSequenceFile(fromAddress sdk.AccAddress) (file *os.File, err error) {
-	path, err := createSequenceDirectory()
+	path, err := getOrCreateSequenceDirectory()
 	if err != nil {
 		return
 	}
@@ -85,23 +84,28 @@ func openSequenceFile(fromAddress sdk.AccAddress) (file *os.File, err error) {
 
 	file, err = os.OpenFile(filename, os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
-		return
+		return nil, fmt.Errorf("opening sequence file: %w", err)
 	}
+
 	return
 }
 
-// GetTxResponseFromOut converts strings to numbers and unmarshalles out into TxResponse struct
-func GetTxResponseFromOut(out *bytes.Buffer) (txResponse sdk.TxResponse, err error) {
-	m := regexp.MustCompile(`"([0-9]+?)"`)
-	str := m.ReplaceAllString(out.String(), "${1}")
+// ParseTxResponse converts output buffer to TxResponse
+func ParseTxResponse(out *bytes.Buffer) (txResponse sdk.TxResponse, err error) {
+	// Convert string numbers to actual numbers
+	numericRegex := regexp.MustCompile(`"([0-9]+?)"`)
+	jsonStr := numericRegex.ReplaceAllString(out.String(), "${1}")
 
 	// We might have YAML here, so we need to convert to JSON first, because TxResponse struct lacks `yaml:"height,omitempty"`, etc.
 	// Since JSON is a subset of YAML, passing JSON through YAMLToJSON is a no-op and the result is the byte array of the JSON again.
-	j, err := yaml.YAMLToJSON([]byte(str))
+	jsonBytes, err := yaml.YAMLToJSON([]byte(jsonStr))
 	if err != nil {
-		return
+		return sdk.TxResponse{}, fmt.Errorf("converting YAML to JSON: %w", err)
 	}
 
-	err = json.Unmarshal(j, &txResponse)
+	if err := json.Unmarshal(jsonBytes, &txResponse); err != nil {
+		return sdk.TxResponse{}, fmt.Errorf("unmarshaling transaction response: %w", err)
+	}
+
 	return
 }

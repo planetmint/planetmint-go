@@ -113,7 +113,7 @@ func (s *E2ETestSuite) TestAttestMachine() {
 
 	_, err = clitestutil.ExecTestCLICmd(val.ClientCtx, machinecli.GetCmdMachineByPublicKey(), args)
 	s.Require().NoError(err)
-	txResponse, err := lib.GetTxResponseFromOut(out)
+	txResponse, err := lib.ParseTxResponse(out)
 	s.Require().NoError(err)
 
 	txResp, err := txcli.QueryTx(val.ClientCtx, txResponse.TxHash)
@@ -150,7 +150,7 @@ func (s *E2ETestSuite) TestInvalidAttestMachine() {
 
 	msg := machinetypes.NewMsgAttestMachine(addr.String(), &machine)
 	out, _ := lib.BroadcastTxWithFileLock(addr, msg)
-	txResponse, err := lib.GetTxResponseFromOut(out)
+	txResponse, err := lib.ParseTxResponse(out)
 	s.Require().NoError(err)
 	s.Require().Equal(int(txResponse.Code), int(4))
 
@@ -160,7 +160,7 @@ func (s *E2ETestSuite) TestInvalidAttestMachine() {
 
 	msg = machinetypes.NewMsgAttestMachine(addr.String(), &machine)
 	out, _ = lib.BroadcastTxWithFileLock(addr, msg)
-	txResponse, err = lib.GetTxResponseFromOut(out)
+	txResponse, err = lib.ParseTxResponse(out)
 	s.Require().NoError(err)
 	s.Require().Equal(int(txResponse.Code), int(3))
 }

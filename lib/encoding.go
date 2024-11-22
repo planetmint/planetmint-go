@@ -8,25 +8,22 @@ import (
 	"github.com/planetmint/planetmint-go/lib/params"
 )
 
-// makeEncodingConfig creates an EncodingConfig for an amino based test configuration.
-func makeEncodingConfig() params.EncodingConfig {
+// MakeEncodingConfig creates a fully configured EncodingConfig for testing
+func MakeEncodingConfig() params.EncodingConfig {
 	amino := codec.NewLegacyAmino()
 	interfaceRegistry := types.NewInterfaceRegistry()
 	marshaler := codec.NewProtoCodec(interfaceRegistry)
-	txCfg := tx.NewTxConfig(marshaler, tx.DefaultSignModes)
+	txConfig := tx.NewTxConfig(marshaler, tx.DefaultSignModes)
 
-	return params.EncodingConfig{
+	encodingConfig := params.EncodingConfig{
 		InterfaceRegistry: interfaceRegistry,
 		Marshaler:         marshaler,
-		TxConfig:          txCfg,
+		TxConfig:          txConfig,
 		Amino:             amino,
 	}
-}
 
-// MakeEncodingConfig creates an EncodingConfig for testing
-func MakeEncodingConfig() params.EncodingConfig {
-	encodingConfig := makeEncodingConfig()
 	std.RegisterLegacyAminoCodec(encodingConfig.Amino)
 	std.RegisterInterfaces(encodingConfig.InterfaceRegistry)
+
 	return encodingConfig
 }

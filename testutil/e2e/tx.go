@@ -16,7 +16,7 @@ func BuildSignBroadcastTx(t *testing.T, addr sdk.AccAddress, msgs ...sdk.Msg) (o
 		t.Log("broadcast tx failed: " + err.Error())
 		return
 	}
-	txResponse, err := lib.GetTxResponseFromOut(out)
+	txResponse, err := lib.ParseTxResponse(out)
 	if err != nil {
 		t.Log("getting tx response from out failed: " + err.Error())
 		return

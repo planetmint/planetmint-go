@@ -77,7 +77,7 @@ func (s *E2ETestSuite) TestNotarizeAsset() {
 			s.Require().NoError(err)
 		}
 
-		txResponse, err := lib.GetTxResponseFromOut(out)
+		txResponse, err := lib.ParseTxResponse(out)
 		s.Require().NoError(err)
 
 		s.Require().NoError(s.network.WaitForNextBlock())

@@ -31,7 +31,7 @@ func buildSignBroadcastTx(goCtx context.Context, loggingContext string, sendingV
 			GetAppLogger().Error(ctx, err, loggingContext+" broadcast tx failed: %v, %v", addr, msg)
 			return
 		}
-		txResponse, err := lib.GetTxResponseFromOut(out)
+		txResponse, err := lib.ParseTxResponse(out)
 		if err != nil {
 			GetAppLogger().Error(ctx, err, loggingContext+" getting tx response from out failed: %v", out)
 			return

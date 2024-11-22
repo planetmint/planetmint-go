@@ -303,7 +303,7 @@ func (s *SelectionE2ETestSuite) TestTokenRedeemClaim() {
 	out, err := lib.BroadcastTxWithFileLock(addr, createClaimMsg)
 	s.Require().NoError(err)
 
-	txResponse, err := lib.GetTxResponseFromOut(out)
+	txResponse, err := lib.ParseTxResponse(out)
 	s.Require().NoError(err)
 	s.Require().Equal(int(0), int(txResponse.Code))
 
@@ -334,7 +334,7 @@ func (s *SelectionE2ETestSuite) TestTokenRedeemClaim() {
 	out, err = lib.BroadcastTxWithFileLock(val.Address, valConfirmMsg)
 	s.Require().NoError(err)
 
-	txResponse, err = lib.GetTxResponseFromOut(out)
+	txResponse, err = lib.ParseTxResponse(out)
 	s.Require().NoError(err)
 	s.Require().Equal(int(0), int(txResponse.Code))
 

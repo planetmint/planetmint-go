@@ -61,7 +61,7 @@ func (s *E2ETestSuite) TestBankSendBroadcastTxWithFileLock() {
 	out, err := lib.BroadcastTxWithFileLock(val.Address, msg)
 	s.Require().NoError(err)
 
-	txResponse, err := lib.GetTxResponseFromOut(out)
+	txResponse, err := lib.ParseTxResponse(out)
 	s.Require().NoError(err)
 	assert.Equal(s.T(), "received wrong fee denom; got: plmnt required: stake: invalid coins", txResponse.RawLog)
 
@@ -72,7 +72,7 @@ func (s *E2ETestSuite) TestBankSendBroadcastTxWithFileLock() {
 	out, err = lib.BroadcastTxWithFileLock(val.Address, msg)
 	s.Require().NoError(err)
 
-	txResponse, err = lib.GetTxResponseFromOut(out)
+	txResponse, err = lib.ParseTxResponse(out)
 	s.Require().NoError(err)
 	assert.Equal(s.T(), "[]", txResponse.RawLog)
 
@@ -87,7 +87,7 @@ func (s *E2ETestSuite) TestBankSendBroadcastTxWithFileLock() {
 	out, err = lib.BroadcastTxWithFileLock(val.Address, msg)
 	s.Require().NoError(err)
 
-	txResponse, err = lib.GetTxResponseFromOut(out)
+	txResponse, err = lib.ParseTxResponse(out)
 	s.Require().NoError(err)
 	assert.Equal(s.T(), "[]", txResponse.RawLog)
 }
@@ -120,7 +120,7 @@ func (s *E2ETestSuite) TestOccSigning() {
 	out, err := lib.BroadcastTxWithFileLock(addr, msg)
 	s.Require().NoError(err)
 
-	txResponse, err := lib.GetTxResponseFromOut(out)
+	txResponse, err := lib.ParseTxResponse(out)
 	s.Require().NoError(err)
 	s.Require().Equal("[]", txResponse.RawLog)
 	s.Require().Equal(uint32(0), txResponse.Code)

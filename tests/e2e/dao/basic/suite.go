@@ -149,7 +149,7 @@ func (s *E2ETestSuite) TestMintToken() {
 	out, err = lib.BroadcastTxWithFileLock(addr, msg1)
 	s.Require().NoError(err)
 
-	txResponse, err := lib.GetTxResponseFromOut(out)
+	txResponse, err := lib.ParseTxResponse(out)
 	s.Require().NoError(err)
 	s.Require().Equal(int(2), int(txResponse.Code))
 }

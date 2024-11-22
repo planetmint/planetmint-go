@@ -207,7 +207,7 @@ func BroadcastTxWithFileLock(fromAddress sdk.AccAddress, msgs ...sdk.Msg) (out *
 		return
 	}
 
-	sequenceFromFile, errFile := getSequenceFromFile(file)
+	sequenceFromFile, errFile := readSequenceFromFile(file)
 	sequenceFromChain, errChain := getSequenceFromChain(clientCtx)
 
 	var sequence uint64
@@ -231,7 +231,7 @@ func BroadcastTxWithFileLock(fromAddress sdk.AccAddress, msgs ...sdk.Msg) (out *
 		return
 	}
 
-	txResponse, err := GetTxResponseFromOut(out)
+	txResponse, err := ParseTxResponse(out)
 	if err != nil {
 		return
 	}
