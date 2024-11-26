@@ -11,8 +11,6 @@ require (
 	sigs.k8s.io/yaml v1.4.0
 )
 
-//replace github.com/planetmint/planetmint-go => ../
-
 require (
 	cloud.google.com/go v0.111.0 // indirect
 	cloud.google.com/go/compute v1.23.3 // indirect
@@ -194,3 +192,5 @@ require (
 	nhooyr.io/websocket v1.8.6 // indirect
 	pgregory.net/rapid v0.5.5 // indirect
 )
+
+replace github.com/planetmint/planetmint-go => ../

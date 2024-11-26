@@ -94,7 +94,7 @@ func (config *Config) SetPlanetmintConfig(planetmintconfig interface{}) {
 
 // GetNodeAddress retrieves the validator address through multiple methods
 func (config *Config) GetNodeAddress() (address string) {
-	var err error = nil
+	var err error
 	// Check environment variable first <- this is used for test cases only
 	if address = os.Getenv(ValAddr); address != "" {
 		return
@@ -111,8 +111,8 @@ func (config *Config) GetNodeAddress() (address string) {
 
 	if err != nil {
 		msg := "Cannot get node address. Please configure a Trust Wallet or define at least one key pair in the utilized keyring."
-		new_error := errors.New(msg + ": " + err.Error())
-		panic(new_error)
+		newError := errors.New(msg + ": " + err.Error())
+		panic(newError)
 	}
 	return address
 }
