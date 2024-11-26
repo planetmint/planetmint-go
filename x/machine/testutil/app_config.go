@@ -22,6 +22,7 @@ import (
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 
 	runtimev1alpha1 "cosmossdk.io/api/cosmos/app/runtime/v1alpha1"
 	appv1alpha1 "cosmossdk.io/api/cosmos/app/v1alpha1"
@@ -53,6 +54,7 @@ var AppConfig = appconfig.Compose(&appv1alpha1.Config{
 					slashingtypes.ModuleName,
 					paramstypes.ModuleName,
 					consensustypes.ModuleName,
+					machinetypes.ModuleName,
 				},
 				EndBlockers: []string{
 					stakingtypes.ModuleName,
@@ -64,6 +66,7 @@ var AppConfig = appconfig.Compose(&appv1alpha1.Config{
 					slashingtypes.ModuleName,
 					paramstypes.ModuleName,
 					consensustypes.ModuleName,
+					machinetypes.ModuleName,
 				},
 				InitGenesis: []string{
 					authtypes.ModuleName,
@@ -75,6 +78,7 @@ var AppConfig = appconfig.Compose(&appv1alpha1.Config{
 					genutiltypes.ModuleName,
 					paramstypes.ModuleName,
 					consensustypes.ModuleName,
+					machinetypes.ModuleName,
 				},
 			}),
 		},
@@ -127,6 +131,10 @@ var AppConfig = appconfig.Compose(&appv1alpha1.Config{
 		{
 			Name:   distrtypes.ModuleName,
 			Config: appconfig.WrapAny(&distrmodulev1.Module{}),
+		},
+		{
+			Name:   machinetypes.ModuleName,
+			Config: appconfig.WrapAny(&machinetypes.Module{}),
 		},
 	},
 })
