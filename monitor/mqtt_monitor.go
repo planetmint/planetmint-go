@@ -62,11 +62,9 @@ func (mms *MqttMonitor) setNumDBElements(numElements int64) {
 	mms.numberOfElements = numElements
 }
 
-func getClientID() (address string) {
+func getClientID() string {
 	conf := config.GetConfig()
-	validatorAddress := conf.GetNodeAddress()
-	address = "monitor-" + validatorAddress
-	return
+	return "monitor-" + conf.GetNodeAddress()
 }
 
 func (mms *MqttMonitor) lazyLoadMonitorMQTTClient() util.MQTTClientI {
