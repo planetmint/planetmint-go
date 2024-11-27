@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"errors"
 	"os"
 	"sync"
 
@@ -91,54 +92,61 @@ func (config *Config) SetPlanetmintConfig(planetmintconfig interface{}) {
 	}
 }
 
-// GetValidatorAddress retrieves the validator address through multiple methods
-func (config *Config) GetValidatorAddress() string {
-	// Check environment variable first
-	if envAddr := os.Getenv(ValAddr); envAddr != "" {
-		return envAddr
+// GetNodeAddress retrieves the validator address through multiple methods
+func (config *Config) GetNodeAddress() (address string) {
+	var err error
+	// Check environment variable first <- this is used for test cases only
+	if address = os.Getenv(ValAddr); address != "" {
+		return
 	}
 
 	libConfig := lib.GetConfig()
 
 	// Handle no Trust Wallet connected scenario
 	if libConfig.GetSerialPort() == "" {
-		return getDefaultValidatorAddress(libConfig)
+		address, err = getKeyringAddress(libConfig)
+	} else { // Handle Trust Wallet connected scenario
+		address, err = getTrustWalletAddress(libConfig)
 	}
 
-	// Handle Trust Wallet connected scenario
-	return getTrustWalletValidatorAddress(libConfig)
+	if err != nil {
+		msg := "Cannot get node address. Please configure a Trust Wallet or define at least one key pair in the utilized keyring."
+		newError := errors.New(msg + ": " + err.Error())
+		panic(newError)
+	}
+	return address
 }
 
-// getDefaultValidatorAddress retrieves the default validator address
-func getDefaultValidatorAddress(libConfig *lib.Config) string {
+// getKeyringAddress retrieves the default validator address
+func getKeyringAddress(libConfig *lib.Config) (address string, err error) {
 	defaultRecord, err := libConfig.GetDefaultValidatorRecord()
 	if err != nil {
 		logger.GetLogger(logger.ERROR).Error("msg", err.Error())
-		return ""
+		return
 	}
 
 	addr, err := defaultRecord.GetAddress()
 	if err != nil {
 		logger.GetLogger(logger.ERROR).Error("msg", err.Error())
-		return ""
+		return
 	}
-
-	return addr.String()
+	address = addr.String()
+	return
 }
 
-// getTrustWalletValidatorAddress retrieves validator address from Trust Wallet
-func getTrustWalletValidatorAddress(libConfig *lib.Config) string {
+// getTrustWalletAddress retrieves validator address from Trust Wallet
+func getTrustWalletAddress(libConfig *lib.Config) (address string, err error) {
 	connector, err := trustwallet.NewTrustWalletConnector(libConfig.GetSerialPort())
 	if err != nil {
 		logger.GetLogger(logger.ERROR).Error("msg", err.Error())
-		return ""
+		return
 	}
 
 	keys, err := connector.GetPlanetmintKeys()
 	if err != nil {
 		logger.GetLogger(logger.ERROR).Error("msg", err.Error())
-		return ""
+		return
 	}
-
-	return keys.PlanetmintAddress
+	address = keys.PlanetmintAddress
+	return
 }

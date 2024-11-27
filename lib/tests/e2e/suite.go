@@ -36,7 +36,7 @@ func NewE2ETestSuite(cfg network.Config) *E2ETestSuite {
 func (s *E2ETestSuite) SetupSuite() {
 	s.T().Log("setting up e2e lib test suite")
 
-	s.network = network.New(s.T())
+	s.network = network.Load(s.T(), s.cfg)
 }
 
 // TearDownSuite clean up after testing
@@ -54,6 +54,9 @@ func (s *E2ETestSuite) TestBankSendBroadcastTxWithFileLock() {
 	addr, err := account.GetAddress()
 	s.Require().NoError(err)
 
+	libConfig := lib.GetConfig()
+	libConfig.SetFeeDenom("stake")
+
 	// incorrect denom
 	coin := sdk.NewCoins(sdk.NewInt64Coin("foobar", 1000))
 	msg := banktypes.NewMsgSend(val.Address, addr, coin)
@@ -63,10 +66,9 @@ func (s *E2ETestSuite) TestBankSendBroadcastTxWithFileLock() {
 
 	txResponse, err := lib.GetTxResponseFromOut(out)
 	s.Require().NoError(err)
-	assert.Equal(s.T(), "received wrong fee denom; got: plmnt required: stake: invalid coins", txResponse.RawLog)
+	assert.Equal(s.T(), "received wrong fee denom; got: stake required: plmnt: invalid coins", txResponse.RawLog)
 
-	libConfig := lib.GetConfig()
-	libConfig.SetFeeDenom("stake")
+	libConfig.SetFeeDenom(sample.FeeDenom)
 
 	// incorrect coin
 	out, err = lib.BroadcastTxWithFileLock(val.Address, msg)
