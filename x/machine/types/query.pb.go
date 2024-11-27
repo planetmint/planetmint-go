@@ -986,6 +986,7 @@ func _Query_ActivatedTrustAnchorCount_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+var Query_serviceDesc = _Query_serviceDesc
 var _Query_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "planetmintgo.machine.Query",
 	HandlerType: (*QueryServer)(nil),
