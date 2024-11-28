@@ -85,7 +85,7 @@ service Query {
   
   // Queries a list of Distributions items.
   rpc Distributions (QueryDistributionsRequest) returns (QueryDistributionsResponse) {
-    option (google.api.http).get = "/planetmint/planetmint-go/dao/distributions";
+    option (google.api.http).get = "/planetmint/dao/distributions";
   
   }
 }
