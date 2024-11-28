@@ -25,6 +25,7 @@ func GetQueryCmd(_ string) *cobra.Command {
 		GetCmdChallenge(),
 		GetCmdChallenges(),
 		GetCmdDistribution(),
+		GetCmdDistributions(),
 		GetCmdListRedeemClaim(),
 		GetCmdMintRequests(),
 		GetCmdQueryParams(),
