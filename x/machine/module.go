@@ -11,10 +11,15 @@ import (
 	"github.com/spf13/cobra"
 
 	abci "github.com/cometbft/cometbft/abci/types"
+	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
+	"cosmossdk.io/core/appmodule"
+	"cosmossdk.io/depinject"
+	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
+	store "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/planetmint/planetmint-go/x/machine/client/cli"
@@ -26,6 +31,12 @@ var (
 	_ module.AppModule      = AppModule{}
 	_ module.AppModuleBasic = AppModuleBasic{}
 )
+
+// IsOnePerModuleType implements the depinject.OnePerModuleType interface.
+func (am AppModule) IsOnePerModuleType() {}
+
+// IsAppModule implements the appmodule.AppModule interface.
+func (am AppModule) IsAppModule() {}
 
 // ----------------------------------------------------------------------------
 // AppModuleBasic
@@ -96,6 +107,7 @@ type AppModule struct {
 	keeper        keeper.Keeper
 	accountKeeper types.AccountKeeper
 	bankKeeper    types.BankKeeper
+	registry      cdctypes.InterfaceRegistry
 }
 
 func NewAppModule(
@@ -103,12 +115,14 @@ func NewAppModule(
 	keeper keeper.Keeper,
 	accountKeeper types.AccountKeeper,
 	bankKeeper types.BankKeeper,
+	registry cdctypes.InterfaceRegistry,
 ) AppModule {
 	return AppModule{
 		AppModuleBasic: NewAppModuleBasic(cdc),
 		keeper:         keeper,
 		accountKeeper:  accountKeeper,
 		bankKeeper:     bankKeeper,
+		registry:       registry,
 	}
 }
 
@@ -159,4 +173,48 @@ func (am AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {
 // EndBlock contains the logic that is automatically triggered at the end of each block
 func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
 	return []abci.ValidatorUpdate{}
+}
+
+//
+// App Wiring Setup
+//
+
+func init() {
+	appmodule.Register(
+		&types.Module{},
+		appmodule.Provide(ProvideModule),
+	)
+}
+
+type MachineInputs struct {
+	depinject.In
+	Config           *types.Module
+	Key              *store.KVStoreKey
+	Cdc              codec.Codec
+	AccountKeeper    types.AccountKeeper
+	BankKeeper       types.BankKeeper
+	Registry         cdctypes.InterfaceRegistry
+	MsgServiceRouter *baseapp.MsgServiceRouter
+
+	storeKey                      store.StoreKey
+	taIndexStoreKey               store.StoreKey
+	issuerPlanetmintIndexStoreKey store.StoreKey
+	issuerLiquidIndexStoreKey     store.StoreKey
+	taStoreKey                    store.StoreKey
+	addressIndexStoreKey          store.StoreKey
+	memKey                        store.StoreKey
+	paramstore                    paramtypes.Subspace
+	authority                     string
+	rootDir                       string
+}
+type MachineOutputs struct {
+	depinject.Out
+	MachineKeeper keeper.Keeper
+	Module        appmodule.AppModule
+}
+
+func ProvideModule(in MachineInputs) MachineOutputs {
+	k := keeper.NewKeeper(in.Cdc, in.storeKey, in.taIndexStoreKey, in.issuerPlanetmintIndexStoreKey, in.issuerLiquidIndexStoreKey, in.taStoreKey, in.addressIndexStoreKey, in.memKey, in.paramstore, in.authority, in.rootDir)
+	m := NewAppModule(in.Cdc, *k, in.AccountKeeper, in.BankKeeper, in.Registry)
+	return MachineOutputs{MachineKeeper: *k, Module: m}
 }

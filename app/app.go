@@ -552,7 +552,7 @@ func New(
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 		homePath,
 	)
-	machineModule := machinemodule.NewAppModule(appCodec, app.MachineKeeper, app.AccountKeeper, app.BankKeeper)
+	machineModule := machinemodule.NewAppModule(appCodec, app.MachineKeeper, app.AccountKeeper, app.BankKeeper, interfaceRegistry)
 
 	app.AssetKeeper = *assetmodulekeeper.NewKeeper(
 		appCodec,
