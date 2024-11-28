@@ -14,7 +14,6 @@ import (
 func TestQueryDistribtions(t *testing.T) {
 	keeper, ctx := keepertest.DaoKeeper(t)
 	wctx := sdk.WrapSDKContext(ctx)
-	//var popEpochs int64 = 24
 	distributions := createNDistributionOrder(keeper, ctx, 20)
 	for _, tc := range []struct {
 		desc                  string
