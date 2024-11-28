@@ -82,6 +82,12 @@ service Query {
     option (google.api.http).get = "/planetmint/dao/redeem_claim_by_liquid_tx_hash/{liquidTxHash}";
   
   }
+  
+  // Queries a list of Distributions items.
+  rpc Distributions (QueryDistributionsRequest) returns (QueryDistributionsResponse) {
+    option (google.api.http).get = "/planetmint/planetmint-go/dao/distributions";
+  
+  }
 }
 // QueryParamsRequest is request type for the Query/Params RPC method.
 message QueryParamsRequest {}
@@ -175,5 +181,14 @@ message QueryRedeemClaimByLiquidTxHashRequest {
 
 message QueryRedeemClaimByLiquidTxHashResponse {
   RedeemClaim redeemClaim = 1;
+}
+
+message QueryDistributionsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryDistributionsResponse {
+  DistributionOrder                      distributions = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination    = 2;
 }
 
