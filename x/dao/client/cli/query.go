@@ -25,6 +25,7 @@ func GetQueryCmd(_ string) *cobra.Command {
 		GetCmdChallenge(),
 		GetCmdChallenges(),
 		GetCmdDistribution(),
+		GetCmdDistributions(),
 		GetCmdListRedeemClaim(),
 		GetCmdMintRequests(),
 		GetCmdQueryParams(),
@@ -33,8 +34,6 @@ func GetQueryCmd(_ string) *cobra.Command {
 		GetCmdReissuances(),
 		GetCmdShowRedeemClaim(),
 	)
-
-	cmd.AddCommand(CmdDistributions())
 
 	// this line is used by starport scaffolding # 1
 

@@ -11,7 +11,7 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdDistributions() *cobra.Command {
+func GetCmdDistributions() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "distributions",
 		Short: "Query distributions",
