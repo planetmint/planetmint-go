@@ -188,7 +188,7 @@ message QueryDistributionsRequest {
 }
 
 message QueryDistributionsResponse {
-  DistributionOrder                      distributions = 1;
+  repeated DistributionOrder             distributions = 1 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
   cosmos.base.query.v1beta1.PageResponse pagination    = 2;
 }
 
