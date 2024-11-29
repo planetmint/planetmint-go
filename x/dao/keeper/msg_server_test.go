@@ -210,23 +210,23 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 		})
 	}
 	localDistributionOrder := types.DistributionOrder{
-		DaoAddr:         "",
-		DaoAmount:       "",
+		DaoAddr:         "daoaddr",
+		DaoAmount:       "daoamount",
 		DaoTxID:         "",
-		InvestorAddr:    "",
-		InvestorAmount:  "",
+		InvestorAddr:    "invaddr",
+		InvestorAmount:  "invamount",
 		InvestorTxID:    "",
-		PopAddr:         "",
-		PopAmount:       "",
+		PopAddr:         "popaddr",
+		PopAmount:       "popamount",
 		PopTxID:         "",
 		FirstPop:        0,
 		LastPop:         5,
-		Proposer:        "",
-		EarlyInvAddr:    "",
-		EarlyInvAmount:  "",
+		Proposer:        "proposer",
+		EarlyInvAddr:    "eaaddr",
+		EarlyInvAmount:  "eaamount",
 		EarlyInvTxID:    "",
-		StrategicAddr:   "",
-		StrategicAmount: "",
+		StrategicAddr:   "straddr",
+		StrategicAmount: "stramount",
 		StrategicTxID:   "",
 	}
 	k.StoreDistributionOrder(sdkCtx, localDistributionOrder)
@@ -243,6 +243,26 @@ func TestMsgServerReportPoPResult(t *testing.T) {
 	res, err := msgServer.DistributionResult(ctx, &msg)
 	assert.Equal(t, nil, err)
 	assert.Equal(t, &types.MsgDistributionResultResponse{}, res)
+
+	do, found := k.LookupDistributionOrder(sdkCtx, 5)
+	assert.Equal(t, true, found)
+	assert.Equal(t, msg.DaoTxID, do.DaoTxID)
+	assert.Equal(t, msg.InvestorTxID, do.InvestorTxID)
+	assert.Equal(t, msg.PopTxID, do.PopTxID)
+	assert.Equal(t, msg.EarlyInvestorTxID, do.EarlyInvTxID)
+	assert.Equal(t, msg.StrategicTxID, do.StrategicTxID)
+
+	assert.Equal(t, localDistributionOrder.DaoAddr, do.DaoAddr)
+	assert.Equal(t, localDistributionOrder.DaoAmount, do.DaoAmount)
+	assert.Equal(t, localDistributionOrder.InvestorAddr, do.InvestorAddr)
+	assert.Equal(t, localDistributionOrder.InvestorAmount, do.InvestorAmount)
+	assert.Equal(t, localDistributionOrder.PopAddr, do.PopAddr)
+	assert.Equal(t, localDistributionOrder.PopAmount, do.PopAmount)
+	assert.Equal(t, localDistributionOrder.EarlyInvAddr, do.EarlyInvAddr)
+	assert.Equal(t, localDistributionOrder.EarlyInvAmount, do.EarlyInvAmount)
+	assert.Equal(t, localDistributionOrder.StrategicAddr, do.StrategicAddr)
+	assert.Equal(t, localDistributionOrder.StrategicAmount, do.StrategicAmount)
+	assert.Equal(t, localDistributionOrder.Proposer, do.Proposer)
 }
 func TestMsgServerMintToken(t *testing.T) {
 	t.Parallel()
