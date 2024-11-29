@@ -32,7 +32,7 @@ func (k msgServer) DistributionResult(goCtx context.Context, msg *types.MsgDistr
 	distribution.DaoTxID = msg.DaoTxID
 	distribution.PopTxID = msg.PopTxID
 	distribution.InvestorTxID = msg.InvestorTxID
-	distribution.EarlyInvAddr = msg.EarlyInvestorTxID
+	distribution.EarlyInvTxID = msg.EarlyInvestorTxID
 	distribution.StrategicTxID = msg.StrategicTxID
 
 	if err := k.clearUnresolvedClaims(ctx, distribution.FirstPop); err != nil {
