@@ -54,6 +54,11 @@ Use the `ignite scaffold` [command](https://docs.ignite.com/references/cli#ignit
 ### Migrations
 Module migrations must be registered in each respective module in the `AppModule.RegisterServices(cfg module.Configurator)` function. For each module that is to be upgraded in a migration the ConsensusVersion must be updated. In addition an `UpgradeHandler` needs to be added to the `App.setupUpgradeHandlers()`. Upgrade handlers have a name that needs to be added to an upgrade proposal which needs to be voted on by participating validators.
 
+### Add depinject module capabilities with protoc
+Define `Module` message in `proto/planetmintgo/<module>/module.proto`. (example machine module).
+git clone cosmos-sdk repo v0.47.14
+use protoc -I="./proto" -I="./cosmos-sdk/proto" --go_out=./proto  "./proto/planetmintgo/machine/module.proto"    
+
 For more info see [here](https://docs.cosmos.network/v0.47/learn/advanced/upgrade).
 
 ## Learn more
