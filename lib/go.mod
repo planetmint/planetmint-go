@@ -200,3 +200,5 @@ require (
 )
 
 replace github.com/planetmint/planetmint-go => ../
+
+replace github.com/cosmos/cosmos-sdk => github.com/planetmint/cosmos-sdk v0.47.14
