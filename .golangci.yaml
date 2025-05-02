@@ -1,6 +1,4 @@
----
-run:
-  timeout: 5m
+version: "2"
 linters:
   enable:
     - asasalint
@@ -15,7 +13,6 @@ linters:
     - dupl
     - dupword
     - durationcheck
-    - errcheck
     - errchkjson
     - errname
     - errorlint
@@ -29,16 +26,12 @@ linters:
     - goconst
     - gocritic
     - gocyclo
-    - gofmt
     - goheader
     - gomodguard
     - goprintffuncname
-    - gosimple
     - gosmopolitan
-    - govet
     - grouper
     - importas
-    - ineffassign
     - interfacebloat
     - loggercheck
     - makezero
@@ -63,83 +56,99 @@ linters:
     - sloglint
     - sqlclosecheck
     - staticcheck
-    - stylecheck
     - tagalign
     - tagliatelle
-    - tenv
     - testableexamples
     - tparallel
     - unconvert
     - unparam
-    - unused
     - usestdlibvars
     - wastedassign
     - whitespace
     - zerologlint
-linters-settings:
-  nakedret:
-    max-func-lines: 100
-  tagalign:
-    strict: true
-  tagliatelle:
-    case:
-      use-field-name: true
-      rules:
-        json: kebab
-issues:
-  exclude-rules:
-    - path: x/.*/types/message.*\.go
-      linters:
-        - dupl
-    - path: x/dao/client/cli/query_.*\.go
-      linters:
-        - dupl
-    - path: x/dao/client/cli/tx_reissue_rddl.*\.go
-      linters:
-        - dupl
-    - path: x/dao/client/cli/*\.go
-      linters:
-        - revive
-    - path: testutil/nullify/nullify\.go
-      linters:
-        - exhaustive
-    - path: x/.*/keeper/query.*\.go
-      linters:
-        - dupl
-        - paralleltest
-    - path: tests/.*/*\.go
-      linters:
-        - paralleltest
-    - path: util/machine_nft_test\.go
-      linters:
-        - paralleltest
-    - path: testutil/network/network.go
-      linters:
-        - gocognit
-        - gocyclo
-        - wastedassign
-        - nestif
-    - path: x/.*/simulation/.*\.go
-      linters:
-        - revive
-    - path: x/.*/module_simulation\.go
-      linters:
-        - revive
-    - path: x/.*/client/cli/query_params\.go
-      linters:
-        - revive
-    - path: x/.*/.*/cli/query_.*\.go
-      linters:
-        - revive
-    - path: docs/docs\.go
-      linters:
-        - revive
-    - path: util/elementsd_connector_test\.go
-      linters:
-        - paralleltest
-    - path: monitor/mqtt_monitor_test\.go
-      linters:
-        - paralleltest
-    - path: monitor/.*\.go
-      linters:
-        - durationcheck
+  settings:
+    nakedret:
+      max-func-lines: 100
+    tagalign:
+      strict: true
+    tagliatelle:
+      case:
+        rules:
+          json: kebab
+        use-field-name: true
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - linters:
+          - dupl
+        path: x/.*/types/message.*\.go
+      - linters:
+          - dupl
+        path: x/dao/client/cli/query_.*\.go
+      - linters:
+          - dupl
+        path: x/dao/client/cli/tx_reissue_rddl.*\.go
+      - linters:
+          - revive
+        path: x/dao/client/cli/*\.go
+      - linters:
+          - exhaustive
+        path: testutil/nullify/nullify\.go
+      - linters:
+          - dupl
+          - paralleltest
+        path: x/.*/keeper/query.*\.go
+      - linters:
+          - paralleltest
+        path: tests/.*/*\.go
+      - linters:
+          - paralleltest
+        path: util/machine_nft_test\.go
+      - linters:
+          - gocognit
+          - gocyclo
+          - nestif
+          - wastedassign
+        path: testutil/network/network.go
+      - linters:
+          - revive
+        path: x/.*/simulation/.*\.go
+      - linters:
+          - revive
+        path: x/.*/module_simulation\.go
+      - linters:
+          - revive
+        path: x/.*/client/cli/query_params\.go
+      - linters:
+          - revive
+        path: x/.*/.*/cli/query_.*\.go
+      - linters:
+          - revive
+        path: docs/docs\.go
+      - linters:
+          - paralleltest
+        path: util/elementsd_connector_test\.go
+      - linters:
+          - paralleltest
+        path: monitor/mqtt_monitor_test\.go
+      - linters:
+          - durationcheck
+        path: monitor/.*\.go
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gofmt
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
