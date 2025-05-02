@@ -149,7 +149,8 @@ func (mms *MqttMonitor) SelectPoPParticipantsOutOfActiveActors() (challenger str
 	found := 0
 	var lastSeen LastSeenEvent
 	for iter.Next() {
-		if count == randomChallenger {
+		switch count {
+		case randomChallenger:
 			lastSeen, err = mms.getDataFromIter(iter)
 			if err != nil {
 				Log("could not get Data from ID" + strconv.Itoa(randomChallenger))
@@ -157,7 +158,7 @@ func (mms *MqttMonitor) SelectPoPParticipantsOutOfActiveActors() (challenger str
 			}
 			challenger = lastSeen.Address
 			found++
-		} else if count == randomChallengee {
+		case randomChallengee:
 			lastSeen, err = mms.getDataFromIter(iter)
 			if err != nil {
 				Log("could not get Data from ID" + strconv.Itoa(randomChallengee))

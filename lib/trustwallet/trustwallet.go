@@ -166,12 +166,15 @@ func (t *Connector) SignWithOptega(ctx int, dataToSign, pubkey string) (string, 
 
 func (t *Connector) UnwrapPublicKey(publicKey string) (bool, string) {
 	length := len(publicKey)
-	if length == 136 || length == 130 {
+
+	switch length {
+	case 130, 136:
 		return true, publicKey[len(publicKey)-128:]
-	} else if length == 128 {
+	case 128:
 		return true, publicKey
+	default:
+		return false, publicKey
 	}
-	return false, publicKey
 }
 
 func (t *Connector) CalculateHash(dataToSign string) (string, error) {
