@@ -200,3 +200,7 @@ require (
 )
 
 replace github.com/planetmint/planetmint-go => ../
+
+replace github.com/coinbase/rosetta-sdk-go => github.com/tkachoff/rosetta-sdk-go v0.0.0-20200409123456-b90b71783ca14a994cb092b2429be4b9fcdfdddf
+
+replace github.com/coinbase/rosetta-sdk-go/types => github.com/coinbase/mesh-sdk-go/types v1.0.0
