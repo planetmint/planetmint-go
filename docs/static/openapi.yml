@@ -77443,6 +77443,21 @@ definitions:
       lastIncludedPop:
         type: string
         format: int64
+  planetmintgo.der.DER:
+    type: object
+    properties:
+      zigbeeID:
+        type: string
+      dirigeraID:
+        type: string
+      dirigeraMAC:
+        type: string
+      plmntAddress:
+        type: string
+      liquidAddress:
+        type: string
+  planetmintgo.der.MsgRegisterDERResponse:
+    type: object
   planetmintgo.der.Params:
     type: object
     description: Params defines the parameters for the module.
