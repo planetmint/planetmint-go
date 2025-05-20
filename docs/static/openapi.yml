@@ -47663,7 +47663,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /planetmint/planetmint-go/der/params:
+  /planetmint/der/params:
     get:
       summary: Parameters queries the parameters of the module.
       operationId: PlanetmintgoDerParams
