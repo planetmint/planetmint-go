@@ -1,0 +1,12 @@
+syntax = "proto3";
+package planetmintgo.der;
+
+import "gogoproto/gogo.proto";
+import "planetmintgo/der/params.proto";
+
+option go_package = "github.com/planetmint/planetmint-go/x/der/types";
+
+// GenesisState defines the der module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+}
