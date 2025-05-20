@@ -10,8 +10,9 @@ import (
 func (k msgServer) RegisterDER(goCtx context.Context, msg *types.MsgRegisterDER) (*types.MsgRegisterDERResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Handling the message
-	_ = ctx
+	k.StoreDerAttest(ctx, *msg.Der)
+
+	//TODO: init NFT creation and storag of NFT to DER associations
 
 	return &types.MsgRegisterDERResponse{}, nil
 }
