@@ -7,6 +7,7 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "planetmintgo/der/params.proto";
 import "planetmintgo/der/der.proto";
+import "planetmintgo/der/liquid_der_asset.proto";
 
 option go_package = "github.com/planetmint/planetmint-go/x/der/types";
 
@@ -22,6 +23,12 @@ service Query {
   // Queries a list of Der items.
   rpc Der (QueryDerRequest) returns (QueryDerResponse) {
     option (google.api.http).get = "/planetmint/der/der/{zigbeeID}";
+  
+  }
+  
+  // Queries a list of Nft items.
+  rpc Nft (QueryNftRequest) returns (QueryNftResponse) {
+    option (google.api.http).get = "/planetmint/der/nft/{zigbeeID}";
   
   }
 }
@@ -41,5 +48,13 @@ message QueryDerRequest {
 
 message QueryDerResponse {
   DER der = 1;
+}
+
+message QueryNftRequest {
+  string zigbeeID = 1;
+}
+
+message QueryNftResponse {
+  LiquidDerAsset derNft = 1;
 }
 
