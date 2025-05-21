@@ -77504,6 +77504,17 @@ definitions:
         type: string
       liquidAddress:
         type: string
+  planetmintgo.der.LiquidDerAsset:
+    type: object
+    properties:
+      zigbeeID:
+        type: string
+      plmntAddress:
+        type: string
+      assetID:
+        type: string
+  planetmintgo.der.MsgNotarizeLiquidDerAssetResponse:
+    type: object
   planetmintgo.der.MsgRegisterDERResponse:
     type: object
   planetmintgo.der.Params:

@@ -14,6 +14,8 @@ const (
 	MemStoreKey = "mem_der"
 
 	DerAssetKey = "Der/DerAsset/"
+
+	LiquidDerAssetKey = "Der/LiquidDerAsset/"
 )
 
 func KeyPrefix(p string) []byte {

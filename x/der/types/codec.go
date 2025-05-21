@@ -9,12 +9,16 @@ import (
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgRegisterDER{}, "der/RegisterDER", nil)
+	cdc.RegisterConcrete(&MsgNotarizeLiquidDerAsset{}, "der/NotarizeLiquidDerAsset", nil)
 	// this line is used by starport scaffolding # 2
 }
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgRegisterDER{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgNotarizeLiquidDerAsset{},
 	)
 	// this line is used by starport scaffolding # 3
 

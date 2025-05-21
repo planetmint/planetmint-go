@@ -115,30 +115,126 @@ func (m *MsgRegisterDERResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgRegisterDERResponse proto.InternalMessageInfo
 
+type MsgNotarizeLiquidDerAsset struct {
+	Creator  string          `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	DerAsset *LiquidDerAsset `protobuf:"bytes,2,opt,name=derAsset,proto3" json:"derAsset,omitempty"`
+}
+
+func (m *MsgNotarizeLiquidDerAsset) Reset()         { *m = MsgNotarizeLiquidDerAsset{} }
+func (m *MsgNotarizeLiquidDerAsset) String() string { return proto.CompactTextString(m) }
+func (*MsgNotarizeLiquidDerAsset) ProtoMessage()    {}
+func (*MsgNotarizeLiquidDerAsset) Descriptor() ([]byte, []int) {
+	return fileDescriptor_15158a087cddc7bd, []int{2}
+}
+func (m *MsgNotarizeLiquidDerAsset) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgNotarizeLiquidDerAsset) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgNotarizeLiquidDerAsset.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgNotarizeLiquidDerAsset) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgNotarizeLiquidDerAsset.Merge(m, src)
+}
+func (m *MsgNotarizeLiquidDerAsset) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgNotarizeLiquidDerAsset) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgNotarizeLiquidDerAsset.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgNotarizeLiquidDerAsset proto.InternalMessageInfo
+
+func (m *MsgNotarizeLiquidDerAsset) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgNotarizeLiquidDerAsset) GetDerAsset() *LiquidDerAsset {
+	if m != nil {
+		return m.DerAsset
+	}
+	return nil
+}
+
+type MsgNotarizeLiquidDerAssetResponse struct {
+}
+
+func (m *MsgNotarizeLiquidDerAssetResponse) Reset()         { *m = MsgNotarizeLiquidDerAssetResponse{} }
+func (m *MsgNotarizeLiquidDerAssetResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgNotarizeLiquidDerAssetResponse) ProtoMessage()    {}
+func (*MsgNotarizeLiquidDerAssetResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_15158a087cddc7bd, []int{3}
+}
+func (m *MsgNotarizeLiquidDerAssetResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgNotarizeLiquidDerAssetResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgNotarizeLiquidDerAssetResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgNotarizeLiquidDerAssetResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgNotarizeLiquidDerAssetResponse.Merge(m, src)
+}
+func (m *MsgNotarizeLiquidDerAssetResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgNotarizeLiquidDerAssetResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgNotarizeLiquidDerAssetResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgNotarizeLiquidDerAssetResponse proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*MsgRegisterDER)(nil), "planetmintgo.der.MsgRegisterDER")
 	proto.RegisterType((*MsgRegisterDERResponse)(nil), "planetmintgo.der.MsgRegisterDERResponse")
+	proto.RegisterType((*MsgNotarizeLiquidDerAsset)(nil), "planetmintgo.der.MsgNotarizeLiquidDerAsset")
+	proto.RegisterType((*MsgNotarizeLiquidDerAssetResponse)(nil), "planetmintgo.der.MsgNotarizeLiquidDerAssetResponse")
 }
 
 func init() { proto.RegisterFile("planetmintgo/der/tx.proto", fileDescriptor_15158a087cddc7bd) }
 
 var fileDescriptor_15158a087cddc7bd = []byte{
-	// 232 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0x2c, 0xc8, 0x49, 0xcc,
-	0x4b, 0x2d, 0xc9, 0xcd, 0xcc, 0x2b, 0x49, 0xcf, 0xd7, 0x4f, 0x49, 0x2d, 0xd2, 0x2f, 0xa9, 0xd0,
-	0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x12, 0x40, 0x96, 0xd2, 0x4b, 0x49, 0x2d, 0x92, 0x92, 0xc2,
-	0x50, 0x9c, 0x92, 0x5a, 0x04, 0x51, 0xad, 0x14, 0xcc, 0xc5, 0xe7, 0x5b, 0x9c, 0x1e, 0x94, 0x9a,
-	0x9e, 0x59, 0x5c, 0x92, 0x5a, 0xe4, 0xe2, 0x1a, 0x24, 0x24, 0xc1, 0xc5, 0x9e, 0x5c, 0x94, 0x9a,
-	0x58, 0x92, 0x5f, 0x24, 0xc1, 0xa8, 0xc0, 0xa8, 0xc1, 0x19, 0x04, 0xe3, 0x0a, 0xa9, 0x73, 0x31,
-	0xa7, 0xa4, 0x16, 0x49, 0x30, 0x29, 0x30, 0x6a, 0x70, 0x1b, 0x89, 0xea, 0xa1, 0xdb, 0xa3, 0xe7,
-	0xe2, 0x1a, 0x14, 0x04, 0x52, 0xa1, 0x24, 0xc1, 0x25, 0x86, 0x6a, 0x68, 0x50, 0x6a, 0x71, 0x41,
-	0x7e, 0x5e, 0x71, 0xaa, 0x51, 0x02, 0x17, 0xb3, 0x6f, 0x71, 0xba, 0x50, 0x24, 0x17, 0x37, 0xb2,
-	0x95, 0x0a, 0x98, 0x66, 0xa1, 0xea, 0x97, 0xd2, 0x20, 0xa4, 0x02, 0x66, 0x83, 0x93, 0xe7, 0x89,
-	0x47, 0x72, 0x8c, 0x17, 0x1e, 0xc9, 0x31, 0x3e, 0x78, 0x24, 0xc7, 0x38, 0xe1, 0xb1, 0x1c, 0xc3,
-	0x85, 0xc7, 0x72, 0x0c, 0x37, 0x1e, 0xcb, 0x31, 0x44, 0xe9, 0xa7, 0x67, 0x96, 0x64, 0x94, 0x26,
-	0xe9, 0x25, 0xe7, 0xe7, 0xea, 0x23, 0x4c, 0x43, 0x62, 0xea, 0xa6, 0xe7, 0xeb, 0x57, 0x40, 0x02,
-	0xb3, 0xb2, 0x20, 0xb5, 0x38, 0x89, 0x0d, 0x1c, 0x44, 0xc6, 0x80, 0x00, 0x00, 0x00, 0xff, 0xff,
-	0xef, 0x7c, 0x8e, 0x08, 0x6d, 0x01, 0x00, 0x00,
+	// 325 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x92, 0x3f, 0x4b, 0xc3, 0x40,
+	0x18, 0xc6, 0x7b, 0x16, 0xfc, 0x73, 0x05, 0x91, 0x80, 0x25, 0xcd, 0x70, 0xd4, 0x38, 0xb4, 0x20,
+	0x26, 0xd0, 0xae, 0x2e, 0x4a, 0x3b, 0x08, 0xd6, 0xe1, 0x9c, 0x74, 0x29, 0x69, 0xef, 0xe5, 0x3c,
+	0x68, 0x7b, 0xf1, 0xee, 0x0a, 0xb5, 0x9f, 0xc2, 0x8f, 0xe5, 0xd8, 0xd1, 0xc1, 0x41, 0x9a, 0x2f,
+	0x22, 0x6d, 0x1a, 0x4d, 0x4c, 0xaa, 0xb8, 0x25, 0xbc, 0xbf, 0x3c, 0xbf, 0xe7, 0x0d, 0x2f, 0xae,
+	0x85, 0xa3, 0x60, 0x02, 0x66, 0x2c, 0x26, 0x86, 0x4b, 0x9f, 0x81, 0xf2, 0xcd, 0xcc, 0x0b, 0x95,
+	0x34, 0xd2, 0x3a, 0x4a, 0x8f, 0x3c, 0x06, 0xca, 0x71, 0x72, 0x30, 0x03, 0x15, 0xd3, 0x4e, 0x23,
+	0x37, 0x1b, 0x89, 0xa7, 0xa9, 0x60, 0x7d, 0x06, 0xaa, 0x1f, 0x68, 0x0d, 0x26, 0x06, 0xdd, 0x3b,
+	0x7c, 0xd8, 0xd3, 0x9c, 0x02, 0x17, 0xda, 0x80, 0xea, 0x74, 0xa9, 0x65, 0xe3, 0xbd, 0xa1, 0x82,
+	0xc0, 0x48, 0x65, 0xa3, 0x3a, 0x6a, 0x1e, 0xd0, 0xe4, 0xd5, 0x6a, 0xe0, 0x32, 0x03, 0x65, 0xef,
+	0xd4, 0x51, 0xb3, 0xd2, 0x3a, 0xf6, 0x7e, 0x16, 0xf2, 0x3a, 0x5d, 0x4a, 0x57, 0x84, 0x6b, 0xe3,
+	0x6a, 0x36, 0x94, 0x82, 0x0e, 0xe5, 0x44, 0x83, 0xab, 0x71, 0xad, 0xa7, 0xf9, 0xad, 0x34, 0x81,
+	0x12, 0x73, 0xb8, 0x59, 0x77, 0xea, 0x80, 0xba, 0x5c, 0x35, 0xfa, 0xc5, 0x7c, 0x81, 0xf7, 0xd9,
+	0x86, 0xda, 0xe8, 0xeb, 0x79, 0x7d, 0x36, 0x8d, 0x7e, 0x7d, 0xe1, 0x9e, 0xe2, 0x93, 0xad, 0xd2,
+	0xa4, 0x59, 0xeb, 0x1d, 0xe1, 0x72, 0x4f, 0x73, 0xeb, 0x1e, 0x57, 0xd2, 0x7f, 0xa3, 0xc0, 0x93,
+	0x5d, 0xcd, 0x69, 0xfe, 0x45, 0x24, 0x0a, 0x6b, 0x8e, 0xab, 0x5b, 0x36, 0x3f, 0x2b, 0xcc, 0x28,
+	0x86, 0x9d, 0xf6, 0x3f, 0xe0, 0xc4, 0x7d, 0x75, 0xfd, 0xba, 0x24, 0x68, 0xb1, 0x24, 0xe8, 0x63,
+	0x49, 0xd0, 0x4b, 0x44, 0x4a, 0x8b, 0x88, 0x94, 0xde, 0x22, 0x52, 0x7a, 0xf0, 0xb9, 0x30, 0x8f,
+	0xd3, 0x81, 0x37, 0x94, 0x63, 0xff, 0x3b, 0x38, 0xf5, 0x78, 0xce, 0xa5, 0x3f, 0x8b, 0x8f, 0xf1,
+	0x39, 0x04, 0x3d, 0xd8, 0x5d, 0x5f, 0x4e, 0xfb, 0x33, 0x00, 0x00, 0xff, 0xff, 0x28, 0x7a, 0x49,
+	0xef, 0xad, 0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -154,6 +250,7 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
 	RegisterDER(ctx context.Context, in *MsgRegisterDER, opts ...grpc.CallOption) (*MsgRegisterDERResponse, error)
+	NotarizeLiquidDerAsset(ctx context.Context, in *MsgNotarizeLiquidDerAsset, opts ...grpc.CallOption) (*MsgNotarizeLiquidDerAssetResponse, error)
 }
 
 type msgClient struct {
@@ -173,9 +270,19 @@ func (c *msgClient) RegisterDER(ctx context.Context, in *MsgRegisterDER, opts ..
 	return out, nil
 }
 
+func (c *msgClient) NotarizeLiquidDerAsset(ctx context.Context, in *MsgNotarizeLiquidDerAsset, opts ...grpc.CallOption) (*MsgNotarizeLiquidDerAssetResponse, error) {
+	out := new(MsgNotarizeLiquidDerAssetResponse)
+	err := c.cc.Invoke(ctx, "/planetmintgo.der.Msg/NotarizeLiquidDerAsset", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	RegisterDER(context.Context, *MsgRegisterDER) (*MsgRegisterDERResponse, error)
+	NotarizeLiquidDerAsset(context.Context, *MsgNotarizeLiquidDerAsset) (*MsgNotarizeLiquidDerAssetResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -184,6 +291,9 @@ type UnimplementedMsgServer struct {
 
 func (*UnimplementedMsgServer) RegisterDER(ctx context.Context, req *MsgRegisterDER) (*MsgRegisterDERResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterDER not implemented")
+}
+func (*UnimplementedMsgServer) NotarizeLiquidDerAsset(ctx context.Context, req *MsgNotarizeLiquidDerAsset) (*MsgNotarizeLiquidDerAssetResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NotarizeLiquidDerAsset not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -208,6 +318,24 @@ func _Msg_RegisterDER_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_NotarizeLiquidDerAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgNotarizeLiquidDerAsset)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).NotarizeLiquidDerAsset(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/planetmintgo.der.Msg/NotarizeLiquidDerAsset",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).NotarizeLiquidDerAsset(ctx, req.(*MsgNotarizeLiquidDerAsset))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var Msg_serviceDesc = _Msg_serviceDesc
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "planetmintgo.der.Msg",
@@ -216,6 +344,10 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RegisterDER",
 			Handler:    _Msg_RegisterDER_Handler,
+		},
+		{
+			MethodName: "NotarizeLiquidDerAsset",
+			Handler:    _Msg_NotarizeLiquidDerAsset_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -287,6 +419,71 @@ func (m *MsgRegisterDERResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) 
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgNotarizeLiquidDerAsset) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgNotarizeLiquidDerAsset) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgNotarizeLiquidDerAsset) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.DerAsset != nil {
+		{
+			size, err := m.DerAsset.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintTx(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgNotarizeLiquidDerAssetResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgNotarizeLiquidDerAssetResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgNotarizeLiquidDerAssetResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTx(v)
 	base := offset
@@ -316,6 +513,32 @@ func (m *MsgRegisterDER) Size() (n int) {
 }
 
 func (m *MsgRegisterDERResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgNotarizeLiquidDerAsset) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.DerAsset != nil {
+		l = m.DerAsset.Size()
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgNotarizeLiquidDerAssetResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -475,6 +698,174 @@ func (m *MsgRegisterDERResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgRegisterDERResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgNotarizeLiquidDerAsset) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgNotarizeLiquidDerAsset: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgNotarizeLiquidDerAsset: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DerAsset", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.DerAsset == nil {
+				m.DerAsset = &LiquidDerAsset{}
+			}
+			if err := m.DerAsset.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgNotarizeLiquidDerAssetResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgNotarizeLiquidDerAssetResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgNotarizeLiquidDerAssetResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

@@ -3,12 +3,14 @@ syntax = "proto3";
 package planetmintgo.der;
 
 import "planetmintgo/der/der.proto";
+import "planetmintgo/der/liquid_der_asset.proto";
 
 option go_package = "github.com/planetmint/planetmint-go/x/der/types";
 
 // Msg defines the Msg service.
 service Msg {
-  rpc RegisterDER (MsgRegisterDER) returns (MsgRegisterDERResponse);
+  rpc RegisterDER            (MsgRegisterDER           ) returns (MsgRegisterDERResponse           );
+  rpc NotarizeLiquidDerAsset (MsgNotarizeLiquidDerAsset) returns (MsgNotarizeLiquidDerAssetResponse);
 }
 message MsgRegisterDER {
   string creator = 1;
@@ -16,4 +18,11 @@ message MsgRegisterDER {
 }
 
 message MsgRegisterDERResponse {}
+
+message MsgNotarizeLiquidDerAsset {
+  string         creator  = 1;
+  LiquidDerAsset derAsset = 2;
+}
+
+message MsgNotarizeLiquidDerAssetResponse {}
 
