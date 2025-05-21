@@ -40,9 +40,7 @@ func (k msgServer) handleDERNFTIssuance(goCtx context.Context, der *types.DER, p
 
 	if err != nil {
 		logger.Error(ctx, err, "DER NFT issuance failed")
-		return
+	} else {
+		logger.Info(ctx, "DER NFT issuance successful: "+der.ZigbeeID)
 	}
-
-	logger.Info(ctx, "DER NFT issuance successful: "+der.ZigbeeID)
-	return
 }

@@ -7,6 +7,7 @@ import (
 
 // GetParams get all parameters as types.Params
 func (k Keeper) GetParams(ctx sdk.Context) types.Params {
+	_ = ctx
 	return types.NewParams()
 }
 
