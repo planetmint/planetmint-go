@@ -5,7 +5,7 @@ import (
 	"github.com/planetmint/planetmint-go/x/der/types"
 )
 
-func (k Keeper) StoreDerAttest(ctx sdk.Context, asset types.DER) {
+func (k Keeper) StoreDerAsset(ctx sdk.Context, asset types.DER) {
 	appendValue := k.cdc.MustMarshal(&asset)
 	k.storeAsset(ctx, types.KeyPrefix(types.DerAssetKey), asset.ZigbeeID, appendValue)
 }

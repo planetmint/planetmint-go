@@ -12,7 +12,7 @@ import (
 func (k msgServer) RegisterDER(goCtx context.Context, msg *types.MsgRegisterDER) (*types.MsgRegisterDERResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	k.StoreDerAttest(ctx, *msg.Der)
+	k.StoreDerAsset(ctx, *msg.Der)
 
 	// Get machine params from MachineKeeper
 	params := k.MachineKeeper.GetParams(ctx)

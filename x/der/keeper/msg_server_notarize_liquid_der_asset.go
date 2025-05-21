@@ -10,7 +10,7 @@ import (
 func (k msgServer) NotarizeLiquidDerAsset(goCtx context.Context, msg *types.MsgNotarizeLiquidDerAsset) (*types.MsgNotarizeLiquidDerAssetResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	k.StoreLiquidDerAttest(ctx, *msg.DerAsset)
+	k.StoreLiquidDerAsset(ctx, *msg.DerAsset)
 
 	return &types.MsgNotarizeLiquidDerAssetResponse{}, nil
 }
