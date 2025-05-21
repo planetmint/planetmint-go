@@ -125,6 +125,7 @@ import (
 	dermodule "github.com/planetmint/planetmint-go/x/der"
 	dermodulekeeper "github.com/planetmint/planetmint-go/x/der/keeper"
 	dermoduletypes "github.com/planetmint/planetmint-go/x/der/types"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	pmante "github.com/planetmint/planetmint-go/app/ante"
@@ -594,6 +595,8 @@ func New(
 		keys[dermoduletypes.StoreKey],
 		keys[dermoduletypes.MemStoreKey],
 		app.GetSubspace(dermoduletypes.ModuleName),
+		app.MachineKeeper,
+		homePath,
 	)
 	derModule := dermodule.NewAppModule(appCodec, app.DerKeeper, app.AccountKeeper, app.BankKeeper)
 

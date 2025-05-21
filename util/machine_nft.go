@@ -13,6 +13,7 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/planetmint/planetmint-go/clients/shamir/coordinator"
+	derTypes "github.com/planetmint/planetmint-go/x/der/types"
 	"github.com/planetmint/planetmint-go/x/machine/types"
 )
 
@@ -26,6 +27,32 @@ var (
 
 func init() {
 	RegisterAssetServiceHTTPClient = &http.Client{}
+}
+
+func IssueDerNFT(goCtx context.Context, der *derTypes.DER, scheme string, domain string, path string) error {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	// asset registration is in order to have the contact published
+	var notarizedAsset derTypes.LiquidDerAsset
+
+	assetID, contract, hex, err := coordinator.IssueNFTAsset(goCtx, der.ZigbeeID, der.PlmntAddress, domain)
+	if err != nil {
+		GetAppLogger().Error(ctx, err, "")
+		return err
+	}
+	assetRegistryEndpoint := fmt.Sprintf("%s://%s/%s", scheme, domain, path)
+
+	GetAppLogger().Info(ctx, "Liquid Token Issuance assetID: "+assetID+" contract: "+contract+" tx: "+hex)
+	err = RegisterAsset(goCtx, assetID, contract, assetRegistryEndpoint)
+	if err != nil {
+		GetAppLogger().Error(ctx, err, "")
+	}
+	// issue message with:
+	notarizedAsset.AssetID = assetID
+	notarizedAsset.ZigbeeID = der.ZigbeeID
+	notarizedAsset.PlmntAddress = der.PlmntAddress
+
+	SendLiquidDerAssetRegistration(goCtx, notarizedAsset)
+	return err
 }
 
 func IssueMachineNFT(goCtx context.Context, machine *types.Machine, scheme string, domain string, path string) error {

@@ -6,6 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/planetmint/planetmint-go/util"
 	"github.com/planetmint/planetmint-go/x/der/types"
+	machinesTypes "github.com/planetmint/planetmint-go/x/machine/types"
 )
 
 func (k msgServer) RegisterDER(goCtx context.Context, msg *types.MsgRegisterDER) (*types.MsgRegisterDERResponse, error) {
@@ -13,12 +14,12 @@ func (k msgServer) RegisterDER(goCtx context.Context, msg *types.MsgRegisterDER)
 
 	k.StoreDerAttest(ctx, *msg.Der)
 
-	//TODO: init NFT creation and storag of NFT to DER associations
+	// Get machine params from MachineKeeper
+	params := k.MachineKeeper.GetParams(ctx)
+
 	// Process NFT issuance if validator is block proposer
 	if util.IsValidatorBlockProposer(ctx, k.rootDir) {
-		if err := k.handleDERNFTIssuance(goCtx, *msg.Der, params); err != nil {
-			return err
-		}
+		k.handleDERNFTIssuance(goCtx, msg.Der, params)
 	} else {
 		util.GetAppLogger().Info(ctx, "Not block proposer: skipping DER NFT issuance")
 	}
@@ -26,22 +27,22 @@ func (k msgServer) RegisterDER(goCtx context.Context, msg *types.MsgRegisterDER)
 	return &types.MsgRegisterDERResponse{}, nil
 }
 
-func (k msgServer) handleDERNFTIssuance(goCtx context.Context, machine *types.Machine, params types.Params) error {
+func (k msgServer) handleDERNFTIssuance(goCtx context.Context, der *types.DER, params machinesTypes.Params) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	logger := util.GetAppLogger()
-	logger.Info(ctx, "Issuing Machine NFT: "+machine.String())
+	logger.Info(ctx, "Issuing DER NFT: "+der.String())
 
-	err := util.IssueMachineNFT(goCtx, machine,
+	err := util.IssueDerNFT(goCtx, der,
 		params.AssetRegistryScheme,
 		params.AssetRegistryDomain,
 		params.AssetRegistryPath,
 	)
 
 	if err != nil {
-		logger.Error(ctx, err, "Machine NFT issuance failed")
-		return err
+		logger.Error(ctx, err, "DER NFT issuance failed")
+		return
 	}
 
-	logger.Info(ctx, "Machine NFT issuance successful: "+machine.String())
-	return nil
+	logger.Info(ctx, "DER NFT issuance successful: "+der.ZigbeeID)
+	return
 }
