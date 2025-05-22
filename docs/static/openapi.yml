@@ -47678,13 +47678,11 @@ paths:
                 properties:
                   zigbeeID:
                     type: string
-                  dirigeraID:
-                    type: string
-                  dirigeraMAC:
-                    type: string
                   plmntAddress:
                     type: string
                   liquidAddress:
+                    type: string
+                  metadataJson:
                     type: string
         default:
           description: An unexpected error response.
@@ -77540,13 +77538,11 @@ definitions:
     properties:
       zigbeeID:
         type: string
-      dirigeraID:
-        type: string
-      dirigeraMAC:
-        type: string
       plmntAddress:
         type: string
       liquidAddress:
+        type: string
+      metadataJson:
         type: string
   planetmintgo.der.LiquidDerAsset:
     type: object
@@ -77572,13 +77568,11 @@ definitions:
         properties:
           zigbeeID:
             type: string
-          dirigeraID:
-            type: string
-          dirigeraMAC:
-            type: string
           plmntAddress:
             type: string
           liquidAddress:
+            type: string
+          metadataJson:
             type: string
   planetmintgo.der.QueryNftResponse:
     type: object

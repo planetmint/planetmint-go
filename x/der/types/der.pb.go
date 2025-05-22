@@ -24,10 +24,9 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type DER struct {
 	ZigbeeID      string `protobuf:"bytes,1,opt,name=zigbeeID,proto3" json:"zigbeeID,omitempty"`
-	DirigeraID    string `protobuf:"bytes,2,opt,name=dirigeraID,proto3" json:"dirigeraID,omitempty"`
-	DirigeraMAC   string `protobuf:"bytes,3,opt,name=dirigeraMAC,proto3" json:"dirigeraMAC,omitempty"`
-	PlmntAddress  string `protobuf:"bytes,4,opt,name=plmntAddress,proto3" json:"plmntAddress,omitempty"`
-	LiquidAddress string `protobuf:"bytes,5,opt,name=liquidAddress,proto3" json:"liquidAddress,omitempty"`
+	PlmntAddress  string `protobuf:"bytes,2,opt,name=plmntAddress,proto3" json:"plmntAddress,omitempty"`
+	LiquidAddress string `protobuf:"bytes,3,opt,name=liquidAddress,proto3" json:"liquidAddress,omitempty"`
+	MetadataJson  string `protobuf:"bytes,4,opt,name=metadataJson,proto3" json:"metadataJson,omitempty"`
 }
 
 func (m *DER) Reset()         { *m = DER{} }
@@ -70,20 +69,6 @@ func (m *DER) GetZigbeeID() string {
 	return ""
 }
 
-func (m *DER) GetDirigeraID() string {
-	if m != nil {
-		return m.DirigeraID
-	}
-	return ""
-}
-
-func (m *DER) GetDirigeraMAC() string {
-	if m != nil {
-		return m.DirigeraMAC
-	}
-	return ""
-}
-
 func (m *DER) GetPlmntAddress() string {
 	if m != nil {
 		return m.PlmntAddress
@@ -98,6 +83,13 @@ func (m *DER) GetLiquidAddress() string {
 	return ""
 }
 
+func (m *DER) GetMetadataJson() string {
+	if m != nil {
+		return m.MetadataJson
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*DER)(nil), "planetmintgo.der.DER")
 }
@@ -105,21 +97,20 @@ func init() {
 func init() { proto.RegisterFile("planetmintgo/der/der.proto", fileDescriptor_6380e8122e200808) }
 
 var fileDescriptor_6380e8122e200808 = []byte{
-	// 222 bytes of a gzipped FileDescriptorProto
+	// 208 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0x2a, 0xc8, 0x49, 0xcc,
 	0x4b, 0x2d, 0xc9, 0xcd, 0xcc, 0x2b, 0x49, 0xcf, 0xd7, 0x4f, 0x49, 0x2d, 0x02, 0x61, 0xbd, 0x82,
-	0xa2, 0xfc, 0x92, 0x7c, 0x21, 0x01, 0x64, 0x39, 0xbd, 0x94, 0xd4, 0x22, 0xa5, 0xb5, 0x8c, 0x5c,
-	0xcc, 0x2e, 0xae, 0x41, 0x42, 0x52, 0x5c, 0x1c, 0x55, 0x99, 0xe9, 0x49, 0xa9, 0xa9, 0x9e, 0x2e,
-	0x12, 0x8c, 0x0a, 0x8c, 0x1a, 0x9c, 0x41, 0x70, 0xbe, 0x90, 0x1c, 0x17, 0x57, 0x4a, 0x66, 0x51,
-	0x66, 0x7a, 0x6a, 0x51, 0xa2, 0xa7, 0x8b, 0x04, 0x13, 0x58, 0x16, 0x49, 0x44, 0x48, 0x81, 0x8b,
-	0x1b, 0xc6, 0xf3, 0x75, 0x74, 0x96, 0x60, 0x06, 0x2b, 0x40, 0x16, 0x12, 0x52, 0xe2, 0xe2, 0x29,
-	0xc8, 0xc9, 0xcd, 0x2b, 0x71, 0x4c, 0x49, 0x29, 0x4a, 0x2d, 0x2e, 0x96, 0x60, 0x01, 0x2b, 0x41,
-	0x11, 0x13, 0x52, 0xe1, 0xe2, 0xcd, 0xc9, 0x2c, 0x2c, 0xcd, 0x4c, 0x81, 0x29, 0x62, 0x05, 0x2b,
-	0x42, 0x15, 0x74, 0xf2, 0x3c, 0xf1, 0x48, 0x8e, 0xf1, 0xc2, 0x23, 0x39, 0xc6, 0x07, 0x8f, 0xe4,
-	0x18, 0x27, 0x3c, 0x96, 0x63, 0xb8, 0xf0, 0x58, 0x8e, 0xe1, 0xc6, 0x63, 0x39, 0x86, 0x28, 0xfd,
-	0xf4, 0xcc, 0x92, 0x8c, 0xd2, 0x24, 0xbd, 0xe4, 0xfc, 0x5c, 0x7d, 0x84, 0x37, 0x91, 0x98, 0xba,
-	0xe9, 0xf9, 0xfa, 0x15, 0xe0, 0x00, 0x29, 0xa9, 0x2c, 0x48, 0x2d, 0x4e, 0x62, 0x03, 0x87, 0x89,
-	0x31, 0x20, 0x00, 0x00, 0xff, 0xff, 0x47, 0x01, 0xf0, 0x5d, 0x31, 0x01, 0x00, 0x00,
+	0xa2, 0xfc, 0x92, 0x7c, 0x21, 0x01, 0x64, 0x39, 0xbd, 0x94, 0xd4, 0x22, 0xa5, 0x7e, 0x46, 0x2e,
+	0x66, 0x17, 0xd7, 0x20, 0x21, 0x29, 0x2e, 0x8e, 0xaa, 0xcc, 0xf4, 0xa4, 0xd4, 0x54, 0x4f, 0x17,
+	0x09, 0x46, 0x05, 0x46, 0x0d, 0xce, 0x20, 0x38, 0x5f, 0x48, 0x89, 0x8b, 0xa7, 0x20, 0x27, 0x37,
+	0xaf, 0xc4, 0x31, 0x25, 0xa5, 0x28, 0xb5, 0xb8, 0x58, 0x82, 0x09, 0x2c, 0x8f, 0x22, 0x26, 0xa4,
+	0xc2, 0xc5, 0x9b, 0x93, 0x59, 0x58, 0x9a, 0x99, 0x02, 0x53, 0xc4, 0x0c, 0x56, 0x84, 0x2a, 0x08,
+	0x32, 0x29, 0x37, 0xb5, 0x24, 0x31, 0x25, 0xb1, 0x24, 0xd1, 0xab, 0x38, 0x3f, 0x4f, 0x82, 0x05,
+	0x62, 0x12, 0xb2, 0x98, 0x93, 0xe7, 0x89, 0x47, 0x72, 0x8c, 0x17, 0x1e, 0xc9, 0x31, 0x3e, 0x78,
+	0x24, 0xc7, 0x38, 0xe1, 0xb1, 0x1c, 0xc3, 0x85, 0xc7, 0x72, 0x0c, 0x37, 0x1e, 0xcb, 0x31, 0x44,
+	0xe9, 0xa7, 0x67, 0x96, 0x64, 0x94, 0x26, 0xe9, 0x25, 0xe7, 0xe7, 0xea, 0x23, 0x3c, 0x82, 0xc4,
+	0xd4, 0x4d, 0xcf, 0xd7, 0xaf, 0x00, 0x7b, 0xb9, 0xa4, 0xb2, 0x20, 0xb5, 0x38, 0x89, 0x0d, 0xec,
+	0x6b, 0x63, 0x40, 0x00, 0x00, 0x00, 0xff, 0xff, 0x9d, 0x13, 0x8b, 0x8b, 0x13, 0x01, 0x00, 0x00,
 }
 
 func (m *DER) Marshal() (dAtA []byte, err error) {
@@ -142,31 +133,24 @@ func (m *DER) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.MetadataJson) > 0 {
+		i -= len(m.MetadataJson)
+		copy(dAtA[i:], m.MetadataJson)
+		i = encodeVarintDer(dAtA, i, uint64(len(m.MetadataJson)))
+		i--
+		dAtA[i] = 0x22
+	}
 	if len(m.LiquidAddress) > 0 {
 		i -= len(m.LiquidAddress)
 		copy(dAtA[i:], m.LiquidAddress)
 		i = encodeVarintDer(dAtA, i, uint64(len(m.LiquidAddress)))
 		i--
-		dAtA[i] = 0x2a
+		dAtA[i] = 0x1a
 	}
 	if len(m.PlmntAddress) > 0 {
 		i -= len(m.PlmntAddress)
 		copy(dAtA[i:], m.PlmntAddress)
 		i = encodeVarintDer(dAtA, i, uint64(len(m.PlmntAddress)))
-		i--
-		dAtA[i] = 0x22
-	}
-	if len(m.DirigeraMAC) > 0 {
-		i -= len(m.DirigeraMAC)
-		copy(dAtA[i:], m.DirigeraMAC)
-		i = encodeVarintDer(dAtA, i, uint64(len(m.DirigeraMAC)))
-		i--
-		dAtA[i] = 0x1a
-	}
-	if len(m.DirigeraID) > 0 {
-		i -= len(m.DirigeraID)
-		copy(dAtA[i:], m.DirigeraID)
-		i = encodeVarintDer(dAtA, i, uint64(len(m.DirigeraID)))
 		i--
 		dAtA[i] = 0x12
 	}
@@ -201,19 +185,15 @@ func (m *DER) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovDer(uint64(l))
 	}
-	l = len(m.DirigeraID)
-	if l > 0 {
-		n += 1 + l + sovDer(uint64(l))
-	}
-	l = len(m.DirigeraMAC)
-	if l > 0 {
-		n += 1 + l + sovDer(uint64(l))
-	}
 	l = len(m.PlmntAddress)
 	if l > 0 {
 		n += 1 + l + sovDer(uint64(l))
 	}
 	l = len(m.LiquidAddress)
+	if l > 0 {
+		n += 1 + l + sovDer(uint64(l))
+	}
+	l = len(m.MetadataJson)
 	if l > 0 {
 		n += 1 + l + sovDer(uint64(l))
 	}
@@ -289,70 +269,6 @@ func (m *DER) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DirigeraID", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowDer
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthDer
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthDer
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.DirigeraID = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DirigeraMAC", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowDer
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthDer
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthDer
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.DirigeraMAC = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field PlmntAddress", wireType)
 			}
 			var stringLen uint64
@@ -383,7 +299,7 @@ func (m *DER) Unmarshal(dAtA []byte) error {
 			}
 			m.PlmntAddress = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 5:
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field LiquidAddress", wireType)
 			}
@@ -414,6 +330,38 @@ func (m *DER) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.LiquidAddress = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MetadataJson", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDer
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDer
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDer
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MetadataJson = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

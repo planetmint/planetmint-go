@@ -6,8 +6,8 @@ option go_package = "github.com/planetmint/planetmint-go/x/der/types";
 message DER {
   
   string zigbeeID = 1; 
-  string dirigeraID = 2; 
-  string dirigeraMAC = 3; 
-  string plmntAddress = 4; 
-  string liquidAddress = 5; 
+  string plmntAddress = 2; 
+  string liquidAddress = 3;
+  string metadataJson = 4;
+
 }

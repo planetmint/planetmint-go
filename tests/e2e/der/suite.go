@@ -50,10 +50,9 @@ func (s *E2ETestSuite) TestRegisterDER() {
 
 	der := dertypes.DER{
 		ZigbeeID:      "0123456789123456",
-		DirigeraID:    "1123456789123456",
-		DirigeraMAC:   "",
 		PlmntAddress:  val.Address.String(),
 		LiquidAddress: "liquidder",
+		MetadataJson:  "{\"dirigeraID\": \"0123456789123456\", \"dirigeraMac\": \"00:00:00:00:00:00\"}",
 	}
 
 	msg1 := dertypes.NewMsgRegisterDER(val.Address.String(), &der)
