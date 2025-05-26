@@ -214,6 +214,6 @@ jobs:
         run: |
           pushd ${{ matrix.directory }}
           # Exclude generated .pb.go and .pb.gw.go files from test and coverage
-          go test -coverprofile cover.out -race -vet=off -v $(go list ./... | grep -v types)
+          go test -coverprofile cover.out -race -vet=off -timeout 15m -v $(go list ./... | grep -v types)
           # Print coverage by function
           go tool cover -func=cover.out

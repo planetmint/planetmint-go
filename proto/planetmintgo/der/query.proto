@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package planetmintgo.der;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "planetmintgo/der/params.proto";
+import "planetmintgo/der/der.proto";
+import "planetmintgo/der/liquid_der_asset.proto";
+
+option go_package = "github.com/planetmint/planetmint-go/x/der/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  
+  // Parameters queries the parameters of the module.
+  rpc Params (QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/planetmint/der/params";
+  
+  }
+  
+  // Queries a list of Der items.
+  rpc Der (QueryDerRequest) returns (QueryDerResponse) {
+    option (google.api.http).get = "/planetmint/der/der/{zigbeeID}";
+  
+  }
+  
+  // Queries a list of Nft items.
+  rpc Nft (QueryNftRequest) returns (QueryNftResponse) {
+    option (google.api.http).get = "/planetmint/der/nft/{zigbeeID}";
+  
+  }
+}
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  
+  // params holds all the parameters of this module.
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryDerRequest {
+  string zigbeeID = 1;
+}
+
+message QueryDerResponse {
+  DER der = 1;
+}
+
+message QueryNftRequest {
+  string zigbeeID = 1;
+}
+
+message QueryNftResponse {
+  LiquidDerAsset derNft = 1;
+}
+

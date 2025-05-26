@@ -122,6 +122,10 @@ import (
 	daomodulekeeper "github.com/planetmint/planetmint-go/x/dao/keeper"
 	daomoduletypes "github.com/planetmint/planetmint-go/x/dao/types"
 
+	dermodule "github.com/planetmint/planetmint-go/x/der"
+	dermodulekeeper "github.com/planetmint/planetmint-go/x/der/keeper"
+	dermoduletypes "github.com/planetmint/planetmint-go/x/der/types"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	pmante "github.com/planetmint/planetmint-go/app/ante"
@@ -186,6 +190,7 @@ var (
 		machinemodule.AppModuleBasic{},
 		assetmodule.AppModuleBasic{},
 		daomodule.AppModuleBasic{},
+		dermodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -267,6 +272,8 @@ type App struct {
 	AssetKeeper assetmodulekeeper.Keeper
 
 	DaoKeeper daomodulekeeper.Keeper
+
+	DerKeeper dermodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -317,6 +324,7 @@ func New(
 		machinemoduletypes.TrustAnchorKey, machinemoduletypes.AddressIndexKey,
 		assetmoduletypes.StoreKey,
 		daomoduletypes.StoreKey, daomoduletypes.ChallengeKey, daomoduletypes.MintRequestHashKey, daomoduletypes.MintRequestAddressKey,
+		dermoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -582,6 +590,16 @@ func New(
 	)
 	daoModule := daomodule.NewAppModule(appCodec, app.DaoKeeper, app.AccountKeeper, app.BankKeeper)
 
+	app.DerKeeper = *dermodulekeeper.NewKeeper(
+		appCodec,
+		keys[dermoduletypes.StoreKey],
+		keys[dermoduletypes.MemStoreKey],
+		app.GetSubspace(dermoduletypes.ModuleName),
+		app.MachineKeeper,
+		homePath,
+	)
+	derModule := dermodule.NewAppModule(appCodec, app.DerKeeper, app.AccountKeeper, app.BankKeeper)
+
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	/**** IBC Routing ****/
@@ -646,6 +664,7 @@ func New(
 		machineModule,
 		assetModule,
 		daoModule,
+		derModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 
 		crisis.NewAppModule(app.CrisisKeeper, skipGenesisInvariants, app.GetSubspace(crisistypes.ModuleName)), // always be last to make sure that it checks for all invariants and not only part of them
@@ -681,6 +700,7 @@ func New(
 		machinemoduletypes.ModuleName,
 		assetmoduletypes.ModuleName,
 		daomoduletypes.ModuleName,
+		dermoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
 
@@ -709,6 +729,7 @@ func New(
 		machinemoduletypes.ModuleName,
 		assetmoduletypes.ModuleName,
 		daomoduletypes.ModuleName,
+		dermoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	)
 
@@ -742,6 +763,7 @@ func New(
 		machinemoduletypes.ModuleName,
 		assetmoduletypes.ModuleName,
 		daomoduletypes.ModuleName,
+		dermoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	}
 	app.mm.SetOrderInitGenesis(genesisModuleOrder...)
@@ -982,6 +1004,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(machinemoduletypes.ModuleName)
 	paramsKeeper.Subspace(assetmoduletypes.ModuleName)
 	paramsKeeper.Subspace(daomoduletypes.ModuleName)
+	paramsKeeper.Subspace(dermoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper

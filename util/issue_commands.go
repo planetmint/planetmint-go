@@ -8,6 +8,7 @@ import (
 	"github.com/planetmint/planetmint-go/config"
 	"github.com/planetmint/planetmint-go/lib"
 	daotypes "github.com/planetmint/planetmint-go/x/dao/types"
+	dertypes "github.com/planetmint/planetmint-go/x/der/types"
 	machinetypes "github.com/planetmint/planetmint-go/x/machine/types"
 	"sigs.k8s.io/yaml"
 )
@@ -84,6 +85,13 @@ func SendLiquidAssetRegistration(goCtx context.Context, notarizedAsset machinety
 	sendingValidatorAddress := config.GetConfig().GetNodeAddress()
 	msg := machinetypes.NewMsgNotarizeLiquidAsset(sendingValidatorAddress, &notarizedAsset)
 	loggingContext := "notarize liquid asset"
+	buildSignBroadcastTx(goCtx, loggingContext, sendingValidatorAddress, msg)
+}
+
+func SendLiquidDerAssetRegistration(goCtx context.Context, notarizedAsset dertypes.LiquidDerAsset) {
+	sendingValidatorAddress := config.GetConfig().GetNodeAddress()
+	msg := dertypes.NewMsgNotarizeLiquidDerAsset(sendingValidatorAddress, &notarizedAsset)
+	loggingContext := "notarize liquid DER asset"
 	buildSignBroadcastTx(goCtx, loggingContext, sendingValidatorAddress, msg)
 }
 

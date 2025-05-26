@@ -1,0 +1,11 @@
+syntax = "proto3";
+package planetmintgo.der;
+
+option go_package = "github.com/planetmint/planetmint-go/x/der/types";
+
+message LiquidDerAsset {
+  
+  string zigbeeID = 1; 
+  string plmntAddress = 2; 
+  string assetID = 3; 
+}
