@@ -466,7 +466,10 @@ func New(
 	)
 
 	// Register store loader for v0.13.0 upgrade (DER module)
-	derUpgradeHeight := getDerUpgradeHeightFromConfig(homePath)
+	derUpgradeHeight, err := getDerUpgradeHeightFromConfig(homePath)
+	if err != nil {
+		fmt.Println("failed to get DER upgrade height from config: %v", err)
+	}
 	app.SetStoreLoader(
 		upgradetypes.UpgradeStoreLoader(derUpgradeHeight, &storetypes.StoreUpgrades{
 			Added: []string{dermoduletypes.StoreKey},
@@ -1052,20 +1055,19 @@ func (app *App) setupUpgradeHandlers() {
 }
 
 // Utility function to get DER upgrade height from config/upgrade-v0.13.0.json
-func getDerUpgradeHeightFromConfig(homePath string) int64 {
+func getDerUpgradeHeightFromConfig(homePath string) (int64, error) {
 	configPath := filepath.Join(homePath, "config", "upgrade-v0.13.0.json")
 	data, err := os.ReadFile(configPath)
 	if err != nil {
-		panic(fmt.Sprintf("Failed to read DER upgrade config: %v", err))
+		return 0, fmt.Errorf("failed to read DER upgrade config: %w", err)
 	}
 	var cfg struct {
 		DerUpgradeHeight int64 `json:"der-upgrade-height"`
 	}
 	if err := json.Unmarshal(data, &cfg); err != nil {
-		panic(fmt.Sprintf("Failed to parse DER upgrade config: %v", err))
+		return 0, fmt.Errorf("failed to parse DER upgrade config: %w", err)
 	}
 	if cfg.DerUpgradeHeight <= 0 {
-		panic("DER upgrade height must be set and > 0 in config/upgrade-v0.13.0.json")
+		return 0, fmt.Errorf("DER upgrade height must be set and > 0 in config/upgrade-v0.13.0.json")
 	}
-	return cfg.DerUpgradeHeight
-}
+	return cfg.DerUpgradeHeight, nil
