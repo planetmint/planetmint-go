@@ -2,6 +2,7 @@ package app
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -468,7 +469,7 @@ func New(
 	// Register store loader for v0.13.0 upgrade (DER module)
 	derUpgradeHeight, err := getDerUpgradeHeightFromConfig(homePath)
 	if err != nil {
-		fmt.Println("failed to get DER upgrade height from config: %v", err)
+		logger.Error("failed to get DER upgrade height from config", "error", err)
 	}
 	app.SetStoreLoader(
 		upgradetypes.UpgradeStoreLoader(derUpgradeHeight, &storetypes.StoreUpgrades{
@@ -1068,6 +1069,7 @@ func getDerUpgradeHeightFromConfig(homePath string) (int64, error) {
 		return 0, fmt.Errorf("failed to parse DER upgrade config: %w", err)
 	}
 	if cfg.DerUpgradeHeight <= 0 {
-		return 0, fmt.Errorf("DER upgrade height must be set and > 0 in config/upgrade-v0.13.0.json")
+		return 0, errors.New("DER upgrade height must be set and > 0 in config/upgrade-v0.13.0.json")
 	}
 	return cfg.DerUpgradeHeight, nil
+}
