@@ -1,9 +1,10 @@
 package keeper
 
 import (
+	"testing"
+
 	dertypes "github.com/planetmint/planetmint-go/x/der/types"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestStoreDerAssetAndLookupDerAsset(t *testing.T) {
