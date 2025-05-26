@@ -465,6 +465,14 @@ func New(
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
+	// Register store loader for v0.13.0 upgrade (DER module)
+	derUpgradeHeight := getDerUpgradeHeightFromConfig(homePath)
+	app.SetStoreLoader(
+		upgradetypes.UpgradeStoreLoader(derUpgradeHeight, &storetypes.StoreUpgrades{
+			Added: []string{dermoduletypes.StoreKey},
+		}),
+	)
+
 	// ... other modules keepers
 
 	// Create IBC Keeper
@@ -1037,4 +1045,27 @@ func (app *App) setupUpgradeHandlers() {
 	app.UpgradeKeeper.SetUpgradeHandler("v0.11.0", func(ctx sdk.Context, _ upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
 		return app.mm.RunMigrations(ctx, app.configurator, fromVM)
 	})
+	app.UpgradeKeeper.SetUpgradeHandler("v0.13.0", func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+		ctx.Logger().Info("Running v0.13.0 upgrade: adding der store")
+		return app.mm.RunMigrations(ctx, app.configurator, fromVM)
+	})
+}
+
+// Utility function to get DER upgrade height from config/upgrade-v0.13.0.json
+func getDerUpgradeHeightFromConfig(homePath string) int64 {
+	configPath := filepath.Join(homePath, "config", "upgrade-v0.13.0.json")
+	data, err := os.ReadFile(configPath)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to read DER upgrade config: %v", err))
+	}
+	var cfg struct {
+		DerUpgradeHeight int64 `json:"der_upgrade_height"`
+	}
+	if err := json.Unmarshal(data, &cfg); err != nil {
+		panic(fmt.Sprintf("Failed to parse DER upgrade config: %v", err))
+	}
+	if cfg.DerUpgradeHeight <= 0 {
+		panic("DER upgrade height must be set and > 0 in config/upgrade-v0.13.0.json")
+	}
+	return cfg.DerUpgradeHeight
 }
