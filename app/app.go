@@ -1045,7 +1045,7 @@ func (app *App) setupUpgradeHandlers() {
 	app.UpgradeKeeper.SetUpgradeHandler("v0.11.0", func(ctx sdk.Context, _ upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
 		return app.mm.RunMigrations(ctx, app.configurator, fromVM)
 	})
-	app.UpgradeKeeper.SetUpgradeHandler("v0.13.0", func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+	app.UpgradeKeeper.SetUpgradeHandler("v0.13.0", func(ctx sdk.Context, _ upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
 		ctx.Logger().Info("Running v0.13.0 upgrade: adding der store")
 		return app.mm.RunMigrations(ctx, app.configurator, fromVM)
 	})
@@ -1059,7 +1059,7 @@ func getDerUpgradeHeightFromConfig(homePath string) int64 {
 		panic(fmt.Sprintf("Failed to read DER upgrade config: %v", err))
 	}
 	var cfg struct {
-		DerUpgradeHeight int64 `json:"der_upgrade_height"`
+		DerUpgradeHeight int64 `json:"der-upgrade-height"`
 	}
 	if err := json.Unmarshal(data, &cfg); err != nil {
 		panic(fmt.Sprintf("Failed to parse DER upgrade config: %v", err))
