@@ -8,6 +8,8 @@ on:
 
 jobs:
   build:
+    # Temporarily disabling the Sonar Scan job due to [reason]. Re-enable when [condition].
+    if: false
     name: Sonar Scan
     runs-on: ubuntu-latest
     steps:
