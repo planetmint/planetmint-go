@@ -5,7 +5,7 @@ go 1.22
 require (
 	github.com/cometbft/cometbft v0.37.5
 	github.com/cosmos/cosmos-sdk v0.47.14
-	github.com/planetmint/planetmint-go v0.12.8
+	github.com/planetmint/planetmint-go v0.13.0
 	github.com/stretchr/testify v1.9.0
 	go.bug.st/serial v1.6.2
 	sigs.k8s.io/yaml v1.4.0

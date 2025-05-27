@@ -23,7 +23,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.2
-	github.com/planetmint/planetmint-go/lib v0.6.0
+	github.com/planetmint/planetmint-go/lib v0.9.0
 	github.com/rddl-network/elements-rpc v1.2.1
 	github.com/rddl-network/go-utils v0.2.3
 	github.com/rddl-network/rddl-claim-service v0.3.2
